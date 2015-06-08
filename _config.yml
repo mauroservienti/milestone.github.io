@@ -13,5 +13,10 @@ url: "http://mauroservienti.github.io" # the base hostname & protocol for your s
 twitter_username: mauroservienti
 github_username:  mauroservienti
 
-# Build settings
-markdown: kramdown
+highlighter: pygments
+
+markdown: redcarpet
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+
+exclude: ['README.md', 'LICENSE']
