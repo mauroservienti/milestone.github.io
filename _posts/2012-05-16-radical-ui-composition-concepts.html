@@ -1,0 +1,77 @@
+---
+layout: post
+title: 'Radical - UI Composition: concepts'
+date: '2012-05-16T14:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Radical
+- UI Composition
+- Model View ViewModel
+modified_time: '2012-05-16T14:00:02.338+02:00'
+thumbnail: http://lh5.ggpht.com/-8jNbcdrxkFs/T7ChdcAfk5I/AAAAAAAAB_0/8MJ2YJVMHaI/s72-c/image_thumb21.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3394908419810697317
+blogger_orig_url: http://milestone.topics.it/2012/05/radical-ui-composition-concepts.html
+---
+
+<p><a href="http://lh3.ggpht.com/-e5kkh75ly7g/T7ChbIgC6qI/AAAAAAAAB_s/jQyoRMeASs4/s1600-h/image23.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-8jNbcdrxkFs/T7ChdcAfk5I/AAAAAAAAB_0/8MJ2YJVMHaI/image_thumb21.png?imgmax=800" width="323" height="254"></a></p> <p><strong>Cool…but what the hell is it?</strong></p> <p>it is a Window… :-) whose xaml (MainView) is defined as follows:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">&lt;</font></font></span><font style="font-size: 11.3pt"><span style="color: "><font color="#a31515">Window</font></span><span style="color: "><font color="#ff0000"> ...</font></span><font color="#0000ff"><span style="color: ">&gt;</span></font>
+<span style="color: "><font color="#a31515">	</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">Grid</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+<span style="color: "><font color="#a31515">		</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">Grid.RowDefinitions</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+<span style="color: "><font color="#a31515">			</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">RowDefinition</font></span><span style="color: "><font color="#ff0000"> Height</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"Auto"</span><span style="color: "> /&gt;</span></font>
+<span style="color: "><font color="#a31515">			</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">RowDefinition</font></span><span style="color: "><font color="#ff0000"> Height</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"*"</span><span style="color: "> /&gt;</span></font>
+<span style="color: "><font color="#a31515">		</font></span><span style="color: "><font color="#0000ff">&lt;/</font></span><span style="color: "><font color="#a31515">Grid.RowDefinitions</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+ 
+<span style="color: "><font color="#a31515">		</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">Menu</font></span><span style="color: "><font color="#ff0000"> ...</font></span> <span style="color: "><font color="#ff0000"><font style="background-color: #ffff00">rg</font></font></span><font style="background-color: #ffff00"><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#ff0000">RegionService.Region</font></span><span style="color: "><font color="#0000ff">="{</font></span><span style="color: "><font color="#a31515">lrg</font></span><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#a31515">MainMenuRegion</font></span><span style="color: "><font color="#ff0000"> Name</font></span></font><font color="#0000ff"><font style="background-color: #ffff00"><span style="color: ">=</span><span style="color: ">MainMenuRegion</span><span style="color: ">}</span><span style="color: ">"</span></font><span style="color: ">&gt;</span></font>
+<span style="color: "><font color="#a31515">			</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">MenuItem</font></span><span style="color: "><font color="#ff0000"> Header</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"File"</span></font>&nbsp;<font style="background-color: #ffff00"><span style="color: "><font color="#ff0000">rg</font></span><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#ff0000">RegionService.Region</font></span><span style="color: "><font color="#0000ff">="{</font></span><span style="color: "><font color="#a31515">lrg</font></span><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#a31515">MenuItemRegion</font></span><span style="color: "><font color="#ff0000"> Name</font></span></font><font color="#0000ff"><font style="background-color: #ffff00"><span style="color: ">=</span><span style="color: ">FileMenuRegion</span><span style="color: ">}</span><span style="color: ">"</span></font><span style="color: ">&gt;</span></font>
+<span style="color: "><font color="#a31515">				</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">MenuItem</font></span><span style="color: "><font color="#ff0000"> Header</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"Sub Item"</span><span style="color: "> /&gt;</span></font>
+<span style="color: "><font color="#a31515">			</font></span><span style="color: "><font color="#0000ff">&lt;/</font></span><span style="color: "><font color="#a31515">MenuItem</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+<span style="color: "><font color="#a31515">		</font></span><span style="color: "><font color="#0000ff">&lt;/</font></span><span style="color: "><font color="#a31515">Menu</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+ 
+<span style="color: "><font color="#a31515">		</font></span><span style="color: "><font color="#0000ff">&lt;</font></span><span style="color: "><font color="#a31515">ContentPresenter</font></span><span style="color: "><font color="#ff0000"> ...</font></span><span style="color: "><font color="#ff0000">&nbsp;<font style="background-color: #ffff00">rg</font></font></span><font style="background-color: #ffff00"><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#ff0000">RegionService.Region</font></span><span style="color: "><font color="#0000ff">="{</font></span><span style="color: "><font color="#a31515">rg</font></span><span style="color: "><font color="#0000ff">:</font></span><span style="color: "><font color="#a31515">ContentPresenterRegion</font></span><span style="color: "><font color="#ff0000"> Name</font></span></font><font color="#0000ff"><font style="background-color: #ffff00"><span style="color: ">=</span><span style="color: ">SampleContentRegion</span><span style="color: ">}</span><span style="color: ">"</span></font><span style="color: "> /&gt;</span></font>
+<span style="color: "><font color="#a31515">	</font></span><span style="color: "><font color="#0000ff">&lt;/</font></span><span style="color: "><font color="#a31515">Grid</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+<span style="color: "><font color="#0000ff">&lt;/</font></span><span style="color: "><font color="#a31515">Window</font></span></font><span style="color: "><font style="font-size: 11.3pt" color="#0000ff">&gt;</font></span></font></pre></blockquote>
+<p>(“…” content removed for clarity)</p>
+<p>The UI is really, really simple but defines 3 different regions where content can be injected at runtime.</p>
+<p><strong>What does it mean “inject content at runtime”?</strong></p>
+<p>First of all let us take a look at what the xaml does: we are using the “Region” attached property, provided by the Radical framework, to attach to standard WPF UI elements 3 different types of region, each one created by a specific markup extension and uniquely identified, within this view, by its name.</p>
+<p><strong>Regions</strong></p>
+<p>Radical offers some built-in region types:</p>
+<p><a href="http://lh5.ggpht.com/-sMnBotFyduE/T7CheRqXNTI/AAAAAAAAB_8/Sm0rnsek0Zc/s1600-h/image%25255B5%25255D.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh3.ggpht.com/-_WOT4Awd5OM/T7Chf08PpeI/AAAAAAAACAE/HGtAtyZO9Bo/image_thumb%25255B2%25255D.png?imgmax=800" width="406" height="219"></a></p>
+<p>As you can see from the diagram there are some interfaces, and already built generic abstract classes ready for inheritance, that defines the 3 (well 4…) main region concepts:</p>
+<p><em>IRegion</em>: the IRegion is the mother of all regions carrying the basic information required such as the region name and a reference to the hosting view, its concrete implementation is a markup extension that provides to the inheritors all the plumbing required the WPF; An IRegion, nor a Region&lt;T&gt;, can be directly used as a concrete region, the <em>real</em> regions are the followings:</p>
+<ol>
+<li><em>IContentRegion</em>: a IContentRegion is a region that is capable of hosting one single content at a time, at runtime the content can be replaced whenever is needed using the Content property, that directly maps to the Content property of the element this region is attached to; An obvious and built-in implementation of this type of region is the ContentPresenterRegion that can be attached to any WPF ContentPresenter;</li>
+<li><em>IElementsRegion</em>: a IElementsRegion is built to host more than one element, where all the elements are all visible at the same time, basically it is a collection of “region content”, one built-in implementation is the PanelRegion that can be attached to any panel type, but it is really easy to built your own ItemsControlRegion that can be attached to any ItemsControl; in the Radical samples there is a MainMenuRegion and a MenuItemRegion that are built to host MenuItem(s) in the Menu WPF element and in the MenuItem WPF element;</li>
+<li><em>ISwitchingElementsRegion</em>: a ISwitchingElementsRegion, as its ancestor, is built to host more than one element at a time and adds the concept of active element, that is automatically tracked for changes. A real world sample of this type of region is a TabControlRegion where where runtime region elements will be TabItem(s) that the user can click to activate;</li></ol>
+<p>The abstract classes are generic classes ready to be “closed around” the UI element for which we are building the specialized region. Here is the full code required to build a new region type for menus:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">MainMenuRegion</font></span> : <span style="color: "><font color="#2b91af">ElementsRegion</font></span><font style="background-color: #ffff00">&lt;<span style="color: "><font color="#2b91af">Menu</font></span>&gt;</font>
+{
+	<span style="color: "><font color="#0000ff">public</font></span> MainMenuRegion()
+	{
+ 
+	}
+ 
+	<span style="color: "><font color="#0000ff">public</font></span> MainMenuRegion( <span style="color: "><font color="#2b91af">String</font></span> name )
+	{
+		<span style="color: "><font color="#0000ff">this</font></span>.Name = name;
+	}
+ 
+	<span style="color: "><font color="#0000ff">protected</font></span>&nbsp;<span style="color: "><font color="#0000ff">override</font></span>&nbsp;<span style="color: "><font color="#0000ff">void</font></span>&nbsp;<font style="background-color: #ffff00">OnAdd( System.Windows.<span style="color: "><font color="#2b91af">DependencyObject</font></span> view )</font>
+	{
+		<span style="color: "><font color="#0000ff">this</font></span>.Element.Items.Add( ( <span style="color: "><font color="#2b91af">MenuItem</font></span> )view );
+	}
+ 
+	<span style="color: "><font color="#0000ff">protected</font></span>&nbsp;<span style="color: "><font color="#0000ff">override</font></span>&nbsp;<span style="color: "><font color="#0000ff">void</font></span>&nbsp;<font style="background-color: #ffff00">OnRemove( System.Windows.<span style="color: "><font color="#2b91af">DependencyObject</font></span> view</font>, <span style="color: "><font color="#2b91af">RemoveReason</font></span> reason )
+	{
+		view.As&lt;<span style="color: "><font color="#2b91af">MenuItem</font></span>&gt;( e =&gt;
+		{
+			<span style="color: "><font color="#0000ff">if</font></span>( <span style="color: "><font color="#0000ff">this</font></span>.Element.Items.Contains( e ) )
+			{
+				<span style="color: "><font color="#0000ff">this</font></span>.Element.Items.Remove( e );
+			}
+		} );
+	}
+}</font></font></pre></blockquote>
+<p>Really, really easy.</p>
+<p>In the next post we’ll see how all this stuff can be used to inject content at runtime.</p>
+<p>.m</p>  

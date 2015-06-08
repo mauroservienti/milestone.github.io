@@ -1,0 +1,62 @@
+---
+layout: post
+title: 'NServiceBus: error queues'
+date: '2013-05-06T15:08:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Domain Driven Design
+- NServiceBus
+modified_time: '2013-05-06T15:08:00.673+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1485704427737941226
+blogger_orig_url: http://milestone.topics.it/2013/05/nservicebus-error-queues.html
+---
+
+<p><a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a> has the concept of error queue, that is used, as the name implies, <a href="http://support.nservicebus.com/customer/portal/articles/862410-how-do-i-handle-exceptions-" target="_blank">when an error occurs</a>; given this behavior the debate should move to:</p> <h3>What is an error?</h3> <p>Many things can be categorized as an error:</p> <ul> <li>pure bugs such as unhandled exceptions;</li> <li>validation failures: the incoming message does not satisfies the business validation rules;</li> <li>security violations: the incoming message, due the current security context, cannot be handled;</li> <li>etc.;</li></ul> <p>What we get for free in NServiceBus is that if our message handler does something like this:</p> <blockquote><pre class="csharpcode"><span class="kwrd">class</span> SampleHandler : IHandleMessages&lt;SampleMessage&gt;
+{
+    <span class="kwrd">public</span> <span class="kwrd">void</span> Handle( SampleMessage message )
+    {
+        <span class="kwrd">if</span>( !<span class="kwrd">this</span>.IsValid( message ) )
+        {
+             <span class="kwrd">throw</span> <span class="kwrd">new</span> ArgumentException( <span class="str">"Invalid message"</span> );
+        }
+
+        <span class="rem">//message handling if validation succeed</span>
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>and an invalid message comes in the retry logic retries for 5 times (by default) and then if the message is still invalid moves the message to the error queue.</p>
+<h3>But…</h3>
+<p>Some legitimate questions arise from the above sample:</p>
+<ol>
+<li>is it possible that if message A is considered invalid at the first attempt can be considered valid at a subsequent attempt?</li>
+<li>is a validation failure the same as an unhandled exception?</li>
+<li>does it make sense to have message failed due to a validation failure in the same can as a message failed due to a bug?<br>do they have the same business meaning?</li></ol>
+<p>Do all the above questions mean that the default NServiceBus behavior is wrong? <strong>absolutely not, period</strong>.</p>
+<p>The above questions simply put evidence on the fact that every little thing that happens in the world we are modeling has a meaning, from the business perspective, and that meaning must be magnified to deeply understand how to treat it.</p>
+<p>Next time we’ll see how we can leverage the message handling pipeline to change the default above behavior to satisfy our needs.</p>
+<p>.m</p>  

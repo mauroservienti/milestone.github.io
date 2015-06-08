@@ -1,0 +1,119 @@
+---
+layout: post
+title: Anonymous delegates/methods/lambda… unsubscribing…
+date: '2008-10-23T14:27:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T20:15:14.378+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1760058266899365349
+blogger_orig_url: http://milestone.topics.it/2008/10/anonymous-delegatesmethodslambda.html
+---
+
+      <span>Forse non tutti sanno che… :-D, bello iniziare così.</span><br>  <span>Sappiamo tutti cosa sono gli eventi e come utilizzarli/gestirli, abbiamo il sistema tradizionale (quasi legacy oserei dire ;-)):</span><br>  <pre class="code"><span style="color: #2b91af">WithEvent </span>we = <span style="color: blue">new </span><span style="color: #2b91af">WithEvent</span>();
+we.SomethingOccurred += <span style="color: blue">new </span><span style="color: #2b91af">EventHandler</span>( OnSomethingOccurred );</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>In cui agganciamo esplicitamente un delegate, che punta ad un nostro metodo, all’evento esposto da una classe.</span><br>
+
+<span>Abbiamo poi altri due sistemi, il secondo evoluzione del primo, che sono decisamente più smart:</span><br>
+
+<pre class="code"><span style="color: #2b91af">WithEvent </span>we = <span style="color: blue">new </span><span style="color: #2b91af">WithEvent</span>();
+we.SomethingOccurred += <span style="color: blue">delegate</span>( <span style="color: blue">object </span>sender, <span style="color: #2b91af">EventArgs </span>e )
+{
+    <span style="color: green">//Do something...
+</span>};</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>possiamo infatti utilizzare gli anonymous methods per agganciare direttamente un handler, questo, oltre che ad una maggior leggibilità, porta anche una serie di vantaggi non indifferenti: uno su tutti la visibilità di eventuali variabili definite nello <em>scope</em> e la conseguente non necessità di gestire fastidiose variabili globali:</span><br>
+
+<pre class="code"><span style="color: #2b91af">String </span>foo = <span style="color: #a31515">"foo"</span>;
+<span style="color: #2b91af">WithEvent </span>we = <span style="color: blue">new </span><span style="color: #2b91af">WithEvent</span>();
+we.SomethingOccurred += <span style="color: blue">delegate</span>( <span style="color: blue">object </span>sender, <span style="color: #2b91af">EventArgs </span>e )
+{
+    <span style="color: green">//Do something...
+    </span>foo = <span style="color: #a31515">"new value"</span>;
+};</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>sarà onere del compilatore smazzarsi il problema, e <em>lui</em> è decisamente bravo.</span><br>
+
+<span>Possiamo ulterirmente <em>abbellire</em> la sintassi facendo uso delle <u>fantastiche</u> lambda expression:</span><br>
+
+<pre class="code"><span style="color: #2b91af">String </span>foo = <span style="color: #a31515">"foo"</span>;
+<span style="color: #2b91af">WithEvent </span>we = <span style="color: blue">new </span><span style="color: #2b91af">WithEvent</span>();
+we.SomethingOccurred += ( s, e ) => { foo = <span style="color: #a31515">"new value"</span>; };</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>ottenendo, imho, una sintassi semplicemente fenomenale.</span><br>
+
+<span>Siamo però adesso di fronte ad un annoso problema, in entrambi gli ultimi 2 casi (anonymous methods e lambda) ci perdiamo per strada il fatto che sarebbe buona pratica anche rimuovere gli handler ad un evento. In questo purtroppo il compilatore non ci viene in aiuto perchè non genera nessun codice per la rimozione e così su 2 piedi ci troviamo di fronte ad piccolo inghippo di non facile soluzione… se infatti proviamo a scrivere sta “porcata” compila ma non sortisce l’effetto desiderato (e per fortuna aggiungo io…):</span><br>
+
+<span>we.SomethingOccurred -= ( s, e ) => { foo = <span style="color: #a31515">"new value"</span>; };</span><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span>questo perchè ogni volta che usiamo gli anonymous methods/lambda il compilatore genera degli handler diversi.</span><br>
+
+<span>la soluzione però non è così brutta e neanche così ardua:</span><br>
+
+<pre class="code"><span style="color: #2b91af">EventHandler </span>handler = ( s, e ) => { foo = <span style="color: #a31515">"new value"</span>; };
+
+we.SomethingOccurred += handler;
+we.SomethingOccurred -= handler;</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>basta infatti crearlo noi l’handler… ma se volessimo deregistrare l’evento all’interno dell’handler stesso? potremmo essere tentati di scrivere una cosa del tipo:</span><br>
+
+<pre class="code"><span style="color: #2b91af">String </span>foo = <span style="color: #a31515">"foo"</span>;
+<span style="color: #2b91af">WithEvent </span>we = <span style="color: blue">new </span><span style="color: #2b91af">WithEvent</span>();
+
+<span style="color: #2b91af">EventHandler </span>handler = ( s, e ) => 
+{ 
+    foo = <span style="color: #a31515">"new value"</span>;
+    ( ( <span style="color: #2b91af">WithEvent </span>)s ).SomethingOccurred -= handler;
+};
+
+we.SomethingOccurred += handler;</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>che è perfettamente lecito ma non compila… per il semplice fatto all’interno del corpo della lambda non posso far riferimento alla lambda stessa… in realtà questa cosa non è proprio vera e credo che il problema sia solo il compilatore che non è abbastanza smart, se infatti scriviamo:</span><br>
+
+<pre class="code"><span style="color: #2b91af">EventHandler </span>handler = <span style="color: blue">null</span>;
+handler = ( s, e ) => 
+{ 
+    foo = <span style="color: #a31515">"new value"</span>;
+    ( ( <span style="color: #2b91af">WithEvent </span>)s ).SomethingOccurred -= handler;
+};</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+
+
+<span>compila alla perfezione e funziona che è una meraviglia.</span><br>
+
+<span>.m</span><br>
+

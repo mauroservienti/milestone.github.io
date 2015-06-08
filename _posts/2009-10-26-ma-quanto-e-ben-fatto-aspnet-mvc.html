@@ -1,0 +1,100 @@
+---
+layout: post
+title: Ma quanto è ben fatto Asp.Net MVC!
+date: '2009-10-26T09:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Castle Windsor
+modified_time: '2012-08-04T20:18:28.774+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8358122929239569951
+blogger_orig_url: http://milestone.topics.it/2009/10/ma-quanto-e-ben-fatto-aspnet-mvc.html
+---
+
+<span>Non sono propriamente uno sviluppatore web, o almeno non lo sono più in modo assiduo da qualche anno, quindi sono rimasto un po’ indietro :-)</span><br>  <span>Da un anno, abbondante, a questa parte in <a href="http://www.manageddesigns.it/">bottega</a> stiamo seguento un cliente, di dimensioni ragguardevoli, nello sviluppo di una soluzione di content publishing; sono entrato nel team da poco e siccome una parte corposa del progetto è basta su <a href="http://www.asp.net/mvc">Asp.Net MVC</a> avevo bisogno di recuperare il tempo perso e nel frattempo prendere confidenza con il framework MVC, naturalmente non potevo farlo pesando sulle spalle del team, almeno non per la parte prettamente infrastrutturale.</span><br>  <span>Mi sono armato di buona volontà e ho iniziato la creazione di un “piccolo” progetto che avevo in cantiere da un po’, progetto che poteva essere fatto con MVC, progetto che ha caratteristiche che lo rendono compatibile con le mie necessità dilearning e altre caratteristiche che possono essere piegate alle mie necessità di learning :-)</span><br>  <span>Naturalmente io sono <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/allergia-da-manuale-delle-istruzioni-e-conseguenzehellip.aspx">allergico al manuale delle istruzioni</a> e peggio ancora ho la tendenza a voler partire dalla cose facili… :-), ergo:</span><br>  <ul>   <li>ho creato una <a href="http://blogs.ugidotnet.org/topics/archive/2009/10/23/meticolositagrave-e-organizzazione.aspx">bella solution con i sacri crismi</a>; </li>    <li>ci ho piazzato un bel progetto MVC (<a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=d3f06bb9-5f5f-4f46-91e9-813b3fce2db1&displaylang=en">v2 per essere precisi</a>) fatto con VS2010;       <ul>       <li>ho dato un occhio a come era strutturato; </li>        <li>ho rimosso tutto quello che c’era nel global.asax; </li>        <li>ho rimosso tutti i Controllers; </li>     </ul>   </li> </ul>  <span>e mi sono detto:</span><br>  <ul>   <li>devo riuscire a pluggare <a href="http://www.castleproject.org/container/index.html">Castle Windsor</a> come framework per IoC; </li>    <li>devo riuscire a spostare i Controller(s) in un assembly separato; </li> </ul>  <span>e con sorpresa ho scoperto che è di una semplicità disarmante, il che, imho, è decisamente un pregio.</span><br>  <span><strong>ControllerFactory</strong></span><br>  <span>L’architettura di MVC prevede che la creazione di un controller sia delegata ad una factory, ergo quando registrate le route:</span><br>  <blockquote>   <pre class="code">routes.MapRoute(
+    <span style="color: #a31515">"Default"</span>,
+    <span style="color: #a31515">"{controller}/{action}/{id}"</span>,
+    <span style="color: blue">new </span>{ controller = <span style="color: #a31515">"Home"</span>, action = <span style="color: #a31515">"Index"</span>, id = <span style="color: #a31515">"" </span>}
+);</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>oltre a fare tutto quello che fanno state anche dicendo: “ooh engine di MVC! guarda che per soddisfare a quella richiesta devi usare il controller che si chiama <em>HomeController</em> e che sta nella folder <em>Controllers</em>”, <u>conventtion-over-configuration</u>.</span><br>
+
+<span>In realtà non è vero che gli state dicendo che sta nella <u>folder</u> Controllers, ma lo vedremo tra poco. Sta di fatto che quando arriva una richiesta http che deve essere girata a quel controller l’engine di MVC va dalla <em>Default</em>ControllerFactory e gli chiede di risolvere il problema: voglio questo controller, mo arrangiati un po’ te :-).</span><br>
+
+<span>Come possiamo metterci in mezzo? semplicissimo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>container = <span style="color: blue">new </span><span style="color: #2b91af">WindsorContainer</span>();
+<span style="color: blue">var </span>factory = <span style="color: blue">new </span><span style="color: #2b91af">WindsorControllerFactory</span>( container );
+
+<span style="color: #2b91af">ControllerBuilder</span>.Current.SetControllerFactory( factory );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>dove una WindsorControllerFactory altro non è che:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">WindsorControllerFactory </span>: <span style="color: #2b91af">DefaultControllerFactory
+</span>{
+    <span style="color: #2b91af">IWindsorContainer </span>container;
+    <span style="color: blue">public </span>WindsorControllerFactory( <span style="color: #2b91af">IWindsorContainer </span>container )
+    {
+        <span style="color: blue">this</span>.container = container;
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">IController </span>GetControllerInstance( <span style="color: #2b91af">RequestContext </span>requestContext, <span style="color: #2b91af">Type </span>controllerType )
+    {
+        <span style="color: blue">return </span>container.Resolve( controllerType ) <span style="color: blue">as </span><span style="color: #2b91af">IController</span>;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>triviale è dir poco :-)</span><br>
+
+<span><strong>DefaultNamespaces</strong></span><br>
+
+<span>Ma cosa succede in fase di risoluzione del “nome” del controller? una volta fatta la prima parte, iniettato c'ioè il nostro motore di IoC preferito, se piazziamo un bel breakpoint in quel metodo <em>GetControllerInstance</em> ci accorgiamo che il tipo che arriva come secondo parametro è il System.Type del controller che MVC ritiene debba soddisfare la richiesta.</span><br>
+
+<span>Il problema ce ci poniamo è: ma come fa questa scelta? l’unica cosa che sa è che a fronte di una richiesta http deve girare l’onere ad un controller che si chiama Home. Quello che succede è più o meno questo, e qui eventualmente lascio intervenire <a href="http://codeclimber.net.nz/">Simone</a> per i dettagli:</span><br>
+
+<ul>
+  <li>una volta scoperto che il controller è Home, lo “scopre” grazie alla RouteTable; </li>
+
+  <li>parte la ricerca, via reflection, per una classe Home<em>Controller</em>: 
+
+    <ul>
+      <li>che erediti da Controller; </li>
+
+      <li>che si trovi nello stesso assembly dell’applicazione MVC; </li>
+
+      <li>e che, presumo, abbia un full type name: “<em>Application Default Namespace</em>” + Controllers + “<em>Controller Name</em>” </li>
+    </ul>
+  </li>
+</ul>
+
+<span>se questa convenzione non viene rispettata il giochetto non funziona. Quindi come possiamo spostare i controller in un posto diverso?</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">ControllerBuilder</span>.Current.DefaultNamespaces.Add( <span style="color: #a31515">"ManagedDesigns.Next.Mvc.Runtime.Controllers" </span>);</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Questo altro non fa che dare la possibilità al motre di MVC di cercare i controller anche <em>li</em>, dove quel <em>li</em> può essere un assembly separato, a patto che stia nella bin dell’applicazione, permettendoci di fare ad esempio questo, in fase di configurazione di Castle:</span><br>
+
+<blockquote>
+  <pre class="code">container.Register( <span style="color: #2b91af">AllTypes</span>.Of<<span style="color: #2b91af">Controller</span>>()
+    .FromAssemblyNamed( <span style="color: #a31515">"Next.Mvc.Runtime" </span>)
+    .Configure( cd => cd.LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Transient ) ) );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>registriamo in maniera implicita tutti i tipi che derivano da <em>Controller</em> e che stanno nell’assembly indicato.</span><br>
+
+<ul>
+  <li>Elegante; </li>
+
+  <li>Semplice; </li>
+
+  <li>Efficace; </li>
+</ul>
+
+<span>.m</span><br>
+

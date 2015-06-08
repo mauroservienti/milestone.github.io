@@ -1,0 +1,47 @@
+---
+layout: post
+title: Quanto non mi piace la sintassi delle Dependency/Attached Property…
+date: '2009-05-19T17:25:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T12:01:46.077+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1730058819319410666
+blogger_orig_url: http://milestone.topics.it/2009/05/quanto-non-mi-piace-la-sintassi-delle.html
+---
+
+<span>…è troppo <strong>nemica del compilatore</strong> e se in una giornata scrivete montagne di codice il rischio di scrivere minch*ate è alto, e in questo caso neanche gli Unit Test sono d’aiuto:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">namespace </span>Topics.Runtime.ViewModel
+{
+    <span style="color: blue">using </span>...;<br>
+    [<span style="color: #2b91af">Component</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">IEstimateWizardViewModel </span>), Lifestyle = <span style="color: #2b91af">Lifestyle</span>.Transient )]
+    <span style="color: blue">sealed class </span><span style="color: #2b91af">EstimateWizardViewModel </span>: <span style="color: #2b91af">ViewModelBase</span><<span style="color: #2b91af">IEstimateWizardView</span>>, <span style="color: #2b91af">IEstimateWizardViewModel
+    </span>{
+        <span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>IsBusyProperty = <span style="color: #2b91af">DependencyProperty</span>.Register(
+            <span style="color: #a31515">"IsBusy"</span>,
+            <span style="color: blue">typeof</span>( <span style="color: #2b91af">Boolean </span>),
+            <span style="color: blue">typeof</span>( <span style="color: #2b91af">EstimateViewModel </span>),
+            <span style="color: blue">new </span><span style="color: #2b91af">PropertyMetadata</span>( <span style="color: blue">false </span>) );
+
+        <span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>IsBusy
+        {
+            <span style="color: blue">get </span>{ <span style="color: blue">return </span>( <span style="color: #2b91af">Boolean </span>)<span style="color: blue">this</span>.GetValue( IsBusyProperty ); }
+            <span style="color: blue">private set </span>{ <span style="color: blue">this</span>.SetValue( IsBusyProperty, <span style="color: blue">value </span>); }
+        }<br>    }
+}</pre>
+</blockquote>
+
+<ul>
+  <li>Nessun errore di compilazione;</li>
+
+  <li>Nessun errore a runtime;</li>
+
+  <li>Nulla nella Output Window di Visual Studio a runtime;</li>
+
+  <li>Nessun test che fallisce: il comportamento è quello attesto;</li>
+</ul>
+
+<span>Semplicemente non funziona… ci ho perso almeno mezz’ora… poi mi sono reso conto, dopo un buon caffè, che quando ho registrato la DependencyProperty ho scelto, nell’intellisense di Visual Studio, il tipo dell’Owner (il 3° parametro del metodo Register) sbagliato: <em>EstimateViewModel</em> invece di <em>Estimate<u>Wizard</u>ViewModel</em>…</span><br>
+
+<span>Scomodo decisamente scomodo, e non ditemi di scrivere un test per verificarlo perchè ci manca solo quello… ;-)</span><br>
+
+<span>.m</span><br>

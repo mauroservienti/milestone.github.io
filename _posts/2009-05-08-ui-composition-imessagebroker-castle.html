@@ -1,0 +1,193 @@
+---
+layout: post
+title: 'UI Composition :: IMessageBroker, Castle Windsor e le facility'
+date: '2009-05-08T11:59:00.000+02:00'
+author: Mauro Servienti
+tags:
+- UI Composition
+- Castle Windsor
+modified_time: '2012-08-04T19:54:32.347+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5520192008020646780
+blogger_orig_url: http://milestone.topics.it/2009/05/ui-composition-imessagebroker-castle.html
+---
+
+<span>Un altro intermezzo, si lo so che ho promesso un’ultima puntata ma:</span><br>  <ul>   <li>Non ho tempo, ogni tanto lavoro :-); </li>    <li>La soluzione che per ora ho adottato per la gestione della navigazione, oggetto dell’ultima puntata, non mi piace, funziona, funziona bene, ma non mi piace… è rumorosa. </li> </ul>  <span>Facciamo invece un passo indierto: tempo fa abbiamo parlato di “<a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/imessagebroker.aspx" target="_blank">message broker</a>” per sopperire all’impossibilità di usare, in un’applicazione composita, i tradizionali eventi del mondo .net.</span><br>  <span>Una cosa che <em>tipicamente</em> si fa in un’applicazione composita è iniettare contenuti visuali, e lo si fa ad esempio rispondendo al messaggio che informa dello startup di una certa risorsa, nella fase di “Initialize” di un modulo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">this</span>.Broker.Subscribe<<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>>( <span style="color: blue">this</span>, msg =>
+{
+    <span style="color: blue">var </span>shellRegionManager = msg.RegionManager;
+    <span style="color: blue">var </span>viewModel = <span style="color: blue">this</span>.viewModelProvider.Resolve<<span style="color: #2b91af">IAccountingViewModel</span>>();
+
+    shellRegionManager[ <span style="color: #2b91af">ShellKnownRegions</span>.Ribbon ].Add( viewModel.View );
+} );</pre>
+</blockquote>
+
+<span>Nulla di trascendentale è vero, ma decisamente noiosetto, soprattutto se l’applicazione è complessa e succedono tante cose, perchè quindi non introdurre un qualcosa che ci semplifichi la vita:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IMessageHandler
+</span>{
+    <span style="color: blue">void </span>Handle( <span style="color: #2b91af">IMessage </span>message );
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IMessageHandler</span><T> : <span style="color: #2b91af">IMessageHandler
+    </span><span style="color: blue">where </span>T : <span style="color: #2b91af">IMessage
+</span>{
+    <span style="color: blue">void </span>Handle( T message );
+}</pre>
+</blockquote>
+
+<span>Questo ci permette di fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">IMessageHandler</span><<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>> shellViewModelLoadingHandler;
+
+<span style="color: blue">public </span>Module( <span style="color: #2b91af">IMessageBroker </span>broker, <span style="color: #2b91af">IMessageHandler</span><<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>> shellViewModelLoadingHandler )
+    : <span style="color: blue">base</span>( broker )
+{
+    <span style="color: #2b91af">Ensure</span>.That( shellViewModelLoadingHandler ).Named( <span style="color: #a31515">"shellViewModelLoadingHandler" </span>).IsNotNull();<br>    <br>    <span style="color: blue">this</span>.shellViewModelLoadingHandler = shellViewModelLoadingHandler;
+}
+
+<span style="color: blue">protected override void </span>OnInitialize()
+{
+    <span style="color: blue">this</span>.Broker.Subscribe<<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>>( <span style="color: blue">this</span>, msg =>
+    {
+        <span style="color: blue">this</span>.shellViewModelLoadingHandler.Handle( msg );
+    } );
+}</pre>
+</blockquote>
+
+<span>Tralascio il codice dell’handler perchè è davvero triviale. Cosa abbiamo fatto:</span><br>
+
+<ul>
+  <li>facciamo dipendere il nostro modulo dal message broker e dall’handler; </li>
+
+  <li>durante la fase di “Initialize” del modulo altro non facciamo che “legare” i 2 signori: handler e borker; </li>
+</ul>
+
+<span>ma… il codice diventa sempre di più plumbing code noiosissimo e introduce un altro problema da non sottovalutare:</span><br>
+
+<blockquote>
+  <span>Il dependency resolver di Castle Windsor in fase di resolve del componente si accorge che il modulo ha delle dipendenze, cerca quindi tra i componenti registrati qualcuno che sia in grado di soddisfare quelle dipendenze, se lo trova, lo istanzia e lo passa al costruttore…</span><br>
+
+  <span>nel nostro scenario però potete immaginare che ci siano <em>n</em> moduli e quindi ci siano <em>n</em> classi che implementano IMessageHandler<ViewModelLoading<IShellViewModel>> e questo è un problema perchè il dependency resolver non saprebbe quale darvi… ecco quindi che vi tocca cominciare a fare i salti mortali con la gestione della configurazione di Castle, che è tutto tranne che developer friendly (more to come…).</span><br>
+</blockquote>
+
+<span>ma non tutto è perduto, altrimenti non sarei qui a tediarvi ;-), abbiamo sottolineato che il codice è decisamente plumbing code, quello che facciamo è semplicemente dire al message broker che se arriva un certo messaggio lo vogliamo far gestire ad uno specifico handler, quindi perchè non automatizzare la cosa?</span><br>
+
+<span><strong>Castle Windsor: Facility</strong></span><br>
+
+<span>Innanzitutto un po’ di background: una facility è una classe che può essere registrata nel container al fine di interagire con il kernel di Castle e personalizzare il comportamento del container/kernel stesso.</span><br>
+
+<span>Vediamo cosa ho fatto che è decisamente più semplice del concetto di facility: vogliamo registrare in maniera automatica un message handler in modo che venga implicitamente chiamato quando quel determinato tipo di messaggio viene “sparato” <cit.>.</span><br>
+
+<span>Quale è il momento migliore per farlo?: durante la registrazione del componente, un message handler è un componente come gli altri quindi viene registrato nel container, quello che vogliamo fare è “infilarci” nel processo di registrazione e customizzare il comportamento. ma come facciamo a capire cosa fare, e soprattutto quando?</span><br>
+
+<span><em>AOP is the word</em>, cominciamo con il definire un attributo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">AttributeUsage</span>( <span style="color: #2b91af">AttributeTargets</span>.Class )]
+<span style="color: blue">public sealed class </span><span style="color: #2b91af">SubscribeToMessageAttribute </span>: <span style="color: #2b91af">Attribute
+</span>{
+    <span style="color: blue">public </span>SubscribeToMessageAttribute( <span style="color: #2b91af">Type </span>messageType )
+    {
+        <span style="color: blue">if</span>( !<span style="color: blue">typeof</span>( <span style="color: #2b91af">IMessage </span>).IsAssignableFrom( messageType ) )
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentException</span>();
+        }
+
+        <span style="color: blue">this</span>.MessageType = messageType;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">Type </span>MessageType
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">private set</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>che possiamo usare così:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">SubscribeToMessage</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>> ) )]
+<span style="color: blue">class </span><span style="color: #2b91af">ShellViewModelLoadingHandler </span>: <span style="color: #2b91af">MessageHandler</span><<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>>
+{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">IViewModelProvider </span>viewModelProvider;
+
+    <span style="color: blue">public </span>ShellViewModelLoadingHandler( <span style="color: #2b91af">IViewModelProvider </span>viewModelProvider )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( viewModelProvider ).Named( <span style="color: #a31515">"viewModelProvider" </span>).IsNotNull();
+
+        <span style="color: blue">this</span>.viewModelProvider = viewModelProvider;
+    }
+
+    <span style="color: blue">public override void </span>Handle( <span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>> message )
+    {
+        <span style="color: blue">var </span>shellRegionManager = message.RegionManager;
+        <span style="color: blue">var </span>ribbonRegion = shellRegionManager[ <span style="color: #2b91af">ShellKnownRegions</span>.Ribbon ];
+
+        <span style="color: blue">var </span>viewModel = <span style="color: blue">this</span>.viewModelProvider.Resolve<<span style="color: #2b91af">IDeliveriesManagerViewModel</span>>();
+        ribbonRegion.Add( viewModel.View );
+    }
+}</pre>
+</blockquote>
+
+<span>per decorare il nostro message handler, ok nulla di trascendentale, anzi triviale direi.</span><br>
+
+<span>Ma come usiamo questa cosa? Realizziamo una facility per Castle Windsor:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">SubscribeToMessageFacility </span>: <span style="color: #2b91af">AbstractFacility
+</span>{
+    <span style="color: blue">protected override void </span>Init()
+    {
+        <span style="color: blue">this</span>.Kernel.ComponentRegistered += ( s, h ) =>
+        {
+            <span style="color: #2b91af">SubscribeToMessageAttribute </span>attribute;
+            <span style="color: blue">if</span>( h.Service.Is<<span style="color: #2b91af">IMessageHandler</span>>() && h.ComponentModel.Implementation.TryGetAttribute( <span style="color: blue">out </span>attribute ) )
+            {
+                <span style="color: blue">var </span>messageType = attribute.MessageType;
+
+                <span style="color: blue">var </span>broker = <span style="color: blue">this</span>.Kernel.GetService<<span style="color: #2b91af">IMessageBroker</span>>();
+                broker.Subscribe( <span style="color: blue">this</span>, messageType, msg =>
+                {
+                    <span style="color: blue">var </span>handler = <span style="color: blue">this</span>.Kernel.Resolve( s, h.Service ) <span style="color: blue">as </span><span style="color: #2b91af">IMessageHandler</span>;
+                    handler.Handle( msg );
+                } );
+            }
+        };
+    }
+}</pre>
+</blockquote>
+
+<span>Realizzare una facility è decisamente facile, se no non si chiamerebbe facility… battutaccia :-), creiamo una classe che deriva da AbstractFacility e implementiamo l’unico metodo abstract: Init().</span><br>
+
+<span>Quello che facciamo è semplicemente chiedere al Kernel di Castle di notificarci quando viene registrato un nuovo componente:</span><br>
+
+<ul>
+  <li>se il componente registrato implementa IMessageHandler, o viene registrato come un IMessageHandler; </li>
+
+  <li>se il componente registrato è decorato con l’attributo SubscribeToMessageAttribute; </li>
+
+  <li>altro non facciamo che: 
+    <ul>
+      <li>recuperare, sempre dal Kernel, un riferimento al message borker; </li>
+
+      <li>effettuare una sottoscrizione per il tipo di messaggio che l’handler registrato dichiara; </li>
+
+      <li>reagire all’arrivo del messaggio rigirando all’handler in questione l’onere di gestirlo; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>L’ultima cosa che ci resta da fare è registrare in fase di startup la nostra facility:</span><br>
+
+<blockquote>
+  <pre class="code">container.AddFacility<<span style="color: #2b91af">SubscribeToMessageFacility</span>>();</pre>
+</blockquote>
+
+<span>…e il gioco è fatto!</span><br>
+
+<span>Non solo abbiamo elegantemente risolto un problema cominciando finalmente a sfruttare alcuni degli internals di un container per IoC ma abbiamo anche ridotto a zero il rumore (aka smell) che il plumbing code generava nel codice del modulo.</span><br>
+
+<span>.m</span><br>
+

@@ -1,0 +1,142 @@
+---
+layout: post
+title: 'M-V-VM: The beginning'
+date: '2010-04-23T13:12:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Presentation Pattern
+- Model View ViewModel
+modified_time: '2012-02-13T08:52:08.948+01:00'
+thumbnail: https://lh3.googleusercontent.com/-clfZQMgfZcM/TzjBEb_FrnI/AAAAAAAABPI/Q9BUa_SRQCE/s72-c/646250cd-bb80-4cd0-98ec-241094093aa0.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2687578760667911994
+blogger_orig_url: http://milestone.topics.it/2010/04/m-v-vm-beginning.html
+---
+
+<span>
+	Rispondendo sui newsgroup mi sono reso conto, o forse è solo ego ;-), che probabilmente mancano risorse introduttive, molto introduttive, su Model-View-ViewModel. Non ho cercato, semplicemente mi piace scrivere, quindi sorbitemi :-), se proprio cambiate canale, aka “mark as read” ;-)</span><br>
+<span>
+	<em>Disclaimer:</em></span><br>
+<blockquote>
+	<span>
+		Un pattern in quanto tale è una linea guida per la soluzione ad un problema comune e in quanto linea guida va calato nel contesto del problema che deve risolvere, non va aplicato alla cieca in maniera “talebana”. Nel mio approccio all’uso di un pattern ho però scoperto che se il “<em>primo e iniziale</em>” approccio è un po’ talebano alla lunga paga perchè ogni volta che si devia dal pattern ci si sofferma a chiedersi perchè e quando non si ha esperienza di un dominio chiedersi perchè è “tanta roba” :-)</span><br>
+</blockquote>
+<span>
+	<strong>What’s that…?</strong></span><br>
+<span>
+	mi sono già belle che rotto di scrivere M-V-VM quindi diventa il “nostro amico”… :-), il nostro amico è un pattern architetturale il cui focus è la presentazione dei dati, esiste da che mondo è mondo e non nasce con Wpf, è sempre stato conosciuto come <em>Presentation Pattern</em>; ma perchè è diventato un must, e per certi versi una buzz-word, proprio con Wpf? perchè il nostro amico trae enormi vantaggi dall’infinita potenza, flessibilità e malleabilità del motore di Data Binding proprio di Wpf.</span><br>
+<span>
+	Tornando in topic… un pattern per la presentazione dei dati è tipicamente composto da una triade, tre attori ognuno con un ruolo ben preciso:</span><br>
+<ul>
+	<li>
+		<strong>Visualizzare i dati</strong>: è il ruolo specificamente dedicato alla visualizzazione dei dati, questo ruolo non ha nessun diritto di fare ragionamenti sui dati, può nella migliore delle ipotesi fare ragionamenti che determinano alcune caratteristiche della visualizzazione sulla base di caratteristiche dei dati stessi: coloro di rosso il nome di un prodotto perchè non è in stock;</li>
+	<li>
+		<strong>Manipolare e preparare i dati</strong>: i dati tipicamente non sono pronti per essere visualizzati, la visualizzazione è spesso un appiattimento dei dati, avevte un grafo, in memoria, che è multi-dimensionale e volete rappresentarlo su un qualcosa che multi-dimensionale non è, esempio estremo un report cartaceo; questo ruolo ha quindi l’onere di trasformare e adattare i dati durante il loro ciclo di vita/caso d’uso;</li>
+	<li>
+		<strong>Dati duri e puri</strong>: i nostri dati veri e proprio, il dominio, nulla di più ne nulla di meno senza nessunissima nozione di essere trattato e visualizzato in un’applicazione di qualsivoglia genere;</li>
+</ul>
+<span>
+	questi attori nell’idioma del nostro amico sono:</span><br>
+<ul>
+	<li>
+		<strong>View</strong>: visualizza i dati;</li>
+	<li>
+		<strong>ViewModel</strong>: manipola e prepara i dati;</li>
+	<li>
+		<strong>Model</strong>: i dati quelli del nostro object model;</li>
+</ul>
+<span>
+	<a href="https://lh6.googleusercontent.com/-kpO5QerEvwk/TzjBExRiAzI/AAAAAAAABPM/l4Y3ReiBCt4/8c630a35-051b-487c-8494-9e3c99812a05.png" rel="shadowbox"><img alt="image" border="0" height="216" src="https://lh3.googleusercontent.com/-clfZQMgfZcM/TzjBEb_FrnI/AAAAAAAABPI/Q9BUa_SRQCE/646250cd-bb80-4cd0-98ec-241094093aa0.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="344"></a></span><br>
+<span>
+	Un aspetto molto importante, di cui ho già avuto <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5001943265322451544" target="_blank">modo di discutere</a> esponendo uno scenario si complesso ma decisamente tipico, è che il modello non deve mai essere esposto alla view ma deve sempre essere <u>mediato</u> dal view model, in realtà con l’esperienza scopriete che non è sempre necessariamente così ma è bene, soprattutto all’inizio, tenere ben presente questa regola.</span><br>
+<span>
+	<strong>What can M-V-VM do for me?</strong></span><br>
+<span>
+	La domanda vera però probabilmente è un’altra: perchè?, perchè dovrei <strike>dannarmi per</strike> adottare il “nostro amico”? quali vantaggi ne possono trarre? alla fine dobbiamo capire se <strike>lo sbattimento</strike> il gioco vale la candela.</span><br>
+<span>
+	<em>Separation of Concern</em></span><br>
+<span>
+	Da punto di vista del design sicuramente l’applicazione di un pattern di presentazione aiuta nel rispetare il principio di seprazione dei compiti, non è onere della UI prendere decisioni di business come non è onere del modello prendere decisioni sul suo shaping perchè sa di essere ospitao in una UI di un certo tipo; è inoltre indubbio che SoC aumenta la semplicità di manutenzione al crescere delle dimensioni della soluzione perchè sapere, ad esempio, dove cercare è un grosso vantaggio;</span><br>
+<span>
+	<em>Tastability</em></span><br>
+<span>
+	Altro vantaggio portato da un pattern di questo tipo è che introduce la testabilità di buona parte del codice delegato alla manipolazione dei dati e l’unica cosa che ci rimane da verificare è chi abbia “composto” la UI abbia correttamente messo in binding le cose giuste con i dati giusti, ma per questo ci sono gli User Acceptance Test;</span><br>
+<span>
+	<em>Separation of Roles</em></span><br>
+<blockquote>
+	<span>
+		<em>…l’unica cosa che ci rimane da verificare è chi abbia “composto” la UI abbia correttamente…</em></span><br>
+</blockquote>
+<span>
+	Finalmente, anche se ancora con un po’ di fatica, ma siamo sulla strada giusta, chi “<em>disegna</em>” non è detto che debba essere chi “<em>programma</em>”: M-V-VM, la tecnologia e gli strumenti finalmente ci permettono di separare abbastanza nettamente le figure professionali coinvolte nella creazione di un’applicazione Wpf.</span><br>
+<span>
+	Ma… ci sono degli svantaggi? naturalmente si:</span><br>
+<ul>
+	<li>
+		L’applicazion di un presentation pattern è complessivamente un’operazione complessa, che richiede dimistichezza con il pattern e con la tecnologia che si vuole usare;</li>
+	<li>
+		Alla complessità intrinseca dobbiamo aggiungere, ad oggi, che il rapporto tra wpf e il nostro amico è ancora agli inzi e molte aree sono borderline e diventa diffcile scegliere cosa far fare a chi, in questo senso essere un po’ talebani nell’applicazione del pattern aiuta a soffermarsi a pensare;</li>
+	<li>
+		Come qualsiasi pattern è senza strumenti di controllo, non abbiamo un compilatore che ci dice che una certa cosa è sbagliata ergo è molto facile farsi prendere dalla fretta del fare le cose… e la fretta produce solo cose deprecabili;</li>
+</ul>
+<span>
+	<strong>My First M-V-VM Based application</strong></span><br>
+<span>
+	Ok… tante belle parole ma in soldoni?</span><br>
+<blockquote>
+	<span>
+		<em>Come utente voglio poter visualizzare il dettaglio dell’anagrafica di una persona visualizzando nome, cognome, data di nascita ed età al fine di avere informazioni che non ho.</em></span><br>
+</blockquote>
+<span>
+	Abbiamo il requisito, che potrebbe produrre un modello di questo genere:</span><br>
+<span>
+	<a href="https://lh5.googleusercontent.com/-aPYB1GIdzuA/TzjBFu3GIWI/AAAAAAAABPY/Y9SPCalqdus/720091d9-ab00-447a-8635-40640287b632.png" rel="shadowbox"><img alt="image" border="0" height="161" src="https://lh4.googleusercontent.com/-cGetvvliWoE/TzjBFC_7xvI/AAAAAAAABPQ/9KPy8GBEiow/94c17ac1-0dfe-4c58-9922-b7780438fddc.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="240"></a></span><br>
+<span>
+	è evidente, ed è pure voluto in questo caso anche se magari è un po’ tirato per i capelli, che sul modello manca un’informazione essenziale: l’età. Quale miglior candidato del ViewModel per gestire questa informazione “calcolata”?</span><br>
+<span>
+	<a href="https://lh4.googleusercontent.com/--b4a7aAM_xQ/TzjBGv0t7II/AAAAAAAABPo/Aq9b_G8gnfQ/11b96bde-e2da-437e-94e5-2dc714af0c22.png" rel="shadowbox"><img alt="image" border="0" height="201" src="https://lh3.googleusercontent.com/-tOYQsuAGWhA/TzjBGKDCYvI/AAAAAAAABPk/9ZcoP8DAsos/d0e88d9f-768b-4e53-a5e0-6029623c484f.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="240"></a></span><br>
+<span>
+	Come possiamo notare un ViewModel è una classe come tutte le altre nulla di più ne nulla di meno, l’unica caratteristica peculiare è che implementa l’interfaccia <a href="http://msdn.microsoft.com/library/system.componentmodel.inotifypropertychanged%28VS.95%29.aspx" target="_blank">INotifyPropertyChanged</a>, all’inizio un errore che si tende a fare è far derivare i propri view model da Dependency Object ma questo non porta nessun vantaggio, anzi porta (imho) <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1730058819319410666" target="_blank">qualche svantaggio</a>.</span><br>
+<blockquote>
+	<span>
+		ndr: <br>
+		<em>abbiamo un modello e uno strato di business (perchè alla fine il ViewModel questo è) implementato e funzionante, cosa ci vieta di testarlo? cosa ci avrebbe vietato di realizzarlo con un approccio basato su TDD o su Test First? Inoltre è interessante sottolineare che fino ad ora non abbiamo minimamente tirato in ballo Wpf.</em></span><br>
+</blockquote>
+<span>
+	Dopo la divagazione, che mette in luce un punto interessante e importante, cosa ci resta da fare? Unire i 2 mondi, cominciamo con il disegnare la UI:</span><br>
+<span>
+	<a href="https://lh3.googleusercontent.com/-d9mpUw0Veis/TzjBH2lT7pI/AAAAAAAABP8/8oGSiddsdiM/d40db586-5c06-4419-b7d5-d8fc363b2618.png" rel="shadowbox"><img alt="image" border="0" height="137" src="https://lh3.googleusercontent.com/-HTasVDY2U6Q/TzjBHbjJPbI/AAAAAAAABP0/QFr2zZjor88/0c5da7ce-ec15-4eae-91e5-9aaa159f5460.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a></span><br>
+<span>
+	decisamente banale, ma per ora fa il suo sporco lavoro :-)</span><br>
+<span>
+	Cosa ci resta da fare? molto banalemente collegare i 2 mondi. Discuteremo del concetto di view-first e view-model-first, per ora limitiamoci a farlo funzionare con un' approccio view-first senza entrare nel dettaglio:</span><br>
+<blockquote>
+	<pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Window </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Class</span><span style="color: blue">="Mvvm.Presentation.MainView"
+        </span><span style="color: red">xmlns</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">x</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">presentation</span><span style="color: blue">="clr-namespace:Mvvm.Presentation"
+        </span><span style="color: red">Title</span><span style="color: blue">="MainView" </span><span style="color: red">Height</span><span style="color: blue">="158" </span><span style="color: red">Width</span><span style="color: blue">="300">
+    <</span><span style="color: #a31515">Window.DataContext</span><span style="color: blue">>
+        <</span><span style="color: #a31515">presentation</span><span style="color: blue">:</span><span style="color: #a31515">MainViewModel </span><span style="color: blue">/>
+    <<span style="color: #a31515">Window.DataContext</span><span style="color: blue">>
+</span></span></pre></blockquote>
+<span>
+	Definiamo il nostro namespace xml “presentation” che ci consente di avere accesso dallo xaml direttamente ai nostri tipi e poi assegnamo alla proprietà DataContext della Window un’istanza del nostro ViewModel. <br>
+	A runtime quello che succede è questo:</span><br>
+<span>
+	<a href="https://lh6.googleusercontent.com/-yFUNJbZi2eE/TzjBJpf3I2I/AAAAAAAABQM/uiZ_8Jh067Y/203b6349-3cad-417a-b785-7c275ba72905.png" rel="shadowbox"><img alt="image" border="0" height="133" src="https://lh6.googleusercontent.com/-svA2f4Zwe4w/TzjBIxBiwDI/AAAAAAAABQE/JSLMdvK4U5I/b576bbb2-c6b6-493f-93f0-f3ad9d7980ac.png" style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" width="244"></a></span><br>
+<span>
+	La nostra Window viene istanziata e i dati visualizzati, mettendo in luce la mia tenera età :-), ma quale magia fa si che i dati giusti compaiano al posto giusto?</span><br>
+<blockquote>
+	<pre class="code"><span style="color: blue"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Grid.Column</span><span style="color: blue">="1" </span><span style="color: red">Height</span><span style="color: blue">="23" 
+            </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=FirstName, </span><span style="color: red">UpdateSourceTrigger</span><span style="color: blue">=PropertyChanged}"
+            </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" />
+</span></span></pre></blockquote>
+<span>
+	In realtà nessuna magia piuttosto una “banale” espressione di binding con cui indichiamo al motore di Data Binding di Wpf come vogliamo che 2 elementi vengano “interconnessi” tra loro, figo :-) <br>
+	Direi che come panoramica iniziale abbiamo messo abbastanza carne al fuoco, naturalmente ci <a href="http://milestone.topics.it/UserFiles/Downloads/Mvvm.Application.zip" target="_blank">sono anche i sorgenti</a>.</span><br>
+<span>
+	Per ogni cosa fate un fischio :-)</span><br>
+<span>
+	.m</span><br>

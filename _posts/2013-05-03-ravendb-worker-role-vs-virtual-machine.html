@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'RavenDB: Worker Role vs. Virtual Machine'
+date: '2013-05-03T10:35:00.001+02:00'
+author: Mauro Servienti
+tags:
+- RavenDB
+- Azure
+modified_time: '2013-05-03T10:35:28.238+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4301745791167635644
+blogger_orig_url: http://milestone.topics.it/2013/05/ravendb-worker-role-vs-virtual-machine.html
+---
+
+<p>We have seen that in order to deploy <a href="http://ravendb.net/" target="_blank">RavenDB</a> on Windows <a href="http://www.windowsazure.com/" target="_blank">Azure</a> we 2 main options:</p> <ul> <li><a href="{{ site.baseurl }}{% post_url 2012-11-07-running-ravendb-as-windows-azure-worker %}" target="_blank">Deploy RavenDB as a worker role</a>;</li> <li><a href="{{ site.baseurl }}{% post_url 2012-11-15-running-ravendb-on-windows-azure-using %}" target="_blank">Deploy using a Virtual Machine</a>;</li></ul> <h3>Which is the best bet?</h3> <p>Now that Azure Virtual Machines are a fully supported feature I have to say that they are the preferred solution, or even the only real solution.</p> <h3>Why?</h3> <p>Control is the keyword. Scaling a database is not just a matter of adding power (vertical scaling) or instances (horizontal scaling), scaling a database requires full control over the scaling topology and the Azure worker roles are not thought with control over topology in mind, it is simply not their role to give us control, they are here to give us a really, and powerful, easy way to scale.</p> <p>Worker roles live behind, and there is no way to avoid this, a network load balancer that hides from the outside the roles topology, preventing upfront to have a master-slave relation within database instances hosted in different role instances.</p> <p>The only concrete way to host RavenDB (any db?) is to have full control over the network topology, and have full knowledge of the topology from the client perspective, for example we need to know that from a certain point on we are connected to a slave and not anymore to the master, and to have full control we need to leverage the power of the Azure Virtual Machines where we can do quite all we want in term of machine configuration and of network configuration.</p> <p>Without loosing to much in term of time-to-react to scale requests, <a href="{{ site.baseurl }}{% post_url 2012-11-28-running-ravendb-on-windows-azure-with %}" target="_blank">like we already said</a>.</p> <p>.m</p>  

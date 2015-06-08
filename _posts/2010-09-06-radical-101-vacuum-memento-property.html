@@ -1,0 +1,90 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): Memento Property Metadata'
+date: '2010-09-06T11:34:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Memento
+modified_time: '2012-02-20T12:18:05.302+01:00'
+thumbnail: https://lh6.googleusercontent.com/-VyMnMJKF0j0/T0Ir7Hb3r9I/AAAAAAAABow/vY3-iEcQ1_M/s72-c/wlEmoticon-smile_2_6.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8284369426284521661
+blogger_orig_url: http://milestone.topics.it/2010/09/radical-101-vacuum-memento-property.html
+---
+
+<span>Abbiamo <a href="http://mauroservienti.blogspot.com/2010/06/radical-101-vacuum-memento.html" target="_blank">introdotto</a> il concetto di Memento disponibile in <a href="http://radical.codeplex.com/" target="_blank">Radical</a> e ad un certo punto abbiamo detto che esistono dei metadati che è possibile associare ad una proprietà.</span><br>  <span>Nel post precedente abbiamo visto che il processo di inizializzazione di una Entity/ViewModel da esporre è più o meno una cosa del genere:</span><br>  <blockquote>   <pre style="font-family: consolas"><span style="color: blue">public</span> <span style="color: blue">void</span> Initialize( <span style="color: #2b91af">Person</span> person, <span style="color: #2b91af">Boolean</span> registerAsTransient )<br>{<br>	<span style="color: blue">if</span>( registerAsTransient )<br>	{<br>		<span style="color: blue">this</span>.RegisterTransient();<br>	}<br> <br>	<span style="color: blue">this</span>.SetInitialPropertyValue( () => <span style="color: blue">this</span>.FirstName, person.FirstName );<br>	<span style="color: blue">this</span>.SetInitialPropertyValue( () => <span style="color: blue">this</span>.LastName, person.LastName );<br>}</pre>
+</blockquote>
+
+<span>L’implementazione di SetInitialPropertyValue è questa:</span><br>
+
+<blockquote>
+  <pre style="font-family: consolas"><span style="color: blue">protected</span> <span style="color: #2b91af">PropertyMetadata</span><T> SetInitialPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, T value )<br>{<br>	<span style="color: blue">var</span> name = property.GetMemberName();<br>	<span style="color: blue">var</span> metadata = <span style="color: blue">this</span>.GetPropertyMetadata<T>( name );<br>	metadata.DefaultValue = value;<br> <br>	<span style="color: blue">return</span> metadata;<br>}<br> <br><span style="color: blue">readonly</span> <span style="color: #2b91af">IDictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">PropertyMetadata</span>> propertiesMetadata = <span style="color: blue">new</span> <span style="color: #2b91af">Dictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">PropertyMetadata</span>>();<br> <br><span style="color: blue">protected</span> <span style="color: #2b91af">PropertyMetadata</span><T> GetPropertyMetadata<T>( <span style="color: #2b91af">String</span> propertyName )<br>{<br>	<span style="color: #2b91af">PropertyMetadata</span> md;<br>	<span style="color: blue">if</span>( !<span style="color: blue">this</span>.propertiesMetadata.TryGetValue( propertyName, <span style="color: blue">out</span> md ) )<br>	{<br>		md = <span style="color: blue">this</span>.GetDefaultMetadata<T>( propertyName );<br>		<span style="color: blue">this</span>.propertiesMetadata.Add( propertyName, md );<br>	}<br> <br>	<span style="color: blue">return</span> ( <span style="color: #2b91af">PropertyMetadata</span><T> )md;<br>}<br> <br><span style="color: blue">protected</span> <span style="color: blue">virtual</span> <span style="color: #2b91af">PropertyMetadata</span><T> GetDefaultMetadata<T>( <span style="color: #2b91af">String</span> propertyName )<br>{<br>	<span style="color: blue">return</span> <span style="color: blue">new</span> <span style="color: #2b91af">PropertyMetadata</span><T>( propertyName );<br>}</pre>
+</blockquote>
+
+<span>quello che si può notare è che viene implicitamente fornito un set di Metadati di default, metadati che possono essere customizzati nel caso in cui sia necessario aggiungere funzionalità e/o attributi.</span><br>
+
+<span>Che cosa fanno i Metadati di default?</span><br>
+
+<ul>
+  <li>tengono traccia di quale sia il valore di default/iniziale assegnato alla proprietà; </li>
+
+  <li>determinano se la proprietà debba o meno notificare, via INotifyPropertyChanged, le variazioni di stato; </li>
+
+  <li>consentono di implementare il concetto di <em>Cascade Notification</em>: 
+
+    <ul>
+      <li>faccio il set della proprietà BornDate; </li>
+
+      <li>l’entità notifica che la propprietà BornDate è cambiata; </li>
+
+      <li>l’entità notifica che anche la proprietà Age è cambiata; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Se la nostra entity deriva da MementoEntity abbiamo anche il supporto per il change tracking e questo supporto è attivabile/disattivabile per singola proprietà proprio grazie ai Metadati:</span><br>
+
+<blockquote>
+  <pre style="font-family: consolas"><span style="color: blue">protected</span> <span style="color: blue">override</span> <span style="color: #2b91af">PropertyMetadata</span><T> GetDefaultMetadata<T>( <span style="color: #2b91af">String</span> propertyName )<br>{<br>	<span style="color: blue">return</span> <span style="color: blue">new</span> <span style="color: #2b91af">MementoPropertyMetadata</span><T>( propertyName );<br>}</pre>
+</blockquote>
+
+<span>MementoEntity infatti ridefinisce i Metadati di default aggiungendo il supporto per il tracking:</span><br>
+
+<blockquote>
+  <pre style="font-family: consolas"><span style="color: blue">public</span> <span style="color: blue">class</span> <span style="color: #2b91af">MementoPropertyMetadata</span><T> : <span style="color: #2b91af">PropertyMetadata</span><T><br>{<br>	<span style="color: blue">public</span> MementoPropertyMetadata( <span style="color: #2b91af">String</span> propertyName )<br>		: <span style="color: blue">base</span>( propertyName )<br>	{<br>		<span style="color: blue">this</span>.TrackChanges = <span style="color: blue">true</span>;<br>	}<br><br> <br>	<span style="color: blue">public</span> <span style="color: #2b91af">Boolean</span> TrackChanges { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }<br><br>}</pre>
+</blockquote>
+
+<span>La domanda a questo punto è: come fa Memento entity a intercettare tutte i get/set per fare tracking? la risposta è abbastanza semplice (e apre a molti scenari interessanti anche per gli utilizzatori). Una proprietà perchè funzioni in questo modello deve essere definita così:</span><br>
+
+<blockquote>
+  <pre style="font-family: consolas"><span style="color: blue">public</span> <span style="color: #2b91af">String</span> FirstName<br>{<br>	<span style="color: blue">get</span> { <span style="color: blue">return</span> <span style="color: blue">this</span>.GetPropertyValue( () => <span style="color: blue">this</span>.FirstName ); }<br>	<span style="color: blue">set</span> { <span style="color: blue">this</span>.SetPropertyValue( () => <span style="color: blue">this</span>.FirstName, <span style="color: blue">value</span> ); }<br>}</pre>
+</blockquote>
+
+<span>Se andiamo a spulciare nell’implementazione di MementoEntity troviamo questo:</span><br>
+
+<blockquote>
+  <pre style="font-family: consolas"><span style="color: blue">protected</span> <span style="color: blue">override</span> <span style="color: blue">void</span> SetPropertyValue<T>( <span style="color: blue">string</span> propertyName, T data, <span style="color: #2b91af">PropertyValueChanged</span><T> pvc )<br>{<br>	<span style="color: blue">base</span>.SetPropertyValue<T>( propertyName, data, e =><br>	{<br>		<span style="color: blue">var</span> md = <span style="color: blue">this</span>.GetPropertyMetadata<T>( propertyName ) <span style="color: blue">as</span> <span style="color: #2b91af">MementoPropertyMetadata</span><T>;<br>		<span style="color: blue">if</span>( md != <span style="color: blue">null</span> && md.TrackChanges )<br>		{<br>			<span style="color: blue">var</span> callback = <span style="color: blue">this</span>.GetRejectCallback<T>( propertyName );<br>			<span style="color: blue">this</span>.CacheChange( e.OldValue, callback );<br>		}<br> <br>		<span style="color: blue">if</span>( pvc != <span style="color: blue">null</span> )<br>		{<br>			pvc( e );<br>		}<br>	} );<br>}</pre>
+</blockquote>
+
+<span>Un passo indietro… Entity, da cui MementoEntity eredita, espone un metodo SetPropertyValue<T>( Expression<Func<T>> property, T value ) che permette di eseguire il set di un valore, ma espone anche un overload SetPropertyValue<T>( Expression<Func<T>> property, T value, PropertyValueChanged<T> pvc ) che permette all’utilizzatore di agganciare un delegato che viene invocato nel caso in cui il set modifichi effettivamente la proprietà.</span><br>
+
+<span>MementoEntity fa esattamente quello, esegue l’override di SetPropertyValue e:</span><br>
+
+<ul>
+  <li>recupera un’istanza dei metadati; </li>
+
+  <li>se è attivo il tracking fa tracking della variazione; </li>
+
+  <li>se l’inheritor ha settato una callback invoca la callback per garantire consistenza; </li>
+</ul>
+
+<span>e il giochetto è fatto <img style="border-bottom-style: none; border-right-style: none; border-top-style: none; border-left-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh6.googleusercontent.com/-VyMnMJKF0j0/T0Ir7Hb3r9I/AAAAAAAABow/vY3-iEcQ1_M/wlEmoticon-smile_2_6.png">, che vantaggi porta all’eventuale inheritor?</span><br>
+
+<ul>
+  <li>Una classe derivata potrebbe definire un suo subset di metadati che contengono ad esempio le regole di validazione della proprietà in oggetto; </li>
+
+  <li>alla variazione della proprietà utilizzare i metadati per recuperare il set di regole e validare la proprietà; </li>
+</ul>
+
+<span>.m</span><br>

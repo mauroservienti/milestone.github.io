@@ -1,0 +1,142 @@
+---
+layout: post
+title: Se la soluzione è dietro l’angolo spesso la ignoriamo…
+date: '2009-05-25T14:28:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T20:20:19.220+02:00'
+thumbnail: https://lh5.googleusercontent.com/-z0baYC0Qedk/Tym-jN5XRCI/AAAAAAAAAbo/sVO3KTq73f4/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2125153395719515755
+blogger_orig_url: http://milestone.topics.it/2009/05/se-la-soluzione-e-dietro-langolo-spesso.html
+---
+
+<span>… e ci complichiamo la vita reinventando la ruota.</span><br>  <span><strong>La gestione dei settings di un’applicazione</strong></span><br>  <span>VisualStudio ci mette a disposizione un’infrastruttura eccelsa per la gestione dei settings, che va mostruosamente oltre il mero file “ini”, non foss’altro perchè, ad esempio:</span><br>  <ul>   <li>è <u><em>fortemente tipizzata</em></u>;</li>    <li>è “a gratis” <em><u>user o application scoped</u></em>;</li>    <li>offre un <em><u>designer integrato</u></em> nell’ambiete di sviluppo, con tutto quello che questo comporta, come ad esempio il <em><u>pieno supporto per il refactoring</u></em>… che è tutto tranne che poco ;-)</li> </ul>  <span>Quello che succede però è che appena deviamo un attimo da quello che abbiamo di builtin nel framework/ambiente di sviluppo, perchè ad esempio la necessità è di conservare/persistere i settaggi in un database, implicitamente ci mettiamo il paraocchi e facciamo l’ennesima soluzione custom senza neanche dedicare un secondo a capire se quello che abbiamo in mano è in qualche modo customizzabile.</span><br>  <span>Oggi nell’applicare la <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/24/un-test-al-giorno-leva-il-bug-di-tornohellip-again.aspx" target="_blank">mia nuova policy</a> ho riscritto un piccolo componente che uso da qualche “secolo” aggiornandolo a Linq, il componente è un <a href="http://msdn.microsoft.com/en-us/library/system.configuration.settingsprovider.aspx" target="_blank">SettingsProvider</a>.</span><br>  <span><strong>MyDatabaseSettingsProvider</strong></span><br>  <blockquote>   <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">MyDatabaseSettingsProvider </span>: <span style="color: #2b91af">SettingsProvider
+</span>{
+    <span style="color: blue">private readonly </span><span style="color: #2b91af">String </span>connectionString;
+
+    <span style="color: blue">public </span>MyDatabaseSettingsProvider()
+    {
+        <span style="color: blue">this</span>.connectionString = <span style="color: #2b91af">ConfigurationManager</span>.ConnectionStrings[ <span style="color: #a31515">"SettingsCN" </span>].ConnectionString;
+    }
+
+    <span style="color: blue">public override string </span>ApplicationName
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+
+    <span style="color: blue">public override void </span>Initialize( <span style="color: blue">string </span>name, <span style="color: #2b91af">NameValueCollection </span>config )
+    {
+        <span style="color: blue">if</span>( <span style="color: #2b91af">String</span>.IsNullOrEmpty( name ) )
+        {
+            name = <span style="color: #a31515">"DatabaseSettingsProvider"</span>;
+        }
+
+        <span style="color: blue">base</span>.Initialize( name, config );
+    }
+
+    <span style="color: blue">public override </span><span style="color: #2b91af">SettingsPropertyValueCollection </span>GetPropertyValues( <span style="color: #2b91af">SettingsContext </span>context, <span style="color: #2b91af">SettingsPropertyCollection </span>collection )
+    {
+        <span style="color: blue">var </span>valueCollection = <span style="color: blue">new </span><span style="color: #2b91af">SettingsPropertyValueCollection</span>();
+
+        <span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">SettingsDataContext</span>( <span style="color: blue">this</span>.connectionString ) )
+        {
+            <span style="color: blue">foreach</span>( <span style="color: #2b91af">SettingsProperty </span>setting <span style="color: blue">in </span>collection )
+            {
+                <span style="color: blue">var </span>settingValue = <span style="color: blue">new </span><span style="color: #2b91af">SettingsPropertyValue</span>( setting );
+                settingValue.IsDirty = <span style="color: blue">false</span>;
+
+                <span style="color: blue">var </span>key = settingValue.Name;
+                <span style="color: blue">var </span>dbSetting = dc.Settings.Where( s => s.Name == key ).SingleOrDefault();
+                <span style="color: blue">if</span>( dbSetting != <span style="color: blue">null </span>)
+                {
+                    settingValue.SerializedValue = dbSetting.SerializedValue;
+                }
+
+                valueCollection.Add( settingValue );
+            }
+        }
+
+        <span style="color: blue">return </span>valueCollection;
+    }
+
+    <span style="color: blue">public override void </span>SetPropertyValues( <span style="color: #2b91af">SettingsContext </span>context, <span style="color: #2b91af">SettingsPropertyValueCollection </span>collection )
+    {
+        <span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">SettingsDataContext</span>( <span style="color: blue">this</span>.connectionString ) )
+        {
+            <span style="color: blue">foreach</span>( <span style="color: #2b91af">SettingsPropertyValue </span>propval <span style="color: blue">in </span>collection )
+            {
+                <span style="color: blue">if</span>( !propval.UsingDefaultValue && propval.IsDirty )
+                {
+                    <span style="color: blue">var </span>key = propval.Name;
+                    <span style="color: blue">var </span>dbSetting = dc.Settings.Where( s => s.Name == key ).SingleOrDefault();
+                    <span style="color: blue">if</span>( dbSetting != <span style="color: blue">null </span>)
+                    {
+                        dbSetting.SerializedValue = ( <span style="color: #2b91af">String </span>)propval.SerializedValue;
+                    }
+                    <span style="color: blue">else
+                    </span>{
+                        <span style="color: blue">var </span>setting = <span style="color: blue">new </span><span style="color: #2b91af">Setting</span>();
+                        setting.Name = key;
+                        setting.SerializedValue = ( <span style="color: #2b91af">String </span>)propval.SerializedValue;
+                        setting.ValueType = propval.Property.PropertyType.ToShortString();
+
+                        dc.Settings.InsertOnSubmit( setting );
+                    }
+
+                    dc.SubmitChanges();
+                }
+            }
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Gli unici 2 metodi degni di nota sono:</span><br>
+
+<ul>
+  <li><strong>GetPropertyValues</strong>: questo metodo viene chiamato dall’infrastruttura dei Settings di Visual Studio la prima volta che accedete all’instanza statica, esposta come singleton, dei settings: Properties.Settings.Default… per intenderci; 
+
+    <br>L’infrastruttura vi passa un context, che è un dictionary in cui ci potete mettere un sacco di belle cose, e una collection che rappresenta l’elenco dei settings di cui ha bisogno che venga caricato il valore; </li>
+
+  <li><strong>SetPropertyValues</strong>: questo metodo viene invece chiamato quando l’infrastruttura dei settings ha bisogno di salvare i settings, attenzione che viene chiamato solo per i settings che hanno user scope, e vi passa il “solito” context e l’elenco dei settings che devono essere salvati. </li>
+</ul>
+
+<span>Nell’esempio mappo i settings, in maniera molto inefficente ma lo scopo del post è la semplicità, su una “tabella” di un db, che è a sua volta mappata su una entity:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-uRLoV3TBD6c/Tym-j_kJZYI/AAAAAAAAAbs/_uQytiI0wDs/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-z0baYC0Qedk/Tym-jN5XRCI/AAAAAAAAAbo/sVO3KTq73f4/image_thumb.png" width="216" height="157"></a> </span><br>
+
+<span>Ma come si usa? nulla di più semplice, prendete un qualsiasi file di settings (o quello di default, o uno custom vostro non è importante) e “pigiate” View Code nel designer:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-Gug0gzPebuY/Tym-kwmv3uI/AAAAAAAAAb8/lir1twydEkc/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-jJR0ByUir6o/Tym-kNnMuuI/AAAAAAAAAb0/nZJem3ONBHs/image_thumb_1.png" width="234" height="64"></a> </span><br>
+
+<span>Visual Studio vi aggiunge al progetto una partial class che “estende” la classe dei settings generata dal designer stesso:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">SettingsProvider</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">MyDatabaseSettingsProvider </span>) )]
+<span style="color: blue">internal sealed partial class </span><span style="color: #2b91af">Settings
+</span>{
+    <span style="color: blue">public </span>Settings()
+    {
+        <span style="color: blue">this</span>.Context.Add( <span style="color: #a31515">"MyKey"</span>, <span style="color: #a31515">"MyValue" </span>);
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>L’unica cosa che dovete fare è aggiungere in testa alla classe l’attributo SettingsProvider specificando il tipo del vostro provider, Visual Studio provvederà al resto :-).</span><br>
+
+<span>Che vataggi abbiamo?</span><br>
+
+<ul>
+  <li>usiamo l’infrastruttura dei settings di Visual Studio senza reinventare la ruota; </li>
+
+  <li>usiamo il designer di Visual Studio, <em>ndr</em>: l’ambiente di sviluppo continuerà a creare il file app.config e continuerà a metterci i valori specificati nel designer, ma il file serve solo a Visual Studio per funzionare non vi serve farne il deploy; </li>
+
+  <li>Abbiamo investito veramente pochissimo tempo (circa 20 minuti) in una soluzione decisamente riutilizzabile; </li>
+</ul>
+
+<span>Nell’esempio di poco sopra utilizzo anche l’istanza del dictionary, che verrà passato al SettingsProvider, sia in fase di get che di set dei settings, per passare dei valori custom; questa cosa è di importanza fondamentale perchè vi permettte ad esempio di avere in file di Settings diversi (che sono classi diverse in namespace diversi per Visual Studio) proprietà con lo stesso nome e poterle tranquillamente persistere nella stessa tabella del db utilizzando ad esempio quella coppia MyKey/MyValue come prefisso per quello specifico file di settings al fine di rendere univoco a livello di solution il nome del setting.</span><br>
+
+<span>.m</span><br>
+

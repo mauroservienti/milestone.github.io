@@ -1,0 +1,139 @@
+---
+layout: post
+title: 'AngularJS: Dependency Injection primer'
+date: '2013-12-20T09:24:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+modified_time: '2013-12-19T15:13:57.049+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3620920719463461451
+---
+
+<p>Index:</p> <ul> <li><a href="http://milestone.topics.it/2013/12/a-gentle-introduction-to-angularjs.html">A gentle introduction to AngularJS</a></li> <li><a href="http://milestone.topics.it/2013/12/angularjs-app-and-modules.html">App and modules</a></li> <li><a href="http://milestone.topics.it/2013/12/angularjs-modules-2-phase-startup.html">Modules 2 phase startup</a></li></ul> <p>In the last post, where we spoke about the modules 2 phase startup process we left with a sample:</p> <blockquote><pre class="csharpcode">app.run([<span class="str">'$log'</span>, <span class="kwrd">function</span>($log){
+        $log.debug(<span class="str">'App run phase'</span>);
+ }]);</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Strange, indeed; but…we are running too fast. The following works too as expected:</p>
+<blockquote><pre class="csharpcode">app.run(<span class="kwrd">function</span>($log){
+        $log.debug(<span class="str">'App run phase'</span>);
+ });</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>So what is going on?</p>
+<p><strong>Dependency Injection</strong></p>
+<p><a href="http://angularjs.org/" target="_blank">AngularJS</a> is inspecting our function signature and notice that the parameter <strong>name</strong> is something that the framework knows. In this case AngularJS knows what a $log is, it is a well known AngularJS service whose role is to provide a facade for the browser logging infrastructure.</p>
+<blockquote>
+<p><em>Side note</em>: by convention all the AngularJS services and components are prefixed with the $ sign, we will see that the above sample will work even with our components and it is not dependent on the AngularJS stuff.</p></blockquote>
+<p>Since AngularJS knows how to resolve a $log instance it will resolve it for us at runtime injecting it in our function, in this case the run function. One thing we have to deal with, when speaking about DI in JavaScript, is that since JavaScript misses custom type definitions we cannot perform dependency injection based on type but we can only deal with type names. Since we deal with arguments, parameters and type names only we need to find a way to survive to the “minification” process.</p>
+<p>If we minify the above sample it is quite sure that the process will change the $log parameter name to something shorter such as “a”:</p>
+<blockquote><pre class="csharpcode">app.run(<span class="kwrd">function</span>(a){a.debug(<span class="str">'App run phase'</span>);});</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>preventing AngularJS to inject the correct component since from now on AngularJS does not know anything about “a”. In order to overcome this issue we can use a “minification friendly syntax” such as the following:</p>
+<blockquote><pre class="csharpcode">app.run([<span class="str">'$log'</span>, <span class="kwrd">function</span>($log){
+        $log.debug(<span class="str">'App run phase'</span>);
+ }]);</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Where we are instructing AngularJS on which are the components that we want to be injected. In this case the syntax utilize the Array notation where the last array element is the function and all the previous elements are the name of the components that we want to inject in the function; be aware that the order is obviously very important.</p>
+<p>Next time back to the UI composition/presentation framework with Controllers.</p>
+<p>.m</p>  

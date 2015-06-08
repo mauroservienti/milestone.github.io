@@ -1,0 +1,33 @@
+---
+layout: post
+title: NServiceBus Configuration API Webinar - errata corrige
+date: '2014-11-04T11:34:00.002+01:00'
+author: Mauro Servienti
+tags: 
+modified_time: '2014-11-04T11:36:42.640+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7788570320825209658
+blogger_orig_url: http://milestone.topics.it/2014/11/nservicebus-configuration-api-webinar.html
+---
+
+In september I had the opportunity to drive the "Mastering NServiceBus Configuration API" webinar. The webinar recording can be found here: https://particular-1.wistia.com/medias/q8tdr6mnzz<br />
+<br />
+<iframe allowtransparency="true" class="wistia_embed" frameborder="0" height="270" name="wistia_embed" scrolling="no" src="http://fast.wistia.net/embed/iframe/q8tdr6mnzz?canonicalUrl=http%3A%2F%2Fparticular-1.wistia.com%2Fmedias%2Fq8tdr6mnzz&amp;canonicalTitle=Mastering%20NServiceBus%20Configuration%20-%20particular-1" width="480"></iframe>
+
+<br />
+This post is a sort of "errata corrige", a few things need clarification:<br />
+<ul>
+<li>at minute 18: I said that "we can rely on DI in a INeedInitialization" implementation: wrong, we cannot. At this stage we cannot resolve any components yet, what we are guaranteed is that the container is setup and injected in NServiceBus so we can register components not yet resolve them;</li>
+<li>At min 35: there is a self-hosting sample, since now the IBus interface implements the Idisposable interface it is much better to change the sample code using the "using" pattern, in order to correctly shutdown the bus:
+<blockquote class="tr_bq">
+using( var bus = Bus.Create( cfg ) )<br />
+{<br />
+&nbsp; &nbsp; bus.Start();<br />
+&nbsp; &nbsp; Console.Read();<br />
+}</blockquote>
+</li>
+<li>the AsAClient role is for SendOnly endpoints: wrong, the difference between AsAClient and AsAServer roles is the client one turns off transactions, SLR, Timeouts and purges queue at startup.<br />
+</li>
+<li>At min 45.40: talking about registering steps in the pipeline, I said the InsertAfter/Before is right after/before: it is not accurate, the registration just guarantees that the step is inserted after or before another step, it does not guarantee that it will be inserted right after or before, so there could be steps between the new registered step and the one that was configured to be after or before.<br />
+</li>
+</ul>
+Thanks to John Simons (<a href="https://twitter.com/johnsimons_" target="_blank">https://twitter.com/johnsimons_</a>) for reviewing the material and highlighting the above issues.

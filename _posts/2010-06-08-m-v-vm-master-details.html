@@ -1,0 +1,171 @@
+---
+layout: post
+title: 'M-V-VM: master-details'
+date: '2010-06-08T06:54:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Presentation Pattern
+- Model View ViewModel
+modified_time: '2012-02-16T07:18:11.951+01:00'
+thumbnail: https://lh3.googleusercontent.com/-kin9pTMSG1k/TzyfeTgxRGI/AAAAAAAABXQ/U_2BSUXqk98/s72-c/1cca36b2-ebbf-4819-b9d2-381c71cf5f87.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4335141306208935416
+blogger_orig_url: http://milestone.topics.it/2010/06/m-v-vm-master-details.html
+---
+
+<span>Continuiamo con la nostra serie introduttiva su <em>Model View ViewModel</em>.</span><br>  <span>L’ultima volta, troppo tempo fa, abbiamo parlato del primo approccio a <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2687578760667911994" target="_blank">Model View ViewModel</a>. Andiamo avanti e prima di addentrarci nelle vere problematiche legate all’implementazione di questo pattern vediamo di capire come gestire un modello che sia un filo più complesso di quello dell’ultima volta:</span><br>  <span><a href="https://lh6.googleusercontent.com/-0ozln6iO-QI/TzyffUhUGdI/AAAAAAAABXY/H7h_1sYJ5Ic/ed035c33-d6c2-4718-ba08-1b7306cb999f.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-kin9pTMSG1k/TzyfeTgxRGI/AAAAAAAABXQ/U_2BSUXqk98/1cca36b2-ebbf-4819-b9d2-381c71cf5f87.png" width="244" height="98"></a></span><br>  <span>la solita solfa, un bel master-detail “<em>tipicamente tipico</em>”, prossimamente faremo anche un esempio <em>N-N</em> e non sempre e solo <em>1-N</em>; fissiamo degli obiettivi per questo giro:</span><br>  <ol>   <li>essere in grado di visualizzare la lista degli indirizzi; </li>    <li>essere in grado di modificare un indirizzo; </li>    <li>essere in grado di eliminare un indirizzo; </li> </ol>  <span>i due punti mettono immediatamente in evidenza un paio di cose interessanti:</span><br>  <ul>   <li>abbiamo la necessità di capire come visualizzare una lista di elementi in una view; </li>    <li>abbiamo la necessità di capire come tenere traccia dell’elemento selezionato nella lista degli indirizzi; </li>    <li>abbiamo la necessità di capire come visualizzare i dati dell’elemento selezionato; </li>    <li>abbiamo la necessità di capire come gestire un’azione, la cancellazione in questo caso; </li> </ul>  <span><strong>DataBinding: “I Love You” ;-)</strong></span><br>  <span>i primi due punti sono un “problema” che deleghiamo volentieri al motore di data binding di wpf, ma prima di vedere come preoccupiamoci di aggiornare il nostro ViewModel al fine di soddisfare i nuovi requisiti:</span><br>  <span><a href="https://lh5.googleusercontent.com/-tCqfyeYqYuQ/TzyfiVOzrVI/AAAAAAAABXo/mjGNa-O2qC4/2d969424-1df4-4ef8-91f6-f44455931b62.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-t_DYa3X5ROw/TzyfhUATlTI/AAAAAAAABXg/AAU1-wEmhnM/1dc17be0-b715-40d2-bc50-f2573346a61e.png" width="244" height="142"></a></span><br>  <span><strong>Refactoring</strong></span><br>  <span>La prima cosa che notiamo è un massiccio refactoring dall’ultima volta:</span><br>  <span><a href="https://lh3.googleusercontent.com/-5Cke9LjjDik/Tzyfkb7FpHI/AAAAAAAABX0/EdHqp-j1WD8/a076579b-e0ea-4c44-ba66-3c3eaa24b9da.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="11b96bde-e2da-437e-94e5-2dc714af0c22" border="0" alt="11b96bde-e2da-437e-94e5-2dc714af0c22" src="https://lh5.googleusercontent.com/-8B0H2tFIgis/TzyfjSFTz_I/AAAAAAAABXw/Hy2Puzr9VLk/b79d11a4-5e3e-4591-a0b1-290edbcdf5d4.png" width="183" height="154"></a></span><br>  <span>il MainViewModel innanzitutto comincia a fare il MainViewModel e non rappresenta più una Person, ruolo che non gli si addiceva, abbiamo introdotto un AbstractViewModel che faccia da classe base per tutti e abbiamo introdotto i ViewModel sia per Person che per Address. In perfetta sintonia con il concetto di Separation of Concern il modello è completamente mediato dai ViewModel e non è mai esposto direttamente alla View. In questo esempio la gerarchia dei ViewModel è speculare alla gerarchia del modello ma non deve essere necessariamente così: il modello ha lo scopo di modellare il nostro mondo, la realtà che vogliamo rappresentare, mentre il ViewModel ha lo scopo di adattare il modello ad uno specifico Use Case.</span><br>  <span>Questa nuova struttura ci permette di soddisfare il primo requisito.</span><br>  <span><strong>“List” Data Binding</strong></span><br>  <span>Aggiorniamo la nostra UI:</span><br>  <span><a href="https://lh6.googleusercontent.com/-aKlhZbNaPqQ/TzyfmFblC9I/AAAAAAAABYE/tnicdAP3IJA/eba53434-f9b7-4150-924e-2ca1553d2f5b.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-v6wCvPWba3s/TzyfkwCaDpI/AAAAAAAABYA/O2QCk3zJ-mA/29503dc2-da84-4dbf-bae6-fb6049431fdd.png" width="244" height="184"></a></span><br>  <span>con questo semplice xaml:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">Grid.ColumnSpan</span><span style="color: blue">="2" 
+          </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Person.Addresses}"
+          </span><span style="color: red">Grid.Row</span><span style="color: blue">="4" </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" </span><span style="color: red">Margin</span><span style="color: blue">="12" 
+          </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Stretch">
+    <</span><span style="color: #a31515">ListView.View</span><span style="color: blue">>
+        <</span><span style="color: #a31515">GridView</span><span style="color: blue">>
+            <</span><span style="color: #a31515">GridViewColumn </span><span style="color: red">DisplayMemberBinding</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">streetAddressConverter</span><span style="color: blue">}}" </span><span style="color: red">Header</span><span style="color: blue">="Street" />
+            <</span><span style="color: #a31515">GridViewColumn </span><span style="color: red">Header</span><span style="color: blue">="City" </span><span style="color: red">DisplayMemberBinding</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=City}"  />
+        <<span style="color: #a31515">GridView</span><span style="color: blue">></span>
+    <<span style="color: #a31515">ListView.View</span><span style="color: blue">></span>
+<<span style="color: #a31515">ListView</span><span style="color: blue">></span>
+</span></pre>
+</blockquote>
+
+<span>Abbiamo aggiunto alla nostra View una ListView, nulla di trascendentale, ci sono però un paio di cose degne di nota:</span><br>
+
+<ul>
+  <li>per agganciare la lista degli indirizzi alla ListView mattiamo in binding la collection Addresses esposta da PersonViewModel con la proprietà ItemsSource: 
+    <ul>
+      <li>se andiamo a spulciare notiamo che Addresses è una <a href="http://msdn.microsoft.com/library/ms668604.aspx" target="_blank">ObservableCollection<t></t></a>, una ObservableCollection è una collection apposita per Wpf che ha la capacità di notificare alla UI le variazioni interne alla collection, una sorta di INotifyPropertyChanged per le liste; </li>
+    </ul>
+  </li>
+
+  <li>per “realizzare” le colonne ci limitiamo a mettere in binding una GridViewColumn con il dato che ci interessa, anche qui una cosa <em>nuova</em> degna di nota: in uno dei casi utilizziamo un converter. Avete inoltre notato che non stiamo specificando esplicitamente un Path verso una proprietà questo significa che il motore di binding deve usare tutta l’entità e non una specifica proprietà, quindi in questo caso la colonna sarà in binding con l’intera istanza dell’AddressViewModel. </li>
+</ul>
+
+<t>
+
+<span><strong>Binding Converter</strong></span><br>
+
+<span>Un converter è una qualsiasi classe che implementa l’interfaccia <a href="http://msdn.microsoft.com/en-us/library/system.windows.data.ivalueconverter.aspx" target="_blank">IValueConverter</a>:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">StreetAddressConverter </span>: <span style="color: #2b91af">IValueConverter
+</span>{
+    <span style="color: blue">public object </span>Convert( <span style="color: blue">object </span>value, <span style="color: #2b91af">Type </span>targetType, <span style="color: blue">object </span>parameter, <span style="color: #2b91af">CultureInfo </span>culture )
+    {
+        <span style="color: blue">if</span>( value != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">var </span>address = ( <span style="color: #2b91af">AddressViewModel </span>)value;
+            <span style="color: blue">return </span><span style="color: #2b91af">String</span>.Format( <span style="color: #a31515">"{0}, {1}"</span>, address.Street, address.Number );
+        }
+
+        <span style="color: blue">return null</span>;
+    }
+
+    <span style="color: blue">public object </span>ConvertBack( <span style="color: blue">object </span>value, <span style="color: #2b91af">Type </span>targetType, <span style="color: blue">object </span>parameter, <span style="color: #2b91af">CultureInfo </span>culture )
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">NotImplementedException</span>();
+    }
+}</pre>
+</blockquote>
+
+<span>un converter si inserisce nella binding pipeline e ha la possibilità di manipolare il contenuto del binding secondo questo schema:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-BWNkIUc8Yvk/Tzyfn_yxMGI/AAAAAAAABYY/RbpelpcIUzs/d195a2a9-ed25-480a-8933-bbd13dd0ffbe.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-KkxWdJ5upn4/TzyfmzsVWVI/AAAAAAAABYM/L5zFo9HoxDA/fa609829-9559-4881-a916-30718228aba6.png" width="244" height="76"></a> </span><br>
+
+<span>Per completare il tutto quello che ci resta da fare è modificare il nostro MainViewModel così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MainViewModel </span>: <span style="color: #2b91af">AbstractViewModel
+</span>{
+    <span style="color: blue">public </span>MainViewModel()
+    {
+        <span style="color: blue">var </span>person = <span style="color: blue">new </span>Model.<span style="color: #2b91af">Person</span>( <span style="color: blue">new </span><span style="color: #2b91af">DateTime</span>( 1973, 1, 10 ) )
+        {
+            FirstName = <span style="color: #a31515">"Mauro"</span>,
+            LastName = <span style="color: #a31515">"Servienti"
+        </span>};
+
+        person.Addresses.Add
+        (
+            <span style="color: blue">new </span>Model.<span style="color: #2b91af">Address</span>( person )
+            {
+                Street = <span style="color: #a31515">"v. Nonzo"</span>,
+                Number = <span style="color: #a31515">"12/B"</span>,
+                City = <span style="color: #a31515">"Città del Mondo"</span>,
+                ZipCode = <span style="color: #a31515">"10101"</span>,
+                Province = <span style="color: #a31515">"SW"</span>,
+                Country = <span style="color: #a31515">"Italy"
+            </span>}
+        );
+
+        person.Addresses.Add
+        (
+            <span style="color: blue">new </span>Model.<span style="color: #2b91af">Address</span>( person )
+            {
+                Street = <span style="color: #a31515">"v. Schiaffino"</span>,
+                Number = <span style="color: #a31515">"11"</span>,
+                City = <span style="color: #a31515">"Milano"</span>,
+                ZipCode = <span style="color: #a31515">"20100"</span>,
+                Province = <span style="color: #a31515">"MI"</span>,
+                Country = <span style="color: #a31515">"Italy"
+            </span>}
+        );
+
+        <span style="color: blue">this</span>.Person = <span style="color: blue">new </span><span style="color: #2b91af">PersonViewModel</span>( person );
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">PersonViewModel </span>_person = <span style="color: blue">null</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">PersonViewModel </span>Person
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._person; }
+        <span style="color: blue">set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.Person )
+            {
+                <span style="color: blue">this</span>._person = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.Person );
+            }
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Qui facciamo una cosa sola: abbiamo cablato, per ora, la creazione del modello per tenere bassa la complessità. 
+  <br>Creiamo l’istanza di Person la popoliamo con le proprietà del caso e con un paio di indirizzi giusto per avere dei dati da visualizzare, infine creaimo il ViewModel per mediare il rapporto tra la Person e la View.</span><br>
+
+<span>I ViewModel che wrappano le nostre entità non fanno nulla di trascendentale, l’unica cosa degna di nota è il costruttore del PersonViewModel che a sua volta crea la lista degli indirizzi:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>PersonViewModel( Model.<span style="color: #2b91af">Person </span>person )
+{
+    <span style="color: blue">this</span>.person = person;
+
+    <span style="color: blue">this</span>.FirstName = <span style="color: blue">this</span>.person.FirstName;
+    <span style="color: blue">this</span>.LastName = <span style="color: blue">this</span>.person.LastName;
+    <span style="color: blue">this</span>.BornDate = <span style="color: blue">this</span>.person.BornDate;
+    <span style="color: blue">this</span>.Age = <span style="color: blue">this</span>.EvalAge( <span style="color: blue">this</span>.BornDate );
+
+    <span style="color: blue">this</span>.Addresses = <span style="color: blue">this</span>.person.Addresses
+        .Aggregate( <span style="color: blue">new </span><span style="color: #2b91af">ObservableCollection</span><<span style="color: #2b91af">AddressViewModel</span>>(), ( list, obj ) =>
+        {
+            <span style="color: blue">var </span>avm = <span style="color: blue">new </span><span style="color: #2b91af">AddressViewModel</span>( obj );
+            list.Add( avm );
+            <span style="color: blue">return </span>list;
+        } );
+}</pre>
+</blockquote>
+
+<span>Per ora direi che ci possiamo fermare qui, abbiamo messo un bel po’ di carne al fuoco, al prossimo giro vediamo di completare i requisiti che ci siamo dati ad inizio post:</span><br>
+
+<ol>
+  <li><strike>essere in grado di visualizzare la lista degli indirizzi</strike>; </li>
+
+  <li>essere in grado di modificare un indirizzo; </li>
+
+  <li>essere in grado di eliminare un indirizzo; </li>
+</ol>
+
+<span>Sorgenti aggiornati: <a href="http://milestone.topics.it/UserFiles/Downloads/Mvvm.Application-1.1.zip" target="_blank">Mvvm.Application-1.1.zip</a></span><br>
+
+<span>.m</span><br>
+</t>
+

@@ -1,0 +1,26 @@
+---
+layout: post
+title: 'UI Composition :: Una “region” dentro un Popup'
+date: '2009-09-29T17:56:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:00:59.936+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5364883348358109827
+blogger_orig_url: http://milestone.topics.it/2009/09/ui-composition-una-region-dentro-un.html
+---
+
+<span>Non si può.</span><br>  <span>Il motivo è abbastanza semplice, esiste uno ed un solo “Region Service”, per ciclo di vita dell’applicazione, che è il main entry point per accedere al mondo delle region, dato un Region Service e una View è possibile ottenere un Region Manager che è colui che gestisce le region per una data View; come minimo quindi esiste un Region Manager per ogni View che ospita delle region.</span><br>  <span>La procedura di registrazione delle region è abbastanza semplice e viene fatta dalla MarkupExtension che lo sviluppatore utilizza nello xaml:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">StackPanel </span><span style="color: red">rg</span><span style="color: blue">:</span><span style="color: red">RegionService.Region</span><span style="color: blue">="{</span><span style="color: #a31515">rg</span><span style="color: blue">:</span><span style="color: #a31515">PanelRegion </span><span style="color: red">Names</span><span style="color: blue">=”MyRegion”}}" /></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Quando, a runtime, viene fatto il parsing dello xaml, del <em>baml</em> in realtà ma è un dettaglio irrilevante, viene istanziata anche la vostra MarckupExtension e viene chiamato il metodo ProvideValue( IServiceProvider ) che ha il compito di ritornare un’istanza di “qualcosa” di sensato per il contesto in cui viene usato, in questo caso quindi come minimo di una IRegion. Quello che succede è che la registrazione di una nuova IRegion è operazione deputata ad un Region Manager che necessita anche di un riferimento alla View che contiene la region.</span><br>
+
+<span>L’inghippo è che se il tutto sta in un Popup il giochetto non funziona perchè il Logical Tree e il Visual Tree all’interno di un controllo Popup hanno un comportamento diverso essendo il Popup a tutti gli effetti una Window diversa.</span><br>
+
+<span>Andando a spulciare scopro che Prism v2 in realtà questa cosa la fa… buffaldino :-) ma anche sacripante perchè la fa in maniera un po’ poco standard, aggiungendo cioè un attached behavior al controllo che volete “decorare” con il Popup, in questo modo il Popup nello xaml non esiste e tutto il motore di generazione delle region funziona come ci aspettiamo.</span><br>
+
+<span>Ho quindi iniziato a lavorare per aggiungere questa chicca anche al mio toolkit perchè la necessità è quella di avere una ricerca contestuale, in un Popup simile a quello di un ComboBox, ma con la possibilità di inettare la UI di ricerca a runtime.</span><br>
+
+<span>A breve qualche screen-shot o il dettaglio del fallimento :-)</span><br>
+
+<span>.m</span><br>

@@ -1,0 +1,13 @@
+---
+layout: post
+title: ISA Server, Exchange e ActiveSync...
+date: '2007-10-28T08:46:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-27T15:43:05.395+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3210602505695952778
+blogger_orig_url: http://milestone.topics.it/2007/10/isa-server-exchange-e-activesync.html
+---
+
+<span>Da un po' di tempo, per l'esattezza da quando possiedo un HTC TyTN, sto sfruttando con soddisfazione la sincronia del device direttamente con Exchange quindi senza la necessità di collegarlo fisicamente al portatile per sincronizzarlo con Outlook.</span><br> <span>Il tutto funziona molto bene se non per un piccolo dettaglio che mi ha sempre infastidito, ActiveSync si connette ad Exchange quando sono al di fuori della mia LAN mentre quando sono all'interno la connessione fallisce. Il motivo principale è che il nome del server di Exchange all'interno della LAN è diverso dal nome pubblico e non potendo impostare <em>n</em> profili sul Device la connessione fallisce.</span><br> <span>La prima soluzione che ho pensato è stata quella di definire sul DNS un record anche per il nome esterno che puntasse all'IP del server di Exchange ma questo fa si che la connettività all'interno della LAN funzioni alla perfezione mentre smette di funzionare quella dall'esterno...</span><br> <span>...e qui entra in gioco il terzo attore: ISA Server.</span><br> <span>Il motivo è presto spiegato: ISA Server per connettersi e pubblicare (in modalità SSL+SSL) il server di Exchange utilizza l'IP della macchina di destinazione e non il FQN, quindi quando la richiesta arriva dall'esterno ISA si ritrova che allo stesso IP corrispondono più di un sito e i nomi dei certificati non coincidono più portando al fallimento della connessione.</span><br> <span>La soluzione è stata più semplice del previsto: mi sono limitato ad aggiungere un secondo indirizzo IP sulla scheda di rete della macchina Exchange, ho creato le nuove entry nel DNS e nella configurazione di IIS ho impostato i siti web per rispondere ad uno piuttosto che all'altro indirizzo; in questo modo quando la connessione arriva dall'interno il Device si connette ad un IP che è diverso da quando la connessione arriva dall'esterno facendo si che anche ISA Server si comporti correttamente.</span><br> <span>.m</span><br>

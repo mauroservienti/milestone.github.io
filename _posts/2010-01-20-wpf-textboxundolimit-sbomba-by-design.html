@@ -1,0 +1,83 @@
+---
+layout: post
+title: Wpf TextBox.UndoLimit “sbomba” by design :-)
+date: '2010-01-20T08:35:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T17:47:27.610+02:00'
+thumbnail: https://lh5.googleusercontent.com/-_YmwfjLPclk/TzJyNpkcKqI/AAAAAAAABFo/7yilo05wJk8/s72-c/7f7f4192-51f9-460e-9afe-c2157ed68dec.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7672574535407411798
+blogger_orig_url: http://milestone.topics.it/2010/01/wpf-textboxundolimit-sbomba-by-design.html
+---
+
+<span>… che a casa mia si chiama BUG, e come tale è <a href="http://social.msdn.microsoft.com/forums/en-US/wpf/thread/c6d9bca4-7832-4816-be94-a8e8f6e32007/" target="_blank">riconosciuto</a>.</span><br>  <span><strong>Un po’ di storia</strong></span><br>  <span>Se cercate di fare questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">UndoLimit</span><span style="color: blue">="0" </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">DataSource</span><span style="color: blue">.</span><span style="color: red">Zone</span><span style="color: blue">, ...</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>con lo scopo di disabilitare il supporto per l’Undo offerto da Wpf, vi beccate una sonora exception “<em>Cannot use UndoService while it is disabled</em>”… l’inghippo è che quella cosa sbomba da paura a runtime se avete impostato un Binding sulla proprietà Text. Lo snippet qui sotto, grabbato con Reflector, spiega molto bene il problema:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-Ps1vQA-nlq4/TzJyODV0lKI/AAAAAAAABFs/DtJhXLvBqN0/5cdfefb8-3da6-420a-857b-f2e376dbd595.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-_YmwfjLPclk/TzJyNpkcKqI/AAAAAAAABFo/7yilo05wJk8/7f7f4192-51f9-460e-9afe-c2157ed68dec.png" width="244" height="44"></a></span><br>
+
+<span>Quella chiamata a Clear() scoppia perchè avete impostato UndoLimit a “0” disabilitando di fatto l’UndoManager. </span><br>
+
+<span><strong>Possibili Workaround</strong></span><br>
+
+<span>San Google propone una serie di possibili soluzioni:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-YGm1Q6ddk2k/TzJyPBkGnkI/AAAAAAAABGA/JZRDNsbC2qY/db03419e-eca5-4eb1-be6a-89d52fe8d210.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-zuYIQoNO5aQ/TzJyOVpVHTI/AAAAAAAABF0/fK3F5_XCd9o/b03a0bd1-0aa1-4d9c-81d8-afc6f7b154dd.png" width="244" height="85"></a> 
+
+  <br><font size="1">(</font><a href="http://infosysblogs.com/microsoft/2008/03/wpf_textbox_memory_leak_issue_1.html" target="_blank"><font size="1">fonte</font></a><font size="1">)</font></span><br>
+
+<span>Come lo stesso autore dice, non funziona :-), e ne <a href="http://www.infosysblogs.com/microsoft/2008/03/wpf_textbox_memory_issue.html" target="_blank">propone un’altra</a>:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-d23oMOzgpFQ/TzJyQY2DbPI/AAAAAAAABGM/u7hfzJK6Cs0/7d4c74c3-ef1e-49d1-a454-2841ddcb2176.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-gw8QmTnPlT4/TzJyP9Sb6sI/AAAAAAAABGE/EEDc9EwTH50/227075ec-1f13-41b3-b99e-0b2af22f3fc8.png" width="244" height="55"></a> </span><br>
+
+<span>Ma sinceramente a me non va neanche questa, nonostante in molti siano decisamente soddisfatti, non ho errori semplicemente non succede nulla.</span><br>
+
+<span>Un terzo, fallimentare tentativo, è stato creare una Attached Property che impostasse l’UndoLimit dopo l’evento Loaded, perchè alla fine il problema sta proprio li, ma anche questo fallisce perchè in fase di Unload del controllo la proprietà Text viene resettata e quindi il codice cerca di fare nuovamente il reset (<em>Clear()</em>) dell’UndoManager.</span><br>
+
+<span>Alla fine, partendo da un <a href="http://social.msdn.microsoft.com/forums/en-US/wpf/thread/a4476d22-bf5e-4ca4-969e-7bffb8564277/" target="_blank">hint trovato sui Microsoft Forum</a>, la <u>pezza</u> definitiva è questo Behavior:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">DisableUndoManagerBehavior </span>: <span style="color: #2b91af">Behavior</span><<span style="color: #2b91af">TextBox</span>>
+{
+    <span style="color: blue">protected override void </span>OnAttached()
+    {
+        <span style="color: blue">base</span>.OnAttached();
+
+        <span style="color: blue">var </span>cb = <span style="color: blue">new </span><span style="color: #2b91af">CommandBinding</span>();
+        cb.Command = <span style="color: #2b91af">ApplicationCommands</span>.Undo;
+        cb.CanExecute += ( s, e ) => e.CanExecute = <span style="color: blue">this</span>.AssociatedObject.IsFocused;
+        cb.Executed += ( s, e ) => e.Handled = <span style="color: blue">true</span>;
+
+        <span style="color: blue">this</span>.AssociatedObject.CommandBindings.Add( cb );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che utilizzato così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">DataSource</span><span style="color: blue">.</span><span style="color: red">Zone</span><span style="color: blue">}"</span><span style="color: blue">>
+    <</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+        <</span><span style="color: #a31515">behaviors</span><span style="color: blue">:</span><span style="color: #a31515">DisableUndoManagerBehavior </span><span style="color: blue">/>
+    </</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+</</span><span style="color: #a31515">TextBox</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>produce l’effetto desiderato, in realtà l’UndoManager non viene disabilitato ma semplicemente <em>reso innoquo</em>.</span><br>
+
+<span><strong>…e Wpf 4.0?</strong></span><br>
+
+<span>Funziona come si deve senza costringerci a fare i salti mortali, e il fido Reflector conferma:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-JT8SA88zow8/TzJyRXLNkUI/AAAAAAAABGc/c5QhbfWms98/ac70ce41-764a-4e30-b83a-fc705d0d2a63.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-AQp_zWYSUT4/TzJyQ-ivUcI/AAAAAAAABGU/eSACKYIJaXw/7024be90-a95e-488b-801f-2a4539ef4310.png" width="244" height="74"></a> </span><br>
+
+<span>Vi chiederete… perchè devi disabilitare il suppporto per l’Undo? perchè se avete un <a href="/search/label/Memento" target="_blank">vostro motore</a> per gestire il change tracking… ;-)</span><br>
+
+<span>.m</span><br>
+
+
+
+
+

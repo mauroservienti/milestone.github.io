@@ -1,0 +1,231 @@
+---
+layout: post
+title: 'UI Composition :: I Moduli'
+date: '2009-04-01T11:45:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Architecture
+- UI Composition
+modified_time: '2012-01-31T14:03:45.929+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1393714531847944126
+blogger_orig_url: http://milestone.topics.it/2009/04/ui-composition-i-moduli.html
+---
+
+<span><em>Scoperto come scoprire</em> quali sono i moduli installati non ci resta che caricarli… fosse semplice ;-)</span><br>  <span>La prima cosa che dobbiamo fare è trovare un sistema per collegare un IModuleDescriptor ad un modulo, dato che le informazioni presenti in un ModuleDescriptor arrivano da un file di configurazione non abbiamo gratis nessun “ponte” tra i 2 mondi: la descrizione di un modulo e il modulo stesso.</span><br>  <span>Quello che possiamo banalmente fare, e che faremo, è aggiungere alcune informazioni al sistema di configurazione, in realtà scopriamo che ci basta aggiungere al file di configurazione un valore che ci dica quale sia la classe che fa da entry point per il nostro modulo; l’unico requisito è che questa classe sia un modulo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModule
+</span>{
+ <span style="color: gray">   </span><span style="color: blue">void </span>Boot();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>se procediamo in questa direzione però ci scontriamo subito con un problema: il modulo ha bisogno di poter configurare a sua volta il service container per  iniettare la sua configurazione, potremmo essere allora tentati di scrivere qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModule
+</span>{
+    <span style="color: blue">void </span>Boot( <span style="color: #2b91af">IServiceProvider <font color="#000000">provider</font></span> );
+}</pre>
+</blockquote>
+
+<span>Questo apparentemente risolve, ma finisce con l’assegnare troppe responsabilità al metodo Boot() e non ci permette di disaccoppiare la fase di inizializzazione dalla fase di avvio, imponendoci di controllare le dipendenze tra i moduli per garantirci che quando il modulo X parte, il modulo Y, da cui X dipende, abbia già fatto quello che deve fare pena il fallimento dell’avvio di X; e questo è evidente che puzza un sacco e ci complica troppo la vita.</span><br>
+
+<span>Potremmo tentare a questo punto di spostarci verso un qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModule
+</span>{
+    <span style="color: blue">void </span>Initialize( <span style="color: #2b91af">IServiceProvider </span>provider );
+    <span style="color: blue">void </span>Boot();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Funziona è vero, ma:</span><br>
+
+<ul>
+  <li>Se pensiamo al modulo, isolandolo dal resto del mondo, ci rendiamo conto che il modulo è un’applicazione isolata a tutti gli effetti e diventa evidente che l’IModule è l’entry point di questa applicazione. In quest’ottica è lecito pensare che il modulo abbia delle dipendenze e che durante la fase di avvio abbia qualcosa da fare… sarebbe quindi molto bello se potessimo ottenere un’istanza del modulo da Castle in modo da avere le dipendenze iniettate “a gratis”; </li>
+
+  <li>L’altro problema, che è più un dettaglio implementativo che un vero e proprio problema, è che la fase di inizializzazione del modulo, che coincide principalmente con la configurazione del container, non dovrebbe legarci mani e piedi; Se configurassimo il container attraverso un file xml saremmo liberi di cambiare la configurazione come e quando vogliamo senza creare problemi di sorta, qui vogliamo ottenere lo stesso risultato del resto la fase di inizializzazione quello è: configurazione; </li>
+</ul>
+
+<span>Quindi perchè non pensare a qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModule
+</span>{
+    <span style="color: gray">/// <summary>
+    /// </span><span style="color: green">Boots the module.
+    </span><span style="color: gray">/// </summary>
+    </span><span style="color: blue">void </span>Boot();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e poi del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModuleBootstrapper
+</span>{
+    <span style="color: blue">void </span>Initialize( <span style="color: #2b91af">IServiceProvider </span>container );
+    <span style="color: #2b91af">IModule </span>GetModule();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>In questo modo, mettendo le 2 implementazioni in assembly diversi (esattamente come abbiamo con MyApplication.Runtime e MyApplication.Boot), otteniamo la netta separazione dei 2 mondi.</span><br>
+
+<span>Quello che ci resta da fare è rendere conoscio il sistema di configurazione dei moduli di questa novità:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">modulesConfiguration</span><span style="color: blue">>
+  <</span><span style="color: #a31515">installedModules</span><span style="color: blue">>
+    <</span><span style="color: #a31515">modules</span><span style="color: blue">>
+      <</span><span style="color: #a31515">add </span><span style="color: red">name</span><span style="color: blue">=</span>"<span style="color: blue">module.MyFirstModule</span>" <u><span style="color: red">Bootstarpper</span><span style="color: blue">=</span>"-- <span style="color: blue">Fully Qualified Type Name --</span>"</u> <span style="color: blue">/>
+    </</span><span style="color: #a31515">modules</span><span style="color: blue">>
+  </</span><span style="color: #a31515">installedModules</span><span style="color: blue">>
+</</span><span style="color: #a31515">modulesConfiguration</span><span style="color: blue">></span></pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Semplicemente ci basta aggiungere alla configurazione quale sia il tipo da cui dobbiamo fare la fase di boot del singolo modulo, nella solution allegata trovate “propagata” questa variazione a tutto il sistema di configurazione.</span><br>
+
+<span>Rendiamo infine capace il nostro sistema (in questo caso il ModuleDescriptor) di caricare un IModuleBootstrapper:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">IModuleBootstrapper </span>Load()
+{
+    <span style="color: blue">var </span>bootstrapperType = <span style="color: #2b91af">Type</span>.GetType( <span style="color: blue">this</span>.bootstrapper );
+    <span style="color: blue">var </span>obj = ( <span style="color: #2b91af">IModuleBootstrapper </span>)<span style="color: #2b91af">Activator</span>.CreateInstance( bootstrapperType );
+
+    <span style="color: blue">return </span>obj;
+}</pre>
+</blockquote>
+
+<span>Il prossimo step ci consente di entrare nel vivo del problema: <em>il mio primo modulo</em>.</span><br>
+
+<span>Un modulo è composto come minimo da 3 assembly, non è obbligatorio, ma, almeno all’inizio per capire, sarebbe una buona regola da seguire:</span><br>
+
+<ul>
+  <li><strong>MyFirstModule.System</strong>: contiene la definizione di tutti i contratti (entità e servizi) utilizzati ed esposti dal modulo; </li>
+
+  <li><strong>MyFirstModule.Runtime</strong>: contiene l’implementazione concreta di quello che abbiamo definito in *.System; </li>
+
+  <li><strong>MyFirstModule.Boot</strong>: si occupa della fase di boot del modulo ed in particolare della configurazione del container; </li>
+</ul>
+
+<span>Procediamo quindi con il creare i 3 progetti e configurare Visual Studio per:</span><br>
+
+<ul>
+  <li>Eseguire le azioni di “post build” al fine di copiare gli assembly del modulo nella bin dell’applicazione; </li>
+
+  <li>Compilare i progetti nell’ordine corretto; </li>
+</ul>
+
+<span>Creati i progetti non facciamo altro che aggiugere il minimo indispensabile:</span><br>
+
+<ul>
+  <li>La classe MyFirstModule che implementa l’interfaccia IModule e non fa nulla per ora; </li>
+
+  <li>La classe Bootstrapper responsabile della fase di inizializzazione del modulo, per ora questa classe si occupa di: 
+    <ul>
+      <li>Configurare il container registrando il modulo stesso; </li>
+
+      <li>Restituire l’istanza del modulo; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>La fase di avvio dell’applicazione a questo punto diventa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>moduleManager = container.Resolve<<span style="color: #2b91af">IModuleManager</span>>();
+<span style="color: blue">var </span>installedModules = moduleManager.GetInstalledModules();
+
+<span style="color: blue">var </span>bootstrappers = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">IModuleBootstrapper</span>>();
+<span style="color: blue">foreach</span>( <span style="color: blue">var </span>module <span style="color: blue">in </span>installedModules )
+{
+    <span style="color: blue">var </span>bootstrapper = module.Load();
+    bootstrappers.Add( bootstrapper );
+}
+
+<span style="color: blue">foreach</span>( <span style="color: blue">var </span>bootstrapper <span style="color: blue">in </span>bootstrappers )
+{
+    bootstrapper.Initialize( container );
+}
+
+<span style="color: blue">var </span>modules = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">IModule</span>>();
+<span style="color: blue">foreach</span>( <span style="color: blue">var </span>bootstrapper <span style="color: blue">in </span>bootstrappers )
+{
+    <span style="color: blue">var </span>module = bootstrapper.GetModule();
+}
+
+<span style="color: blue">foreach</span>( <span style="color: blue">var </span>module <span style="color: blue">in </span>modules )
+{
+    module.Boot();
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>E’ un filino troppo complessa e carica la fase di Boot dell’applicazione di troppe responsabilità quindi facciamo un po’ di refactoring:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModuleManager
+</span>{
+<span style="color: gray">    </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">IModuleDescriptor</span>> InstalledModules { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">IModule</span>> LoadedModules { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">IModuleManager </span>LoadInstalledModules();
+    <span style="color: #2b91af">IModuleManager </span>InitializeModules();
+    <span style="color: blue">void </span>BootModules();
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>modifichiamo il module manager per supportare le nuove funzionalità e ci aggiugiamo un pizzico di fluent interfaces, la fase di boot dell’applicazione diventa molto più snella a questo punto:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>moduleManager = container.Resolve<<span style="color: #2b91af">IModuleManager</span>>();
+
+moduleManager.LoadInstalledModules()
+    .InitializeModules()
+    .BootModules();</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Quello che succede è:</span><br>
+
+<ul>
+  <li>Carichiamo i descriptor dei moduli installati; </li>
+
+  <li>Inizializziamo tutti i moduli; </li>
+
+  <li>Avviamo i moduli inizializzati; </li>
+</ul>
+
+<span>La fase di inizializzazione di un modulo necessita di una reference al container corrente, per far si che il module manager possa fornire una reference facciamo dipendere il module manager stesso dal service container e registriamo il service container in se stesso (un po’ contorto… ma solo in apparenza):</span><br>
+
+<blockquote>
+  <pre class="code">container.Register( <span style="color: #2b91af">Component<br>    </span>.For<<span style="color: #2b91af">IWindsorContainer</span>, <span style="color: #2b91af">IServiceProvider</span>>()
+    .Instance( container ) );<a href="http://11011.net/software/vspaste"></a></pre>
+</blockquote>
+
+<span>Estendiamo, infine, anche il nostro IEnvironmentService al fine di fargli esporre le nuove informazioni relative ai moduli in esecuzione.</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IEnvironmentService
+</span>{
+    <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">IModuleDescriptor</span>> InstalledModules { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">IModule</span>> LoadedModules { <span style="color: blue">get</span>; }
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span><strong>Concludendo…</strong></span><br>
+
+<span>Adesso siamo in grado di caricare i moduli installati, lo stesso identico sistema può essere utilizzato per un sistema a plugin, ora viene la fase più complessa che è rendere pluggabile anche la UI, quindi permettere ad un singolo modulo di iniettare contenuti in zone (Region) messe a disposizione da altri; per fare ciò nella prossima puntata parleremo di:</span><br>
+
+<ul>
+  <li>Comunicazione: Applicazione <–> Moduli e Modulo <-> Modulo;</li>
+
+  <li>RegionService, RegionManager e Region;</li>
+</ul>
+
+<span>Il progetto allo stato attuale: <a href="http://downloads.topics.it/composite_ui_samples/CompositeUI_v3.zip" target="_blank">CompositeUI_v3.zip</a></span><br>
+
+<span>.m</span><br>
+

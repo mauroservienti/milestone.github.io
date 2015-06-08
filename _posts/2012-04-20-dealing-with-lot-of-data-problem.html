@@ -1,0 +1,23 @@
+---
+layout: post
+title: 'Dealing with a lot of data: the problem'
+date: '2012-04-20T13:53:00.000+02:00'
+author: Mauro Servienti
+tags: 
+modified_time: '2012-04-20T13:53:50.135+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4324866290562797598
+blogger_orig_url: http://milestone.topics.it/2012/04/dealing-with-lot-of-data-problem.html
+---
+
+where “<em>a lot</em>” means 20+ mil “records/documents”.<br />
+Dealing with a lot of data is usually a problem, but the interesting stuff is that the main problem is not a technical problem. It is quite obvious that all the architectural choices we are used to are not guaranteed at all to work, it is obvious that generalization is much more evil than what generally generalization is, it is obvious that every single technical choice must be chosen with performance in mind because generally low performance with those numbers generally mean that nothing works.<br />
+But a much more interesting problem is the daily development workflow, dealing with those numbers means that:<br />
+<ul>
+<li>the size on disk of those data is something like 100Gb;</li>
+<li>generating test data takes a long time: hours;</li>
+<li>having more than one test environment on the same machine is a problem;</li>
+<li>changing the shape of the data to test a different scenario takes ages;</li>
+<li>changing the data indexing strategy takes a long time;</li>
+</ul>
+All these interesting problems when faced are a key driver for the application that must deal with those huge data.<br />
+.m

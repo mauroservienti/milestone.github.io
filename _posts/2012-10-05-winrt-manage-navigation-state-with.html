@@ -1,0 +1,33 @@
+---
+layout: post
+title: WinRT manage navigation state with Radical
+date: '2012-10-05T09:43:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Metro
+- WinRT
+- Windows 8
+modified_time: '2012-10-05T09:43:00.296+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5527277295577904877
+blogger_orig_url: http://milestone.topics.it/2012/10/winrt-manage-navigation-state-with.html
+---
+
+<p>One of the key point in the WinRT application development is that we are required to handle the application state transitions, as in Windows Phone, in order to correctly manage the fact that the operating system at some point can suspend/terminate our application while it is in background.</p> <p>Obviously this must be completely transparent to the user thus when the user comes back to our application he expects to find the application in the same exact state were she left.</p> <p>We have to take care of 2 main concern:</p> <ol> <li>The navigation stack;  <li>The application state in term of “current data”;</li></ol> <p>Obviously if we use <a href="http://radical.codeplex.com/" target="_blank">Radical</a> for WinRT (codenamed <a href="http://radical.codeplex.com/SourceControl/changeset/view/81561#1579589" target="_blank">Radical Chic</a> and available on <a href="http://nuget.org" target="_blank">Nuget</a> as <a href="http://nuget.org/packages/Radical.Windows.Presentation.Puzzle.WinRT" target="_blank">pre-release</a>) we can do something like:</p> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">sealed</span> <span style="color: #0000ff">partial</span> <span style="color: #0000ff">class</span> App : Application<br>{<br>    ApplicationBootstrapper bootstrapper;<br>        <br>    <span style="color: #0000ff">public</span> App()<br>    {<br>        <span style="color: #0000ff">this</span>.InitializeComponent();<br><br>        <span style="color: #0000ff">this</span>.Suspending += OnAppSuspending;<br><br>        <span style="color: #0000ff">this</span>.bootstrapper = <span style="color: #0000ff">new</span> PuzzleApplicationBootstrapper&lt;Presentation.MainView&gt;();<br>    }<br><br>    async <span style="color: #0000ff">void</span> OnAppSuspending( <span style="color: #0000ff">object</span> sender, SuspendingEventArgs e )<br>    {<br>        var deferral = e.SuspendingOperation.GetDeferral();<br><br>        await <span style="color: #0000ff">this</span>.bootstrapper.OnSuspending();<br><br>        deferral.Complete();<br>    }<br>}</pre><br></div></blockquote>
+<p>What are we doing?</p>
+<p>We are setting up the Radical Presentation infrastructure using the built-in application bootstrapper and, much more important we are handling the “Suspending” event delegating the execution to the bootstrapper itself.</p>
+<p>Back to our problems…</p>
+<p><strong>The Navigation Stack…</strong></p>
+<p>…is not a problem, since we are using the Radical infrastructure we can leverage the power of the built-in <a href="{{ site.baseurl }}{% post_url 2012-07-25-metro-navigation-service %}" target="_blank">navigation service</a> and forget the whole stuff. The navigation service will:</p>
+<ul>
+<li>keep track of the navigation stack;</li>
+<li>take note of the the user is in the stack;</li>
+<li>persist the stack when the application is suspended;</li>
+<li>resume the stack when the application is resumed;</li>
+<li>if the application is resumed restore the navigation stack bringing the user back to were he left;</li></ul>
+<p><strong>Application state: easy peasy</strong></p>
+<p>the navigation infrastructure gives you something I call “INavigationScopedStorage” that can be used in the following manner:</p>
+<blockquote>
+<div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">class</span> MainViewModel : AbstractViewModel, IExpectNavigatedToCallback, IExpectNavigatingAwayCallback<br>{<br>    <span style="color: #0000ff">void</span> IExpectNavigatedToCallback.OnNavigatedTo( NavigationEventArgs e )<br>    {<br>        <span style="color: #0000ff">if</span> ( e.Mode == NavigationMode.Resume ) <br>        {<br>            var data = e.Storage.GetData&lt;String&gt;( <span style="color: #006080">"myData"</span> );<br>        }<br>    }<br><br>    <span style="color: #0000ff">void</span> IExpectNavigatingAwayCallback.OnNavigatingAway( NavigatingAwayEventArgs e )<br>    {<br>        e.Storage.SetData( <span style="color: #006080">"myData"</span>, <span style="color: #006080">"this is the data"</span>, StorageLocation.Local );<br>    }<br>}</pre><br></div></blockquote>
+<p>As you can see we have a simple ViewModel that implements 2 interfaces in order to get involved in the navigation pipeline. In the navigation event arguments we have we can use the Storage property (that is an instance of INavigationScopedStorage) to store data that are scoped the that view.</p>
+<p>So…each time we navigate away we simply store what we may need if the application will be suspended/terminated and when we navigate to a view we can detect, using the NavigationMode, if we are getting here due to a restore and correctly handling the scenario.</p>
+<p>.m</p>  

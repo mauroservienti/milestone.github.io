@@ -1,0 +1,88 @@
+---
+layout: post
+title: Cerca che ti passa :-)
+date: '2010-01-19T06:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- User Experience
+- WPF
+- Software Mason
+modified_time: '2012-08-04T20:05:50.573+02:00'
+thumbnail: https://lh5.googleusercontent.com/-bGZa_gFtA60/TzJyEFGS1CI/AAAAAAAABEY/7U2Y8WAAPso/s72-c/53abf66d-2403-463f-9958-19c7037ab0ea.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6374035817802360919
+blogger_orig_url: http://milestone.topics.it/2010/01/cerca-che-ti-passa.html
+---
+
+<span><strong>UX</strong>: semplificare la vita all’utente forse è uno task più complessi che ci siano e a mio modo di vedere a grandissimo valore aggiunto, pensiamo ad un sistema di ricerca, come nell’immagine qui sotto, che consente all’utente di cercare all’interno dell’anagrafica dei soggetti:</span><br>  <span><a href="https://lh5.googleusercontent.com/-mq9WwA_14ak/TzJyEo_oKsI/AAAAAAAABEg/Jgy_OkN_nH0/44ce1de0-3940-4c58-b7fe-5924e128384d.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-bGZa_gFtA60/TzJyEFGS1CI/AAAAAAAABEY/7U2Y8WAAPso/53abf66d-2403-463f-9958-19c7037ab0ea.png" width="244" height="71"></a> </span><br>  <span>l’utente scrive qualcosa, tipo “maur*”, e trova quello che cerca:</span><br>  <span><a href="https://lh4.googleusercontent.com/-wYJnqCffZYI/TzJyFk8nddI/AAAAAAAABEs/6rTzlSjtoGs/93f99157-e2dc-49f0-b176-b7f4f9009d93.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-Kw3QyGbYwcw/TzJyFFOKapI/AAAAAAAABEk/eeCDR7Pbno4/4ef6bd97-a0e7-494c-b644-eafb2e0c78c3.png" width="126" height="104"></a> </span><br>  <span>Adesso immaginiamo che lo strumento sia un piccolo gestionale per veterinari e che quindi l’utente debba poter anche cercare gli “animali”, naturalmente un animale non è un “Subject” e sarebbe quindi naturale aspettarsi di avere un’altra RibbonTab “Pets” con la possibilità di cercare nell’anagrafica degli animali.</span><br>  <span><strong>Ma… è comodo?</strong></span><br>  <span>Secondo me neanche un po’ :-), perchè? perchè ad esempio la mia gatta si chiama <em>Isotta</em>, che, anche se raro, potrebbe essere tranquillamente il nome di una cliente presente in anagrafica.</span><br>  <span>Alla fine noi abbiamo un set di informazioni che sono decisamente strutturate, ma se ci pensiamo proabilmente sono strutturate solo per noi, in quanto tecnici che conoscono il sistema, per l’utente sono invece un <em>blobbone</em> di informazioni in cui ha senso poter cercare esattamente come fa con un motore di ricerca su internet. </span><br>  <span><strong>Quindi?</strong></span><br>  <span>Se il nostro veterinario volesse cercare “Isotta” a prescindere dal fatto che sia un cliente o un paziente? semplicemente non può…</span><br>  <span><strong>Un parallelo</strong></span><br>  <span>Q: come fa il sistema operativo ad indicizzare il contenuto di un file che non conosce a priori? (ad esempio di un <em>docx</em> o di un <em>pdf</em>)</span><br>  <span>A: <em>IFilter</em>, che altro non è che un bel sistema a plugin in cui una terza parte può pluggare il suo “indexer” e quando il sistema operativo deve indicizzare contenuti “gestiti” da un IFilter semplicemente passa i contenuti all’IFilter di turno e si aspetta in cambio ad esempio delle keyword;</span><br>  <span><strong>ISearchProvider<T></strong></span><br>  <span>Perchè non prendere spunto e creare una cosa del tipo:</span><br>  <span><a href="https://lh5.googleusercontent.com/-nq2IwbeDPH0/TzJyG7vj1TI/AAAAAAAABFA/q5NUZ7EXu4g/3c07afb1-fff6-4e2d-ab2d-772f119fd84e.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-zuHT3K7n7RU/TzJyF2d6diI/AAAAAAAABE4/Kmr_Wq_04DU/1386d627-4f61-430a-8bbd-9ded5e6c5874.png" width="244" height="121"></a></span><br>  <span><a href="https://lh4.googleusercontent.com/-F5HpdF1n28s/TzJyH5pK0eI/AAAAAAAABFI/kpaWhzlWxUk/2dd485be-faee-4b98-9c7a-45f92dcfccd4.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-KTNXLbVR6l4/TzJyHjixQNI/AAAAAAAABFE/k8wzpz2bJaA/c4ab1621-8c1e-41bf-8900-cbe00c5c52bc.png" width="244" height="63"></a> </span><br>  <span>cioè un sistema di ricerca pluggabile che consenta ad un modulo/plugin di fare ad esempio:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">Module </span>: <span style="color: #2b91af">ModuleBase</span>, <span style="color: #2b91af">IPetsModule
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">ISearchServices </span>searchServices;
+    <span style="color: blue">readonly </span><span style="color: #2b91af">ISearchProvider</span><<span style="color: #2b91af">Pet</span>> searchProvider;
+
+    <span style="color: blue">public </span>Module( <span style="color: #2b91af">ISearchServices </span>searchServices, <span style="color: #2b91af">ISearchProvider</span><<span style="color: #2b91af">Pet</span>> searchProvider )
+        : <span style="color: blue">base</span>( <span style="color: #2b91af">PetsModuleConstants</span>.ModuleKey, <span style="color: #2b91af">PetsModuleConstants</span>.ModuleName )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( searchServices ).Named( <span style="color: #a31515">"searchServices" </span>).IsNotNull();
+        <span style="color: #2b91af">Ensure</span>.That( searchProvider ).Named( <span style="color: #a31515">"searchProvider" </span>).IsNotNull();
+
+        <span style="color: blue">this</span>.searchServices = searchServices;
+        <span style="color: blue">this</span>.searchProvider = searchProvider;
+    }
+
+    <span style="color: blue">protected override void </span>OnInitialize()
+    {
+        <span style="color: blue">base</span>.OnInitialize();
+
+        <span style="color: green">//Register SearchProvider...
+        </span><span style="color: blue">this</span>.searchServices.RegisterProvider( <span style="color: blue">this</span>.searchProvider );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che in ultima battuta, grazie a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Grid </span><span style="color: red">Grid.Column</span><span style="color: blue">="2" </span><span style="color: red">Margin</span><span style="color: blue">="0,0,2,0" </span><span style="color: red">Width</span><span style="color: blue">="100">
+    <</span><span style="color: #a31515">TextBlock </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Center" </span><span style="color: red">ToolTip</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">SearchProviders</span><span style="color: blue">.Selection}">
+        <</span><span style="color: #a31515">Hyperlink </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">ShowSearchLocationsCommand</span><span style="color: blue">}">
+            <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">SearchProviders</span><span style="color: blue">.Selection}"
+                       </span><span style="color: red">TextTrimming</span><span style="color: blue">="CharacterEllipsis" />
+        </</span><span style="color: #a31515">Hyperlink</span><span style="color: blue">>
+    </</span><span style="color: #a31515">TextBlock</span><span style="color: blue">>
+    <</span><span style="color: #a31515">Popup </span><span style="color: red">AllowsTransparency</span><span style="color: blue">="True" </span><span style="color: red">StaysOpen</span><span style="color: blue">="False" </span><span style="color: red">IsOpen</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">ShowSearchLocations</span><span style="color: blue">}" </span><span style="color: red">Placement</span><span style="color: blue">="Bottom">
+        <</span><span style="color: #a31515">dropShadow</span><span style="color: blue">:</span><span style="color: #a31515">SystemDropShadowChrome </span><span style="color: red">Margin</span><span style="color: blue">="3" </span><span style="color: red">Color</span><span style="color: blue">="#71000000" </span><span style="color: red">CornerRadius</span><span style="color: blue">="3">
+            <</span><span style="color: #a31515">Border </span><span style="color: red">Padding</span><span style="color: blue">="5" </span><span style="color: red">CornerRadius</span><span style="color: blue">="3" </span><span style="color: red">MinWidth</span><span style="color: blue">="100">
+                <</span><span style="color: #a31515">Border.Background</span><span style="color: blue">>
+                    <</span><span style="color: #a31515">LinearGradientBrush </span><span style="color: red">EndPoint</span><span style="color: blue">="0,1" </span><span style="color: red">StartPoint</span><span style="color: blue">="0,0">
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFFFFFFF" </span><span style="color: red">Offset</span><span style="color: blue">="0"/>
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFD7E6F9" </span><span style="color: red">Offset</span><span style="color: blue">="0.09"/>
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFC7DCF8" </span><span style="color: red">Offset</span><span style="color: blue">="0.4"/>
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFB3D0F5" </span><span style="color: red">Offset</span><span style="color: blue">="0.4"/>
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFD7E5F7" </span><span style="color: red">Offset</span><span style="color: blue">="0.9"/>
+                        <</span><span style="color: #a31515">GradientStop </span><span style="color: red">Color</span><span style="color: blue">="#FFBAD4F7" </span><span style="color: red">Offset</span><span style="color: blue">="1"/>
+                    </</span><span style="color: #a31515">LinearGradientBrush</span><span style="color: blue">>
+                </</span><span style="color: #a31515">Border.Background</span><span style="color: blue">>
+                <</span><span style="color: #a31515">ItemsControl </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">SearchProviders</span><span style="color: blue">}">
+                    <</span><span style="color: #a31515">ItemsControl.ItemTemplate</span><span style="color: blue">>
+                        <</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">>
+                            <</span><span style="color: #a31515">CheckBox </span><span style="color: red">IsChecked</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">IsSelected</span><span style="color: blue">}" 
+                                  </span><span style="color: red">Content</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">DisplayName</span><span style="color: blue">}" />
+                        </</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">>
+                    </</span><span style="color: #a31515">ItemsControl.ItemTemplate</span><span style="color: blue">>
+                </</span><span style="color: #a31515">ItemsControl</span><span style="color: blue">>
+            </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+        </</span><span style="color: #a31515">dropShadow</span><span style="color: blue">:</span><span style="color: #a31515">SystemDropShadowChrome</span><span style="color: blue">>
+    </</span><span style="color: #a31515">Popup</span><span style="color: blue">>
+</</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>produce un sistema di ricerca integrato:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-tyq2vzasa5o/TzJyJpTaP9I/AAAAAAAABFg/pOLRIO0xqMo/342bc980-612b-451e-904b-eca35c5d7cca.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-36yusSOt5F0/TzJyIdQodQI/AAAAAAAABFM/6Smjk-5d0pA/6ec27fc8-03bf-426e-bf07-04e175ae1687.png" width="379" height="104"></a></span><br>
+
+<span>.m</span><br>
+
+<span>P.S.</span><br>
+
+<span><em>Giurin giuretta ho usato Blend stavolta :-), e la prova sono i Binding in cui non c’è esplicitato “Path=” che è tipico di Blend che in coppia con il supporto per i <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3983269272897217471" target="_blank">Design Time Data che mi sono costruito</a> fa veramente faville.</em></span><br>
+

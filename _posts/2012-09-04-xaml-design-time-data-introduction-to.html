@@ -1,0 +1,75 @@
+---
+layout: post
+title: 'Xaml design time data: an introduction to Radical.Design'
+date: '2012-09-04T10:19:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Blendability
+- Xaml
+- Design Time Data
+modified_time: '2012-09-04T10:19:00.135+02:00'
+thumbnail: http://lh6.ggpht.com/-_MbbmX_rdT8/UBuJoycjfgI/AAAAAAAACDQ/GUNOnp6jrqg/s72-c/image_thumb_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3127509011534316634
+blogger_orig_url: http://milestone.topics.it/2012/09/xaml-design-time-data-introduction-to.html
+---
+
+<p>I’m not a heavy user of the design time data basically because I do not usually design complex user interfaces that cannot be designed without design time data support, so <em>blendability</em> for me is not a strong requirement. On the other side I am a big fan of the technology and of the possibilities offered by the design time data, that some times can really save your life :-)</p> <p><strong>What does <em>blendability</em> mean?</strong></p> <p>The term was born with the arise of Microsoft Expression Blend (thus <em>blend</em>ability) that is a tool for Xaml designers that promises to the designer to completely hide (take care of) the Xaml markup code giving to the designer all the required tools to design everything.</p> <p>The problem is that Xaml UI are, most of the times, data driven, so the interfaces adapts itself to the shape of the data. That said is easy to understand that if in the designer we do not have the data, designing the UI can be really frustrating.</p> <p>Blendability is the art of providing data at design time. We want to be able to have a class (a ViewModel) such as the following:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> PersonViewModel : AbstractViewModel
+{
+    String _firstName;
+    <span class="kwrd">public</span> <span class="kwrd">string</span> FirstName
+    {
+        get { <span class="kwrd">return</span> <span class="kwrd">this</span>._firstName; }
+        set 
+        {
+            <span class="kwrd">this</span>._firstName = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"FirstName"</span> );
+        }
+    }
+
+    <span class="rem">// other properties omitted for simplicity</span>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>and a design time experience like this one:</p>
+<p><a href="http://lh4.ggpht.com/-kTMyPptUXBw/UBuJn_qZUUI/AAAAAAAACDI/R8MnP322-Hk/s1600-h/image_thumb%25255B3%25255D.png"><img title="image_thumb" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image_thumb" src="http://lh6.ggpht.com/-_MbbmX_rdT8/UBuJoycjfgI/AAAAAAAACDQ/GUNOnp6jrqg/image_thumb_thumb.png?imgmax=800" width="244" height="137"></a></p>
+<p><em>Figure: the Visual Studio 2010 designer displaying a Xaml window with real data.</em></p>
+<p>A design time experience where we have some data that help us to understand how the Xaml, we are designing, will behave at runtime.</p>
+<p><strong>Current state of the art</strong></p>
+<p>Currently there are 3 different approaches (well…2 since the first and the second we’ll see are technically the same):</p>
+<ol>
+<li>design your ViewModel so that it knows that it can run in the designer; there is an API that let’s you discover if you are running in the designer and thus the ViewModel can provide fake data at design time;<br><br>This approach has 2 main drawbacks:</li>
+<ol>
+<li>You need to change your architecture/design to support something (the design time experience) that has nothing to do with the goal of the application;</li>
+<li>You need to have a public default constructor otherwise the designer cannot create an instance of the ViewModel at design time;</li></ol>
+<li>use the ViewModelLocator approach, move the logic to detect the designer in the locator and return a completely different ViewModel when running in the designer;<br><br>Even this approach has drawbacks:</li>
+<ol>
+<li>you need to use the *locator pattern, that personally I do not like at all;</li>
+<li>the design time view model must have exactly the same shape as the runtime view model, and as we’ll see, this can be a problem; this also has technical problems since you have to introduce interfaces for the view models or you need to be able to inherit from the runtime view model and override the relevant properties;</li>
+<li>you end up, even in this case, to inject, and change, and maintain, logic in your code in order to support the design time experience;</li></ol>
+<li>use <a href="http://radical.codeplex.com/" target="_blank">Radical</a>.Design (<a href="https://nuget.org/packages/radical.design" target="_blank">available</a> via <a href="http://nuget.org/" target="_blank">NuGet</a>) that has a completely different approach and solves all the outlined drawbacks of the other solutions;</li></ol>
+<p>In the next posts we’ll see how to achieve an amazing design time time experience using really strange stuff :-) </p>
+<p>.m</p>  

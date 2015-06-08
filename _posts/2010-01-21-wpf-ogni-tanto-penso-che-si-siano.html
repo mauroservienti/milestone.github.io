@@ -1,0 +1,91 @@
+---
+layout: post
+title: 'Wpf: Ogni tanto penso che si siano fumati il cervello…'
+date: '2010-01-21T16:52:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Behaviors
+modified_time: '2012-08-04T17:48:12.460+02:00'
+thumbnail: https://lh4.googleusercontent.com/-uzE-tcrVszQ/TzJygJjRygI/AAAAAAAABIo/QPQwneXK9pM/s72-c/9b70f997-30b0-4669-9668-f39d75157bf9.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-312756305616436846
+blogger_orig_url: http://milestone.topics.it/2010/01/wpf-ogni-tanto-penso-che-si-siano.html
+---
+
+<span>Si si avete capito bene, quelli che hanno disegnato l’api di Wpf :-S</span><br>  <span>Provate a fare una Window ridimensionabile con il mouse (con il ResizeGrip per intenderci) ma ne massimizzabile ne minimizzabile… con Windows Forms era una banalità, con Wpf non si può :-o</span><br>  <span><strong>WindowControlBoxBehavior</strong></span><br>  <span>la soluzione, pezza secondo me, è questa:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">WindowControlBoxBehavior </span>: <span style="color: #2b91af">Behavior</span><<span style="color: #2b91af">Window</span>>
+{<span style="color: green">
+    </span><span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>AllowMaximize
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+<span style="color: green">
+    </span><span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>AllowMinimize
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+
+    <span style="color: #2b91af">RoutedEventHandler </span>h;
+
+    <span style="color: blue">public </span>WindowControlBoxBehavior()
+    {
+        h = ( s, e ) =>
+        {
+            <span style="color: blue">var </span>isDesign = <span style="color: #2b91af">DesignTimeHelper</span>.GetIsInDesignMode();
+            <span style="color: blue">var </span>hWnd = <span style="color: blue">new </span><span style="color: #2b91af">WindowInteropHelper</span>( <span style="color: blue">this</span>.AssociatedObject ).Handle;
+
+            <span style="color: blue">if</span>( !isDesign && hWnd != <span style="color: #2b91af">IntPtr</span>.Zero && ( !<span style="color: blue">this</span>.AllowMaximize || !<span style="color: blue">this</span>.AllowMinimize ) )
+            {
+                <span style="color: blue">var </span>windowLong = <span style="color: #2b91af">NativeMethods</span>.GetWindowLongPtr( hWnd, <span style="color: #2b91af">Constants</span>.GWL_STYLE );
+
+                <span style="color: blue">if</span>( !<span style="color: blue">this</span>.AllowMaximize )
+                {
+                    windowLong = windowLong & ~<span style="color: #2b91af">Constants</span>.WS_MAXIMIZEBOX;
+                }
+
+                <span style="color: blue">if</span>( !<span style="color: blue">this</span>.AllowMinimize )
+                {
+                    windowLong = windowLong & ~<span style="color: #2b91af">Constants</span>.WS_MINIMIZEBOX;
+                }
+
+                <span style="color: #2b91af">NativeMethods</span>.SetWindowLongPtr( hWnd, <span style="color: #2b91af">Constants</span>.GWL_STYLE, windowLong );
+            }
+        };
+    }
+
+    <span style="color: blue">protected override void </span>OnAttached()
+    {
+        <span style="color: blue">base</span>.OnAttached();
+        <span style="color: blue">this</span>.AssociatedObject.Loaded += h;
+    }
+
+    <span style="color: blue">protected override void </span>OnDetaching()
+    {
+        <span style="color: blue">this</span>.AssociatedObject.Loaded -= h;
+        <span style="color: blue">base</span>.OnDetaching();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>un po’ di sano P/Invoke utilizzabile via xaml così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+    <</span><span style="color: #a31515">bhv</span><span style="color: blue">:</span><span style="color: #a31515">WindowControlBoxBehavior </span><span style="color: red">AllowMaximize</span><span style="color: blue">="False" </span><span style="color: red">AllowMinimize</span><span style="color: blue">="False" />
+</</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>producendo il risultato desiderato:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-oeBZgaUkWS4/TzJygnh-hmI/AAAAAAAABIw/XdQAXZogfws/298c0b1d-54bb-43a0-86c9-ea6a7387181b.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-uzE-tcrVszQ/TzJygJjRygI/AAAAAAAABIo/QPQwneXK9pM/9b70f997-30b0-4669-9668-f39d75157bf9.png" width="244" height="106"></a> <a href="https://lh3.googleusercontent.com/-7p8qv_YOcIY/TzJyiFVsGlI/AAAAAAAABI8/F6OiqAPsg20/e735d941-97d3-4808-9856-8a92a446928c.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-ja_aUEvJNu0/TzJyhmzYJ8I/AAAAAAAABI0/W2p7GlhQrvw/ecf1d948-e43c-4a2a-9fe9-d487114da266.png" width="139" height="106"></a></span><br>
+
+<span>dove i bottoni per massimizzare e minimizzare non ci sono ma la finestra resta comunque ridimensionabile.</span><br>
+
+<span>.m</span><br>
+
+
+
+
+

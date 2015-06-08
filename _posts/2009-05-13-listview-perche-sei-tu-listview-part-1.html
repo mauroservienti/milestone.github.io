@@ -1,0 +1,135 @@
+---
+layout: post
+title: ListView perchè sei tu, ListView… (part 1)
+date: '2009-05-13T14:47:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+modified_time: '2012-08-04T19:59:32.964+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1108003307958566055
+blogger_orig_url: http://milestone.topics.it/2009/05/listview-perche-sei-tu-listview-part-1.html
+---
+
+<span>La ListView di WPF è semplicemente la manna, unita al motore di templating, che ha potenzialità infinite, nel giro di pochissimo tempo vi fa dimenticare che Microsoft si è “<em>dimenticata</em>” di mettere una griglia tra i controlli builtin; e non ditemi che esite quella del <a href="http://www.codeplex.com/wpf/Release/ProjectReleases.aspx" target="_blank">WPF Toolkit</a> perchè siamo lontani anni luce da qualcosa che rasenti la decenza… lasciamo perdere poi i controlli di terze parti, io ho provato quello di <a href="http://xceed.com/Grid_WPF_Intro.html" target="_blank">Xceed</a>, carino, stiloso, ma un chiodo spaventoso… fa pure rima :-D</span><br>  <span>Ma torniamo a noi, abbiamo la nostra bella ListView e abbiamo anche deciso, che causa <a href="http://blogs.ugidotnet.org/Corrado/Default.aspx" target="_blank">cattive</a> <a href="http://groups.google.com/group/wpf-disciples/" target="_blank">frequentazioni</a> ;-), non possiamo vivere senza Model-View-ViewModel… la simpaticona ci frega in curva perchè mancano alcune cosette non da poco, quelle che ho, a mio malgrado, trovato sino ad ora sono:</span><br>  <ul>   <li>L’assenza di un ItemDoubleClickCommand per poter agganciare un ICommand all’atto del doppio click su un elemento della lista; </li>    <li>L’impossibilità di mettere in binding la collection SelectedItems (al plurale) e gestire automaticamente una lista che abbia il supporto per la selezione multipla; </li> </ul>  <span>Ad entrambi i problemi evidenziati ci sono degli workaround:</span><br>  <ol>   <li>Utilizzare gli eventi della ListView e fare da “codice” nella View… aaarghhh… addio M-V-VM ;-) </li>    <li>Dato che usiamo M-V-VM introdurre, nella collection che mettiamo in binding con la ListView, il concetto si “IsSelected”, che poi con un bel DataTemplate visualizziamo come CheckBox, consentendo all’utente di selezionare più elementi… funzionare funziona e lo uso pure, ma se l’utente è abituato alla selezione classica di Windows (quella con il CTRL per intenderci), e di tutto il software dalla notte dei tempi, direi che non ci siamo; </li> </ol>  <span><strong>AttachedProperties rulez!</strong></span><br>  <span>Il nostro primo (in realtà è il secondo punto della lista di cui sopra…) obiettivo è quindi poter scrivere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">ListViewManager.SelectedItems</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedItems}" ... /</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>Sfruttando le <a href="http://msdn.microsoft.com/en-us/library/ms749011.aspx" target="_blank">attached properties</a> è veramente un giochetto:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>SelectedItemsProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                              <span style="color: #a31515">"SelectedItems"</span>,
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">IList </span>),
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">ListViewManager </span>),
+                              <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: blue">null</span>, OnSelectedItemsChanged ) );
+
+
+<span style="color: blue">public static </span><span style="color: #2b91af">IList </span>GetSelectedItems( <span style="color: #2b91af">ListView </span>owner )
+{
+    <span style="color: blue">return </span>( <span style="color: #2b91af">IList </span>)owner.GetValue( SelectedItemsProperty );
+}
+
+<span style="color: blue">public static void </span>SetSelectedItems( <span style="color: #2b91af">ListView </span>owner, <span style="color: #2b91af">IList </span>value )
+{
+    owner.SetValue( SelectedItemsProperty, value );
+}</pre>
+
+  <pre class="code"><span style="color: blue">private static void </span>OnSelectedItemsChanged( <span style="color: #2b91af">DependencyObject </span>d, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{<br>
+<br>}</pre>
+</blockquote>
+
+<span>La prima cosa che facciamo, in una classe statica ListViewManager, è registrare una nuova attached property, già questo ci permette di compilare lo snippet xaml che abbiamo visto prima (ricordatevi di dichiarare il namespace xml), a questo punto non ci resta che gestire il cambio di selezione della ListView. Abbiamo però un inghippo: da un lato abbiamo <em>n</em> ListView a cui il nostro, <u>unico</u>, behavior statico può essere agganciato; abbiamo quindi bisogno di un sistema, una sorta di dictionary, per tenere traccia di cosa stiamo facendo e con chi: la soluzione più semplice è sfruttare lo stesso DependencyObject a cui la attached property è collegata aggiungendo un’altra attached property, privata:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static readonly </span><span style="color: #2b91af">DependencyProperty </span>selectionHandlerProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                      <span style="color: #a31515">"selectionHandler"</span>,
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">SelectionHandler </span>),
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">ListViewManager </span>),
+                      <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: blue">null </span>) );</pre>
+</blockquote>
+
+<span>La classe SelecionHandler è colei che si occupa di sincronizzare la propretà ListView.SelectedItems con la nostra collection nel ViewModel:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">private sealed class </span><span style="color: #2b91af">SelectionHandler
+</span>{
+    <span style="color: #2b91af">ListView </span>owner;
+    <span style="color: #2b91af">IList </span>selectedItems;
+
+    <span style="color: #2b91af">SelectionChangedEventHandler </span>h;
+
+    <span style="color: blue">internal </span>SelectionHandler()
+    {
+        h = ( s, e ) =>
+        {
+            e.RemovedItems.Enumerate( obj =>
+            {
+                <span style="color: blue">if</span>( <span style="color: blue">this</span>.selectedItems.Contains( obj ) )
+                {
+                    <span style="color: blue">this</span>.selectedItems.Remove( obj );
+                }
+            } );
+
+            e.AddedItems.Enumerate( obj => 
+            {
+                <span style="color: blue">this</span>.selectedItems.Add( obj );
+            } );
+        };
+    }<br>
+    <span style="color: blue">public void </span>SartSync( <span style="color: #2b91af">ListView </span>owner, <span style="color: #2b91af">IList </span>selectedItems )
+    {
+        <span style="color: blue">this</span>.owner = owner;
+        <span style="color: blue">this</span>.selectedItems = selectedItems;
+
+        <span style="color: blue">this</span>.owner.SelectionChanged += h;
+    }
+
+    <span style="color: blue">public void </span>StopSync()
+    {
+        <span style="color: blue">this</span>.owner.SelectionChanged -= h;
+
+        <span style="color: blue">this</span>.owner = <span style="color: blue">null</span>;
+        <span style="color: blue">this</span>.selectedItems = <span style="color: blue">null</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>Nulla di trascendentale, una semplice classe che aggancia l’evento SelectionChanged della ListView e sincronizza l’attuale selezione con la lista con cui siamo in binding. A questo punto ci resta l’ultimo passaggio:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>OnSelectedItemsChanged( <span style="color: #2b91af">DependencyObject </span>d, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{
+    <span style="color: blue">if</span>( e.OldValue != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>handler = d.GetValue( selectionHandlerProperty ) <span style="color: blue">as </span><span style="color: #2b91af">SelectionHandler</span>;
+        <span style="color: blue">if</span>( handler != <span style="color: blue">null </span>)
+        {
+            handler.StopSync();
+            d.ClearValue( selectionHandlerProperty );
+        }
+    }
+
+    <span style="color: blue">if</span>( e.NewValue != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>handler = <span style="color: blue">new </span><span style="color: #2b91af">SelectionHandler</span>();
+        handler.SartSync( d.CastTo<<span style="color: #2b91af">ListView</span>>(), e.NewValue.CastTo<<span style="color: #2b91af">IList</span>>() );
+
+        d.SetValue( selectionHandlerProperty, handler );
+    }
+}</pre>
+</blockquote>
+
+<span>Quando il valore della nostra attached property SelectedItems cambia procediamo con:</span><br>
+
+<ul>
+  <li>verificare se avevamo un SelectionHandler agganciato, e nel caso lo rimuoviamo; </li>
+
+  <li>creare un nuovo SelectionHandler, agganciarlo e “avviarlo”; </li>
+</ul>
+
+<span>Lascio per una seconda puntata l’implemtazione dell’ItemDoubleClickCommand.</span><br>
+
+<span>.m</span><br>
+

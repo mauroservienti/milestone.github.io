@@ -1,0 +1,64 @@
+---
+layout: post
+title: 'Castle Windsor - component override: the problem'
+date: '2012-03-14T11:50:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Architecture
+- Inversion of Control
+modified_time: '2012-03-14T11:50:00.064+01:00'
+thumbnail: http://lh3.ggpht.com/-H4KWzU6-iGg/T13VEJHJ-EI/AAAAAAAAB9U/pbpb53nRWaw/s72-c/wlEmoticon-smile2.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5613575282065373661
+blogger_orig_url: http://milestone.topics.it/2012/03/castle-windsor-component-override.html
+---
+
+<p>I am a big fun of the Inversion of Control pattern and of the Dependency Injection one, I love them, I have to admit that I use their impersonation (an Inversion of Control toolkit) even for talk samples…I am really addicted <img class="wlEmoticon wlEmoticon-smile" style="border-top-style: none; border-bottom-style: none; border-right-style: none; border-left-style: none" alt="Smile" src="http://lh3.ggpht.com/-H4KWzU6-iGg/T13VEJHJ-EI/AAAAAAAAB9U/pbpb53nRWaw/wlEmoticon-smile2.png?imgmax=800"></p> <p>The power of the “IoC approach” is much more increased when we deal with “<em>products</em>” (emphasis on the word product vs. project) especially when we deal with product extensibility or much more when we deal with a product that can be customized replacing some default/built-in behaviors to accomplish a specific customer need.</p> <p><strong>A scenario, a common scenario</strong></p> <p>We sell a product and as every product out there we offers to the end user a bunch of features. We can imagine (for simplicity) that every single feature is represented by a component that the application depends on using the classical dependency injection pattern. Let’s think about a real product.</p> <p><strong>Informer</strong></p> <p>Recently I’ve worked on a really interesting product (codenamed: <em>Informer</em>) that basically is a mail server.</p> <blockquote> <p><em>Side note</em>: if you want to deeply understand the underlying architecture and all the choices done come to the <a href="http://guisa1.eventbrite.com/" target="_blank">first Guisa event</a>.</p></blockquote> <p>Informer has a really wide extensible architecture (the driver for that at the Guisa event <img class="wlEmoticon wlEmoticon-winkingsmile" style="border-top-style: none; border-bottom-style: none; border-right-style: none; border-left-style: none" alt="Winking smile" src="http://lh4.ggpht.com/-O_vNsLOQHVU/T13VEizUEuI/AAAAAAAAB9Y/bMkijhaioyY/wlEmoticon-winkingsmile2.png?imgmax=800">) and one of the most important extension point is the security engine that guarantees that every request to the server is authenticated and authorized.</p> <p>The following is an excerpt of the code where you can see how the security service is used:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">MailboxService</font></span> : <span style="color: "><font color="#2b91af">IMailboxService</font></span>
+{
+	<span style="color: "><font color="#0000ff">readonly</font></span>&nbsp;<span style="color: "><font color="#2b91af">ISecurityService</font></span> securityService;
+		
+	<span style="color: "><font color="#0000ff">public</font></span> MailboxService( <span style="color: "><font color="#2b91af">ISecurityService</font></span> securityService <span style="color: "><font color="#008000">/* other dependencies */</font></span> )
+	{
+		<span style="color: "><font color="#0000ff">this</font></span>.securityService = securityService;
+	}
+ 
+	[<span style="color: "><font color="#2b91af">PrincipalPermission</font></span>( <span style="color: "><font color="#2b91af">SecurityAction</font></span>.Demand, Authenticated = <span style="color: "><font color="#0000ff">true</font></span>, Role = <span style="color: "><font color="#2b91af">InformerBuiltinRoles</font></span>.Users )]
+	<span style="color: "><font color="#0000ff">public</font></span> dto.<span style="color: "><font color="#2b91af">PagedResults</font></span>&lt;dto.Conversations.<span style="color: "><font color="#2b91af">Conversation</font></span>&gt; GetConversations( dto.<span style="color: "><font color="#2b91af">ConversationsRequest</font></span> conversationsRequest )
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> mailboxUniqueIdentifier = <span style="color: "><font color="#0000ff">this</font></span>.parser.GetMailboxIdentifier( conversationsRequest.Mailbox );
+		<span style="color: "><font color="#0000ff">this</font></span>.securityService.EnsureIsAuthorized( <span style="color: "><font color="#2b91af">SecurityOperations</font></span>.<span style="color: "><font color="#2b91af">Mailbox</font></span>.Read, mailboxUniqueIdentifier );</font></font></pre><pre style="font-family: ; background: white; color: "><font face="Consolas">                <span style="color: "><font color="#008000"><font style="font-size: 11.3pt">/* other parts of the system */</font></font></span><font style="font-size: 11.3pt"> </font></font><font style="font-size: 11.3pt">
+<font face="Consolas">	}</font></font></pre><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">}</font></font></pre></blockquote>
+<p>Since we are using, at the WCF level, the membership API we can leverage all the benefits of the CAS declarative security (the principal permission attribute) and instead of using the CAS imperative security we introduced a much more fine grained security engine based on policies, roles, actions and resources.</p>
+<p><strong>The problem</strong></p>
+<p>Informer comes with a default built-in implementation of the ISecurityService, implementation based on <a href="http://www.ravendb.net" target="_blank">RavenDB</a> Authorization Bundle and custom Membership and Role provider (the whole product is based on RavenDB and <a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a>); one of the customers has a requirement to integrate the whole security infrastructure with its own on premise Active Directory.</p>
+<blockquote>
+<p><em>Nitpickers corner 1</em>: why not using by default the built-in CAS security? simple, too simple…the role based security does not cover the product requirements.</p>
+<p><em>Nitpickers corner 2</em>: why not using by default a claim based approach? good point, something new to learn and not enough time compared to the date of the first release. Now we have a modular security engine that let us introduce WIF and oAuth without any problem.</p></blockquote>
+<p><strong>Now…</strong></p>
+<p>If you use an IoC container (in our case Castle Windsor) and if you use an xml based configuration it is really easy to achieve the goal, just change the configuration.</p>
+<p><strong>But…</strong></p>
+<p>In a huge product, managing the configuration of hundreds of components (mostly using .net generics) using strings and a xml configuration is a real pain, and is a real pain having a mixed configuration system too.</p>
+<p>As you may know in my campaign to sustainability I love to find frictionless solutions, in the last few years I realized that the best compromise is to use MEF (Microsoft Extensibility Framework) to glue together the container configuration just writing 3 lines of&nbsp; code, summarizing what happens is:</p>
+<ul>
+<li>at application bootstrap an instance of MEF is created; 
+<li>the application bootstrapper requests to import a set of IWindsorInstaller (that are the configuration unit of work of Castle Windsor); 
+<li>MEF resolves all the found installers and the container can be configured;</li></ul>
+<p>In order to participate in this play a module/assembly just need to expose to MEF (using an attribute, nothing more) all the installers that the module wants be installed.</p>
+<p>Event if this approach drastically simplifies the whole configuration and setup process we still need to face a couple of side effects:</p>
+<ul>
+<li>we have no control over the MEF composition process so we basically have no control over the order in which the various installers are loaded; 
+<li>the previous effect can be ignored until the requirement is to override a component behavior…</li></ul>
+<p><strong>Overriding: the real problem.</strong></p>
+<p>When building something extensible one of the key point is to provide extensibility entry points, quite obvious isn’t it? but you do not need to provide any extensions out of the box.</p>
+<p>When building something that must provide a replaceable behavior a default implementation of that behavior must be provided as built-in (remember we do not want any configuration, we want a natural and quite transparent conventions based behavior).</p>
+<p>Now, typically in order to achieve the goal we introduce an interface to depend on&nbsp; (the ISecurityService interface) and somewhere we provide a default implementation of that interface (say DefaultSecurityService), we cannot simply remove the assembly that contains the DefaultSecurityService replacing it with a new implementation because doing so we will end up removing all the Default* implementations provided by the system.</p>
+<p><strong>So…?</strong></p>
+<p>Here is the solution, clean and neat:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">container.Register
+(
+	<span style="color: "><font color="#2b91af">Component</font></span>.For&lt;<span style="color: "><font color="#2b91af">ISecurityService</font></span>&gt;()
+		.ImplementedBy&lt;<span style="color: "><font color="#2b91af">DefaultSecurityService</font></span>&gt;()
+		<font style="background-color: #ffff00">.Overridable()
+</font>);</font></font></pre></blockquote>
+<p>This is the registration made with the container in order to register a component that can be override by someone else. In order to override the component registration the only requirement is to register a new component that implements the same contract.</p>
+<p>In the next post we’ll see how it works under the hood.</p>
+<p>.m</p>  

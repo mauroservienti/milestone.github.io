@@ -1,0 +1,35 @@
+---
+layout: post
+title: IBindingListView…
+date: '2009-05-14T08:26:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T12:01:11.515+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6248392907003970906
+blogger_orig_url: http://milestone.topics.it/2009/05/ibindinglistview.html
+---
+
+<span>Questa cosa è una figata!, <a href="http://www.codeplex.com/RafCollection" target="_blank">Raff ha la sua</a> e io mi sono fatto, come <a href="http://blogs.ugidotnet.org/Raffaele" target="_blank">Raff</a> da tempo immemore (dal fx 1.1, poi con rimaneggiamenti vari nel tempo per adattarla alle nuove feature), la mia implementazione che a breve <em>upgraderò</em> a <a href="http://msdn.microsoft.com/en-us/library/system.collections.specialized.inotifycollectionchanged.aspx" target="_blank">INotifyCollectionChanged</a> e <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icollectionview.aspx" target="_blank">ICollectionView</a> per stare al passo con i tempi.</span><br>  <span>Ma torniamo alle cose importanti, uno dei dettami di M-V-VM è, o meglio sarebbe, quello di non esporre mai direttamente il Model alla View; ad esempio esporre una IList<Address> direttamente dal VM non è proprio il massimo, funziona ma ha qualche magagna fastidiosa. Sempre meglio avere uno strato in mezzo in cui poter iniettare logica che è pertinenete solo ed esclusivamente al layer di presentazione.</span><br>  <span>Complice la mia nuova passione sfrenata per WPF ho dotato il mio framework di una nuova funzionalità:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>source = <span style="color: blue">new </span><span style="color: #2b91af">IAddress</span>[ 10 ]{ ... };
+<span style="color: blue">var </span>items = <span style="color: blue">new </span><span style="color: #2b91af">EntityCollection</span><<span style="color: #2b91af">IAddress</span>>( source ).DefaultView;
+items.AddPropertyMapping( <span style="color: #a31515">"FullAddress"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>), obj =>
+{
+    <span style="color: blue">return </span><span style="color: #2b91af">String</span>.Format( <span style="color: #a31515">"{0}, {1} - {2} {3} ({4})"</span>, obj.StreetAddress, obj.StreetNumber, obj.ZipCode, obj.City, obj.Province );
+} );</pre>
+</blockquote>
+
+<span>è adesso infatti possibile aggiungere delle propretà calcolate direttamente a runtime e queste verranno viste da colui con cui siamo in binding come se fossero effettivamente esposte e presenti sulla collection, togo :-D</span><br>
+
+<span>Per i curiosi, funziona anche in scrittura :-D e ci sono un po’ altre possibilità, basta metterci pure il setter:</span><br>
+
+<blockquote>
+  <pre class="code">items.AddPropertyMapping( <span style="color: #a31515">"FullAddress"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>), obj =>
+{
+    <span style="color: blue">return </span>bla… bal…
+}, ( obj, value ) =>
+{
+    <span style="color: green">//Setter
+</span>} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m</span><br>

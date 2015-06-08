@@ -1,0 +1,272 @@
+---
+layout: post
+title: Il dado è tratto… :-)
+date: '2010-02-25T22:44:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+modified_time: '2012-02-13T08:49:07.533+01:00'
+thumbnail: https://lh4.googleusercontent.com/-YM-hd85ywy0/TzjAcIhrR7I/AAAAAAAABK4/cyO00Z4QR3o/s72-c/d6a2b72a-05fa-4d25-8dcb-13f758d885c8.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7388063455221065451
+blogger_orig_url: http://milestone.topics.it/2010/02/il-dado-e-tratto.html
+---
+
+<span>
+	<a href="https://lh5.googleusercontent.com/-hxj70QTJjPI/TzjAcghW6hI/AAAAAAAABK8/RJC7YZHAjHs/69f2b863-3cdd-4a09-a6c8-45f19fc27732.png" rel="shadowbox"><img align="left" alt="Radical" border="0" height="131" src="https://lh4.googleusercontent.com/-YM-hd85ywy0/TzjAcIhrR7I/AAAAAAAABK4/cyO00Z4QR3o/d6a2b72a-05fa-4d25-8dcb-13f758d885c8.png" style="border-right-width: 0px; margin: 0px 15px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Radical" width="74"></a>Da oggi una prima parte, il che presume che come minimo che ne sarà una seconda, del mio lavoro di questi ultimi anni diventa open source: <a href="http://radical.codeplex.com/">http://radical.codeplex.com/</a>, con licenza “<a href="http://radical.codeplex.com/license" target="_blank">Microsoft Public License (Ms-PL)</a>”</span><br>
+<span>
+	<em>Radical</em> ha la velleità, e pure un po’ la pretesa :-), di essere un framework di supporto per lo sviluppo di applicazioni desktop, quindi Windows Forms e Wpf, e sta pian piano strizzando l’occhiolino anche a Silverlight, che sta entrando di prepotenza nella sfera delle mie passioni.</span><br>
+<span>
+	E’ da giorni che sto scrivendo questo post… che fatica :-)</span><br>
+<span>
+	<strong>Che cosa offre <em>Radical</em>?</strong></span><br>
+<span>
+	Una quantità industriale di cose :-) cerchèrò di riassumerle a mo di indice qui:</span><br>
+<span>
+	Assembly: <strong>Radical</strong>; <em>In ordine strettamente alfabetico</em>…</span><br>
+<ul>
+	<li>
+		<em>Change Tracking Service</em>: no <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/510977580112069157" target="_blank">ho già parlato</a> ma da quel post molto codice è passato sotto la tastiera :-) sta di fatto che c’è un’implementazione completa funzionante, e <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8648847395517022010" target="_blank">pure in produzone</a>, di un sistema di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/4564485249905947350" target="_blank">ChangeTracking</a> per le vostre entità, o come preferisco io per i <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5001943265322451544" target="_blank">ViewModel</a> che <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/4595928365535740230" target="_blank">wrappano le entity</a>;</li>
+	<li>
+		<em>Enumerations</em>: attributi, anche con supporto per la localizzazione, per poter fare questo:</li>
+</ul>
+<blockquote>
+	<pre class="code"><span style="color: blue">enum </span><span style="color: #2b91af">MyEnum
+</span>{
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"sample caption"</span>, <span style="color: #a31515">"some description..."</span>, 1 )]
+    ValueXYZ,
+
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"caption"</span>, <span style="color: #a31515">"description of what?"</span>, 0 )]
+    MyOtherValue,
+}</pre></blockquote>
+<blockquote>
+	<span>
+		e ove necessario estrarre questo:</span><br>
+	<pre class="code"><span style="color: blue">var </span>bindingData = <span style="color: #2b91af">EnumHelper</span>.ExtractBindingData<<span style="color: #2b91af">MyEnum</span>>();
+<span style="color: blue">foreach</span>( <span style="color: blue">var </span>bd <span style="color: blue">in </span>bindingData )
+{
+    <span style="color: #2b91af">MyEnum </span>value = bd.Value;
+    <span style="color: #2b91af">String </span>caption = bd.Caption;
+}</pre></blockquote>
+<blockquote>
+	<span>
+		Se non <em>ricordo male c’è anche un converter</em> per Wpf che data una <em>enum</em> fa tutto il giochetto e la “binda” con un ItemsControl come ad esempio un ComboBox.</span><br>
+</blockquote>
+<ul>
+	<li>
+		<em>Extensions</em>: una quantità industriale di “entension method” per gli usi più disparati e per tutti i gusti, alcuni probabilmente spariranno perchè sono veramente inutili :-);</li>
+	<li>
+		<em>Helpers</em>: una discreta qantità di classi helper per semplificare la vita dello sviluppatore: dall’uso della command line alla creazione <em>on the fly</em> di fast delegate via lambda expression;</li>
+	<li>
+		<em>Messaging</em>: l’implementazione di un motore di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1281487989644186604" target="_blank">message brokering</a>;</li>
+	<li>
+		<em>Model</em>:
+		<ul>
+			<li>
+				<em>Entity, EntityCollection<t>, MementoEntity, MementoEntityCollection<t></t></t></em>: un set di classi base da utilizzarsi ad esempio, quelle Memento*, per avere gratis il supporto al motore di ChangeTracking scrivendo pochissimo, o addirttura niente nel caso delle collection, codice; qui ci sarebbe probabilente da parlare a lungo :-)</li>
+			<li>
+				<em>EntityView</em>: un’implementazione completa, e in produzione da tempo immemore, di IBindingListView e non solo, perchè ad esempio offre pieno supporto per le <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8877682697845647724" target="_blank">colonne calcolate</a>, IEntityView<t><t><t>, e la sua implementazione di base EntityView<t>, fa una montagna di cose senza scrivere una virgola di codice, e offre inoltre la possibilità, ereditando, di customizzare il compotamento fin nei minimi dettagli, anche qui potremmo parlarne per giorni :-). Non ho idea se e come possa funzionare con Silverlight, studio :-); </t></t></t></t></li>
+			<li>
+				Un’implementazione di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/4595928365535740230" target="_blank">Wrapper<t></t></a> che se funzionasse anche in <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/270563796115156224" target="_blank">scenari complessi</a> sarebbe la manna… ma a quanto pare il gioco non vale la candela;</li>
+		</ul>
+	</li>
+	<li>
+		<em>Observers</em>: un set di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1069924125365624508" target="_blank">IMonitor<t></t></a> per semplificare la gestione di scenari di interazione complessi e potenzialmente contorti;</li>
+	<li>
+		<em>Threading/AsyncWorker</em>: un’implementazione <a href="/search/label/Fluent+Interfaces" target="_blank">fluent</a> di un <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/697151370555572637" target="_blank">wrapper</a> per semplificare la gestione di scenari asincroni: c’è sia la versione vecchia che quella nuova, funzionalmente sono identitche ergo non ha senso usare quella vecchia;</li>
+	<li>
+		<em>Validation</em>: un piccolo, semplice e molto limitato framework per la validazione di entity, base ad esempio di un wapper per VAB di Enterprise Library;</li>
+	<li>
+		<em>Validation/Ensure</em>: un semplice kit per fare validazione dei parametri in maniera <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/697151370555572637" target="_blank">fluent e snella</a>;</li>
+</ul>
+<span>
+	<t><t><t><t><t><t>
+	<p>
+		Assembly: <strong>Radical.Windows</strong>;</p>
+	<ul>
+		<li>
+			Un po’ di facility per wpf, facility che pian piano migreranno anche verso Silverlight ove fattibili e supportabili:
+			<ul>
+				<li>
+					<em>Markup Extensions</em>: un po’ di markup extensions per semplificare la vita durante le operazioni di binding;</li>
+				<li>
+					<em>Input</em>: l’ennesima implementazione di un DelegateComand/RelayCommand;</li>
+				<li>
+					<em>Effects</em>: un GrayScaleEffect (basato su DirectX) il cui scopo è quello di convertire <em>on the fly</em> le immagini in scala di grigi per, ad esempio, simulare l’effetto “disabilitato”;</li>
+				<li>
+					<em>Converters</em>: un po’ di converter per gli usi più disparati;</li>
+				<li>
+					<em>Behaviors</em>: un bel po’ di behavior/attached property per:
+					<ul>
+						<li>
+							<em>BusyStatusManager</em>: gestire lo <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1539149096464980549" target="_blank">stato di busy/non busy</a> di una porzione della UI durante l’esecuzione di operazioni asincrone;</li>
+						<li>
+							<em>CueBannerService</em>: aggiunge il <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/7118738954459212198" target="_blank">supporto per i CueBanner</a> alle TextBox (e non solo);</li>
+						<li>
+							<em>EmptyPlaceHolderService</em>: aggiunge la possibilità di visualizzare un “testo/content di cortesia” nel momento in cui un generico ItemsControl non contiene nessun elemento;</li>
+						<li>
+							<em>ListView Behaviors</em>:
+							<ul>
+								<li>
+									<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2130826350794334591" target="_blank">gestione del doppio click</a> su un item della list view e binding con un command;</li>
+								<li>
+									gestione del “key down”, e binding con un command, per ad esempio gestire il tasto “Canc” quando avete uno o più item selezionati;</li>
+								<li>
+									un <em>GridViewColumnManager</em> per gestire, sempre via command sul ViewModel, il sort delle colone, questo in conbutta con <em>IEntityView<t></t></em> spacca alla grande; offre anche facility per gestire il dimensionamento (Stretch) dei column header;</li>
+								<li>
+									La <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1108003307958566055" target="_blank">possibilità di mettere in binding</a> (<u>bidirezionale</u>) i SelectedItems;</li>
+							</ul>
+						</li>
+						<li>
+							<em>TextBox behaviors</em>: un behavior per disabilitare il simpatico “undo manager” che nella 3.5 è un <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/7672574535407411798" target="_blank">filino bacato</a> :-), e un behavior per poter associare un command alla pressione di un tasto, ad esempio per invocare qualcosa alla pressione di “Enter” (è il default);</li>
+						<li>
+							<em>WindowControlBox</em>: un behavior per <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/312756305616436846" target="_blank">disabilitare via “API” i bottoncini</a> maximize e minimize di una Window, funziona alla perfezione su Vista/7 (sia x86 che x64, almeno dai miei test) fa un po’ le bizze su XP, nel senso che non <em>sbomba</em> ma non sempre fa quello che deve… misteri del…</li>
+						<li>
+							<em>Drag & Drop Behavior</em>: un <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3537735522075721198" target="_blank">behavior per poter draggare</a> un po’ quel che si <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1229321874944514788" target="_blank">vuole verso quel che si vuole</a>… gestendo il tutto da ViewModel, è ancora embrionale e focalizzato sui contenuti, quindi sui dati, e non sugli elementi (UIElement) per i quali <a href="http://msdn.microsoft.com/en-us/library/ms771292.aspx" target="_blank">Thumb</a> rulez :-);</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<t>
+	<p>
+		Assembly: <strong>Radical.Design</strong>;</p>
+	<ul>
+		<li>
+			Argomento complesso per essere trattato qui, ma ne ho scritto parecchio :-), un po’ di storia a riguardo:
+			<ul>
+				<li>
+					<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8405716124128763567" title="http://milestone.topics.it/blog/post/wpf-blend-3.0-sampledatasource-molto-bello">http://milestone.topics.it/blog/post/wpf-blend-3.0-sampledatasource-molto-bello</a></li>
+				<li>
+					<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5614549171943176097" title="http://milestone.topics.it/blog/post/in-medio-stat-virtus-blend-3-e-i-design-time-data">http://milestone.topics.it/blog/post/in-medio-stat-virtus-blend-3-e-i-design-time-data</a></li>
+				<li>
+					<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3983269272897217471" title="http://milestone.topics.it/blog/post/design-time-data-reloaded">http://milestone.topics.it/blog/post/design-time-data-reloaded</a></li>
+			</ul>
+		</li>
+		<li>
+			L’implementazione attuale è quella dell’ultimo post, non ho idea se la stessa cosa si possa fare con Silverlight, devo provare;</li>
+	</ul>
+	<p>
+		Assembly: <strong>Radical.VisualStudio.UnitTesting</strong>;</p>
+	<ul>
+		<li>
+			Un set di “extension method” da usare negli unit test, lo so ci sono una pletora di “robi” la fuori ma nell’ottica “Luke, keep it simple” a me basta e avanza poter scrivere:</li>
+	</ul>
+	<blockquote>
+		<pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>changeArgs_generic_ctor_normal_should_correctly_set_values()
+{
+    <span style="color: blue">var </span>entity = <span style="color: blue">new </span><span style="color: #2b91af">Object</span>();
+    <span style="color: blue">var </span>cachedValue = <span style="color: blue">new </span><span style="color: #2b91af">GenericParameterHelper</span>();
+    <span style="color: blue">var </span>iChange = <span style="color: #2b91af">MockRepository</span>.GenerateStub<<span style="color: #2b91af">IChange</span>>();
+
+    <span style="color: blue">var </span>target = <span style="color: blue">this</span>.CreateMock<<span style="color: #2b91af">GenericParameterHelper</span>>( entity, cachedValue, iChange );
+
+    target.Entity.<em><strong><u>ShouldBeEqualTo</u></strong></em>( entity );
+    target.CachedValue.<strong><em><u>ShouldBeEqualTo</u></em></strong>( cachedValue );
+    target.Source.<strong><u><em>ShouldBeEqualTo</em></u></strong>( iChange );
+}</pre></blockquote>
+	<blockquote>
+		<p>
+			Ho preso un test a caso in cui uso uno degli extension method: <u>ShouldBeEqualTo<t>( T expected )</t></u>, in questo caso. Nulla di trascendentale ma semplicemente comodo :-)</p>
+	</blockquote>
+	<t>
+	<p>
+		Assembly: <strong>Radical.Model.NHibernate</strong>;</p>
+	<ul>
+		<li>
+			Ho paralto <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1085259720510327107" target="_blank">spesso di quanto mi piace lo specification pattern</a>: in Radical.dll (namespace Topics.Radical.ComponentModel.QueryModel) trovate una gerarchia di “interface” che implementano lo specification pattern, in questo assembly c’è un’implementazione completa e funzionante (e pure in produzione) di quel set di contratti fatta ad hoc per NHibernate;</li>
+	</ul>
+	<p>
+		Assembly: <strong>Radical.Validation.VAB</strong>;</p>
+	<ul>
+		<li>
+			in Radical.dll (namespace Topics.Radical.ComponentModel.Validation) trovate una semplice astrazione del concetto di validazione di un grafo, VAB è una semplicissima, e probabilmente povera, implementazione per il <strong>V</strong>alidation <strong>A</strong>pplication <strong>B</strong>lock di Enterprise Library, funziona e soddisfa i miei requisiti, ergo… :-);</li>
+	</ul>
+	<p>
+		Assembly: <strong>Radical.Extensions.Castle</strong>;</p>
+	<ul>
+		<li>
+			per ora una ed una sola facility per Castle Windsor per automatizzare le “subscription” del message broker in fase di setup del container… quante parlacce :-D… insomma questo: <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5520192008020646780" title="http://milestone.topics.it/blog/post/ui-composition-imessagebroker-castle-windsor-e-le-facility">http://milestone.topics.it/blog/post/ui-composition-imessagebroker-castle-windsor-e-le-facility</a></li>
+	</ul>
+	<p>
+		<em>Ho elencato le cose degne di nota e probabilmente ne ho tralasciate parecchie.</em></p>
+	<p>
+		<em>Note</em>:</p>
+	<ul>
+		<li>
+			Alcune cose meriterebbero un massiccio refactoring sopratutto l’organizzazione dei namespace che negli anni è diventata un po’ troppo cervellotica per i mie gusti :-), lo farò…</li>
+		<li>
+			per compilare i sorgenti è ncessario avere installato il <strong>DircetX 9.0 SDK</strong> e accertarsi di aver definito (lo dovrebbe fare il setup) la variabile d’ambiente “$(DXSDK_DIR)”, il tutto per ora serve solo per il GrayScaleEffect quind se non vi interessa compilare quello nelle pre-build-action del progetto Radical.Windows potete disabilitare la compilazione;</li>
+		<li>
+			Tutte le <strong>library</strong> da cui il framework dipende “dovrebbero” essere nella cartella lib, se mai qualcuno lo usasse e avesse problemi mi faccia un fischio;</li>
+		<li>
+			Ci sono un set di “<strong>post-build-action</strong>” che altro non fanno che copiare l’output della build in una folder “build” al livello della solution, sul source control c’è anche la struttura di folder che le post-build-action si aspettano di trovare, non ho idea di come si comporti codeplex con le folder vuote quindi nel caso la struttura è:
+			<ul>
+				<li>
+					build
+					<ul>
+						<li>
+							Desktop
+							<ul>
+								<li>
+									debug
+									<ul>
+										<li>
+											it-IT</li>
+									</ul>
+								</li>
+								<li>
+									release
+									<ul>
+										<li>
+											it-IT</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+						<li>
+							Silverlight
+							<ul>
+								<li>
+									debug
+									<ul>
+										<li>
+											it-IT</li>
+									</ul>
+								</li>
+								<li>
+									release
+									<ul>
+										<li>
+											it-IT</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+	<blockquote>
+		<p>
+			le pos-build-action sono comunque abbastanza smart da controllare che la destinazione esista prima di eseguire l’azione in questo modo se la struttura di folder non c’è la post-build-action semplicemente non viene eseguita e la compilazione non fallisce per una stupidaggine :-)</p>
+	</blockquote>
+	<ul>
+		<li>
+			<strong>Documentazione</strong>: c’è tanta documentazione xml, non tutta ma tanta, non c’è nessuna <em>conceptual documentation</em>, un lavoro immane che vorrei fare;</li>
+		<li>
+			<strong>Samples</strong>: c’è un progetto con dei <em>sample</em> e vorrei, prima della documentazione concettuale, mettere in pista quello;</li>
+		<li>
+			<strong>Unit Tests</strong>: ce sono parecchi, che coprono una piccola, a mio modo di vedere, parte del framework, alcune cose hanno un Code Coverage quasi del 100% altre dello 0% :-/ purtroppo…, molte cose sono ereditate dai tempi del framework 1.0 e probabilmente potrebbero essere falciate o massicciamente rifattorizzate al fine di essere facilmente testabili;</li>
+		<li>
+			…ma quanto “<em>perdindirindina</em>” è <strong>lento</strong> CodePlex… se poi ci mettiamo “<em>fulminino</em>” Team Explorer diventa un delirio… :-)</li>
+	</ul>
+	<p>
+		.m</p>
+	</t></t></t></t></t></t></t></t></span><br>
+<span>
+	 </span><br>
+<span>
+	 </span><br>

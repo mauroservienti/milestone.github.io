@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'db4o: update'
+date: '2009-06-19T07:30:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:39:29.187+01:00'
+thumbnail: https://lh3.googleusercontent.com/-i7qhkSPksoA/Tym_HeK0XwI/AAAAAAAAAgA/zTXKa0lCnKA/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6015431949552368852
+blogger_orig_url: http://milestone.topics.it/2009/06/db4o-update.html
+---
+
+<span>Qualche giorno fa <a href="http://blogs.ugidotnet.org/topics/archive/2009/06/14/curiosity-killed-the-cat.-ltcit.gt.aspx" target="_blank">ho parlato</a> di <a href="http://www.db4o.com/" target="_blank">db4o</a> dal punto di vista dello sviluppatore, devo dire che nell’insieme ho trovato molto interessante il tutto e sto seguendo il <a href="http://feeds2.feedburner.com/db4o_product_news" target="_blank">feed</a> del team di sviluppo.</span><br>  <span>Ci sono interessanti novità per quel che riguarda il supporto a linq/IQueryable<T> il che non è niente male, inoltre con la versione 7.10, ancora in beta, viene distribuito gratuitamente anche il db4o ObjectManager (una sorta di Enterprise Manager per db4o) la cosa interessante è che questa versione:</span><br>  <ul>   <li>ha funzionato al primo colpo, a differenza del predecessore;</li>    <li>è un add-in che si integra molto bene in Visual Studio;</li> </ul>  <span><a href="https://lh5.googleusercontent.com/-T2HaTWFAJuE/Tym_HvuViWI/AAAAAAAAAgI/dlKKfwXMHRs/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-i7qhkSPksoA/Tym_HeK0XwI/AAAAAAAAAgA/zTXKa0lCnKA/image_thumb.png" width="244" height="161"></a> </span><br>  <span>Inoltre spulciano i vari post ho capito qualcosa in più, nel mio primo post ho parlato delle varie modalità di interrogazione (query) supportate da db4o, definendo la Native Query (NQ) come la modalità nativa, come si evince dalla documentazione allegata, in realtà le cose non sono proprio così:</span><br>  <span>Da quel che posso intuire dai post che ho letto internamente il motore di db4o utilizza SODA e non NQ, il nuovo supporto per IQueryable<T> infatti adesso trasforma quasi tutto l’expression tree in query SODA, facendo solo in rari casi, per gli operatori non supportati, il fallback a NQ che sostanzialmente si traduce in Linq2Objects che è sempre meglio che una exception ;-).</span><br>  <span>.m</span><br>

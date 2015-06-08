@@ -1,0 +1,83 @@
+---
+layout: post
+title: OpenXml delle mie brame…
+date: '2010-02-26T13:39:00.000+01:00'
+author: Mauro Servienti
+tags:
+- OpenXml
+- Software Mason
+modified_time: '2012-02-13T08:49:20.780+01:00'
+thumbnail: https://lh5.googleusercontent.com/-zvpciIN02Jc/TzjAfSCHTYI/AAAAAAAABLI/h4lNqXpZ7mk/s72-c/46e9e429-2b40-413c-bd1b-5946496bfc54.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-912321177473634515
+blogger_orig_url: http://milestone.topics.it/2010/02/openxml-delle-mie-brame.html
+---
+
+<span>OpenXml è una figata pazzesca :-) potete finalmente produrre/manipolare/leggere programmaticamente documenti di Office, e non solo, senza aver bisogno di Office… il che è decisamente positivo soprattutto se pensiamo al delirio che era far funzionare Office ad esempio da un’applicazione web…</span><br>  <span>Per cominciare è necessario <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=c6e744e5-36e9-45f5-8d8c-331df206e0d0&DisplayLang=en" target="_blank">procurarsi</a> l’SDK (al momento della scrittura in versione 2.0 December 2009 CTP) direttamente dal sito Microsoft, una volta installato se non avete mai visto in vita vostra OpenXml e come me siete allergici al manuale delle istruzioni (le specifiche di OpenXml sono qualche migliaio di pagine… e le ho anche lette in parte…) niente paura! L’SDK contiene il tool <em>piu fantasticissimo</em> del mondo, nella directory “tool” dove avete installato l'SDK: OpenXmlSdkTool.exe.</span><br>  <span>Avviate il <em>robo</em> e provate a caricare un documento, nello screenshot un file di Excel di esempio, il signorino vi esplode sulla sinistra la struttura del file OpenXml e selezionando un nodo è possibile chiedergli (<em>Reflect Code</em>) di produrci il codice C# necessario per produrre quel nodo!</span><br>  <span><a href="https://lh6.googleusercontent.com/-znd7VHtf67o/TzjAfzuqC3I/AAAAAAAABLM/V7viwGp3B3A/4db69055-40cf-4cd8-ae80-c18fc1b3f381.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-zvpciIN02Jc/TzjAfSCHTYI/AAAAAAAABLI/h4lNqXpZ7mk/46e9e429-2b40-413c-bd1b-5946496bfc54.png" width="244" height="168"></a> </span><br>  <span><em>Spettacolo!!! :-)</em></span><br>  <span>Con questo tool diventa veramente banale produrre dei documenti che aderiscono alle specfiche OpenXml. Non è altrettanto facile il contrario, cioè leggere un documento perchè è necessario conoscere molto bene il formato e le sue specifiche. Due esempi, giusto per capirci.</span><br>  <span><strong>Scrittura/Lettura di valori in una cella di Excel</strong></span><br>  <span>Quando scrivete un valore potete limitarvi a fare:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>cell = <span style="color: blue">new </span><span style="color: #2b91af">Cell</span>( <span style="color: blue">new </span><span style="color: #2b91af">CellValue</span>( <span style="color: #a31515">"sample text" </span>) ) 
+{ 
+    DataType = <span style="color: #2b91af">CellValues</span>.String 
+};</pre>
+</blockquote>
+
+<span>Questo crea una cella con del testo ed Excel vive felice, se però cercate di leggere una cosa prodotta da Excel, o anche il vostro file dopo averlo modificato con Excel, scoprite che il ragionamento non vale più. Excel, come da specifiche, usa una cosa che si chiama SharedStringTable e linka i valori, che piazza nella tabella condivisa, alle celle. Ergo per leggere un contenuto dovete fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">String </span>GetCellText( <span style="color: #2b91af">Cell </span>cell )
+{
+    <span style="color: blue">var </span>value = <span style="color: #2b91af">String</span>.Empty;
+    <span style="color: blue">if</span>( cell != <span style="color: blue">null </span>&& cell.CellValue != <span style="color: blue">null </span>)
+    {
+        value = cell.CellValue.Text;
+        <span style="color: blue">if</span>( cell.DataType == <span style="color: #2b91af">CellValues</span>.SharedString )
+        {
+            value = <span style="color: blue">this</span>.stringTable.Descendants<<span style="color: #2b91af">SharedStringItem</span>>().ElementAt( <span style="color: #2b91af">Int32</span>.Parse( cell.CellValue.Text ) ).Text.Text;
+        }
+
+        value = value.Trim();
+    }
+
+    <span style="color: blue">return </span>value;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Perchè tutti quei controlli sui null?</span><br>
+
+<span><strong>La battaglia navale…</strong></span><br>
+
+<span>Noi siamo abituati a pensare al foglio di calcolo come ad una griglia ma se proviamo a scorrere le celle come se scorressimo gli elementi di una matrice bidimensionale ci troveremmo di fronte a delle interessanti sorprese…</span><br>
+
+<span>Se:</span><br>
+
+<ul>
+  <li>provate ad aprire un nuovo foglio di Excel;</li>
+
+  <li>vi posizionate alla cella D12;</li>
+
+  <li>scrivete qualcosa;</li>
+</ul>
+
+<span>quando leggerete da codice quel foglio scoprirete che esiste solo la cella D12 e basta tutto il resto non c’è proprio. Il che in ottica “serializzazione” è decisamente sensato ma in ottica lettura ne dovete tenere conto, ad esempio facendo una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">const string </span>letters = <span style="color: #a31515">"ABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>;
+<span style="color: #2b91af">String </span>ParseCellReference( <span style="color: #2b91af">Int32 </span>hCord, <span style="color: #2b91af">Int32 </span>vCord )
+{
+    <span style="color: blue">var </span>letter = letters[ hCord ].ToString();
+    <span style="color: blue">var </span>number = vCord.ToString();
+
+    <span style="color: blue">return </span><span style="color: #2b91af">String</span>.Concat( letter, number );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che potete usare così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>reference = <span style="color: blue">this</span>.ParseCellReference( 3, 12 ); <span style="color: green">//D12
+</span><span style="color: blue">var </span>cell = row.Elements<<span style="color: #2b91af">Cell</span>>()
+    .Where( c => c.CellReference == reference )
+    .SingleOrDefault();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>E’ ovvio che ParseCellReference è un po’ semplicistico perchè non tiene conto di colonne oltre la 25esima cosa fattibilissima in Excel ma è giusto un hint :-)</span><br>
+
+<span>.m</span><br>
+

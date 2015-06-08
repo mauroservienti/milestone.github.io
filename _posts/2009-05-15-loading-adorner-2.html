@@ -1,0 +1,268 @@
+---
+layout: post
+title: 'Loading… Adorner #2'
+date: '2009-05-15T10:55:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Behaviors
+modified_time: '2012-08-04T17:52:52.392+02:00'
+thumbnail: https://lh5.googleusercontent.com/-jUr3RYjQSvM/TykbgV7W3sI/AAAAAAAAAYo/31cMQm2bucI/s72-c/image_thumb_1.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1539149096464980549
+blogger_orig_url: http://milestone.topics.it/2009/05/loading-adorner-2.html
+---
+
+<span>Sempre in tema di UX ritengo fondamentale che un’applicazione Windows sia <u>fortemente</u> basata su multithreading perchè se c’è una cosa che mi da veramente fastidio è vedere l’applicazione freezata, con quel laconico (Not responding) nella barra del titolo, solo perchè l’operazione “lunga” viene eseguita nello stesso thread della UI.</span><br>  <span>In effetti se dato uno sguardo al task manager scoprite cose interessanti:</span><br>  <span><a href="https://lh4.googleusercontent.com/-63s_5I0txIk/Tykbgm3IXXI/AAAAAAAAAYs/d1zge0Fn_Sk/image_4.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-jUr3RYjQSvM/TykbgV7W3sI/AAAAAAAAAYo/31cMQm2bucI/image_thumb_1.png" width="244" height="114"></a> </span><br>  <span>Un mondo multithreaded è sicuramente più difficile da dominare ma è anche vero che una segretaria incazz*ta è forse peggio di una suocera logorroica, inoltre se cerchiamo scopriamo che il framework .net ci mette a disposizion, da molte versioni, validi strumenti per domare la situazione. Uno su tutti il <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.backgroundworker.aspx" target="_blank">BackgroundWorker</a> ma anche, e perchè no, strumenti di più basso livello come <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.asyncoperationmanager.aspx" target="_blank">AsyncOperationManager</a>.</span><br>  <span>Se vogliamo possiamo poi renderci la vita facile, e avere in mano qualcosa di fortemente tipizzato (il background worker conosce solo Object), possiamo wrappare il tutto e, sfruttando un po’ di fluent interface design, giungere a qualcosa del genere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">this</span>.Browse = <span style="color: #2b91af">DelegateCommand</span>.Create( <span style="color: #a31515">"Cerca..." </span>)
+    .OnCanExecute( o =>
+    {
+        <span style="color: blue">return </span>!<span style="color: blue">this</span>.IsBusy && <span style="color: blue">this</span>.Query.AsKeywords( <span style="color: #a31515">';' </span>).Any();
+    } )
+    .OnExecute( o =>
+    {
+        <span style="color: blue">var </span>keywords = <span style="color: blue">this</span>.Query.AsKeywords( <span style="color: #a31515">';' </span>);
+
+        <span style="color: #2b91af">Worker</span>.UsingAsArgument( keywords )
+            .AndExpectingAsResult<<span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">ISubject</span>>>()
+            .WhenExecutedDo( arg =>
+            {<span style="color: blue">
+                var </span>query = <span style="color: blue">new </span><span style="color: #2b91af">SubjectsByKeywordsQuery</span>( arg.Argument );
+                arg.Result = <span style="color: blue">this</span>.subjectsRepository.GetByQuery( query );
+            } )
+            .ButBeforeDo( arg =>
+            {
+                <span style="color: blue">this</span>.IsBusy = <span style="color: blue">true</span>;
+                <span style="color: blue">this</span>.SelectedItems.DataSource.Clear();
+            } )
+            .AndAfterDo( arg =>
+            {
+                <span style="color: blue">this</span>.AvailableItems.DataSource
+                    .CastTo<<span style="color: #2b91af">IEntityCollection</span><<span style="color: #2b91af">ISubject</span>>>()
+                    .BulkLoad( arg.Result );
+
+                <span style="color: blue">this</span>.IsBusy = <span style="color: blue">false</span>;
+            } )
+            .Execute();
+    } );</pre>
+</blockquote>
+
+<span>Cosa abbiamo:</span><br>
+
+<ul>
+  <li>La definizione di un ICommand, e la gestione dei relativi delegate per la CanExecute e la Execute; </li>
+
+  <li>La definizione di workflow asincrono per l’esecuzione della richiesta dell’utente, la cosa interessante qui è: 
+    <ul>
+      <li>ButBeforeDo() e AndAfterDo() sono eseguiti nel thread della UI, quindi niente plumbing code per la sincronizzazione; </li>
+
+      <li>WhenExecutedDo() viene eseguito in un background thread; </li>
+    </ul>
+  </li>
+
+  <li>Un po’ di pattern vari applicati… </li>
+</ul>
+
+<span>Ma cosa succede nella UI, durante l’esecuzione? questo:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-oakAMFasCQY/Tykbh_q3o5I/AAAAAAAAAY8/_JXo61Vmyb8/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-U3B3Ae8MKNE/TykbhOwJ_WI/AAAAAAAAAY0/aOeqBFXtTB8/image_thumb.png" width="244" height="176"></a> </span><br>
+
+<span>Grazie, “semplicemente” a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">BusyStatusManager.Status</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=IsBusy, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">boolBusyStatusConverter</span><span style="color: blue">}}">
+    <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">BusyStatusManager.Content</span><span style="color: blue">>
+        <</span><span style="color: #a31515">dropShadow</span><span style="color: blue">:</span><span style="color: #a31515">SystemDropShadowChrome </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Center" </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Center">
+            <</span><span style="color: #a31515">Border </span><span style="color: red">BorderBrush</span><span style="color: blue">="Black" </span><span style="color: red">Background</span><span style="color: blue">="LightGray" </span><span style="color: red">BorderThickness</span><span style="color: blue">="1" >
+                <</span><span style="color: #a31515">StackPanel </span><span style="color: red">Margin</span><span style="color: blue">="5">
+                    <</span><span style="color: #a31515">TextBlock </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Center" </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Center" </span><span style="color: red">Text</span><span style="color: blue">="Attendere..." </span><span style="color: red">FontStyle</span><span style="color: blue">="Italic" />
+                    <</span><span style="color: #a31515">ProgressBar </span><span style="color: red">Margin</span><span style="color: blue">="0,2,0,0" </span><span style="color: red">IsIndeterminate</span><span style="color: blue">="True" </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" </span><span style="color: red">Height</span><span style="color: blue">="5" />
+                </</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+            </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+        </</span><span style="color: #a31515">dropShadow</span><span style="color: blue">:</span><span style="color: #a31515">SystemDropShadowChrome</span><span style="color: blue">>
+    </</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">BusyStatusManager.Content</span><span style="color: blue">>
+</</span><span style="color: #a31515">ListView</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>Ci sono 2 cose che non compaiono sulla ListView normale:</span><br>
+
+<ol>
+  <li>BusyStatusManager.Status: è un’enumerazione che può assumere i valori Idle o Busy ed è l’entry point del sistema; </li>
+
+  <li>BusyStatusManager.Content: in perfetto stile WPF è di tipo System.Object ed è il vero e proprio contenuto che deve essere visualizzato durante l’operazione asincrona, la visualizzazione è triggherata dalla proprietà Status, come è facile immaginare quando è Idle non viene visualizzato nulla mentre è Busy viene visualizzato il contenuto della proprietà Content; </li>
+</ol>
+
+<span>Nell’esempio non facciamo nulla diparticolare, ma nulla ci vieterebbe di mettere in binding anche il contenuto del “Busy Panel” con, ad esempio, delle proprietà sul VM al fine di mostrare uno stato di avanzamento più consistente.</span><br>
+
+<span>Inoltre sottolineo che quel blocco di xaml è applicabile a qualsiasi controllo, del resto dipende solo dal VM con cui è in binding e non dal controllo su cui è applicato. Il controllo è importante solo in termini di Rendering, per l’esattezza di Measure e Arrange.</span><br>
+
+<span>Naturalmente il tutto per funzionare sfrutta un immancabile, e tra un po’ inflazionato, Adorner; ma iniziamo come al solito con il behavior, la classe statica che fa da ponte ed espone le attached properties:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>ContentProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                              <span style="color: #a31515">"Content"</span>,
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">Object </span>),
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">BusyStatusManager </span>),
+                              <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: blue">null</span>, OnPropertyChanged ) );
+
+<span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>StatusProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                      <span style="color: #a31515">"Status"</span>,
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">BusyStatus </span>),
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">BusyStatusManager </span>),
+                      <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: #2b91af">BusyStatus</span>.Idle, OnPropertyChanged ) );
+
+<span style="color: blue">static readonly </span><span style="color: #2b91af">DependencyProperty </span>handledProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                      <span style="color: #a31515">"handled"</span>,
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">Boolean </span>),
+                      <span style="color: blue">typeof</span>( <span style="color: #2b91af">BusyStatusManager </span>),
+                      <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: blue">false </span>) );</pre>
+</blockquote>
+
+<span>Dichiariamo le attached property:</span><br>
+
+<ul>
+  <li><strong>Content</strong>: semplicemente il contenuto da visualizzare; </li>
+
+  <li><strong>Status</strong>: l’enumerazione (Idle o Busy) che trigghera la visualizzazione di quello che c’è in Content, o se non c’è nulla si limita a disabilitare/abilitare il controllo; </li>
+
+  <li><strong>handled</strong>: una proprietà privata che ci serve per capire a che punto siamo: il problema è che abbiamo più di una attached property e la notifica della variazione del valore della proprietà ci arriva in 2 casi: 
+
+    <ul>
+      <li>Quando effettivamente il valore cambia; </li>
+
+      <li>Quando il valore viene settato la prima volta durante l’initialize del controllo; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Avendo noi 2 proprietà riceviamo “troppe” notifiche e dobbiamo iniziare a reagire solo quando il controllo è effettivamente Loaded, ci agganciamo quindi all’evento Loaded ma dobbiamo falro una sola volta per ogni controllo, quindi ci agganciamo all’evento e ci segnamo che ci siamo agganciati, dopodiche restiamo in attesa che il controllo abbia finito l’inizializzazione:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>OnPropertyChanged( <span style="color: #2b91af">DependencyObject </span>d, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{
+    <span style="color: blue">var </span>control = ( <span style="color: #2b91af">FrameworkElement </span>)d;
+    <span style="color: blue">if</span>( !control.IsLoaded && !Gethandled( control ) )
+    {
+        control.Loaded += ( s, rea ) => HandleStatusChanged( control );
+        Sethandled( control, <span style="color: blue">true </span>);
+    }
+    <span style="color: blue">else if</span>( control.IsLoaded && e.Property == StatusProperty )
+    {
+        HandleStatusChanged( control );
+    }
+    <span style="color: blue">else if</span>( control.IsLoaded && e.Property == ContentProperty )
+    {
+        HandleContentChanged( control );
+    }
+}</pre>
+</blockquote>
+
+<span>Quando il controllo termina la fase di inizializzazione impostiamo il nostro mondo, stessa cosa facciamo se il controllo è completamente caricato e cambia una delle 2 proprietà (in realtà solo una perchè per ora non mi interessa supportare la variazione di content a runtime):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>HandleContentChanged( <span style="color: #2b91af">FrameworkElement </span>element )
+{
+    <span style="color: blue">throw new </span><span style="color: #2b91af">NotSupportedException</span>( <span style="color: #a31515">"BusyStatusManager: Content property cannot be changed at runtime." </span>);
+}</pre>
+
+  <pre class="code"><span style="color: blue">static void </span>HandleStatusChanged( <span style="color: #2b91af">FrameworkElement </span>element )
+{
+    <span style="color: blue">var </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( element );
+    <span style="color: #2b91af">Debug</span>.WriteLineIf( layer == <span style="color: blue">null</span>, <span style="color: #a31515">"BusyStatusManager: cannot find any AdornerLayer on the given element." </span>);
+
+    <span style="color: blue">if</span>( layer != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>content = GetContent( element );
+        <span style="color: blue">var </span>status = GetStatus( element );
+
+        <span style="color: blue">switch</span>( status )
+        {
+            <span style="color: blue">case </span><span style="color: #2b91af">BusyStatus</span>.Idle:
+
+                element.IsEnabled = <span style="color: blue">true</span>;
+
+                <span style="color: blue">if</span>( content != <span style="color: blue">null </span>)
+                {
+                    <span style="color: blue">var </span>adorners = layer.GetAdorners( element );
+                    <span style="color: #2b91af">Debug</span>.WriteLineIf( adorners == <span style="color: blue">null</span>, <span style="color: #a31515">"BusyStatusManager: cannot find any Adorner on the given element." </span>);
+
+                    <span style="color: blue">if</span>( adorners != <span style="color: blue">null </span>)
+                    {
+                        <span style="color: blue">var </span>la = adorners.Where( a => a <span style="color: blue">is </span><span style="color: #2b91af">BusyAdorner </span>).SingleOrDefault();
+                        <span style="color: blue">if</span>( la != <span style="color: blue">null </span>)
+                        {
+                            layer.Remove( la );
+                        }
+                    }
+                }
+
+                <span style="color: blue">break</span>;
+
+            <span style="color: blue">case </span><span style="color: #2b91af">BusyStatus</span>.Busy:
+
+                element.IsEnabled = <span style="color: blue">false</span>;
+
+                <span style="color: blue">if</span>( content != <span style="color: blue">null </span>)
+                {
+                    layer.Add( <span style="color: blue">new </span><span style="color: #2b91af">BusyAdorner</span>( element, GetContent( element ) ) );
+                }
+                <span style="color: blue">break</span>;
+
+            <span style="color: blue">default</span>:
+                <span style="color: blue">throw new </span><span style="color: #2b91af">NotSupportedException</span>();
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Cosa facciamo:</span><br>
+
+<ul>
+  <li>Recuperiamo un riferimento all’AdornerLayer; </li>
+
+  <li>Recuperiamo un riferimento al contenuto da visualizzare e allo stato attuale; </li>
+
+  <li>In base allo stato decidiamo il da farsi; </li>
+</ul>
+
+<span><strong>Q</strong>: Perchè impostamo comunque il nostro target a “IsEnabled == false”?</span><br>
+
+<span><strong>A</strong>: Perchè è il sistema più semplice per evitare che l’utente durante l’operazione asincrona possa ciclare sui controlli “coperti” dal nostro adorner spostando il focus con la tastiera. <em>ndr</em>: Non c’è nessun controllo sul fatto che il controllo target sia disabilitato prima dell’operazione e quindi non debba essere riabilitato, non sarebbe un problema aggiungerlo.</span><br>
+
+<span>Infine vediamo le parti salienti del nostro BusyAdorner, che deriva da OverlayAdorner di cui <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/14/wpf-ldquoadornersrdquo-rulez-1.aspx" target="_blank">abbiamo già parlato</a>:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">BusyAdorner </span>: <span style="color: #2b91af">OverlayAdorner
+</span>{
+    <span style="color: blue">private readonly </span><span style="color: #2b91af">ContentPresenter </span>userContent;
+
+    <span style="color: blue">public </span>BusyAdorner( <span style="color: #2b91af">UIElement </span>adornedElement, <span style="color: #2b91af">Object </span>userContent )
+        : <span style="color: blue">base</span>( adornedElement )
+    {
+        <span style="color: blue">this</span>.userContent = <span style="color: blue">new </span><span style="color: #2b91af">ContentPresenter</span>() { Content = userContent };
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">UIElement </span>Content
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.userContent; }
+    }
+
+    <span style="color: blue">protected override void </span>OnRender( <span style="color: #2b91af">DrawingContext </span>drawingContext )
+    {
+        <span style="color: blue">var </span>brush = <span style="color: blue">new </span><span style="color: #2b91af">SolidColorBrush</span>( <span style="color: #2b91af">Color</span>.FromArgb( 100, 220, 220, 220 ) );
+        <span style="color: blue">var </span>rect = <span style="color: blue">new </span><span style="color: #2b91af">Rect</span>( <span style="color: blue">new </span><span style="color: #2b91af">Point</span>( 0, 0 ), <span style="color: blue">this</span>.DesiredSize );
+
+        drawingContext.DrawRectangle( brush, <span style="color: blue">null</span>, rect );
+
+        <span style="color: blue">base</span>.OnRender( drawingContext );
+    }
+}</pre>
+</blockquote>
+
+<span>Unica cosa degna di nota è che senza chiedere nulla a nessuno facciamo l’override di OnRender e disegnamo un rettangolo grigio, con un canale alpha, come sfondo. </span><br>
+
+<span><strong>Q</strong>: Perchè lo facciamo così e non usiamo un Border con Opacity? </span><br>
+
+<span><strong>A</strong>: Perchè l’Opacity ha lo spiacevole side effect che viene propagata, senza possibilità di modificare questo comportamento (o almeno io non l’ho trovato), anche ai child controls del controllo su cui è impostata… Una cosa che sto pensando è di esporre una nuova attached property “Options” per permettere di variare a design time sia il colore di sfondo che la percentuale di trasparenza.</span><br>
+
+<span>.m</span><br>
+

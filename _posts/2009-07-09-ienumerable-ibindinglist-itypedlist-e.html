@@ -1,0 +1,286 @@
+---
+layout: post
+title: IEnumerable<IViewModel<T>>, IBindingList, ITypedList e ICustomTypeDescriptor
+date: '2009-07-09T10:03:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:39:51.425+01:00'
+thumbnail: https://lh6.googleusercontent.com/-kW-eGJ224SY/Tym_MA6cDlI/AAAAAAAAAgo/23rUu5cUB14/s72-c/UI%25252520Mock-up%25252520001_thumb.jpg
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8877682697845647724
+blogger_orig_url: http://milestone.topics.it/2009/07/ienumerable-ibindinglist-itypedlist-e.html
+---
+
+<span>Un bel po’ di carne al fuoco già nel titolo, quindi preparatevi ;-)</span><br>  <span><strong>Scenario</strong></span><br>  <span>Diciamo che il vostro cliente è un giornale, e che su quel giornale ci finiscano <em>casualmente</em> delle pubblicità, e che sempre <em>casualmente</em> voi stiate realizzando per quel giornale un gestionale ad uso interno :-). Tralasciando tutto il processo diciamo che avete in mano una cosa che potremmo chiamare “Impegnato” che è una lista di <em>potenziali</em> pubblicità che <em>dovrebbero</em> finire su una certa uscita, <em>potenziali</em> e <em>dovrebbero</em> perchè per tutta una serie di buoni motivi la redazione/direzione/grafica potrebbero dedicere di apportare modifiche dell’ultima ora che portano al taglio di uno spazio o ad una variazione rispetto a quanto pattuito con il cliente.</span><br>  <span>Quello che succede è che dopo ogni uscita ci sono un uomo e una donna che spulciano a mano il giornale e confrontano quello che è stato pubblicato con la lista dell’impegnato che gli produco io, questo confronto produce come output un set di modifiche/conferme stile <a href="http://en.wikipedia.org/wiki/Mastermind_(board_game)" target="_blank">Mastermind</a>:</span><br>  <ul>   <li>Ok: giusta al posto giusto; </li>    <li>Pubblicata ma sbagliata;      <ul>       <li>posto sbagliato; </li>        <li>dimensioni sbagliate </li>        <li>colore – B/N </li>        <li>etc… </li>     </ul>   </li>    <li>Non pubblicata:      <ul>       <li>Colpa nostra: perchè?;          <ul>           <li>--> ripianificazione </li>         </ul>       </li>        <li>Richiesta del cliente: perchè?;          <ul>           <li>--> ripianificazione </li>         </ul>       </li>     </ul>   </li>    <li>Sospesa:      <ul>       <li>Scelta nostra: perchè? </li>        <li>Richiesta del cliente: perchè? </li>     </ul>   </li>    <li>etc… </li> </ul>  <span>Queste variazioni hanno la necessità di essere storicizzate e produrre quindi una “reservation history” consultabile che permetta di ricostruire la sequenza di avvenimenti che hanno portato alla pubblicazione di una pubblicità; è evidente che in una situazione di questo genere una Reservation è qualcosa di immutabile del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IAdvertisementReservation</span><span style="color: #2b91af">
+</span>{
+    <span style="color: #2b91af">AdvertisementType </span>Type { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">AdvertisementPosition </span>Position { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">AdvertisementColor </span>Color { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">Double </span>ModulesQuantity { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">IPublication </span>PublishQueue { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">AdvertisementReservationStatus </span>Status { <span style="color: blue">get</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Quello di cui abbiamo bisogno ora è un sistema per poter <u>editare</u> lo stato di quella cosa immutabile… che in realtà comporta la creazione di un “figlio” in una catena tipo linked-list. E’ evidente che i concetti di “figlio” e “linked-list” non hanno nulla a che spartire con il modello e sono degli ottimi candidati per diventare parte integrante di un ViewModel atto a produrre una cosa del tipo:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-o7fShJ1hkvU/Tym_NIC7UnI/AAAAAAAAAgw/X2ajWEZB-SA/UI%25252520Mock-up%25252520001_2.jpg" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="UI Mock-up 001" border="0" alt="UI Mock-up 001" src="https://lh6.googleusercontent.com/-kW-eGJ224SY/Tym_MA6cDlI/AAAAAAAAAgo/23rUu5cUB14/UI%25252520Mock-up%25252520001_thumb.jpg" width="244" height="133"></a> </span><br>
+
+<span>Figoso questo tool per fare UI Mock-up si chiama: <em>CartaPenna+Fantasia</em> :-)</span><br>
+
+<span>Adesso abbiamo però una “magagna”: immutabilità;</span><br>
+
+<blockquote>
+  <span>La sorgente dati di quella cosa è una IEnumerable<IAdverisementReservation>, non è una collection perchè l’impegnato è scolpito nella pietra.</span><br>
+</blockquote>
+
+<span>Questo scenario è un fantastico candidato per un ViewModel(Of ViewModel):</span><br>
+
+<ul>
+  <li>ReservationManagerViewModel: 
+    <ul>
+      <li>IEnumerable<ReservationEditorViewModel>: 
+        <ul>
+          <li>IAdversisementReservation </li>
+
+          <li>EditStatus </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Abbiamo quindi la lista di reservation di partenza, la mappiamo su un view model per la gestione, questo view model farà da adapter a adatterà ogni item con un apposito view model che espone l’elemento originale e una classe (un piccolo DTO) che deriva da <em>EditStatus</em> (che è abstract): OkStatus, RelocateStatus, SuspendStatus etc…</span><br>
+
+<span>Sfruttando la potenza di Wpf e grazie a DataTemplate e Trigger sulla base del tipo di EditStatus visualizzo un template ad-hoc per l’editing dello stato di quella Reservation, il tutto in un bellissimo e semplicissimo ItemsControl.</span><br>
+
+<span>Prima di continuare un paio di considerazioni:</span><br>
+
+<ol>
+  <li>Ultimamente ho detto che il rischio dei DTO è <strong>l’abuso di DTO</strong>, ergo passate la vita a scrivere DTO (onore al <a href="http://blogs.ugidotnet.org/pape" target="_blank">capo</a> che ha coniato questa frase): questo è uno scenario in cui il gioco vale la candela tutta la vita; </li>
+
+  <li>Sempre ultimamente ho detto che “<strong>rimappare</strong>” <strong>IList<T></strong> su <strong>IList<IViewModel<T>></strong> costa un sacco e ha anche qualche magagna: come al solito non viviamo di dogmi e scenari abbastanza complessi, nel loro insieme, meritano soluzioni flessibili e sensate, anche se a prima vista costose; </li>
+
+  <li><strong>Wpf I love you</strong>: se penso di dover realizzare la stessa cosa (la UI per l’edit) con Windows Forms potrei dire che sarebbe decisamente più facile imparare un dialetto cinese e poi pinagere in quel dialetto… oppure passare l’esistenza con la peggiore delle suocere :-), in casi come questo Wpf dimostra tutta la sua potenza e dimostra anche che la curva di apprendimento merita di essere affrontata perchè superato lo scoglio iniziale fate cose che con Windows Form/GDI avrebbero un costo pressochè inavvicinabile… cosa ci fate ancora li con una tecnologia legacy!?!?!?! ;-) </li>
+</ol>
+
+<span><strong>Ma… è l’unica soluzione?</strong></span><br>
+
+<span>Qualcuno ricorderà che ho detto una cosa del tipo: un’implementazione custom di IBindingList risolve molte delle problematiche che altrimenti ci porterebbero a “rimappare”…</span><br>
+
+<span>Cerchiamo di spiegare il concetto senza perderci nei meandri del framework e dando contemporaneamente senso al titolo del post.</span><br>
+
+<span><strong>Un salto nel passato</strong></span><br>
+
+<span>torniamo per un attimo all’anno del signore 2000, se qualcuno ricorda fummo folgorati dalla possibilità di scrivere una cosa del tipo:</span><br>
+
+<blockquote>
+  <span>DataTable dt = … 
+    <br>myDataGrid.DataSource = dt;</span><br>
+</blockquote>
+
+<span>e veder magicamente comparire nella giglia le colonne automaticamente mappate sulle colonne della DataTable. La “causa prima” del tutto è un interfaccia che si chiama <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.itypedlist.aspx" target="_blank">ITypedList</a> il cui scopo è quello di descrivere come è strutturata la lista… e voi direte ok, ma quella cosa funziona anche se come DataSource ci piazziamo una MyCustomClass[], si è vero ma fa un uso pazzesco di reflection ;-). Quello che succede è più o meno questo:</span><br>
+
+<ul>
+  <li>la DataSource è una DataTable: 
+    <ul>
+      <li>rimappa la DataSource su DataTable.DefaultView e ricomincia… la DataView è ITypedList; </li>
+    </ul>
+  </li>
+
+  <li>La DataSource è ITypedList: 
+    <ul>
+      <li>Chiama GetItemProperties() e qui viene il bello…; </li>
+    </ul>
+  </li>
+
+  <li>altrimenti se la DataSource è ICollection/Array cerca di capire quale sia il tipo degli item, analizzalo via reflection e costruisci le colonne; </li>
+</ul>
+
+<span>Prima di tornare a ITypedList.GetItemProperties() vediamo di definire un po’ meglio la “big picture”: l’interfaccia IBindingList ha un evento ListChanged che serve per notificare al sottoscrittore che qualcosa nella “lista” (in realtà IBindingList è molto più di una lista) è cambiato, negli <em>arguments</em> dell’evento troviamo una cosa decisamente interessante, troviamo un’enumerazione che ci dice che tipo di cambiamento c’è stato nella lista, guarda caso ci sono un alcuni valori decisamente interessanti:</span><br>
+
+<blockquote>
+  <span>ListChangedType.<em>PropertyDescriptorAdded</em>; 
+
+    <br>ListChangedType.<em>PropertyDescriptorDeleted</em>; 
+
+    <br>ListChangedType.<em>PropertyDescriptorChanged</em>;</span><br>
+</blockquote>
+
+<span>IBindingList prevede la possibilità di notifcare al mondo che la struttura dei dati, non solo i dati, è cambiata… la cosa interessante è se la lista in questione oltre ad essere IBindingList è anche ITypedList… la vedete anche voi la big picture?</span><br>
+
+<span>Torniamo per un momento alla DataGrid del framework 1.0, lo stesso discorso vale la GridView del framework 2.0, e purtroppo per nessun controllo Wpf, ma non è un problema.</span><br>
+
+<span>La griglia scopre che la DataSource è ITypedList, e se è IBindingList si aggancia l’evento ListChanged, a questo punto chiama GetItemProperties() e ottiene una collection di <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.propertydescriptor(VS.71).aspx" target="_blank">PropertyDescriptor</a> che sono delle classi nate con lo scopo di descrivere un’altra classe (sono una cosa concettualmente molto diversa da System.Reflection.PropertyInfo, anche se superficialmente condividono molto), implementando noi ITypedList risulta adesso evidente che possiamo ingannare il chiamante e fargli credere che eistano proprietà che in realtà non ci sono :-)… se il tipo di cambiamento notificato con l’evento ListChanged riguarda la struttura la griglia chiamerà nuovamente GetItemProperties() per capire cosa è cambiato e adegurasi di conseguenza. Creare una colonna calcolata a runtime a questo punto potrebbe essere un gioco da ragazzi ;-)</span><br>
+
+<span>Questo però ci porta ad un altro problema, o meglio ci porta a farci una domanda, ma quando in Wpf scriviamo una cosa del genere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=PropertyName}" /></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>cosa succede dietro le quinte?</span><br>
+
+<span>A prima vista potremmo essere portati a pensare che li dietro ci sia un bel po’ di reflection, e ci potrebbe anche essere se passiamo come data context di quel TextBlock una entità veramente <a href="http://en.wikipedia.org/wiki/Plain_Old_CLR_Object" target="_blank">POCO</a>, se però facciamo un po’ di ricerche potremmo scoprire che esiste un’altra interfaccia decisamente interessante:</span><br>
+
+<span><strong>ICustomTypeDescriptor</strong></span><br>
+
+<span>Quello che succede è che se la classe che diventa il DataContext di quella TextBlock implementa <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icustomtypedescriptor.aspx" target="_blank">ICustomTypeDescriptor</a> l’infrastruttura di binding non fa più nessuna assunzione e al momento del binding chiama GetProperties() e va li alla ricerca della proprietà “PropertyName”</span><br>
+
+<span><strong>Ricapitoliamo…</strong></span><br>
+
+<span>… che è il caso, e facciamolo con un esempio, partiamo dalla fine:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>query = <span style="color: blue">new </span><span style="color: #2b91af">ReservationsByPublicationQuery</span>( <span style="color: blue">this</span>.CurrentPublication );
+<span style="color: blue">var </span>source = <span style="color: blue">this</span>.DataContext.GetByQuery<<span style="color: #2b91af">IAdvertisementReservation</span>>( query );
+
+<span style="color: blue">var </span>view = <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">IAdvertisementReservation</span>>( source.ToArray() );<br>view.AutoGenerateProperties = <span style="color: blue">false</span>;
+<br>view.AddPropertyMapping( <span style="color: #a31515">"EditStatus"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">EditStatus </span>), obj =>
+{
+    <span style="color: blue">var </span>status = ( <span style="color: #2b91af">EditStatus </span>)obj.GetCustomValue( <span style="color: #a31515">"EditStatus" </span>);
+    <span style="color: blue">if</span>( status == <span style="color: blue">null </span>)
+    {
+        status = <span style="color: #2b91af">EditStatus</span>.Undefined;
+        obj.SetCustomValue( <span style="color: #a31515">"EditStatus"</span>, status );
+    }
+
+    <span style="color: blue">return </span>status;
+} );
+
+view.AddPropertyMapping( <span style="color: #a31515">"Confirm"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">ICommand </span>), obj =>
+{
+    <span style="color: blue">var </span>cmd = obj.GetCustomValue( <span style="color: #a31515">"Confirm" </span>) <span style="color: blue">as </span><span style="color: #2b91af">ICommand</span>;
+    <span style="color: blue">if</span>( cmd == <span style="color: blue">null </span>)
+    {
+        cmd = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnExecute( o =>
+            {
+                <span style="color: blue">var </span>val = ( <span style="color: #2b91af">EditStatus </span>)obj.GetCustomValue( <span style="color: #a31515">"EditStatus" </span>);
+                <span style="color: blue">if</span>( val == <span style="color: #2b91af">EditStatus</span>.Undefined )
+                {
+                    obj.SetCustomValue( <span style="color: #a31515">"EditStatus"</span>, <span style="color: #2b91af">EditStatus</span>.Ok );
+                }
+                <span style="color: blue">else
+                </span>{
+                    obj.SetCustomValue( <span style="color: #a31515">"EditStatus"</span>, <span style="color: #2b91af">EditStatus</span>.Undefined );
+                }
+            } );
+        obj.SetCustomValue( <span style="color: #a31515">"Confirm"</span>, cmd );
+    }
+
+    <span style="color: blue">return </span>cmd;
+} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Con calma e un pezzetto al volta:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>query = <span style="color: blue">new </span><span style="color: #2b91af">ReservationsByPublicationQuery</span>( <span style="color: blue">this</span>.CurrentPublication );
+<span style="color: blue">var </span>source = <span style="color: blue">this</span>.DataContext.GetByQuery<<span style="color: #2b91af">IAdvertisementReservation</span>>( query );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Nulla di trasendentale utilizziamo una variazione sul tema “<a href="http://en.wikipedia.org/wiki/Specification_pattern" target="_blank">Specification Pattern</a>”, che mixato con un Builder è una vera manna, e recuperiamo dal nostro DataContext i dati che vogliamo manipolare, poi creiamo una vista sui dati, una EntityView<T> è una implementazione custom di IBindingList, IBindingListView, ITypedList e un po’ di altre cose “marginali”…</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>view = <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">IAdvertisementReservation</span>>( source.ToArray() );
+view.AutoGenerateProperties = <span style="color: blue">false</span>;</pre>
+</blockquote>
+
+<span>Una view si comporta esattamente come una View di Sql Server ergo è un qualcosa che può esporre una vista sui dati manipolabile, è possibile fare:</span><br>
+
+<ul>
+  <li>Filtri;</li>
+
+  <li>Sort;</li>
+
+  <li>Aggiunta, rimozione di elementi;</li>
+
+  <li>etc.. etc..</li>
+</ul>
+
+<span>senza alterare la data source, con la dichiarazione di cui sopra creiamo una EntityView<T> “statica” a cui non possono essere aggiunti o rimossi elementi. Infine diciamo all view di non generare in automatico le “proprietà”, un’eventuale chiamata a GetItemProperties() a questo punto ritornerebbe una collection di PropertyDescriptor vuota.</span><br>
+
+<span>Infine creiamo delle proprietà calcolate:</span><br>
+
+<blockquote>
+  <pre class="code">view.AddPropertyMapping( <span style="color: #a31515">"EditStatus"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">EditStatus </span>), obj =>
+{
+    <span style="color: blue">var </span>status = ( <span style="color: #2b91af">EditStatus </span>)obj.GetCustomValue( <span style="color: #a31515">"EditStatus" </span>);
+    <span style="color: blue">if</span>( status == <span style="color: blue">null </span>)
+    {
+        status = <span style="color: #2b91af">EditStatus</span>.Undefined;
+        obj.SetCustomValue( <span style="color: #a31515">"EditStatus"</span>, status );
+    }
+
+    <span style="color: blue">return </span>status;
+} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>questo stralcio di codice crea una proprietà calcolata di tipo EditStatus (una mia classe, un banale DTO) il cui nome è EditStatus, non c’è nessun vincolo sul nome, e che infine utilizza un delagato per fare il “get”, producendo quindi una proprietà in sola lettura. Questo altro non fa che creare una classe custom che implementa ICustomTypeDescriptor e che quindi viene ben digerita dal motore di data binding e cosa molto interessante non fa il benchè minimo uso di reflection. L’altra cosa interessante è che la classe custom implementa anche INotifyPropertyChanged facendo si che questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>itemView = view.ElementAt( 0 );
+view.SetCustomPropertyValue( <span style="color: #a31515">"EditStatus"</span>, itemView, <span style="color: #2b91af">EditStatus</span>.Ok );</pre>
+</blockquote>
+
+<span>generi alla fine della fiera una evento ListChanged notificando al motore di data binding che un certo elemento nella lista (IBindingList) è cambiato e facendo si che il motore di binding venga stimolato ad andare a rileggersi il valore della proprietà cambiata, ed essendo il DataContext di tipo ICustomTypeDescriptor, alla fine venga da noi facendo si che la nostra proprietà calcolata prenda vita, toghissimo!</span><br>
+
+<span>facendo un esempio semplice semplice questa è una proprietà calcolata in lettura/scrittura:</span><br>
+
+<blockquote>
+  <pre class="code">view.AddPropertyMapping( <span style="color: #a31515">"Name"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>), obj =>
+{
+    <span style="color: blue">return </span>obj.GetCustomValue( <span style="color: #a31515">"Name" </span>) <span style="color: blue">as </span><span style="color: #2b91af">String</span>;
+}, ( obj, value ) => 
+{
+    obj.SetCustomValue( <span style="color: #a31515">"Name"</span>, value );
+} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Nel primo esempio invece la seconda proprietà calcolata è di tipo ICommand dimostrando che ci si può mettere qualsiasi cosa e si può arrivare ad avere uno xaml di questo tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ItemsControl </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Items}">
+    <</span><span style="color: #a31515">ItemsControl.ItemTemplate</span><span style="color: blue">>
+        <</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">>
+            <</span><span style="color: #a31515">StackPanel </span><span style="color: red">Orientation</span><span style="color: blue">="Horizontal">
+                </span><span style="color: blue"><</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=EditStatus}" /></span><span style="color: blue">
+                <</span><span style="color: #a31515">Button </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Confirm}" </span><span style="color: red">Content</span><span style="color: blue">="Invoke Command" />
+            </</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+        </</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">>
+    </</span><span style="color: #a31515">ItemsControl.ItemTemplate</span><span style="color: blue">>    
+</</span><span style="color: #a31515">ItemsControl</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che funziona alla perfezione nonostante le proprietà <em>EditStatus</em> e <em>Confirm</em> non esistano proprio.</span><br>
+
+<span><strong>Concluedendo… che è il caso :-)</strong></span><br>
+
+<ul>
+  <li>“Wrappare” ha molto senso se dovete <em>montare</em> molta logica intorno all’item/entity che state manipolando;</li>
+
+  <li><u>Se avete a disposizione</u> una implementazione di IBindingList iniettarci la logica per gestire le proprietà calcolate è abbastanza banale, è tutto il resto di IBindingList che non lo è per niente… e per cose semplici vale molto la pena di wrappare con delle proprietà “calcolate” come nell’esempio ottenendo lo stesso identico risultato, anche in termini prestazionali, ma scrivendo molto meno codice. E’ evidente che al complicarsi della logica l’ago della bilancia si sposta verso un vero e proprio “ViewModelWrapper”, lo dimostra la proprietà calcolata che espone il command, è fattibile ma comincia ad essere troppo complesso e anche poco leggibile quindi probabilmente poco manutenibile;</li>
+</ul>
+
+<span>Se voleste approfondire quello che c’è dietro e quindi:</span><br>
+
+<ul>
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.ibindinglist.aspx" target="_blank">IBindingList</a> / <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.ibindinglistview.aspx" target="_blank">IBindingListView</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.itypedlist.aspx" target="_blank">ITypeList</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icustomtypedescriptor.aspx" target="_blank">ICustomTypeDescriptor</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.iraiseitemchangedevents.aspx" target="_blank">IRaiseItemChangedEvents</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icanceladdnew.aspx" target="_blank">ICancelAddNew</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.collections.specialized.inotifycollectionchanged.aspx" target="_blank">INotifyCollectionChanged</a>;</li>
+
+  <li><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icollectionview.aspx" target="_blank">ICollectionView</a>;</li>
+</ul>
+
+<span>Non avete che da chiedere ;-) e sarò ben felice, con i miei tempi, di intasare il muro di UGI.</span><br>
+
+<span>.m</span><br>

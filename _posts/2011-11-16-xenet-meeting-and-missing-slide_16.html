@@ -1,0 +1,157 @@
+---
+layout: post
+title: Xe.Net meeting (…and the missing slide)
+date: '2011-11-16T13:01:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Domain Driven Design
+- Software Mason
+- Wcf
+- Community
+modified_time: '2012-08-04T20:16:24.166+02:00'
+thumbnail: https://lh4.googleusercontent.com/-GcdXp3qe_iI/T0jBAPMzNII/AAAAAAAAB7Y/b44PqH8NZos/s72-c/image_thumb_17.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6233428954181826413
+blogger_orig_url: http://milestone.topics.it/2011/11/xenet-meeting-and-missing-slide_16.html
+---
+
+<span>on the last Friday I gave a talk, just after <a href="http://blogs.ugidotnet.org/pape/Default.aspx" target="_blank">Andrea Saltarello</a>’s one, on WCF Services design guidelines at Venezia Mestre for <a href="http://www.xedotnet.org" target="_blank">Xe.Net</a> user group. As all the other times it has been a wonderful experience, Xe.Net guys are simply great!</span><br>  <span>I’ve just uploaded the slide deck to <a href="http://www.slideshare.net/mauroservienti/utile-e-sostenibile" target="_blank">slideshare</a>, but I want to add some details on a comment made by <a href="http://blog.knodev.com/" target="_blank">Davide Vernole</a>:</span><br>  <span>At a certain point I said that generalization at the service contract level is evil. We can summarize the statement with this really trivial sample:</span><br>  <blockquote>   <pre class="csharpcode">[ServiceContract]
+<span class="kwrd">public interface</span> IService
+{
+    [OperationContract]
+    <span class="kwrd">void</span> Save( DomainEntity entity );
+}</pre>
+  <style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>The main pain point, from a DDD point of view, in that trivial sample (and a bit extreme) is that you completely loose context and intent, save in the user mental model, generally, does mean nothing.</span><br>
+
+<span>Davide simply said that he does not agree, saying that he is used to generalize, WCF services contracts, using a messaging based approach…does it sound familiar? I love <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5312294359685955003" target="_blank">that</a> <a href="http://mauroservienti.blogspot.com/2010/05/wcf-i-known-service-type-e-non-solo.html" target="_blank">approach</a>! (sorry it’s in Italian)</span><br>
+
+<span>In that talk there is this slide, jumped only due to time constraint:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-ZD3DI71DGAc/T0jBClfkg9I/AAAAAAAAB7g/RYTjOMiteJs/image_2_16.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-GcdXp3qe_iI/T0jBAPMzNII/AAAAAAAAB7Y/b44PqH8NZos/image_thumb_17.png" width="240" height="182"></a></span><br>
+
+<span>Let me say that <strong>messaging at the service level is not generalization</strong>, well not the type of generalization that must be defined evil <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh3.googleusercontent.com/-wImrjFvikBk/T0jBDe7l64I/AAAAAAAAB7k/HvAo_u-9mxQ/wlEmoticon-smile_2_42.png"></span><br>
+
+<span>It is one of the coolest pattern to approach WCF, from my point of view, that let you to move from the RPC style, imposed by WCF, to a message based style. Basically something, trivially, like this:</span><br>
+
+<blockquote>
+  <pre class="csharpcode">[ServiceContract]
+<span class="kwrd">public</span> <span class="kwrd">interface</span> IMessageBrokerService
+{
+    [OperationContract]
+    MessageResponse[] Dispatch( MessageRequest[] requests );
+
+    [OperationContract]
+    <span class="kwrd">void</span> Broadcast( MessageRequest[] requests );
+}</pre>
+  <style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>This is a really huge and wide generalization, but absolutely you do not loose the intent, because the service intent is really clear, and the application intent is moved at the message level:</span><br>
+
+<blockquote>
+  <pre class="csharpcode">[DataContract]
+<span class="kwrd">public</span> <span class="kwrd">class</span> CreateNewCustomerCommand : MessageRequest
+{
+    <span class="rem">//bla...bla...bla...</span>
+}</pre>
+  <style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style><style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>The message intent is crystal clear, nothing can lead to misunderstanding.</span><br>
+
+<span>.m</span><br>

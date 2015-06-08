@@ -1,0 +1,298 @@
+---
+layout: post
+title: 'Wrappa che ti passa: “how to in salsa TDD”…?'
+date: '2009-08-30T16:21:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-02T12:18:34.491+01:00'
+thumbnail: https://lh3.googleusercontent.com/-F9KKwT171w4/Typw58FdQXI/AAAAAAAAAoA/bewqtSN3Bo0/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4595928365535740230
+blogger_orig_url: http://milestone.topics.it/2009/08/wrappa-che-ti-passa-how-to-in-salsa-tdd.html
+---
+
+<span>Nonostante il titolo questo post è uno strascico di quello sulla <a href="http://blogs.ugidotnet.org/topics/archive/2009/08/25/conversazione-ldquonon-solo-overviewrdquo-ltsemi-cit.gt.aspx" target="_blank">conversazione di qualche tempo fa</a>. Te l’avevo detto io, te l’avevo detto io, ehehehe ehehehe :-)</span><br>  <span>Facciamo un po’ di storia. C’erano una volta i cursori e i lock pessimistici:</span><br>  <span><a href="https://lh4.googleusercontent.com/-ZKD9wpg5HrQ/Typw6V8k_NI/AAAAAAAAAoE/IbcjY6CCwAg/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-F9KKwT171w4/Typw58FdQXI/AAAAAAAAAoA/bewqtSN3Bo0/image_thumb.png" width="244" height="86"></a> </span><br>  <span>poi, <u>forse</u> fortunatamente, il mondo si è evoluto e siamo passati agli scenari disconnessi:</span><br>  <span><a href="https://lh6.googleusercontent.com/-GifYJDUsaq0/Typw7bTSpfI/AAAAAAAAAoY/YgnaaglJ4PU/image_4.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-kcWPuYQVbCk/Typw6713a9I/AAAAAAAAAoM/IVE2cYc3szE/image_thumb_1.png" width="244" height="187"></a> </span><br>  <span>In uno scenario disconnesso semplicemente si carica/crea una rappresentazione in memoria dei dati e si lavora su quella rappresentazione invece che direttamente sullo storage.</span><br>  <span>Questo secondo approccio risolve molti problemi, permette scenari di gran lunga più mirabolanti ma è evidente che porta con se qualche magagna come ad esempio la gestione della concorrenza ottimistica che ha una notevole quantità di vantaggi ma non è certo semplice soprattutto nel suo rapporto con l’utente.</span><br>  <span>Inoltre in un rich-client degno del suo nome ci portiamo a casa una serie di magagne non indifferenti principalmente legate alla user experience, vediamone un paio:</span><br>  <span><strong>…e lui ci chiese di crearne uno nuovo…</strong></span><br>  <span>Tenendo bene a mente il <em>disegnino</em> di cui sopra provate a calarci questa entità di dominio:</span><br>  <span><a href="https://lh4.googleusercontent.com/-SpONuGutWmY/Typw8faUmbI/AAAAAAAAAok/382090mzTsA/image_6.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-HuwgK7Mlpr4/Typw8CM8O0I/AAAAAAAAAoc/6bmM6cly4Qo/image_thumb_2.png" width="212" height="170"></a> </span><br>  <blockquote>   <span>“Come utente voglio poter creare un nuovo User scegliendo il nome utente che, se valido, non potrà più essere modificato”</span><br> </blockquote>  <span>Una entità di dominio del genere è decisamente allergica alla UI e vi obbliga a modellare la UI secondo le <u>sue</u> necessità, ad esempio con uno wizard, e non secondo le necessità del <u>vostro utente</u>. Quello che voglio dire è che è decisamente “difficile” mettere quella entità, altrettanto decisamente lecita, in binding con un editor perchè l’utente deve poter editare la proprietà Username ma il suo valore vi serve prima dell’inizio dell’editing al fine di poter creare un’istanza dell’entità da editare… c’è qualcosa che non va ;-) e diciamo subito che non è l’entità di dominio il problema ma probabilmente è il fatto che vi manca qualche cosa nel mezzo. Ma non solo…</span><br>  <span><strong>…e lui scelse qualcosa da modificare…</strong></span><br>  <span><a href="https://lh6.googleusercontent.com/-JWJufo70ByM/Typw9xnMSyI/AAAAAAAAAo4/0FcAKhlwJHA/image_10.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-WxNRM9Yo7eU/Typw9AifdgI/AAAAAAAAAos/eaktKZBaXV0/image_thumb_4.png" width="244" height="194"></a> </span><br>  <span>Il nostro “simpatico” utente cerca qualcosa, visualizza una lista e sceglie un elemento da visualizzare, apre uno <em>screen</em> di edit e comincia l’editing… dato che la nostra bella entità implementa INotifiyPropertyChanged ed è shared tra la lista e lo screen di editing abbiamo l’effetto collaterale che le modifiche sono immediatamente visibili anche nella lista.</span><br>  <span>Dal punto di vista del codice non è un problema particolare perchè ci basta implementare un meccanismo come quello offerto da IEditableObject (che a me non <em>sconquinfera</em> più di tanto… ma è un’altra storia) per garantire la consistenza dei dati, l’inghippo è che l’effetto che otteniamo non è consistente per l’utente che, giustamente, non ha le nozioni (e non deve averle) per capire cosa sta succedendo e perchè.</span><br>  <span><strong>Presentation Pattern</strong></span><br>  <span>entrambi gli esempi di cui sopra sono uno dei motivi per cui esistono i “presentation pattern” e sono uno dei motivi per cui i presentation patter sono un <u>trittico</u>. In tutti i casi c’è sempre un attore tra il model e la sua presentazione:</span><br>  <ul>   <li>Model View <strong>Controller</strong>;</li>    <li>Model View <strong>Presenter</strong>;</li>    <li>Model View <strong>ViewModel</strong>;</li> </ul>      <span>Lo scopo del terzo incomodo è proprio quello di mediare la fase di presentazione/editing del modello:</span><br>  <span><a href="https://lh6.googleusercontent.com/-_KnLZsO4Cm8/Typw-8G4pJI/AAAAAAAAApI/bsxXJpqdG_8/image_12.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-1uxhO7InANY/Typw-QCoCOI/AAAAAAAAAo8/fpjKHjELsqc/image_thumb_5.png" width="244" height="190"></a> </span><br>  <span><em>è un mondo dificile <cit.></em></span><br>  <span>In questo scenario è il mediatore che contiene i dati e fa il commit verso la nostra bella entity solo ed esclusivamente all’atto del commit da parte dell’utente. In questo caso la nostra entità non implementa nulla di relativo al presentation, come è giusto che sia, quindi ad esempio non implementa INotifyPropertyChaged, è il “mediatore” che ha tutta la logica per interagire con la UI, è il mediatore che fa la validazione contestuale a quella specifica fase di editing è il mediatore che se necessario implementa la logica per la gestione del memento… <em>more to come</em> ;-)</span><br>  <span>E’ però evidente, come abbiamo constatato con <a href="http://blogs.ugidotnet.org/Raffaele" target="_blank">Raffaele</a>, che wrappare costa un sacco perchè se immaginate di espandere il vostro dominio aggiungendo una banale relazione uno-molti è evidente che le cose si complicano non poco perchè dovete wrappare l’impossibile con un bel po’ di codice da scrivere.</span><br>  <span><strong>Please welcome ICustomTypeDescriptor</strong></span><br>  <span>Ma non tutto è perso, altrimenti che scriverei a fare :-), possiamo infatti con un po’ di lavoro simpaticamente ingannare il motore di binding di Wpf (anche tutti gli altri), osservate questo esempio basato sulla classe User di cui sopra:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Window.Resources</span><span style="color: blue">>
+    <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">SampleDataContext </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="sdc" />
+</</span><span style="color: #a31515">Window.Resources</span><span style="color: blue">>
+
+<</span><span style="color: #a31515">StackPanel </span><span style="color: red">DataContext</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">sdc</span><span style="color: blue">}">
+
+    <</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+       <</span><span style="color: #a31515">Border </span><span style="color: red">Margin</span><span style="color: blue">="2" </span><span style="color: red">BorderThickness</span><span style="color: blue">="1" </span><span style="color: red">BorderBrush</span><span style="color: blue">="Red">
+            <</span><span style="color: #a31515">TextBox </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=DataSource.FirstName, </span><span style="color: red">UpdateSourceTrigger</span><span style="color: blue">=PropertyChanged}" />
+        </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+    </</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+
+    <</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+        <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="Questo testo è in binding con User.FirstName" />
+        <</span><span style="color: #a31515">Border </span><span style="color: red">Margin</span><span style="color: blue">="2" </span><span style="color: red">BorderThickness</span><span style="color: blue">="1" </span><span style="color: red">BorderBrush</span><span style="color: blue">="Red">
+            <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=DataSource.FirstName}" />
+        </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+    </</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+
+</</span><span style="color: #a31515">StackPanel</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che produce questo risultato:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-ebzXqjI5RbM/TypxA-RNTUI/AAAAAAAAApY/58TijicrbG0/image_14.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-AZDnKwAlF0o/Typw_4-USzI/AAAAAAAAApQ/zKZfqSOBafs/image_thumb_6.png" width="243" height="244"></a> </span><br>
+
+<span>Ma… bada ben… il DataContext è la classe SampleDataContext (il mediatore, il ViewModel in M-V-VM) che è così definita:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">SampleDataContext
+</span>{
+    <span style="color: blue">public </span>SampleDataContext()
+    {
+        <span style="color: blue">this</span>.DataSource = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>();
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>> DataSource { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Togo :-) e anche abbastanza semplice (circa 1h di lavoro, di cui la stragrande maggioranza dedicata alla ricerca, riuscita, di performance, alla fine ci ho messo di più per scrivere questo post). Il segreto, di pulcinella, è proprio l’interfaccia <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.icustomtypedescriptor.aspx" target="_blank">System.ComponentModel.ICustomTypeDescriptor</a>:</span><br>
+
+<ul>
+  <li>Il motore di binding analizza il tipo in binding, in questo caso <em>DataContex</em>.<strong>DataSource</strong>;</li>
+
+  <li>se si accorge che implementa ICustomTypeDescriptor e delega all’istanza di ICustomTypeDescriptor l’onere di risolvere le proprietà con cui andare in binding;</li>
+
+  <li>Fa il resto della parte di binding come sempre;</li>
+</ul>
+
+<span>Quindi se noi facciamo una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">SampleWrapper</span><T> : <span style="color: #2b91af">ICustomTypeDescriptor
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">PropertyDescriptorCollection </span>wrappedProperties;
+    <span style="color: blue">public </span>SampleWrapper()
+    {
+        <span style="color: blue">this</span>.wrappedProperties = <span style="color: #2b91af">TypeDescriptor</span>.GetProperties( <span style="color: blue">typeof</span>( T ) );
+    }
+
+    <span style="color: green">//... omissis...
+
+    </span><span style="color: blue">object </span><span style="color: #2b91af">ICustomTypeDescriptor</span>.GetPropertyOwner( <span style="color: #2b91af">PropertyDescriptor </span>pd )
+    {
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: #2b91af">PropertyDescriptorCollection ICustomTypeDescriptor</span>.GetProperties( <span style="color: #2b91af">Attribute</span>[] attributes )
+    {
+        <span style="color: blue">return this</span>.wrappedProperties;
+    }
+}</pre>
+</blockquote>
+
+<span>ecco che “inganniamo” il motore di binding, per ora però semplicemente lo inganniamo perchè appena proviamo a scrivere qualcosa nella textbox giustamente si schianta tutto perchè non c’è un’istanza su cui fare il set vero e proprio di quel valore.</span><br>
+
+<span>Vi ricordate le <a href="http://blogs.ugidotnet.org/topics/archive/2009/07/26/mimando-le-dependency-propertyhellip.aspx" target="_blank">mie Dependency Property</a>? ecco… ripartendo da li, cosa che avevo parzialmente abbandonato perchè non vedevo un’utilità realmente concreta, adesso ho questi test che passano che è un piacere:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_getPropertyValue_wrapping_nothing_should_return_expected_default_value()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>();
+    <span style="color: blue">var </span>actual = target.GetPropertyValue( u => u.Username );
+
+    actual.ShouldBeNull();
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_setPropertyValue_wrapping_nothing_should_set_value_as_expected()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"Mauro"</span>;
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>();
+    target.SetPropertyValue( u => u.FirstName, expected );
+    <span style="color: blue">var </span>actual = target.GetPropertyValue( u => u.FirstName );
+
+    actual.ShouldBeEqualTo(expected);
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+[<span style="color: #2b91af">ExpectedException</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">InvalidOperationException </span>) )]
+<span style="color: blue">public void </span>wrapper_setPropertyValue_using_readonly_property_should_raise_InvalidOperationException()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>();
+    target.SetPropertyValue( u => u.Username, <span style="color: #a31515">"sample" </span>);
+}</pre>
+</blockquote>
+
+<span>Notate che non abbiamo creto un’istanza della classe User? eppure i test passono e la UI in Wpf (utilizzando un minimale M-V-VM) funziona senza scrivere pressochè una virgola di codice, abbiamo infatti una implementazione di INotifyPropertyChanged e abbiamo pure una implementazione del Memento Pattern, implementazione di cui parleremo prossimamente, che ci consente un rollback delle modifiche (bidirezionale: forward changes e backward changes) effettuate dall’utente.</span><br>
+
+<span>Ritorniamo però ia nostri 2 esempi di prima, nel primo caso l’utente desidera editare un nuovo “User” e giustamente deve poter fare il “set” della proprietà Username nonostante questa sia reaonly:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_setPropertyValue_using_readonly_property_overriding_metadata_should_write_expected_value()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"sample"</span>;
+    <span style="color: blue">var </span>metadata = <span style="color: blue">new </span><span style="color: #2b91af">WrappedPropertyMetadata</span>() { IsReadOnly = <span style="color: blue">false </span>};
+    
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>();
+    target.OverridePropertyMetadata( u => u.Username, metadata );
+
+    target.SetPropertyValue( u => u.Username, expected );
+    <span style="color: blue">var </span>actual = target.GetPropertyValue( u => u.Username );
+
+    actual.ShouldBeEqualTo( expected );
+}</pre>
+</blockquote>
+
+<span>possiamo quindi iniettare nel nostro wrapper un comportamento diverso dal default, questo risolve una parte del problema ma non tutto, infatti abbiamo bisogno di poter eseguire il “commit” delle modifiche nella entità vera e propria:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_commit_wrapping_nothing_should_create_new_entity_instance()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"mauro.servienti@gmail.com"</span>;
+    
+    <span style="color: blue">var </span>propertyMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrappedPropertyMetadata</span>() 
+    { 
+        IsReadOnly = <span style="color: blue">false 
+    </span>};
+
+    <span style="color: blue">var </span>wrapperMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrapperMetadata</span><<span style="color: #2b91af">User</span>>()
+    {
+        CommitInterceptor = e =>
+        {
+            <span style="color: blue">var </span>username = e.Wrapper.GetPropertyValue( u => u.Username );
+            e.Instance = <span style="color: blue">new </span><span style="color: #2b91af">User</span>( username );
+        }
+    };
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>( wrapperMetadata );
+
+    target.OverridePropertyMetadata( u => u.Username, propertyMetadata );
+    target.SetPropertyValue( u => u.Username, expected );
+
+    <span style="color: #2b91af">User </span>actual = target.Commit();
+    actual.Username.ShouldBeEqualTo( expected );
+}</pre>
+
+  <span><a href="http://11011.net/software/vspaste"></a></span><br>
+</blockquote>
+
+<span>abbiamo quindi la necessità di intervenire nel processo di commit, momento in cui il Wrapper travasa i dati nella entità, e dato che stiamo creando un nuovo User iniettiamo nel Wrapper un interceptor (licenza poetica da Castle Windsor) che utilizziamo per creare l’istanza di un nuovo User passando il valore della proprietà username nel costruttore.</span><br>
+
+<span>Ok, ma il resto delle proprietà? Abbiamo 2 strade: farcelo noi ;-)</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_commit_wrapping_nothing_should_create_new_entity_instance_and_should_set_all_values_using_interceptor()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"mauro.servienti@gmail.com"</span>;
+    <span style="color: blue">var </span>firstName = <span style="color: #a31515">"Mauro"</span>;
+    <span style="color: blue">var </span>lastName = <span style="color: #a31515">"Servienti"</span>;
+
+    <span style="color: blue">var </span>propertyMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrappedPropertyMetadata</span>()
+    {
+        IsReadOnly = <span style="color: blue">false
+    </span>};
+
+    <span style="color: blue">var </span>wrapperMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrapperMetadata</span><<span style="color: #2b91af">User</span>>()
+    {
+        CommitInterceptor = e =>
+        {
+            e.Instance = <span style="color: blue">new </span><span style="color: #2b91af">User</span>( e.Wrapper.GetPropertyValue( u => u.Username ) );
+            e.Instance.FirstName = e.Wrapper.GetPropertyValue( u => u.FirstName );
+            e.Instance.LastName = e.Wrapper.GetPropertyValue( u => u.LastName );
+
+            e.Handled = <span style="color: blue">true</span>;
+        }
+    };
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>( wrapperMetadata );
+
+    target.OverridePropertyMetadata( u => u.Username, propertyMetadata );
+    target.SetPropertyValue( u => u.Username, expected );
+    target.SetPropertyValue( u => u.FirstName, firstName );
+    target.SetPropertyValue( u => u.LastName, lastName );
+
+    <span style="color: #2b91af">User </span>actual = target.Commit();
+    actual.Username.ShouldBeEqualTo( expected );
+    actual.FirstName.ShouldBeEqualTo( firstName );
+    actual.LastName.ShouldBeEqualTo( lastName );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>oppure aspettarci che il Wrapper sia in grado di farlo da solo…</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>wrapper_commit_wrapping_nothing_should_create_new_entity_instance_and_should_automatically_set_all_values()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"mauro.servienti@gmail.com"</span>;
+    <span style="color: blue">var </span>firstName = <span style="color: #a31515">"Mauro"</span>;
+    <span style="color: blue">var </span>lastName = <span style="color: #a31515">"Servienti"</span>;
+
+    <span style="color: blue">var </span>propertyMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrappedPropertyMetadata</span>()
+    {
+        IsReadOnly = <span style="color: blue">false
+    </span>};
+
+    <span style="color: blue">var </span>wrapperMetadata = <span style="color: blue">new </span><span style="color: #2b91af">WrapperMetadata</span><<span style="color: #2b91af">User</span>>()
+    {
+        CommitInterceptor = e =>
+        {
+            e.Instance = <span style="color: blue">new </span><span style="color: #2b91af">User</span>( e.Wrapper.GetPropertyValue( u => u.Username ) );
+        }
+    };
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Wrapper</span><<span style="color: #2b91af">User</span>>( wrapperMetadata );
+    target.OverridePropertyMetadata( u => u.Username, propertyMetadata );
+    
+    target.SetPropertyValue( u => u.Username, expected );
+    target.SetPropertyValue( u => u.FirstName, firstName );
+    target.SetPropertyValue( u => u.LastName, lastName );
+
+    <span style="color: #2b91af">User </span>actual = target.Commit();
+
+    actual.Username.ShouldBeEqualTo( expected );
+    actual.FirstName.ShouldBeEqualTo( firstName );
+    actual.LastName.ShouldBeEqualTo( lastName );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+
+
+<span>Notate che nell’interceptor non facciamo più il set di FirstName e LastName? è infatti il Wrapper che adesso fa il commit delle proprietà per noi.</span><br>
+
+<span>La domanda più che lecita è: perchè tutto questo sbattimento? </span><br>
+
+<span>Quello che segue è un parte del dominio di una parte dell’applicazione a cui sto lavorando… una parte di una parte:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-RBgiRC34cVY/TypxCPahyKI/AAAAAAAAApo/XfWoNgfKImw/Model.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="Model" border="0" alt="Model" src="https://lh6.googleusercontent.com/-MPmX_UC_1zk/TypxBbnWM9I/AAAAAAAAApc/YzeSWlMpBaI/Model_thumb.png" width="244" height="111"></a> </span><br>
+
+<span>Pensate sia realistico pensare di scrivere wrapper veri e propri per tutta quella roba? considerando che:</span><br>
+
+<ul>
+  <li>Per ognuna delle entità avete mediamente 3 scenari di edit/creazione diversi in base al contesto d’uso;</li>
+
+  <li>Per ognuna delle entità dove implementare il supporto per il “memento” dell’intero grafo che state editando;</li>
+</ul>
+
+<span>Secondo me no, quindi ritengo che investire un po’ di tempo per investigare starde alternative sia sensato ;-)</span><br>
+
+<span>Cosa ci manca? ancora 2 cose, di cui una al momento già funzionate:</span><br>
+
+<ul>
+  <li><em>Wrapper di una entità esistente</em>: questo funziona, tralascio i test perchè vi ho già tediato abbastanza;</li>
+
+  <li><em>Scenario con grafo complesso</em>: questo è un filino più complesso ma ho già in mente una soluzione e se funziona dovrei cavarmela con un centinaio di righe di codice. Ho però la possibilità di calare quello che ho realizzato fino ad ora in uno scenario reale per capire se riduce effettivamente i tempi di sviluppo, cosa che sulla carta è già una realtà;</li>
+</ul>
+
+<span>Un’ultima domanda: è performante? per quello che fa decisamente si, inoltre nel mio scenario il collo di bottiglia è l’utente quindi… è decisamente performante :-)</span><br>
+
+<span>…e anche stavolta ho scritto un poema, scusate :-)</span><br>
+
+<span>.m</span><br>
+
+<span><em><u>n.d.r.</u>
+
+    <br>Probabilmente non lo si è notato ma il tutto è stato realizzato in TDD, non che sia importante ma mi piaceva sottolinearlo, in questa caso TDD mi è stato utilie perchè mi ha aiutato a focalizzare l’attenzione sulle feature che mi servivano senza lasciarmi trascinare dall’euforia del programmatore moderno :-P
+
+    <br>Ad esempio mi è venuto in mente che sarebbe carino avere il supporto per delle custom property che non esistono sul modello e per una sorta di interceptor per il get/set di ogni singola property, ma per ora non servono, per ora :-)</em></span><br>

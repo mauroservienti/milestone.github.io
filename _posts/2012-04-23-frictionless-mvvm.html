@@ -1,0 +1,49 @@
+---
+layout: post
+title: Frictionless MVVM
+date: '2012-04-23T09:56:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- RavenDB
+- Architecture
+- Model View ViewModel
+modified_time: '2012-04-23T09:56:12.776+02:00'
+thumbnail: http://lh5.ggpht.com/-lGp0fZv-8Q8/T5EatqMpuGI/AAAAAAAAB_E/70lwhM_dGoU/s72-c/image_thumb%25255B10%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6197501131826743555
+blogger_orig_url: http://milestone.topics.it/2012/04/frictionless-mvvm.html
+---
+
+I love the concept of sustainable and frictionless development. This morning I started a new WPF project, it aims to be a base for the <a href="http://ravendb.net/" target="_blank">RavenDB</a> <a href="http://ravendb.net/events/82/3-days-ravendb-training-in-italy" target="_blank">training</a> that <a href="{{ site.baseurl }}{% post_url 2012-04-19-ravendb-training-in-italy %}" target="_blank">we will hold</a> in Perugia in June.<br />
+<strong>10 steps project bootstrap (5 minutes)</strong><br />
+I’m loving it:<br />
+<ul>
+<li>Create the Visual Studio solution;</li>
+<li>Add a WPF project;</li>
+<li>Add some <a href="http://nuget.org/packages?q=Radical" target="_blank">nuget</a> references:</li>
+<ul>
+<li><em>Radical</em>;</li>
+<li><em>Radical.Windows</em>;</li>
+<li><em>Radical.Windows.Presentation</em>;</li>
+<li><em>Radical.Extensions.CastleWindsor</em>;</li>
+</ul>
+<li>Add a reference to the new kid on the block (not yet on nuget): <em>Radical.Windows.Presentation.CastleWindsor</em>;</li>
+<li>Delete the default MainWindow.xaml;</li>
+<li>Edit the app.xaml file to remove the StartupUri property;</li>
+<li>Add a Presentation folder to the project;</li>
+<li>Create to new items:</li>
+<ul>
+<li>A WPF window Main<strong>View</strong>.xaml (*View is important for the default conventions);</li>
+<li>A class Main<strong>ViewModel</strong> (&lt;<em>ViewName&gt;</em>ViewModel is important for the default conventions);</li>
+</ul>
+<li>In the app.xaml.cs add a single line of code:</li>
+</ul>
+<blockquote>
+<a href="http://lh5.ggpht.com/-qO7JRbXDXik/T5Eas5nQkwI/AAAAAAAAB_A/lwHDSCJl5SE/s1600-h/image%25255B12%25255D.png"><img alt="image" border="0" height="104" src="http://lh5.ggpht.com/-lGp0fZv-8Q8/T5EatqMpuGI/AAAAAAAAB_E/70lwhM_dGoU/image_thumb%25255B10%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="448" /></a></blockquote>
+<ul>
+<li>Press F5 and you are up &amp; running <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh6.ggpht.com/-LbjAW2w5K8o/T5EauSRTXbI/AAAAAAAAB_M/YsVsGqhQGzo/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />:</li>
+</ul>
+<blockquote>
+<a href="http://lh3.ggpht.com/-IfaGu19FOMA/T5EavKeReUI/AAAAAAAAB_Y/O3dzRzA5RF4/s1600-h/image%25255B17%25255D.png"><img alt="image" border="0" height="190" src="http://lh6.ggpht.com/-Yq_cjdZ0tD0/T5EawUdvk7I/AAAAAAAAB_c/LsaVBJDHj6A/image_thumb%25255B13%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="353" /></a></blockquote>
+The application boots, all the default and required services (for MVVM and UI Composition) are wired into Castle Windsor, the MainView is designed as the main window, at boot time the MainView is resolved and using the conventions engine the MainViewModel is wired as the DataContext of the MainView, in the end the MainView is shown.<br />
+.m

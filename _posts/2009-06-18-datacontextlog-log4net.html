@@ -1,0 +1,83 @@
+---
+layout: post
+title: '*DataContext.Log –> log4net…'
+date: '2009-06-18T09:29:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:39:23.168+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-214644901874707342
+blogger_orig_url: http://milestone.topics.it/2009/06/datacontextlog-log4net.html
+---
+
+<span>I vari flavour del DataContext offrono la possibilità di agganciare un “logger” per vedere ad esempio le query prodotte, ad esempio con Linq2Sql avete una cosa del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">MyDataContext</span>() )
+{
+    dc.Log = <span style="color: #2b91af">Console</span>.Out;<br>}</pre>
+</blockquote>
+
+<span>Questo, se avete un debugger attaccato, o siete in un’applicazione Console, scrive sulla Console (Output Window per il debugger) i messaggi di Log del DataContext, tra cui tutte le query T-Sql con i parametri etc etc…</span><br>
+
+<span>Adesso supponiamo che vogliate scrivere quel log su un vostro sistema di Log, sia esso log4net, come nel mio caso, o il motore di Tracing di .net, poco importa quale sia la destinazione; in tutti i casi l’inghippo è che da una parte avete un TextWriter mentre dall’altra avete un metodo da chiamare tipicamente passando un messaggio sottoforma di stringa.</span><br>
+
+<span>Per log4net <a href="http://devintelligence.com/2008/01/sending-the-linq-to-sql-log-to-log4net/" target="_blank">ho trovato</a> questa soluzione abbastanza complessa, a mio modo di vedere, che per inciso non funziona… ;-) o meglio se usate log4net in maniera basilare si, ma se cominciate a fare cose un po’ strane allora ciccia, non da errori ma non scrive nulla. All’inizio ci ho ragionato sopra un po’ cercando di capire quale fosse il problema… poi “blink” :-)</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">ActionTextWriter </span>: <span style="color: #2b91af">TextWriter
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">Action</span><<span style="color: #2b91af">String</span>> logger;
+
+    <span style="color: blue">public </span>ActionTextWriter( <span style="color: #2b91af">Action</span><<span style="color: #2b91af">String</span>> logger )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( logger ).Named( <span style="color: #a31515">"logger" </span>).IsNotNull();
+
+        <span style="color: blue">this</span>.logger = logger;
+    }
+
+    <span style="color: blue">public override void </span>Write( <span style="color: blue">string </span>value )
+    {
+        <span style="color: blue">this</span>.logger( value );
+    }
+
+    <span style="color: blue">public override void </span>Write( <span style="color: blue">char</span>[] buffer, <span style="color: blue">int </span>index, <span style="color: blue">int </span>count )
+    {
+        <span style="color: blue">if</span>( buffer == <span style="color: blue">null </span>|| index < 0 || count < 0 || buffer.Length - index < count )
+        {
+            <span style="color: green">//let base class to throw exception
+            </span><span style="color: blue">base</span>.Write( buffer, index, count );
+        }
+
+        <span style="color: blue">this</span>.logger( <span style="color: blue">new </span><span style="color: #2b91af">String</span>( buffer, index, count ) );
+    }
+
+    <span style="color: #2b91af">Encoding </span>_encoding;
+    <span style="color: blue">public override </span><span style="color: #2b91af">Encoding </span>Encoding
+    {
+        <span style="color: blue">get
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">this</span>._encoding == <span style="color: blue">null </span>)
+            {
+                <span style="color: blue">this</span>._encoding = <span style="color: blue">new </span><span style="color: #2b91af">UnicodeEncoding</span>( <span style="color: blue">false</span>, <span style="color: blue">false </span>);
+            }
+
+            <span style="color: blue">return this</span>._encoding;
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>ActionTextWriter, di una semplicità disarmante: altro non fa che intercettare le chiamate a “Write” del TextWriter e redirigerle sul delegato di tipo Action<String> che gli passate nel costruttore.</span><br>
+
+<span>Per usarlo quindi, nel mio caso con log4net, mi limito a fare:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static readonly </span><span style="color: #2b91af">ILog </span>logger = <span style="color: #2b91af">LogManager</span>.GetLogger( <span style="color: blue">typeof</span>( <span style="color: #2b91af">MyRepository </span>) );</pre>
+
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">MyDataContext</span>( <span style="color: blue">this</span>.connectionString ) )
+{
+    dc.Log = <span style="color: blue">new </span><span style="color: #2b91af">ActionTextWriter</span>( s => logger.Debug( s ) );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Semplice, funzionale e senza seg*e mentali di sorta ;-)</span><br>
+
+<span>.m</span><br>

@@ -1,0 +1,169 @@
+---
+layout: post
+title: 'M-V-VM: simple view provider'
+date: '2011-10-27T09:30:00.001+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- UI Composition
+- Model View ViewModel
+modified_time: '2012-02-25T12:07:31.622+01:00'
+thumbnail: https://lh5.googleusercontent.com/-QHuW8z4Q7xI/T0jA8kACFxI/AAAAAAAAB7I/_LsfdIMKx4Y/s72-c/wlEmoticon-smile_2_41.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-299858687487616807
+blogger_orig_url: http://milestone.topics.it/2011/10/m-v-vm-simple-view-provider_27.html
+---
+
+<span>On these pages I have spoken a lot, during this years, about UI composition and I’ve also built a toolkit (during the Prism v1 era) to automate all the infrastructure and all the basic tasks related to UI composition.</span><br>  <span>That project, named <em>Ran Toolkit</em>, has been developed for about 4 years,  and gave me lots of satisfactions, but:</span><br>  <ul>   <li><u>has grown uncontrolled</u>, introducing unwanted complexity…the typical big ball of mud; </li>    <li><u>has a double face</u>: it’s a <em>m-v-vm</em> toolkit and an <em>UI composition</em> toolkit, and if you want one you have to get the other…and vice versa…not the best; </li> </ul>  <span>A couple of months ago I started a new WPF project, at a first glance a really simple project, with really basics m-v-vm needs that can be satisfied by <a href="http://radical.codeplex.com/" target="_blank">Radical</a> and a base class that implements INotifyPropertyChanged, nothing more.</span><br>  <span><strong>So far, so good…</strong></span><br>  <span>Obviously that small application evolved and start asking for some UI composition feature, so I decided to give to the <em>Ran Toolkit</em> a new life adding a new kid to the Radical family: <em>Radical.Windows.Presentation</em> (not yet on <a href="http://nuget.org" target="_blank">nuget</a>).</span><br>  <span><strong>So what?</strong></span><br>  <span>The aims of Radical.Windows.Presentation are:</span><br>  <ul>   <li>provide a m-v-vm toolkit; </li>    <li>provide a UI composition toolkit; </li>    <li>remove, totally remove, the coupling between the two toolkits letting the developer choose what he needs, without compromises; </li> </ul>  <span>The main pillar of Radical.Windows.Presentation is: <strong>simplicity</strong> (period).</span><br>  <span>With simplicity in mind the first thing I approached is the Inversion of Control container support, specifically how to help the developer to resolve views and view models.</span><br>  <span>I can state that there is a tight coupling between views and view models, at least most of the times for every single view there is a view model, what a better place to introduce conventions?</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">interface</font></span> <span style="color: "><font color="#2b91af">IViewResolver</font></span><br>{<br>	T GetView<T>() <span style="color: "><font color="#0000ff">where</font></span> T : <span style="color: "><font color="#2b91af">DependencyObject</font></span>;<br>}</font></font></pre>
+</blockquote>
+
+<span>The view resolver does a really simple assumption, well someone else does it in the end, the view resolver says: <em>given a view named MySampleView I’ll assume, by default, that the view model will be a type in the same namespace as the view and with the same name as the view with a “Model” suffix</em>, so in this case the view model name will be MySampleViewModel.</span><br>
+
+<span>Obviously Radical.Windows.Presentation provides a default implementation of the IViewResolver interface, something like this:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font style="font-size: 11.3pt"><font face="Consolas"><span style="color: "><font color="#0000ff">public</font></span> T GetView<T>() <span style="color: "><font color="#0000ff">where</font></span> T : <span style="color: "><font color="#2b91af">DependencyObject</font></span><br>{<br>	<span style="color: "><font color="#0000ff">var</font></span> view = <span style="color: "><font color="#0000ff">this</font></span>.container.GetService<T>();<br> <br>	<span style="color: "><font color="#0000ff">if</font></span>( !<span style="color: "><font color="#0000ff">this</font></span>.conventions.ViewHasDataContext( view ) )<br>	{<br>		</font></font><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">var</font></span> viewModelType = <span style="color: "><font color="#0000ff">this</font></span>.conventions.ResolveViewModelType( <span style="color: "><font color="#0000ff">typeof</font></span>( T ) );<br>		<span style="color: "><font color="#0000ff">var</font></span> viewModel = <span style="color: "><font color="#0000ff">this</font></span>.container.GetService( viewModelType );<br>  <br>		<span style="color: "><font color="#0000ff">this</font></span>.conventions.AttachViewToViewModel( view, viewModel );<br>		<span style="color: "><font color="#0000ff">this</font></span>.conventions.SetViewDataContext( view, viewModel );<br> <br>	}<br> <br>	<span style="color: "><font color="#0000ff">return</font></span> view;<br>}</font></font></pre>
+</blockquote>
+
+<span><strong>Well…what’s going on here?</strong></span><br>
+
+<span>First of all a couple of notes about involved actors:</span><br>
+
+<ul>
+  <li><em>container</em> is the Inversion of Control container, in this case it is just an IServiceProvider instance and GetService<T> is an extension method that “hides” all the ugliness of type casting; </li>
+
+  <li><em>conventions</em> is a really simple component that handles conventions, that the end user can change to satisfy his own needs; </li>
+</ul>
+
+<span>The first thing we do is to grab a reference to the view, given its T type, then we ask to the conventions handler if the view has a “data context” set.</span><br>
+
+<blockquote>
+  <span><em>Q: </em>Why we ask it to the conventions handler?</span><br>
+
+  <span><em>A: </em>Basically the problem is that a DependencyObject does not have a DataContext property, DataContext is exposed by FrameworkElement and FrameworkContentElement that are not in the same inheritance chain so we cannot query just a single base class; This tells me that other controls (such as third party controls) can behave in a different manner and the end user needs to be able to plug his own logic.</span><br>
+</blockquote>
+
+<span>The second assumption we do here is: if the resolver view already has a DataContext property set it’s a singleton view and has been already resolved once, so do not do anything else and return the view to the caller.</span><br>
+
+<span>On the other end if the view is not a singleton or if it is the first time we resolve that view we:</span><br>
+
+<ul>
+  <li>ask to the conventions handler, given the view type, to tell us which is the view model type; </li>
+
+  <li>resolve the view model using the Inversion of Control container; </li>
+
+  <li>attach the view to the view model…what the hell is this? we’ll see it in a minute; </li>
+
+  <li>set the DataContext of the view to the resolved view model instance, we use the conventions handler for the reasons explained above; </li>
+</ul>
+
+<span><em>There are also a couple of other things we do but we’ll let them for another post.</em></span><br>
+
+<span><strong>Why do we attach the view to the view model?</strong></span><br>
+
+<span>Well, this is one of the decisions driven by the simplicity pillar: in every desktop application you have, at one point, to deal with the view, as the following really frequent sample demonstrates:</span><br>
+
+<blockquote>
+  <span><em>Dialogs</em>: you need to request, from a view model, to open a dialog to ask something to the user (e.g. choose a file on disk); you’ll try to do everything respecting the pattern, so you send a “ChooseFileRequest” message using your favorite message broker but at one point you realize that you need to give to the dialog instance its own owner, otherwise you start facing really <em>cool</em> behaviors where dialogs are dialogs but are not topmost and cannot be brought on top… :-/</span><br>
+</blockquote>
+
+<span>Radical.Windows.Presentation introduce a really simple way to achieve that, just fire your message in the usual way and introduce in the message the concept of “owner”; for example if the calling view model is the designated owner you can write something like this:</span><br>
+
+<blockquote>
+  <pre class="csharpcode">var message = <span class="kwrd">new</span> ChooseFileRequest()
+{
+   Owner = <span class="kwrd">this</span>;
+}
+
+<span class="kwrd">this</span>.broker.Broadcast( message );</pre>
+  <style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>Now what you can do in the message handler is something like:</span><br>
+
+<blockquote>
+  <pre class="csharpcode">var window = message.Owner.FindWindow();
+var view = viewResolver.GetView<MyDialogView>();
+view.Owner = window;
+
+view.ShowDialog();</pre>
+  <style type="text/css">
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style><style type="text/css">
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>where <em>FindWindow</em> is an extension method provided by the infrastructure whose role is to find the window instance that is hosting the given view model…how? simply using the conventions handler, asking it the current view associated with the view model and reverse walking the visual tree until it finds the Window object.</span><br>
+
+<span>Easy…isn’t it? <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh5.googleusercontent.com/-QHuW8z4Q7xI/T0jA8kACFxI/AAAAAAAAB7I/_LsfdIMKx4Y/wlEmoticon-smile_2_41.png"></span><br>
+
+<span>.m</span><br>

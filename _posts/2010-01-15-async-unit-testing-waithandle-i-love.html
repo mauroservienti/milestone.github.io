@@ -1,0 +1,38 @@
+---
+layout: post
+title: 'Async Unit Testing: WaitHandle I love you :-)'
+date: '2010-01-15T13:29:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Unit Tests
+modified_time: '2012-08-04T19:47:46.215+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6736883777378162151
+blogger_orig_url: http://milestone.topics.it/2010/01/async-unit-testing-waithandle-i-love.html
+---
+
+<span>è vero che non si può testare tutto ma secondo me vale la pena di testare il più possibile, in questo modo si riduce la “superficie di attacco”. Una delle cose scomode da testare sono indubbiamente le “<em>robe</em>” multi-threading, ma:</span><br>  <ul>   <li>se ne scriviamo “<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2343018756879419958" target="_blank">molto piccoli e molto tanti</a>”; </li>    <li>se usiamo gli strumenti che abbiamo a disposizione, </li> </ul>  <span>risulta abbastanza facile produrre qualcosa di utile:</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>asyncWorker_should_correctly_set_result()
+{
+    <span style="color: blue">var </span>wa = <span style="color: blue">new </span><span style="color: #2b91af">ManualResetEvent</span>( <span style="color: blue">false </span>);
+
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"result"</span>;
+    <span style="color: blue">var </span>actual = <span style="color: #a31515">""</span>;
+
+    <span style="color: blue">var </span>worker = <span style="color: #2b91af">AsyncWorker</span>.Using( expected )
+        .AndExpecting( <span style="color: blue">new </span>{ Sample = <span style="color: #a31515">"" </span>} )
+        .Execute( cfg =>
+        {
+            cfg.Async = e => e.Result = <span style="color: blue">new </span>{ Sample = e.Argument };
+            cfg.After = e => actual = e.Result.Sample;
+        } );
+
+    worker.Completed += ( s, e ) => wa.Set();
+    wa.WaitOne();
+
+    actual.ShouldBeEqualTo( expected );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m</span><br>
+

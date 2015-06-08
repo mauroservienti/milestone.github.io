@@ -1,0 +1,56 @@
+---
+layout: post
+title: …dimenticavo :-)
+date: '2010-01-21T11:04:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-08T14:02:36.201+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9136862159197105888
+blogger_orig_url: http://milestone.topics.it/2010/01/dimenticavo.html
+---
+
+<span><a href="http://milestone.topics.it/blog/post/confrontarsi-smuove-i-neuroni">Anche io invecchio</a>, uffa :-P</span><br>  <span>la chiaccherata con <a href="http://cradle.aspitalia.com/">Marco de Sanctis</a> era volta a capire perchè non avessi usato una sintassi di questo genere:</span><br>  <blockquote>   <pre class="code"><span style="color: #2b91af">Ensure</span>.That( () => args )
+    .WithMessage( <span style="color: #a31515">"Missing console arguments." </span>)
+    .IsFalse( v => v.Length == 0 );</pre>
+</blockquote>
+
+<span>che utilizzando le lambda mi permetteva di pigliare due piccioni con una fava:</span><br>
+
+<ul>
+  <li>rimuovere il nome del parametro che è una stringa non refactoring-friendly; </li>
+
+  <li>e passare contestualmente il valore da ispezionare; </li>
+</ul>
+
+<span>In effetti quella cosa in origine c’era:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">internal </span>Ensure( System.Linq.Expressions.<span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> obj )
+{
+    <span style="color: blue">if</span>( obj == <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"obj"</span>, <span style="color: #a31515">"Cannot use a null Expression<Func<T>> as Ensure ctor parameter." </span>);
+    }
+
+    <span style="color: #2b91af">Func</span><T> func = obj.Compile();
+    <span style="color: blue">this</span>.inspectedObject = func();
+
+    <span style="color: blue">var </span>expression = obj.Body <span style="color: blue">as </span>System.Linq.Expressions.<span style="color: #2b91af">MemberExpression</span>;
+    <span style="color: blue">var </span>member = expression.Member <span style="color: blue">as </span>System.Reflection.<span style="color: #2b91af">FieldInfo</span>;
+    <span style="color: blue">this</span>.Name = member.Name;
+}</pre>
+</blockquote>
+
+<span>Decisamente figoso, peccato che quella chiamata a Compile(), per poi poter ottenere il valore, abbia un costo notevole che inficia in maniera percettibile sulle prestazioni complessive.</span><br>
+
+<span>Il suggerimento resta comunque valido per soddisfare il primo punto e poter scrivere questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">Ensure</span>.That( args )
+    <u><strong>.Named( () => args )
+</strong></u>    .WithMessage( <span style="color: #a31515">"Missing console arguments." </span>)
+    .IsFalse( v => v.Length == 0 );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m<a href="http://11011.net/software/vspaste"></a></span><br>

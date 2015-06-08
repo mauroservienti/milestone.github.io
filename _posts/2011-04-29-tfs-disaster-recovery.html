@@ -1,0 +1,14 @@
+---
+layout: post
+title: TFS Disaster Recovery
+date: '2011-04-29T10:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Team Foundation Server
+modified_time: '2012-08-04T20:14:49.845+02:00'
+thumbnail: https://lh5.googleusercontent.com/-euwca_YY29g/T0SlXJ64h-I/AAAAAAAAB1Y/KMKG56cEbgc/s72-c/wlEmoticon-smile_2_24.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5575894273231994828
+blogger_orig_url: http://milestone.topics.it/2011/04/tfs-disaster-recovery.html
+---
+
+<span>Se siete amministratori di un TFS non potete non aver mai sentito parlare dei “<strong>Team Foundation Server Power Tools</strong>” un set di tool per amministrare proprio un’installazione di TFS.</span><br>  <span>Tra questi tool ve ne è uno comodissimo il cui scopo è quello di permettervi di creare un “<strong>backup plan</strong>”. Il tool inoltre, ma direi che è ovvio, vi garantisce la possibilità di ripristinare I dati da un backup in caso di disaster recovery.</span><br>  <span>Il nocciolo della questione è proprio li: <strong>disaster recovery</strong>, il tool ad oggi è utilie solo in caso di disaster recovery e non in caso di migrazione, quindi l’ambiente in cui i dati vengono ripristinati deve essere identico all’ambiente in cui i dati sono stati salvati.</span><br>  <span>Ma supponiamo che abbiate uno scenario in cui questo non sia vero, quindi avete bisogno di ripristinare I dati in un ambiente diverso da quello di partenza, nel mio caso su una macchina con un nome diverso, legata ad un dominio diverso e di conseguenza con utenti diversi.</span><br>  <span><strong>Si può fare <cit.></strong> …ovviamente <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh5.googleusercontent.com/-euwca_YY29g/T0SlXJ64h-I/AAAAAAAAB1Y/KMKG56cEbgc/wlEmoticon-smile_2_24.png"></span><br>  <span>e non è neanche così complicato:</span><br>  <ul>   <li>Reinstallate il TFS e riapplicate il Service Pack 1 ma non eseguite la configurazione; </li>    <li>Ripristinate manualmente I database dai backup usando gli strumenti di Sql Server; </li>    <li>Eseguite, da command line, <a href="http://msdn.microsoft.com/en-us/library/ms253107.aspx">tfsconfig.exe accounts /add</a> (con tutti I parametri necessari) per aggiungere l’utente che state usando per il recovery come service account; </li>    <li>Eseguite la procedura di configurazione usando l’opzione “application tier only”; </li> </ul>  <span>A questo punto potete lanciare la console di amministrazione e cambiare, se necessario, il service account e tutte le opzioni che sono rimaste legate al vecchio ambiente.</span><br>  <span>.m</span><br>

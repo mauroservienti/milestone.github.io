@@ -1,0 +1,26 @@
+---
+layout: post
+title: 'Behavior vs Attached Property #2'
+date: '2010-01-20T10:33:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+- Attached Behaviors
+modified_time: '2012-08-04T17:48:12.461+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3165371633605505277
+blogger_orig_url: http://milestone.topics.it/2010/01/behavior-vs-attached-property-2.html
+---
+
+<span>Vorrei sottolineare un’altra differenza non da poco tra Behavior e Attached Property, oltre a quelle di cui ho <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/6762931204738498267" target="_blank">già parlato</a>, e che <a href="http://blogs.ugidotnet.org/corrado">Corrado</a> nei commenti ha integrato.</span><br>  <span>Una Attached Property, in quanto <u>proprietà</u>, necessita che venga <em>settato</em> un valore al fine di “attivarla”, mentre un Behavior, in quanto <u>comportamento</u>, è molto più simile ad un metodo e, <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/7672574535407411798" target="_blank">come evidenziato</a>, non è necessario <em>nulla</em> perchè venga attivato:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23" </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">DataSource</span><span style="color: blue">.</span><span style="color: red">StreetNumber</span><span style="color: blue">}"</span><span style="color: blue">>
+    <</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+        <</span><span style="color: #a31515">behaviors</span><span style="color: blue">:</span><span style="color: #a31515">DisableUndoManagerBehavior </span><span style="color: blue">/>
+    </</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+</</span><span style="color: #a31515">TextBox</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Un discreto vantaggio :-)</span><br>
+
+<span>.m</span><br>
+

@@ -1,0 +1,145 @@
+---
+layout: post
+title: Wcf, i Known Service Type e non solo :-)
+date: '2010-05-09T00:47:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Wcf
+modified_time: '2012-08-04T20:16:24.169+02:00'
+thumbnail: https://lh5.googleusercontent.com/-assPRW0MO5U/TzyeeORQcdI/AAAAAAAABRY/sh1vQeZ5ueY/s72-c/6aaa99f2-ce89-490c-aae5-d0225f9a736e.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2344472375977518505
+blogger_orig_url: http://milestone.topics.it/2010/05/wcf-i-known-service-type-e-non-solo.html
+---
+
+<span>Qualche giorno fa <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5312294359685955003" target="_blank">abbiamo introdotto</a> alcuni concetti e uno scenario interessante, facciamo un passo indietro per capire effettivamente dove vogliamo arrivare e da dove siamo partiti. Tipcamente siamo abituati a fare una cosa “banale” del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+<span style="color: blue">var </span>svc = <span style="color: blue">new </span><span style="color: #2b91af">MyService</span>( <span style="color: blue">new </span><span style="color: #2b91af">MyRepository</span>() );
+svc.Save( p );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>probabilmente perchè “MyService” è il nostro strato di business.
+  <br>Capita che quella struttura sia fatta in tal modo perchè ad esempio MyService ha della logica di contorno, come ad esempio la gestione degli errori che deve stare sempre “intorno” a MyRepository, si lo so è un esempio un po’ stupido ma sto cercando di tenere basso il profilo e inoltre un esempio migliore non mi viene :-)</span><br>
+
+<span>Visto che la logica di contorno è comune <em>potrebbe</em> avere senso un refactoring del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+<span style="color: blue">var </span>svc = <span style="color: blue">new </span><span style="color: #2b91af">MyService</span>();
+svc.Execute( p, ( entity, repository ) =>
+{
+    repository.Save( entity );
+} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che cosa è cambiato? che abbiamo un engine, MyService, che ha la logica di contorno e delega all’esterno l’esecuzione della logica vera e propria.</span><br>
+
+<span><strong>Distributed, distributed, distributed…</strong></span><br>
+
+<span>Bello direte voi… ma che ci azzecca con il titolo del post? ok, complichiamoci un po’ la vita, altrimenti non c’è gusto ;-) diciamo che MyService <u>deve</u> essere un servizio Wcf… è ovvio che quella sintassi non potrà mai funzionare, ma il concetto non cambia di molto:</span><br>
+
+<ul>
+  <li>abbiamo un endpoint che è un mero esecutore, o meglio un passacarte;</li>
+
+  <li>abbiamo un set di messaggi (quello che nel nostro esempio di cui sopra sono delegati) che possono viaggiare avanti e indietro passando da e per il nostro passacarte;</li>
+
+  <li>abbiamo degli esecutori che conoscono i messaggi e sanno cosa farci e soprattutto come;</li>
+</ul>
+
+<span>In soldoni questo:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-yIY9ZH3QM1U/Tzyeexqmv1I/AAAAAAAABRc/flJxnaOgdHk/02838c22-902a-4b41-9692-5d15ad93ec58.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-assPRW0MO5U/TzyeeORQcdI/AAAAAAAABRY/sh1vQeZ5ueY/6aaa99f2-ce89-490c-aae5-d0225f9a736e.png" width="295" height="124"></a> </span><br>
+
+<span>Che in codice potrebbe essere espresso così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IMessageBrokerService
+</span>{
+    <span style="color: #2b91af">ResponseMessage</span>[] Dispatch( <span style="color: blue">params </span><span style="color: #2b91af">TwoWayRequestMessage</span>[] requests );
+    <span style="color: blue">void </span>Broadcast( <span style="color: blue">params </span><span style="color: #2b91af">OneWayRequestMessage</span>[] requests );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>A cui per chiarezza ho tolto gli attributi del <em>service contract</em> di Wcf, <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1281487989644186604" target="_blank">vi ricorda qualche cosa</a>? :-).</span><br>
+
+<blockquote>
+  <span><em>ndr</em>: perchè degli array e non delle istanze singole? perchè il chiamante ha bisogno di poter inoltrare un set di richieste che devono essere eseguite in maniera atomica/seriale (transazionale diremmo noi), e non in parallelo, senza che la transazione sia aperta dal client e si trasformi quindi in una <em>distribuited transaction</em> che in questo scenario rischia di diventare il male assoluto.</span><br>
+</blockquote>
+
+<span>Il primo problema da affrontare è che naturalmente nel nostro mondo non viaggeranno istanze dirette di TwoWayRequestMessage o di ResponseMessage, che sono classi astratte, ma piuttosto classi concrete come SearchCustomerRequestMessage che trasporterà le informazioni per la ricerca e si aspetterà come risposta una CustomersSearchResultMessage; l’inghippo è che a Wcf questa cosa non piace per nulla e a runtime il DataContractSerializer va dal DataContractResolver e gli chiede di dargli qualcosa per serializzare quel robo (aka messaggio) che sta cercando di passare il boundary. Naturalmente per noi non ha nessun senso scrivere dei serializer ad hoc per ogni messaggio, o meglio non è detto che lo abbia se il messaggio è <em>naturalmente</em> serializzabile di suo.</span><br>
+
+<span><strong>ServiceKnownTypeAttribute</strong> </span><br>
+
+<span>L’infrastruttura di Wcf ci viene in aiuto e ci permette di decorare i metodi di un servizio con uno o più attributi ServiceKnownType con cui specifichiamo quali sono i tipi noti che possono passare da li. A prima vista però potrebbe esserci un problema questi tipi devono essere noti a compile-time ma in un’applicazione a plugin non ha molto senso perchè con la nascita di un nuovo plugin che probabilmente si porta dietro i suoi messaggi il servizio andrabbe ricompilato… ServiceKnownType ha però un costruttore pensato proprio per questo scenario:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">ServiceKnownType</span>( <span style="color: #a31515">"GetServiceKnownTypes"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">ServiceKnownTypesProvider </span>) )]
+<span style="color: #2b91af">ResponseMessage</span>[] Dispatch( <span style="color: blue">params </span><span style="color: #2b91af">TwoWayRequestMessage</span>[] requests );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Stiamo dicendo a Wcf: quando hai bisogno di sapere i ServiceKnownType vai dalla nostra classe ServiceKnownTypesProvider e chiama il metodo GetServiceKnownTypes che deve essere definito così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">Type</span>> GetServiceKnownTypes( <span style="color: #2b91af">ICustomAttributeProvider </span>provider )<br>{ <br>    ...<br>}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Wcf vi passa le informazioni relative a metodo del servizio che sta indagando e si aspetta in cambio una lista di tipi che lui dovrà considerare come “noti” per quello specifico metodo.</span><br>
+
+<span>E’ quindi possibile pensare di esternalizzare questa configurazione e iniettarla a runtime all’avvio del servizio? certo che si :-), ne parleremo quando parleremo di <em>custom service hosting</em> di un servizio Wcf.</span><br>
+
+<span>L’importante è che la stessa cosa deve naturalmente essere fatta anche lato client altrimenti anche li il processo di serializzazione/deserializzazione fallisce.</span><br>
+
+<span><strong>Uff… perchè non c’è mai nulla di immediato :-)</strong></span><br>
+
+<span>Il concetto di ServiceKnownType funziona perfettamente anche lato client e quindi anche qui è possibilissimo esternalizzare la configurazione e iniettarla a runtime ma non è tutto ora quel che luccica… grrrr :-)</span><br>
+
+<span>vediamo il nostro scenario: il client è un’applicazione Silverlight che usa Prism sfruttando la possibilità di caricare on-demand i moduli, siccome l’applicazione ha un nutrito, molto nutrito, set di plugin si è deciso di sfruttare i moduli di <a href="http://www.codeplex.com/CompositeWPF" target="_blank">Prism</a> per ospitare anche i plugin e realizzare un plugin manager che mascheri e renda trasparente il fatto che i plugin sono hostati un po’ ovunque e vengano scaricati on-demand anch’essi. Per la cronaca “<em>it works like a charme</em>” :-)</span><br>
+
+<span>Ma c’è un problema, che ci ha fatto dannare non poco… </span><br>
+
+<span>Wcf fa una cosa molto sensata che è cachare la Channel Factory…un passo indietro…</span><br>
+
+<span><strong>Come funziona il <em>robo</em>?</strong></span><br>
+
+<span>Alla prima richiesta di creazione di un proxy (aka il client del servizio) viene avviata la configurazione di tutto il mondo, il client si appoggia per la comunicazione ad un ClientChannel e per crearne uno si rivolge ad una ChannelFactory. La ChannelFactory viene creata la prima volta e cachata perchè finchè non cambia la configurazione non ha senso sprecare risorse inutilmente… ecco… da qualche parte nei meandri della ChannelFactory c’è il processo di lettura dei “Service Known Type” ergo? non è possibile aggiungere Service Known Type a runtime dopo che la Channel Factory è stata creata e cachata…ma questa cosa cozza, e pure di molto, con il fatto che il nostro client Silverlight scarica i plugin on-demand e questi ultimi hanno ovviamente bisogno di aggiungere Service Known Type a loro volta on-demand…</span><br>
+
+<span>La soluzione, sporchissima ma perfettamente funzionante e con un impatto prestazionale assai trascurabile, in questo momento è quella di far credere a Wcf che la configurazione sia cambiata:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected void </span>ResetConfiguration()
+{
+    <span style="color: blue">var </span>tmp = <span style="color: blue">this</span>.Endpoint.Name;
+    <span style="color: blue">this</span>.Endpoint.Name = <span style="color: #a31515">"_" </span>+ System.<span style="color: #2b91af">Guid</span>.NewGuid().ToString();
+    <span style="color: blue">this</span>.Endpoint.Name = tmp;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Si si… siamo un po’ buffaldini e pure un po’ sacripanti ;-), cambianodo infatti qualsiasi cosa dell’endpoint facciamo credere a Wcf che la configurazione sia cmabiata e che probabilmente ha senso ricostruire la ChannelFactory: <em>tribute to Gioffy that turned on the light :-)</em></span><br>
+
+<span><strong>Proxy perchè sei tu proxy… :-)</strong></span><br>
+
+<span>ma… probabilmente qualcuno si chiederà: ok, ma dove l’avete messo quel codice? nel proxy generato lato client, rispondiamo noi… e come fate visto che il proxy è generato? semplice, non è generato ma è compilato a monte.</span><br>
+
+<span>Il tutto si rende necessario non tanto per poter gestire quello di cui sopra ma perchè abbiamo bisogno che svcutil.exe non metta il naso nei nostri messaggi generando i suoi <em>dto</em>, ergo c’è un assembly condiviso che contiene sia i tipi di base dei messaggi sia proxy “pregenerati” da noi.</span><br>
+
+<span><strong>Quindi?</strong></span><br>
+
+<span>adesso siamo in grado di fare questo, dal nostro simpatico client Silverlight:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>msg = <span style="color: blue">new </span><span style="color: #2b91af">LogonRequestMessage</span>( username, password );
+<span style="color: blue">var </span>messages = <span style="color: blue">new </span><span style="color: #2b91af">TwoWayRequestMessage</span>[] { msg };<br>
+<span style="color: blue">var </span>client = <span style="color: blue">new </span><span style="color: #2b91af">AsyncWcfMessageBrokerServiceClient</span>();
+client.DispatchAsync( messages, callback =>
+{
+    <span style="color: #2b91af">LogonResponseMessage </span>response;
+    <span style="color: blue">if</span>( callback.TryGetResponse( <span style="color: blue">out </span>response ) )
+    {
+        <span style="color: blue">var </span>isLogged = response.IsSignedOn; 
+    }
+} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m</span><br>
+
+<span><em>p.s. giusto per dare a cesare quel che è di cesare l’idea originale di sposare il concetto di broker con wcf è di </em><a href="http://blogs.ugidotnet.org/robymes" target="_blank"><em>Roberto Messora</em></a><em>, anche se lui probabilmente non lo sa :-)</em></span><br>
+

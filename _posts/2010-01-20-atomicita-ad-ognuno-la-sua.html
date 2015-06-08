@@ -1,0 +1,95 @@
+---
+layout: post
+title: 'Atomicità: ad ognuno la sua :-)'
+date: '2010-01-20T09:17:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Memento
+modified_time: '2012-02-08T14:02:05.617+01:00'
+thumbnail: https://lh4.googleusercontent.com/-UZ5rU3Lf5zQ/TzJySpxj5jI/AAAAAAAABGo/KOy3_t9wgJ4/s72-c/2293e5d2-e7a1-4dd8-ba1d-2912db9cdbe2.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8648847395517022010
+blogger_orig_url: http://milestone.topics.it/2010/01/atomicita-ad-ognuno-la-sua.html
+---
+
+<span>L’utente ha il suo concetto di atomicità, il developer ha il suo…</span><br>  <span><strong>Utente 1 – Developer 0</strong></span><br>  <span><a href="https://lh4.googleusercontent.com/-9DSVmbNsOEM/TzJyTDt55CI/AAAAAAAABGs/YWSiD8PR77A/f9a199f3-90d8-471b-9f21-3e9149d9e38d.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-UZ5rU3Lf5zQ/TzJySpxj5jI/AAAAAAAABGo/KOy3_t9wgJ4/2293e5d2-e7a1-4dd8-ba1d-2912db9cdbe2.png" width="244" height="214"></a> </span><br>  <span>L’utente crea un nuovo “Calendario”, poco importa cosa sia, diciamo che è un master-detail decisamente classico. Poi, dopo averlo creato, lo organizza come meglio crede e una delle cose che fa è rimuovere le pubblicazioni che non ci saranno, ad esempio quelle del mese di Agosto.</span><br>  <span>Quello che succede è:</span><br>  <ul>   <li>Uno degli elementi viene rimosso dalla lista; </li>    <li>Tutti gli elementi successivi a quello rimosso vengono modificati per aggiornare, tra le tante, il “numero” dell’Uscita; </li> </ul>  <span>Poi… cambia idea e fa un bel sano “Undo” :-)</span><br>  <span>Quello che per noi sono <em>n</em> operazioni per l’utente corrispondono ad una sola operazione, quindi il livello di atomicità è diverso e naturalmente <em>vince</em> l’utente. Quindi il <a href="/search/label/Memento" target="_blank">nostro memento</a> deve supportare una cosa come questa:</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>changeTrackingService_atomicOperation_should_set_isChanged_only_on_operation_completed()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();
+
+    <span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>( target );
+    <span style="color: blue">var </span>list = <span style="color: blue">new </span><span style="color: #2b91af">PersonCollection</span>( target );
+
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>actual = target.BeginAtomicOperation() )
+    {
+        person.Name = <span style="color: #a31515">"Mauro"</span>;
+        list.Add( person );
+        person.Name = <span style="color: #a31515">"Mauro Servienti"</span>;
+
+        target.IsChanged.ShouldBeFalse();
+
+        actual.Complete();
+    }
+
+    target.IsChanged.ShouldBeTrue();
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>changeTrackingService_using_atomicOperation_should_fully_rollback_using_one_undo()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();
+
+    <span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>( target );
+    <span style="color: blue">var </span>list = <span style="color: blue">new </span><span style="color: #2b91af">PersonCollection</span>( target );
+
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>actual = target.BeginAtomicOperation() )
+    {
+        person.Name = <span style="color: #a31515">"Mauro"</span>;
+        list.Add( person );
+        person.Name = <span style="color: #a31515">"Mauro Servienti"</span>;
+
+        actual.Complete();
+    }
+
+    target.Undo();
+
+    list.Count.ShouldBeEqualTo( 0 );
+    person.Name.ShouldBeEqualTo( <span style="color: #2b91af">String</span>.Empty );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e naturalmente questa, un filino più complessa:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>changeTrackingService_using_atomicOperation_redo_should_reapply_all_changes_with_one_pass()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();
+
+    <span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>( target );
+    <span style="color: blue">var </span>list = <span style="color: blue">new </span><span style="color: #2b91af">PersonCollection</span>( target );
+
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>actual = target.BeginAtomicOperation() )
+    {
+        person.Name = <span style="color: #a31515">"Mauro"</span>;
+        list.Add( person );
+        person.Name = <span style="color: #a31515">"Mauro Servienti"</span>;
+
+        actual.Complete();
+    }
+
+    target.Undo();
+    target.Redo();
+
+    list.Count.ShouldBeEqualTo( 1 );
+    person.Name.ShouldBeEqualTo( <span style="color: #a31515">"Mauro Servienti" </span>);
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Tutti i test passano, e sono stati frutto della <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/6903117572790280786" target="_blank">mia esternazione :-)</a>, il secondo è, per ora, frutto di un hack che mi piace decisamente poco, uno <em>special case</em> interno al motore di Change Tracking.</span><br>
+
+<span><em>Utente 1 – Developer 1: palla al centro :-)</em></span><br>
+
+<span>Questo però, fortunatamente o meno per voi :-), mi ha ricordato che abbiamo <a href="/search/label/Memento" target="_blank">qualcosa in sospeso</a>: date tempo al tempo ;-)</span><br>
+
+<span>.m</span><br>
+

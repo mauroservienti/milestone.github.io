@@ -1,0 +1,166 @@
+---
+layout: post
+title: 'Jason: validation'
+date: '2013-05-28T10:07:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Jason
+- CQRS
+modified_time: '2013-05-28T10:07:00.817+02:00'
+thumbnail: http://lh4.ggpht.com/-_BSoI4xIo5A/UaHWmKKaMOI/AAAAAAAACZY/b7P70AzeK3Y/s72-c/jason22_thumb4.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9200631578951753972
+blogger_orig_url: http://milestone.topics.it/2013/05/jason-validation.html
+---
+
+<p><a href="http://lh6.ggpht.com/-puzkllS5gKs/UaHWlT5X2mI/AAAAAAAACZQ/Q1z7pf9LsEg/s1600-h/jason226.png"><img title="jason[22]" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; float: right; padding-top: 0px; padding-left: 0px; margin: 0px 0px 5px 10px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="jason[22]" align="right" src="http://lh4.ggpht.com/-_BSoI4xIo5A/UaHWmKKaMOI/AAAAAAAACZY/b7P70AzeK3Y/jason22_thumb4.png?imgmax=800" width="85" height="65"></a>When you deal with command in a CQRS world using for example WebAPI as the transport, well HTTP as transport and WebAPI as host, and you use a toolkit as <a href="http://jason.codeplex.com/" target="_blank">Jason</a> to handle all the infrastructure what you immediately loose is the full control on the ApiController that handles http requests. Asp.NET WebAPI has an immersive and powerful pipeline where you can plug to add and change behaviors, but loosing control over the controller force you to fallback to the DelegatingHandler WebAPI extension point that is q raw low level, extremely powerful but too much low level for most of the application.</p> <p>The first thing that comes in to my mind when I think to a command that travels on the wire and that will be handled server side is validation: I must validate the incoming command, period, something coming from the outside cannot be trusted, period #2.</p> <p>Currently the only option is to validate the incoming command into the command handler itself:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> MyCommandHandler : ICommandHandler&lt;MyCommand&gt;
+{
+  <span class="kwrd">public</span> <span class="kwrd">object</span> Execute( MyCommand command )
+  {
+    <span class="rem">//Validate the command...</span>
+    <span class="rem">//Handle the command here...</span>
+    Jason.Defaults.Response.Ok;
+  }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Is it wrong? No, not really, but we are violating the Single Responsibility Principle, in the end the above class is a command handler not a command validator, isn’t it?</p>
+<h3>So…</h3>
+<p>Now if you drop, and <em>register in the container</em>, a class in your project like the following one:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> MyCommandValidator : AbstractValidator&lt;MyCommand&gt; 
+{
+    <span class="kwrd">public</span> MyCommandValidator()
+    {
+        <span class="kwrd">this</span>.AddRule(
+            property: cmd =&gt; cmd.MyProperty,
+            error: ctx =&gt; <span class="str">"MyProperty is required."</span>,
+            rule: ctx =&gt; !String.IsNullOrWhiteSpace( ctx.Entity.MyProperty ) );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>it will be automatically picked up by the infrastructure to validate the incoming MyCommand. By default if the validation fails an HTTP400 (Bad Request) will be returned to the client, with in the message all the details about the validation errors.</p>
+<h3>Please welcome DataAnnotation support</h3>
+<p>So, since we have in Asp.Net the support for <a href="http://www.asp.net/mvc/tutorials/older-versions/models-(data)/validation-with-the-data-annotation-validators-cs" target="_blank">DataAnnotations</a> why not allow the developer to change the above code to:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> MyCommandValidator : <strong>AbstractDataAnnotationValidator</strong>&lt;MyCommand&gt; 
+{
+    <span class="kwrd">public</span> MyCommandValidator()
+    {
+        <span class="kwrd">this</span>.AddRule(
+            property: cmd =&gt; cmd.MyProperty,
+            error: ctx =&gt; <span class="str">"MyProperty is required."</span>,
+            rule: ctx =&gt; 
+            {
+                <span class="rem">//complex rule that cannot be expressed with an attribute</span>
+                <span class="kwrd">return</span> <span class="kwrd">true</span>; <span class="rem">//or false to indicate failure.</span>
+            } );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>And have the command defined as:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> MyCommand
+{
+    [<strong>Required</strong>]
+    <span class="kwrd">public</span> String MyProperty{ get; set; }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Inheriting the validator from the AbstractDataAnnotationValidator&lt;T&gt; activates the DataAnnotation support thus we can decorate commands with the data annotations attributes and we can express complex rules using code as in the above sample.</p>
+<p>.m</p>  

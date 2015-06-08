@@ -1,0 +1,13 @@
+---
+layout: post
+title: Model-View-ViewModel e la UI
+date: '2009-02-08T11:28:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-31T14:02:30.378+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1457030586387677972
+blogger_orig_url: http://milestone.topics.it/2009/02/model-view-viewmodel-e-la-ui.html
+---
+
+<span>In un <a href="http://blogs.ugidotnet.org/topics/archive/2009/02/07/95412.aspx#1416157" target="_blank">commento</a> <a href="http://blogs.ugidotnet.org/Budano/Default.aspx" target="_blank">Antonio</a> chiede: Sicuramente avrai avuto la necessità; di visualizzare un finestra di dialogo o una MessageBox dal ViewModel, come hai risolto?</span><br>  <span>E’ proprio una necessità di questo genere che mi ha spinto verso il <a href="http://blogs.ugidotnet.org/topics/archive/2009/02/08/imessagebroker.aspx" target="_blank">message borker</a>, il classico esempio è:</span><br>  <blockquote>“…l’utente sta editando una entity e pigia il bottone chiudi che è in binding con un CancelCommand nel ViewModel a questo punto il ViewModel consulta il servizio di ChangeTracking e scopre che l’utente ha apportato delle modifiche alla entity e deve chiedere se salvare o meno…”</blockquote>  <span>natualmente non possiamo mica mettere una MessageBox nel ViewModel altrimenti che ci siamo fatti a fare tutte le se*he mentali dei giorni scorsi… ;-)</span><br>  <span>Nel mio caso ho risolto creando un messaggio del tipo “QueryUserMessage” che ha 2 proprietà:</span><br>  <ul>   <li>Il messaggio da visualizzare all’utente;</li>    <li>Un bool che fornisce la “risposta” dell’utente;</li> </ul>  <span>Il ViewModel che deve “chiedere” posta il messaggio, la <u>View</u> della shell ha sottoscritto il messaggio e si preoccupa di visualizzare la message box e impostare il valore di ritorno.</span><br>  <span>.m</span><br>

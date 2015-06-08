@@ -1,0 +1,105 @@
+---
+layout: post
+title: ListView perchè sei tu, ListView… (part 2)
+date: '2009-05-14T14:15:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+modified_time: '2012-08-04T19:59:32.962+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2130826350794334591
+blogger_orig_url: http://milestone.topics.it/2009/05/listview-perche-sei-tu-listview-part-2.html
+---
+
+<span><a href="http://blogs.ugidotnet.org/topics/archive/2009/05/13/listview-perchegrave-sei-tu-listviewhellip-part-1.aspx" target="_blank">Abbiamo parlato</a> della possibilità di mettere in binding i SelectedItems della ListView di WPF con una nostra collection, altra cosa a cui abbiamo accennato è la mancanza, sulla ListView, di un ICommand per gestire il doppio click su un elemento della lista.</span><br>  <span>Siccome abbiamo scoperto, almeno io ;-), la potenza delle attached properties facciamocelo.</span><br>  <span><strong>ItemDoubleClickCommand</strong></span><br>  <span>Partiamo come al solito dal risultato che vogliamo ottenere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">ListViewManager.ItemDoubleClickCommand</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Select}" /></span></pre>
+</blockquote>
+
+<span>Molto semplice: poter dichiarare un nuovo <em>Command</em> e metterlo in binding con qualcosa che implementi l’interfaccia ICommand; per arrivare li, nell’ormai vecchio e familiare ListViewManager, cominciamo a dichiarare l’attached property:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static </span><span style="color: #2b91af">DependencyProperty </span>ItemDoubleClickCommandProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+    <span style="color: #a31515">"ItemDoubleClickCommand"</span>,
+    <span style="color: blue">typeof</span>( <span style="color: #2b91af">ICommand </span>),
+    <span style="color: blue">typeof</span>( <span style="color: #2b91af">ListViewManager </span>),
+    <span style="color: blue">new </span><span style="color: #2b91af">UIPropertyMetadata</span>( OnItemDoubleClickCommandChanged ) );
+
+
+<span style="color: blue">public static void </span>SetItemDoubleClickCommand( <span style="color: #2b91af">DependencyObject </span>target, <span style="color: #2b91af">ICommand </span>value )
+{
+    target.SetValue( ItemDoubleClickCommandProperty, value );
+}
+
+<span style="color: blue">static </span><span style="color: #2b91af">ICommand </span>GetItemDoubleClickCommand( <span style="color: #2b91af">DependencyObject </span>target )
+{
+    <span style="color: blue">return </span>( <span style="color: #2b91af">ICommand </span>)target.GetValue( ItemDoubleClickCommandProperty );
+}</pre>
+</blockquote>
+
+<span>Riporto anche la parte Get/Set perchè faccio notare che Visual Studio sfrutta le informazioni sul “tipo” del parametro value di SetXxxx, e del valore di ritorno di GetXxxx, per capire in fase di compilazione se la dichiarazione nello xaml sia sensata o meno, questo in combinazione con il tipo che avete dichiarato nella attached property (il secondo parametro del metodo RegisterAttached).</span><br>
+
+<span>Continuiamo poi l’handler che viene invocato in fase di modifica del valore della proprietà:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>OnItemDoubleClickCommandChanged( <span style="color: #2b91af">DependencyObject </span>target, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{
+    <span style="color: #2b91af">Ensure</span>.That( target.GetType() )
+        .WithMessage( <span style="color: #a31515">"This behavior can be attached to ListView(s) only." </span>)
+        .Is<<span style="color: #2b91af">ListView</span>>();
+
+    <span style="color: blue">var </span>lv = ( <span style="color: #2b91af">ListView </span>)target;
+    <span style="color: blue">if</span>( ( e.NewValue != <span style="color: blue">null </span>) && ( e.OldValue == <span style="color: blue">null </span>) )
+    {
+        lv.MouseDoubleClick += onListViewDblClick;
+
+    }
+    <span style="color: blue">else if</span>( ( e.NewValue == <span style="color: blue">null </span>) && ( e.OldValue != <span style="color: blue">null </span>) )
+    {
+        lv.MouseDoubleClick –= onListViewDblClick;
+    }
+}</pre>
+</blockquote>
+
+<span>Verifichiamo innanzitutto che siamo “attached” su una ListView dopodichè agganciamo o sganciamo l’handler dall’evento MouseDoubleClick in base alla situazione in cui siamo. L’event handler, dichiarato sempre nel costruttore statico della classe ListViewManager, altro non fa che gestire il doppio click:</span><br>
+
+<blockquote>
+  <pre class="code">onListViewDblClick += ( s, e ) => 
+{
+    <span style="color: blue">if</span>( IsInsideListViewItem( e.OriginalSource <span style="color: blue">as </span><span style="color: #2b91af">DependencyObject </span>) )
+    {
+        <span style="color: blue">var </span>command = GetItemDoubleClickCommand( ( <span style="color: #2b91af">DependencyObject </span>)s );
+        <span style="color: blue">if</span>( command.CanExecute( <span style="color: blue">null </span>) )
+        {
+            command.Execute( <span style="color: blue">null </span>);
+        }
+    }
+};</pre>
+</blockquote>
+
+<span>Per prima cosa verifichiamo di essere su un ListViewItem, questa verifica è necessaria perchè l’evento MouseDoubleClick viene scatenato per il doppio click su qualsiasi parte della ListView ma a noi interessano solo quelli avvenuti in un ListViewItem, andando a recuperare l’elemento che ha originato il doppio click (OriginalSource) e risalendo il VisualTree finchè non troviamo quello che ci interessa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static </span><span style="color: #2b91af">Boolean </span>IsInsideListViewItem( <span style="color: #2b91af">DependencyObject </span>obj )
+{
+    <span style="color: blue">if</span>( obj == <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">return false</span>;
+    }
+    <span style="color: blue">else if</span>( obj <span style="color: blue">is </span><span style="color: #2b91af">ListViewItem </span>)
+    {
+        <span style="color: blue">return true</span>;
+    }
+    <span style="color: blue">else
+    </span>{
+        <span style="color: blue">var </span>parent = <span style="color: #2b91af">VisualTreeHelper</span>.GetParent( obj );
+        <span style="color: blue">return </span>IsInsideListViewItem( parent );
+    }
+}</pre>
+</blockquote>
+
+<span>Ripercorrere all’indietro il visual tree è necessario perchè associato a quel ListViewItem ci potrebbe essere un complesso DataTemplate e quindi la OriginalSource dell’evento essere un elemento nested nel template.</span><br>
+
+<span>Risaliamo quindi il visual tree e se effettivamente siamo su un ListViewItem recuperiamo, dalla attached property, una reference all’ICommand con cui siamo in binding, verifichiamo che CanExecute() sia true e nel caso invochiamo l’esecuzione del command. </span><br>
+
+<span>.m</span><br>
+

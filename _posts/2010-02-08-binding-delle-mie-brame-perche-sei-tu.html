@@ -1,0 +1,71 @@
+---
+layout: post
+title: Binding delle mie brame perchè sei tu…
+date: '2010-02-08T20:46:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-13T08:48:38.746+01:00'
+thumbnail: https://lh4.googleusercontent.com/-_fYyA2dxkok/TzjATDAXY8I/AAAAAAAABKI/l3fzoDy54j4/s72-c/cd0613f8-709c-4874-83cf-f5df51e409eb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6931796178938747898
+blogger_orig_url: http://milestone.topics.it/2010/02/binding-delle-mie-brame-perche-sei-tu.html
+---
+
+<span>si potesse … <em>mortacci loro <cit.></em> :-) se solo questa fosse pubblica:</span><br>  <span><a href="https://lh4.googleusercontent.com/-fVbLTNOZJr4/TzjAVGdfkKI/AAAAAAAABKQ/uQlkVqbuKt4/b1b917c1-ad72-49af-828a-750f7a993b0d.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-_fYyA2dxkok/TzjATDAXY8I/AAAAAAAABKI/l3fzoDy54j4/cd0613f8-709c-4874-83cf-f5df51e409eb.png" width="134" height="104"></a> </span><br>  <span>o ci fosse un evento della classe <a href="http://msdn.microsoft.com/en-us/library/system.windows.data.binding.aspx" target="_blank">Binding</a> che notifica l’<em>avvenuto</em> data binding, questo funzionerebbe alla grande (notate le parti sottolineate):</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView</span><span style="color: blue">>
+   <</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+      <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">ListViewColumnHeaderCommandBehavior 
+         </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">markup</span><span style="color: blue">:</span><span style="color: #a31515"><u><em>AutoCommandBinding</em></u> </span><span style="color: red">Path</span><span style="color: blue">=<u><em>ApplySort</em></u>}" />
+   </</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+</</span><span style="color: #a31515">ListView</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e invece non va, mentre <em>naturalmente</em> questo va:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView</span><span style="color: blue">>
+    <</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+        <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">ListViewColumnHeaderCommandBehavior 
+            </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding</span><span style="color: #a31515"> </span><span style="color: red">Path</span><span style="color: blue">=ApplySortCommand}" />
+    </</span><span style="color: #a31515">i</span><span style="color: blue">:</span><span style="color: #a31515">Interaction.Behaviors</span><span style="color: blue">>
+</</span><span style="color: #a31515">ListView</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span><strong>Lo scopo e i</strong><strong> problemi</strong></span><br>
+
+<span>Siamo sempre li, se lavoriamo molto con M-V-VM <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8469237633209319455" target="_blank">possiamo voler ridurre il rumore</a> al fine di eliminare dai nostri ViewModel qualcosa che è più legato all’infrastruttura piuttosto che al business.</span><br>
+
+<span><em>Tipicamente</em> con M-V-VM la sorgente dati di un binding è il ViewModel, raggiungibile attraverso la proprietà DataContext, sempre <em>tipicamente</em>… se avete bisogno di far operazioni strane scoprite molto rapidamente che il codice di esempio soffre di un paio di magagne non indifferenti:</span><br>
+
+<ol>
+  <li>la proprietà DataContext è valorizzata e disponibile solo ed escusivamente dopo che il FrameworkElement è “<em>Loaded</em>”, mentre una Binding Expression viene <em>valutata</em> prima del Loaded event, e questo è un problema perchè se tutto il vostro giochetto si basa sul DataContext siete fritti :-); </li>
+
+  <li>Un Behavior è “solo” DependencyObject quindi niente evento Loaded…; </li>
+</ol>
+
+<span>ecco perchè <em>IDataBindEngineClient</em> sarebbe la soluzione di molti mali... ma non tutto il male vien per nuocere :-)</span><br>
+
+<ul>
+  <li>Il secondo problema ha una soluzione abbastanza “banale”: creare una classe base per i miei behavior che aggiunga un evento Attached che notifica quando il behavior viene “attached” al suo elemento della UI; </li>
+
+  <li>a questo punto il primo problema diventa un semplice trick: capire se siamo in un behavior e quindi agganciare l’evento Attached e solo all’atto dell’avvenuto aggancio sottoscrivere l’evento Loaded del controllo che ci interessa; </li>
+</ul>
+
+<span><strong>Ma…</strong></span><br>
+
+<span>…questo continua a non funzionare:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">>
+   <</span><span style="color: #a31515">Border </span><span style="color: red">BorderThickness</span><span style="color: blue">="0,1,0,0" </span><span style="color: red">BorderBrush</span><span style="color: blue">="Gainsboro" </span><span style="color: red">Margin</span><span style="color: blue">="2">
+      <</span><span style="color: #a31515">TextBlock </span><span style="color: red">DataContext</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=...</span><span style="color: blue">}">
+         <</span><span style="color: #a31515">Hyperlink </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">markup</span><span style="color: blue">:</span><span style="color: #a31515">AutoCommandBinding </span><span style="color: red">Path</span><span style="color: blue">=Edit}"></span><span style="color: #a31515">Modifica...</span><span style="color: blue"></</span><span style="color: #a31515">Hyperlink</span><span style="color: blue">>
+      </</span><span style="color: #a31515">TextBlock</span><span style="color: blue">>
+   </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+</</span><span style="color: #a31515">DataTemplate</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il tutto sia che stia in un <em>*Template</em> sia che stia in un <em>Popup</em>…</span><br>
+
+<span><em>To be continued…</em></span><br>
+
+<span>.m</span><br>

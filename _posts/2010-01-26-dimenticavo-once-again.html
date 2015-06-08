@@ -1,0 +1,74 @@
+---
+layout: post
+title: Dimenticavo… once again :-)
+date: '2010-01-26T04:40:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-08T14:03:09.406+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-926478342719061078
+blogger_orig_url: http://milestone.topics.it/2010/01/dimenticavo-once-again.html
+---
+
+<span>Abbiamo parlato di “Ensure” e del suo rapporto con lo StackTrace ma mi sono dimenticato il pezzetto importante e giustamente <a href="http://it.linkedin.com/in/antonioparata">Antonio</a> se ne è accorto :-)</span><br>  <span>Eccoci:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">SourceInfo
+</span>{
+    <span style="color: blue">public readonly static </span><span style="color: #2b91af">SourceInfo </span>Empty = <span style="color: blue">new </span><span style="color: #2b91af">SourceInfo</span>( <span style="color: #a31515">""</span>, <span style="color: #a31515">""</span>, <span style="color: #2b91af">MemberTypes</span>.Custom );
+
+    <span style="color: blue">public </span>SourceInfo( <span style="color: #2b91af">String </span>methodName, <span style="color: #2b91af">String </span>className, <span style="color: #2b91af">MemberTypes </span>sourceType )
+    {
+        <span style="color: blue">this</span>.MethodName = methodName;
+        <span style="color: blue">this</span>.ClassName = className;
+        <span style="color: blue">this</span>.SourceType = sourceType;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>MethodName { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>ClassName { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+    <span style="color: blue">public </span><span style="color: #2b91af">MemberTypes </span>SourceType { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Utilizzando questa come dto possiamo scrivere qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static class </span><span style="color: #2b91af">Ensure
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">Ensure</span><T> That<T>( T obj )
+    {
+        <span style="color: #2b91af">SourceInfo </span>si = <span style="color: #2b91af">SourceInfo</span>.Empty;
+
+        <span style="color: blue">var </span>st = <span style="color: blue">new </span><span style="color: #2b91af">StackTrace</span>( 1 );
+        <span style="color: blue">if</span>( st.FrameCount > 0 )
+        {
+            <span style="color: blue">var </span>f = st.GetFrame( 0 );
+            <span style="color: blue">var </span>mi = f.GetMethod();
+            <span style="color: blue">if</span>( mi != <span style="color: blue">null </span>)
+            {
+                si = <span style="color: blue">new </span><span style="color: #2b91af">SourceInfo</span>( mi.DeclaringType.Name, mi.Name, mi.MemberType );
+            }
+        }
+
+        <span style="color: blue">return new </span><span style="color: #2b91af">Ensure</span><T>( obj, si );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che altro non fa che recuperare le informazioni sullo stack frame precedente al nostro che è necessariamente il chiamante.</span><br>
+
+<span>A questo punto diventa abbastanza banale far passare un test come questo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>ensure_getFullErrorMessage_should_contain_all_relevant_information()
+{
+    <span style="color: blue">var </span>obj = <span style="color: #2b91af">Ensure</span>.That( <span style="color: #a31515">"" </span>);
+    <span style="color: #2b91af">String </span>actual = obj.GetFullErrorMessage( <span style="color: #a31515">"validator specific message" </span>);
+
+    <span style="color: blue">var </span>containsClassName = actual.Contains( <span style="color: blue">typeof</span>( <span style="color: #2b91af">ValidatorTest </span>).Name );
+    <span style="color: blue">var </span>containsMethodName = actual.Contains( <span style="color: blue">typeof</span>( <span style="color: #2b91af">ValidatorTest </span>).Name );
+
+    containsClassName.ShouldBeTrue();
+    containsMethodName.ShouldBeTrue();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m</span><br>

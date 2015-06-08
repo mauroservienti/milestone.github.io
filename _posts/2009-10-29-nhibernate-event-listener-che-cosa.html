@@ -1,0 +1,31 @@
+---
+layout: post
+title: 'NHibernate, event listener: che cosa scomoda…'
+date: '2009-10-29T11:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-07T15:02:13.168+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-245263281383419609
+blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-event-listener-che-cosa.html
+---
+
+<span>Questa è abbastanza “<em>scomoda</em>” se usate gli event listener di <a href="https://www.hibernate.org/343.html">NHibernate</a> da codice dovete stare molto attenti a non rimuovere quelli di default:</span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: blue">var </span>fc = container.GetService<<span style="COLOR: #2b91af">FluentConfiguration</span>>();
+fc.ExposeConfiguration( cfg =>
+{
+    cfg.EventListeners.PreInsertEventListeners = <span style="COLOR: blue">new</span>[] { <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">MySaveEventListener</span>() };
+} );</pre>
+<a href="http://11011.net/software/vspaste"></a></blockquote>
+<span>Quello che succede infatti, e pure giustamente, è che se nella lista degli eventi c’è già qualcuno lo state semplicemente sovrascrivendo e questo è poco bello :-)</span><br>
+<span>Una soluzione semplice ed elegante è questo <a href="http://blog.caraulean.com/2009/09/02/clean-code-register-additional-event-listeners-in-nhibernate/">Extension Method</a> che vi permette di scrivere in maniera molto naturale questo:</span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: blue">var </span>fc = container.GetService<<span style="COLOR: #2b91af">FluentConfiguration</span>>();
+fc.ExposeConfiguration( cfg => 
+{
+    cfg.AddListener( e => e.PreInsertEventListeners, <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">MySaveEventListener</span>() );
+});</pre>
+<a href="http://11011.net/software/vspaste"></a></blockquote>
+<span>ne riparliamo prossimamente</span><br>
+<span>.m</span><br>

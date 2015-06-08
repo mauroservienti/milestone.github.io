@@ -1,0 +1,85 @@
+---
+layout: post
+title: 'Inversion of Control on the Phone: IPuzzleContainer'
+date: '2011-03-22T11:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Windows Phone 7
+- Inversion of Control
+modified_time: '2012-08-04T19:57:39.782+02:00'
+thumbnail: https://lh3.googleusercontent.com/-vfjhgUF93go/T0SlGsvQlaI/AAAAAAAABzg/e80bhYpX6bg/s72-c/wlEmoticon-smile_2_19.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5562883929551601143
+blogger_orig_url: http://milestone.topics.it/2011/03/inversion-of-control-on-phone.html
+---
+
+<span>Quando si è abituati a scrivere codice seguendo un certo stile è difficile cambiare approccio, soprattutto se:</span><br>  <ul>   <li>lo stile che siamo abituati ad usare è efficace; </li>    <li>il cambiamento ci obbliga ad essere meno efficaci; </li> </ul>  <span>Entrambe le affermazioni sono vere se siete abituati a scrivere codice seguendo i principi di Inversion of Control e Dependency Injection e vi trovate ad un certo punto a sviluppare per una piattaforma per cui non esiste un framework per Inversion of Control.</span><br>  <span><strong>Windows Phone 7</strong></span><br>  <span>In questi giorni mi sto dilettando con lo sviluppo di un’applicazione per Windows Phone 7, è per uso personale e la sto facendo nel tempo libero sfruttando la cosa per studiare una piattaforma con cui avevo giochicchiato all’inizio e poi abbandonato per altri lidi <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh3.googleusercontent.com/-vfjhgUF93go/T0SlGsvQlaI/AAAAAAAABzg/e80bhYpX6bg/wlEmoticon-smile_2_19.png">. L’applicazione in se e per se non fa nulla di trascendentale e non è oggetto del post, l’intenzione è però quella di realizzarla seguendo lo stesso stile di programmazione che mi accompagna da anni nello sviluppo di applicazioni Wpf e Silverlight. In particolare quello che mi interessa in questo momento è:</span><br>  <ul>   <li><strong>Model View ViewModel</strong>: con il solito approccio un po’ “talebano” finalizzato a spingermi al limite delle possibilità offerte dalla piattaforma; </li>    <li><strong>Inversion of Control</strong> e <strong>Dependency Injection</strong>: principalmente al fine di non perdere sane e buone abitudini e non ultimo al fine di poter introdurre con semplicità Unit Test su Windows Phone 7; </li> </ul>  <span>Per M-V-VM direi che non c’è problema s’è solo da “litigare” un po’ con le limitazioni di Silverlight per Wp7 soprattutto per me che sono ben abituato dalla potenza di Wpf; il problema vero è sorto quando mi sono messo a cercare un’implementazione di un motore per IoC per il telefono, ammetto che non mi sono dannato molto ma non ho trovato nulla che fosse degno di nota. C’è una versione di Castle Windsor compilata per Silverlight 3 (e una anche per Silverlight 4) ma in entrambi i casi l’applicazione compila correttamente ma “sbomba” clamorosamente all’avvio.</span><br>  <span><strong>IPuzzleContainer</strong></span><br>  <span>Al che mi sono detto: beh…facciamocelo <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="42c083d7-515c-412d-b9ae-f4dcebf4ea25">, che ci vorrà mai <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="https://lh4.googleusercontent.com/-mydIa0979Ws/T0SlHYHyNxI/AAAAAAAABzk/BASwwJo18mU/wlEmoticon-smilewithtongueout_2_13.png"></span><br>  <span>In effetti un paio d’ore di lavoro, più un’oretta di refactoring per renderlo molto simile a Castle Windsor nell’uso hanno prodotto questo:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> container = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">PuzzleContainer</font></span>();
+ 
+container.Register
+(
+	<span style="color: "><font color="#2b91af">EntryBuilder</font></span>.For<<span style="color: "><font color="#2b91af">Dispatcher</font></span>>()
+		.UsingInstance( <span style="color: "><font color="#2b91af">Deployment</font></span>.Current.Dispatcher )
+);
+ 
+container.Register
+(
+	<span style="color: "><font color="#2b91af">EntryBuilder</font></span>.For<<span style="color: "><font color="#2b91af">IDispatcher</font></span>>()
+		.ImplementedBy<<span style="color: "><font color="#2b91af">SilverlightDispatcher</font></span>>()
+);
+ 
+container.Register
+(
+	<span style="color: "><font color="#2b91af">EntryBuilder</font></span>.For<<span style="color: "><font color="#2b91af">IMessageBroker</font></span>>()
+		.ImplementedBy<<span style="color: "><font color="#2b91af">MessageBroker</font></span>>()
+);</font></pre>
+</blockquote>
+
+<span>Come si può notare la sintassi per la registrazione dei componenti è molto simile proprio a quella di Castle Windsor, in questo esempio ci limitiamo a registrare dei contratti e la loro implementazione concreta, nel primo caso abbiamo già una “live instance” e quindi registriamo quella. IMessageBroker ha una dipendenza (nel costruttore, quindi mandatory) proprio sui due tipi registrati in precedenza, IPuzzleContainer risolverà per noi le dipendenze all’atto della risoluzione del broker.</span><br>
+
+<span>Naturalmente abbiamo anche il supporto per i tipi concreti e le factory:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font style="font-size: 12pt">container.Register
+(
+	<span style="color: "><font color="#2b91af">EntryBuilder</font></span>.For<<span style="color: "><font color="#2b91af">LifecycleAwareService</font></span>>()
+);
+ 
+container.Register
+(
+	<span style="color: "><font color="#2b91af">EntryBuilder</font></span>.For<<span style="color: "><font color="#2b91af">IsolatedStorageSettings</font></span>>().UsingFactory( () =>
+	{
+		<span style="color: "><font color="#0000ff">return</font></span> <span style="color: "><font color="#2b91af">IsolatedStorageSettings</font></span>.ApplicationSettings;
+	} )
+);</font></pre>
+</blockquote>
+
+<span>LifecycleAwareService non implementa nessuna interfaccia e viene registrato direttamente, mentre nel secondo caso usiamo una factory per risolvere il tipo concreto.</span><br>
+
+<span>Sempre per mantenermi allineato con Castle c’è anche il supporto per il Lifestyle che di default è Singleton, ma in fase di registrazione può essere cambiato a Transient, non c’è nessun supporto per altri tipi di Lifestyle e sinceramente non ne vedo la necessità. Se proprio fosse necessario si potrebbe ipotizzare un Threaded Lifestyle, cosa peraltro tutto tranne che difficile.</span><br>
+
+<span>L’uso è altrettanto semplice:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> lifeSvc = container.Resolve<<span style="color: "><font color="#2b91af">LifecycleAwareService</font></span>>();
+</font></pre>
+</blockquote>
+
+<span>Triviale direi. Un paio di note per concludere:</span><br>
+
+<ul>
+  <li>Funziona? si;</li>
+
+  <li>E’ affidabile: non ne ho la più pallida idea <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="f517a7cf-cccb-4663-91cf-2af50f00e35b"></li>
+
+  <li>E’ performante: a naso sembrerebbe di si, ma non ho fatto la benché minima misurazione;</li>
+
+  <li>Dove lo trovo? <a href="http://radical.codeplex.com/" target="_blank">Radical</a> for Windows Phone 7…</li>
+
+  <li>Quando? a breve <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="beb9e1b6-7d3b-4d30-9ef6-bbfa08a3de96"> non ho ancora fatto check-in dei sorgenti, mi piacerebbe scrivere qualche Unit Test prima;</li>
+
+  <li>Il prossimo step? il supporto per le facility sempre in stile Castle Windsor;</li>
+</ul>
+
+<span>Insomma quando sarà “su” fateci quello che volete ma non sparate sul pianista <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="cba58708-b0d6-452e-b3d1-18a4434d8aef"></span><br>
+
+<span>.m</span><br>

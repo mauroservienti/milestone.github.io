@@ -1,0 +1,13 @@
+---
+layout: post
+title: La mia nuova struttura di rete
+date: '2006-12-12T11:15:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T11:50:09.457+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8375755591303747117
+blogger_orig_url: http://milestone.topics.it/2006/12/la-mia-nuova-struttura-di-rete.html
+---
+
+<span>Approfittando dell'assenza della mia dolce metà</span><br> <blockquote><em><font color="#808080"><ot mode="on"><br>    ebbene si non sono più single :-D<br></ot></font></em></blockquote> <span>ho sfruttato il week-end lungo appena passato per fare un po' di rivoluzioni alla mia rete domestica, sono passato da un singolo server con Windows SBS 2003 Premium ad una rete decisamente più articolata.</span><br> <span>Perchè? Semplice al TechEd Raff e Lorenzo mi hanno fatto una capa tanta sulla colossale falla di security che è quel bel giocattolino commerciale che si chiama appunto Small Business Server.<br>Sapevo già bene, avendole sperimentate sulla mia pelle, quali sono le magagne e i limiti di SBS ma non avevo mai fatto il grande salto per il semplicissimo fatto che nella versione "non SBS" di Exchange non c'è un connettore POP3 e non avevo nessuna intenzione di spendere soldi per acquistarne uno...</span><br> <span>Adesso ho una licenza di Gfi MailEssentials che tra le altre cose contiene contiene proprio un connettore POP3 quindi mi sono armato di pazienza e ho rivoluzionato tutto passando da un singolo server con SBS a una rete, per ora, fatta da:</span><br> <span>Windows 2003 R2 - Domain Controller<br>Windows 2003 R2 - ISA Server<br>Windows 2003 R2 - Exchange Server</span><br> <span>Il bello è che non ho tutte ste macchine ma ne ho una sola che ospita il Domain Controller, le altre 2 sono ospitate da altrettante macchine virtuali su Virtual Server R2... togo!</span><br> <span>Mi manca solo un'ultima macchina da mettere in pista che quella che ospiterà Team Foundation Server ma per quello devo prima fare un piccolo aggiornamento hardware al server che sta un po' soffrendo, quindi il tutto è rimandato a dopo natale.</span><br> <span>Per ora per accedere dall'esterno creo una VPN con ISA e da li faccio quello che voglio, l'obiettivo però è pubblicare da ISA i vari servizi che mi interessa esporre... ma devo prima studiare!</span><br> <span>Stay tuned ;-)</span><br> <span>.m</span><br>

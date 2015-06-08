@@ -1,0 +1,61 @@
+---
+layout: post
+title: 'WCF e Inversion-of-Control: un’altra possibile via di convivenza'
+date: '2011-07-26T09:40:00.000+02:00'
+author: Mauro Servienti
+tags:
+- MEF
+- Software Mason
+- Inversion of Control
+- Castle Windsor
+- Wcf
+modified_time: '2012-08-04T19:57:39.781+02:00'
+thumbnail: https://lh3.googleusercontent.com/-hyGwbx0xfyw/T0jAwgaM0kI/AAAAAAAAB5g/HaT874tyiXo/s72-c/wlEmoticon-smile_2_37.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9193065062848145472
+blogger_orig_url: http://milestone.topics.it/2011/07/wcf-e-inversion-of-control-unaltra.html
+---
+
+<span>Abbiamo già avuto modo di fare una <a href="http://mauroservienti.blogspot.com/2010/05/wcf-self-service-hosting-ioc-2-max.html" target="_blank">lunga digressione</a> sulla possibilità di far convivere, molto felicemente anche, un motore di Inversion of Control e la creazione di istanze di servizi WCF.</span><br>  <span>Quella soluzione soffre purtroppo di un inconveniente che, a mio modo di vedere, è tutto tranne che trascurabile.</span><br>  <span><strong>Piccolo ripassino… <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh3.googleusercontent.com/-hyGwbx0xfyw/T0jAwgaM0kI/AAAAAAAAB5g/HaT874tyiXo/wlEmoticon-smile_2_37.png"></strong></span><br>  <span>Prima di indagare e disquisire facciamo un breve ripasso su come gira il fumo, altresì noto come ciclo di vita di un servizio WCF e attori coinvolti; partendo dal fondo, mettendoci quindi nei panni del servizio WCF:</span><br>  <ol>   <li><em>IInstanceProvider</em>: l’istanza di un servizio WCF è in ultimo fornita (e gestita) da una classe che implementa l’interfaccia IInstanceProvider; Un IInstanceProvider è paragonabile ad un container, ha due simpatici metodi GetInstance e ReleaseInstance che sono decisamente auto esplicativi; </li>    <li><em>IServiceBehavior</em>: come fa un IInstanceProvider a infilarsi nella pipeline di WCF? lo fa tramite un behavior, per l’esattezza un IServiceBehavior applicato a uno o più endpoint; </li>    <li><em>ServiceHost</em>: un IServiceBehavior può a sua volta essere inserito nella pipeline di WCF in 2 modi:       <ol>       <li>tramite file configurazione, ma dovete pagare lo scotto che non avete accesso al processo di creazione dell’istanza del behavior e rischiate di dover ricorrere al famigerato “service locator pattern”; </li>        <li>tramite un <em>ServiceHost</em> custom che in fase di apertura dell’host altro non fa che aggiungere il behavior allalista di quelli da usarsi; </li>     </ol>   </li>    <li><em>ServiceHostFactory</em>: ok…ma se sono ad esempio hostato in IIS, e quindi ho un file svc, come posso avere controllo sulla creazione del ServiceHost? semplice… tramite una ServiceHostFactory custom che è il primo vero entry point nel processo di creazione di tutto il mondo; </li> </ol>  <span><strong>Ora…</strong></span><br>  <span>out-of-the-box avete fondamentalmente due modi per agganciare una ServiceHostFactory alla pipeline di WCF:</span><br>  <ul>   <li>Mettendo mano al markup del file .svc e aggiungendo l’attributo “Factory”, consentendovi di specificare una factory specifica per ogni servizio: </li> </ul>  <blockquote>   <pre style="font-family: ; background: white"><font face="Consolas"><span style="background-image: none; background-attachment: scroll; background-repeat: repeat; background-position: 0% 0%"><font style="background-color: #ffff00"><font style="font-size: 11.3pt"><%</font></font></span><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">@</font></span> <span style="color: "><font color="#800000">ServiceHost</font></span> <span style="color: "><font color="#ff0000">Language</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"C#"</span></font> <br>		<span style="color: "><font color="#ff0000">Service</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"<span style="color: "><font color="#0000ff">MyWebApplication.MyService</font></span>"</span></font> <br>		<span style="color: "><font color="#ff0000">Factory</font></span><font color="#0000ff"><span style="color: ">=</span><span style="color: ">"MyWebApplication.MyServiceHostFactory"</span></font> </font><span style="background-image: none; background-attachment: scroll; background-repeat: repeat; background-position: 0% 0%"><font style="background-color: #ffff00; font-size: 11.3pt">%></font></span></font></pre>
+</blockquote>
+
+<ul>
+  <li>Oppure definendo nel file di configurazione della vostra applicazione quale deve essere la factory di default per ogni servizio: </li>
+</ul>
+
+<blockquote>
+  <pre style="font-family: ; background: white"><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt"><</font></font></span><font style="font-size: 11.3pt"><span style="color: "><font color="#a31515">system.serviceModel</font></span></font></font><font style="font-size: 11.3pt"><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">  <</span></font><span style="color: "><font color="#a31515">serviceHostingEnvironment</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">    <</span></font><span style="color: "><font color="#a31515">serviceActivations</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">      <</span></font><span style="color: "><font color="#a31515">add</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">service</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">MyWebApplication.MyService</font></span>"<br>           </font><font face="Consolas"><span style="color: "><font color="#ff0000">relativeAddress</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">MyService.svc</font></span>"<font color="#0000ff"><br>           </font><span style="color: "><font color="#ff0000">factory</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">MyWebApplication.MyServiceHostFactory</font></span>"</font><font face="Consolas"><font color="#0000ff"><span style="color: ">/></span><br><span style="color: ">    </</span></font><span style="color: "><font color="#a31515">serviceActivations</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">  </</span></font><span style="color: "><font color="#a31515">serviceHostingEnvironment</font></span></font></font><font face="Consolas"><font style="font-size: 11.3pt"><font color="#0000ff"><span style="color: ">></span><br><span style="color: "></</span></font><span style="color: "><font color="#a31515">system.serviceModel</font></span></font><span style="color: "><font style="font-size: 11.3pt" color="#0000ff">></font></span></font></pre>
+</blockquote>
+
+<span><strong>Bello…ma…</strong></span><br>
+
+<span>…non è tutto oro quello che luccica, nel mondo di Inversion of Control e della Dependency Injection c’è una regola aurea: “<em>deve esistere uno ed un solo container</em>”.</span><br>
+
+<span>Il modello di WCF prevede che venga, per certi versi giustamente, creata un’istanza della factory per ogni servizio che esponete, ma a questo punto nasce un inghippo…dato che, in entrambi i casi di cui sopra, la factory viene esplicitata in maniera dichiarativa non avete nuovamente controllo sulla sua creazione e se volete avere a disposizione un container per Inversion of Control al fine di gestire il ciclo di vita dei vostri servizi siete di nuovo costretti a ricorrere nuovamente a qualcosa basato su “service locator” o porcate simili che implicano l’uso di static…mannaggia…</span><br>
+
+<span><strong>.Net 4.0 e WCF 4.0: <em>si… può… fare!</em></strong></span><br>
+
+<span>vediamo subito il come poi capiamo il cosa; nel vostro simpatico Global.asax potete fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#2b91af"><font style="font-size: 11.3pt">ApplicationBootstrapper</font></font></span><font style="font-size: 11.3pt"> bootstrapper;<br></font></font><font face="Consolas"><font style="font-size: 11.3pt"><br> <br><span style="color: "><font color="#0000ff">protected</font></span> <span style="color: "><font color="#0000ff">void</font></span> Application_Start( <span style="color: "><font color="#0000ff">object</font></span> sender, <span style="color: "><font color="#2b91af">EventArgs</font></span> e )<br>{<br>	<span style="color: "><font color="#0000ff">var</font></span> root = <span style="color: "><font color="#2b91af">AppDomain</font></span>.CurrentDomain.BaseDirectory;<br>	<span style="color: "><font color="#0000ff">var</font></span> directory = <span style="color: "><font color="#2b91af">Path</font></span>.Combine( root, <span style="color: "><font color="#a31515">"bin"</font></span> );<br> <br>	<span style="color: "><font color="#0000ff">this</font></span>.bootstrapper = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">ApplicationBootstrapper</font></span>( directory );<br>	<span style="color: "><font color="#0000ff">var</font></span> container = <span style="color: "><font color="#0000ff">this</font></span>.bootstrapper.Boot();<br> <br>	<span style="color: "><font color="#0000ff">var</font></span> hostFactory = <span style="color: "><font color="#0000ff">new</font></span> Hosting.<span style="color: "><font color="#2b91af">MyServiceHostFactory</font></span>( container );<br> <br>	<span style="color: "><font color="#2b91af">RouteTable</font></span>.Routes.Add( <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">ServiceRoute</font></span>( <span style="color: "><font color="#a31515">"my"</font></span>, hostFactory, <span style="color: "><font color="#0000ff">typeof</font></span>( <span style="color: "><font color="#2b91af">MyService</font></span> ) ) );<br>}</font></font></pre>
+</blockquote>
+
+<span><em>ApplicationBootstrapper</em> non è altro che un wrapper per la creazione e l’inizializzazione di <a href="http://mauroservienti.blogspot.com/2011/03/mef-e-windsor-lunione-fa-la-forza.html" target="_blank">Castle Windsor via MEF</a>, la cosa veramente interessante sono le ultime due righe:</span><br>
+
+<ol>
+  <li>creiamo manualmente (avremmo anche potuto farla risolvere al container) una factory custom a cui passiamo nel costruttore un’istanza del nostro fido container; </li>
+
+  <li>sfruttiamo una figata del motore di routing: le ServiceRoute. Una ServiceRoute non è altro che una route speciale che è in grado di attivare un servizio WCF…come? 
+    <ol>
+      <li>usando come prefisso della rotta il valore che decidiamo noi, in questo esempio “<em>my</em>”; </li>
+
+      <li>usando una factory fornita dall’esterno, in questo caso la nostra; </li>
+
+      <li>specificando quale sia il tipo di servizio che quella rotta esporrà; </li>
+    </ol>
+  </li>
+</ol>
+
+<span>A questo punto, dopo aver compilato, non vi resta che puntare il browser a “<em>http://my-service-uri/<strong>my</strong></em>” per vedere attivato il vostro servizio “<em>MyService</em>” e… se MyService ha una o più dipendenze questa verranno risolte da Castle.</span><br>
+
+<span>.m</span><br>

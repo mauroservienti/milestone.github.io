@@ -1,0 +1,14 @@
+---
+layout: post
+title: TFS Backup Power Tool (after disaster recovery)
+date: '2011-05-02T09:28:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Team Foundation Server
+modified_time: '2012-08-04T20:14:49.844+02:00'
+thumbnail: https://lh3.googleusercontent.com/-olnLLlcUotQ/T0SlYXH959I/AAAAAAAAB1g/TJxvgGZ36BI/s72-c/wlEmoticon-smile_2_25.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9059515186445395766
+blogger_orig_url: http://milestone.topics.it/2011/05/tfs-backup-power-tool-after-disaster.html
+---
+
+<span>Avete <a href="http://mauroservienti.blogspot.com/2011/04/tfs-disaster-recovery.html">fatto tutto</a> ma quando cercate di configurare un nuovo backup plan vi compare questo errore:</span><br>  <blockquote>   <span>[Error @…] !Verify Error!: A backup plan already exists for this Tfs configuration</span><br> </blockquote>  <span>Niente panico <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh3.googleusercontent.com/-olnLLlcUotQ/T0SlYXH959I/AAAAAAAAB1g/TJxvgGZ36BI/wlEmoticon-smile_2_25.png"> è proprio perchè il tool non è pensato per la “migrazione”… nei commenti di un post di Brian Harry la soluzione, da Sql Management Studio:</span><br>  <blockquote>   <span>Use Tfs_Configuration      <br>EXEC sp_dropextendedproperty @name = 'TFS_BACKUP_PLAN_CONTROLLER'</span><br> </blockquote>  <span>.m</span><br>

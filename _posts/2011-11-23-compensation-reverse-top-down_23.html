@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'Compensation: reverse-top-down'
+date: '2011-11-23T13:48:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Architecture
+modified_time: '2012-02-25T12:08:05.851+01:00'
+thumbnail: https://lh6.googleusercontent.com/-M18uCakDLEs/T0jBEyYaW_I/AAAAAAAAB7w/Q-1rXqX0zts/s72-c/wlEmoticon-smile_2_43.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-984427503876958949
+blogger_orig_url: http://milestone.topics.it/2011/11/compensation-reverse-top-down_23.html
+---
+
+<span>reverse-top-down is really cool <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh6.googleusercontent.com/-M18uCakDLEs/T0jBEyYaW_I/AAAAAAAAB7w/Q-1rXqX0zts/wlEmoticon-smile_2_43.png"></span><br>  <span><strong>What the hell is reverse-top-down?</strong></span><br>  <span>We have already seen that there is an “easy” way to introduce compensation in an existing architecture (the post can be found <a href="http://mauroservienti.blogspot.com/2011/06/compensazione-bozze-pubblicazione.html" target="_blank">here</a>, sorry it’s in Italian) and we have also seen that, generally, that requirement emerge due to some lacks of the original architecture design.</span><br>  <span>Suppose for a while that you know upfront that one of the non-functional requirements is compensation.</span><br>  <span><strong>A sample?</strong></span><br>  <span>Quite easy: in the environment you are working in data, even “related” data, are stored on different storage types and even in different locations, and that prevents the usage of distributed transactions (as you may already know I think that distributed transactions are evil). For the purpose of the post we can think to a model, made of Person(s) and Address(es) where Persons are stored in a relational database and the Addresses are accessed/stored using a remote service.</span><br>  <span><strong>What happens when you want to create a new Person?</strong></span><br>  <span>In this case we can imagine that the first step is to approach the creation of the Address that is the “related” entity that in case of failure can be abandoned.</span><br>  <span>The second step is to create, in a transaction if you like, the Person…if the creation fails the person does not exists and no one can find the orphaned address.</span><br>  <span>.m</span><br>

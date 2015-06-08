@@ -1,0 +1,95 @@
+---
+layout: post
+title: IQueryProvider…
+date: '2008-12-12T06:57:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T20:04:53.717+02:00'
+thumbnail: https://lh3.googleusercontent.com/-GWcfBCGYIEs/TyaEQc4_M7I/AAAAAAAAAQE/9R2iz6Fg7W0/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-616008592350833665
+blogger_orig_url: http://milestone.topics.it/2008/12/iqueryprovider.html
+---
+
+<span>Ok… predo spunto dal <a target="_blank" href="http://blogs.ugidotnet.org/topics/archive/2008/12/10/architettura-cui-prodest.aspx#1404764">commento di Davide</a> per approfondire la questione IQueryProvider e cercare di capire quali sono le difficoltà vere, o almeno quelle che ho scoperto io fino ad ora, nella realizzazione di un query provider per Linq.</span><br>
+<span>Innanzitutto sottolineo che non mi sto cimentando nell’impresa, non per ora…, sto “semplicemente” cercando di capire come funziona. Come <a target="_blank" href="http://blogs.ugidotnet.org/RobyMes/">Roby</a> sono curioso(issimo) per natura, devo smontare e rimontere tutto quello che mi passa per le mani e se non capisco mi intestardisco fino ad arrivare alla soluzione.</span><br>
+<span>Vediamo innanzitutto da dove si parte. Questo snippet, preso dagli unit test, espone lo scenario: </span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: #2b91af">String </span>expected = <span style="COLOR: #a31515">"select [_t0].[id], [_t0].[firstName], [_t0].[lastName] from [Persons] as [_t0]"</span>;
+
+<span style="COLOR: #2b91af">DbRepositoryQueryProvider </span>provider = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">DbRepositoryQueryProvider</span>();
+<span style="COLOR: #2b91af">TestPersonRepository </span>repository = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">TestPersonRepository</span>( provider );
+
+<span style="COLOR: blue">var </span>query = <span style="COLOR: blue">from </span>person <span style="COLOR: blue">in </span>repository <span style="COLOR: blue">select </span>person;
+
+<span style="COLOR: #2b91af">String </span>actual = provider.GetQueryText( query.Expression );</pre>
+</blockquote>
+<span>Nulla di trascendentale, se non fosse che non va…,  mentre questo invece funziona:</span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: #2b91af">String </span>expected = <span style="COLOR: #a31515">"select [_t0].[id], [_t0].[firstName], [_t0].[lastName] from [Persons] as [_t0] where [_t0].[firstName] = ‘Mauro’"</span>;
+
+<span style="COLOR: #2b91af">DbRepositoryQueryProvider </span>provider = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">DbRepositoryQueryProvider</span>();
+<span style="COLOR: #2b91af">TestPersonRepository </span>repository = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">TestPersonRepository</span>( provider );
+
+<span style="COLOR: blue">var </span>query = repository.Where( p => p.FirstName == <span style="COLOR: #a31515"><span style="COLOR: #a31515">"</span>Mauro<span style="COLOR: #a31515">"</span></span><span style="COLOR: blue"> </span>);
+
+<span style="COLOR: #2b91af">String </span>actual = provider.GetQueryText( query.Expression );</pre>
+</blockquote>
+<span>nonostante all’apparenza sia più complesso, e lo è sia ben chiaro. Ma quali sono le differenza tra il primo ed il secondo?</span><br>
+<span>Tutto sta nell’expression tree che viene generato dal motore di Linq, evitando per ora gli screenshot (fidatevi), la differenza fondamentale sta che nel primo caso nell’expression tree avete una MethodCallExpression che incapsula la chiamata a “Select”, mentre nel secondo no, è implicita…</span><br>
+<span>Facciamo un passo indietro:</span><br>
+<span><a rel="lightbox" href="https://lh5.googleusercontent.com/-u8MWUhWC1Aw/TyaEQw0r5FI/AAAAAAAAAQI/iZIdQPRcdxw/image_2.png"><img style="BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px" title="image" border="0" alt="image" width="644" height="159" src="https://lh3.googleusercontent.com/-GWcfBCGYIEs/TyaEQc4_M7I/AAAAAAAAAQE/9R2iz6Fg7W0/image_thumb.png"></a> </span><br>
+<span>La query Linq di partenza è decisamente, <em>decisamente</em> è un parolone…, semplice da convertire, il repository nell’esempio è una IQueryable<Person> e grazie al mapping, tutto hard coded sia chiaro, sappiamo che il “tipo” Person è mappato sulla tabella [Persons], allo stesso modo sappiamo che Person ha una serie di proprietà che sono mappate sulle rispettive colonne id, firstName, lastName. In questo caso nell’expression tree che viene generato troviamo, in coda, una chiamata esplicita a “Select”, quella query Linq è infatti equivalente all’expression generata dall’extension method Select():</span><br>
+<blockquote>
+<span>repository.Select( p => p );</span><br>
+</blockquote>
+<span>e infatti produce lo stesso identico expression tree. Ma sappiamo molto bene che in realtà la chiamata a Select() ci serve solo in 2 casi:</span><br>
+<ol>
+    <li>L’esempio triviale di cui sopra che corrisponde ad una “<em>select * from tableName</em>” senza condizione, ergo vogliamo tutti i record; </li>
+    <li>Nel momento in cui vogliamo eseguire una “projection” verso un tipo diverso da Person, e questa è tutta un’altra storia. </li>
+</ol>
+<span>Normalmente possiamo scrivere:</span><br>
+<blockquote>
+<span><span style="COLOR: blue">var </span>query = repository.Where( p => p.FirstName == <span style="COLOR: #a31515"><span style="COLOR: #a31515">"</span>Mauro<span style="COLOR: #a31515">"</span></span><span style="COLOR: blue"> </span>);</span><br>
+</blockquote>
+<span>e tutto funziona come deve senza esplicitare la select, cosa necessaria nella query linq per il solo fatto che è necessaria dal punto di vista del compilatore che deve capire cosa state facendo. Ma torniamo al nostro problema… e mi tocca fare un’altro passo indietro. IQueryProvider (System.Linq) non è sufficiente, nonostante sia il cuore di tutto, perchè non è l’entry point per la generazione di una “query”.</span><br>
+<span>System.Linq.IQueryable<T> è il vero entry point, noi sviluppatori scriviamo query che insistono su una IQueryable<T> e solo quando invochiamo l’esecuzione, o deferred execution che sia, entra in gioco IQueryProvider. L’implementazione di IQueryable<T> è decisamente triviale ed ha il solo scopo di “conservare” l’expression tree che viene generato da chiamate consecutive a <em>n</em> extension methods come in questo esempio:</span><br>
+<blockquote>
+<span><span style="COLOR: blue">var </span>query = repository.Where( p => p.FirstName == “Mauro” ) <br>
+                                   .OrderBy( p => p.LastName ) <br>
+                                   .Skip( 10 ) <br>
+                                   .Take( 5 ) <br>
+                                   .Select( p => new { DisplayName = String.Format( “{0} {1}”, p.FirstName, p.LastName ) } );</span><br>
+</blockquote>
+<span>Ogni chiamata genera un nuovo expression tree, che è immutabile (importantissimo), che sta a voi memorizzare nella vostra implementazione di IQueryable<T>. <br>
+Quando andiamo in esecuzione, deferred execution in questo caso, viene effettivamente chiamato in causa il query provider:</span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: blue">foreach</span>( <span style="COLOR: blue">var </span>element <span style="COLOR: blue">in </span>query )
+{
+    <span style="COLOR: #2b91af">Console</span>.WriteLine( element );
+}</pre>
+</blockquote>
+<span>A questo punto viene il bello, dato l’expression tree avete l’onere di analizzarlo e generare innanzitutto il command, gli eventuali parameters, e infine mandarlo in esecuzione recuperare u cursore forward only (IDataReader) e scorrendo i record creare (projection) le istanze delle entity.</span><br>
+<span>Detta così sembra facile… in realtà il problema vero è che se stiamo scrivendo un query provider il nostro obiettivo è quello di essere general purpose e non limitare le possibilità del nostro utilizzatore. Se ci pensate la cosa è più che normale la scrittura di in query provider è paragonabile alla scrittura di un ORM e di certo quando usate NH, ad esempio, non avete limiti nelle possibilità di scrittura delle query… purtroppo infatti, lo sviluppatore, è libero di scrivere:</span><br>
+<blockquote>
+<span>repository.Where( p => true );</span><br>
+</blockquote>
+<span>che probabilmente non ha molto senso ma è decisamente lecito e che deve essere trasformato in una cosa del tipo:</span><br>
+<blockquote>
+<span>select * from [Persons] where 1 = 1</span><br>
+</blockquote>
+<span>che ancora non è detto che abbia senso ma è sicuramente lecito, ma non solo potremmo sbizzarrirci e produrre:</span><br>
+<blockquote>
+<span>repository.Where( p => myMethod( p ) );</span><br>
+</blockquote>
+<span>e qui sono cavoli amari perchè nell’expression tree avete una MethodCallExpression per myMethod e avete l’arduo compito di capire, ed è tutt’altro che semplice, se sia possibile eseguire quella chiamata in maniera remota, ergo su sql server ad esempio, o se invece debba essere eseguita localmente con conseguente fetch di tutti i dati e filtro in memoria… ma potremmo peggiorare:</span><br>
+<blockquote>
+<span>repository.Where( p => myMethod( p ) ).OrderBy( p => p.FirstName );</span><br>
+</blockquote>
+<span>mescolando ulteriormente le carte in tavola al provider che deve essere in grado di capire che la prima chiamata deve essere eseguita localmente ma la seconda può essere eseguita su sql server, deve quindi interpretare quell’expression tree come se fosse stato scritto:</span><br>
+<blockquote>
+<span>repository.OrderBy( p => p.FirstName ).Where( p => myMethod( p ) );</span><br>
+</blockquote>
+<span>che non so se sia lecito, ad esempio per Linq2Sql, ma rende bene l’idea.</span><br>
+<span>Da questi primissimi esempi è facile capire quale sia il grado di difficoltà a cui ci si trova davanti nella scrittura di un query provider, e questo purtroppo è solo l’inizio. Vedremo, se ci saranno altre “puntate”, quali sono gli altri scogli.</span><br>
+<span>.m</span><br>

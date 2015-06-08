@@ -1,0 +1,38 @@
+---
+layout: post
+title: 'NHibernate: stra-puuteeenzaaa!'
+date: '2009-10-12T12:57:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- NHibernate
+modified_time: '2012-08-04T19:42:15.868+02:00'
+thumbnail: https://lh3.googleusercontent.com/-u2s69IILPWA/TyvMzPTv81I/AAAAAAAAAxQ/VqeIPXEu2FI/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3618937504947512899
+blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-stra-puuteeenzaaa.html
+---
+
+<span>Scenario:</span><br>  <span><a href="https://lh3.googleusercontent.com/-EFbiyNW3fyE/TyvM0PsLMmI/AAAAAAAAAxY/JfifRWuR91M/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-u2s69IILPWA/TyvMzPTv81I/AAAAAAAAAxQ/VqeIPXEu2FI/image_thumb.png" width="212" height="244"></a> </span><br>  <span>un dominio molto banale mappato su una singola tabella con una colonna che fa da discriminante, è così, è legacy e me lo devo tenere :-).</span><br>  <span>Adesso il nostro simpatico utente vuole fare una ricerca per tutti i <em>Subject</em>, a prescindere dal fatto che siano <em>Company</em> o <em>Person</em>, che contengono in <em>Subject.Name</em> qualcosa tipo (Like) ‘%mauro%’: una sorta di full-text.</span><br>  <span>Banale direte voi:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>criteria = querySpec.Keywords
+    .AsSqlServerKeywords()
+    .Aggregate( session.CreateCriteria<<span style="color: #2b91af">Subject</span>>(), ( a, kw ) =>
+        a.Add( <span style="color: #2b91af">Restrictions</span>.Like( <span style="color: #a31515">"Name"</span>, kw, <span style="color: #2b91af">MatchMode</span>.Exact ) )
+    );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>dove querySpec è una <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/wrappare-un-ormhellip.aspx">Specification<T></a> e AsSqlServerKeywords un banale extension method che data una lista di keywords con i carattery jolly “windows based” (* e ?) li <em>parsa</em> e li rimpiazza con gli equivalenti per Sql Server (% e _) e poi forza una <em>Restrictions.Like</em> con <em>MatchMode</em> a <em>Exact</em> in modo che il generatore di query di <a href="https://www.hibernate.org/343.html">NHibernate</a> non raddoppi i caratteri jolly.</span><br>
+
+<span>Ok, peccato che la proprietà Name non sia mappata perchè non è prevista nello schema della tabella quindi ciccia… quella roba si schianta di brutto.</span><br>
+
+<span>Grazie al solito onnipresente <a href="http://cradle.aspitalia.com/">Marco De Sanctis</a> però ho trovato una soluzione che definirei semplicemente fantastica. Osservate il mapping, fatto con Fluent NHibernate:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.Map( s => s.Name )
+    .FormulaIs( <span style="color: #a31515">"mySchema.udf_SubjectName( Type, FirstName, LastName, CompanyName )" </span>);</pre>
+</blockquote>
+
+<span>Mappiamo la proprietà su una <a href="http://msdn.microsoft.com/en-us/library/aa175085(SQL.80).aspx">User Defined Function</a> di Sql Server che NHibernate brillantemente invocherà per ogni riga del result set permettendoci di avere il dato che ci serve ma soprattutto permettendo ad NHibernate di generarci delle query.</span><br>
+
+<span>Fantastico! Non c’è altro da dire.</span><br>
+
+<span>.m</span><br>
+

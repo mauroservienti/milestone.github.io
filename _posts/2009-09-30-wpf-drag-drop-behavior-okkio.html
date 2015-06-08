@@ -1,0 +1,46 @@
+---
+layout: post
+title: 'Wpf: “Drag & Drop” Behavior, okkio :-)'
+date: '2009-09-30T16:07:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+- Attached Behaviors
+modified_time: '2012-02-03T13:01:00.644+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1229321874944514788
+blogger_orig_url: http://milestone.topics.it/2009/09/wpf-drag-drop-behavior-okkio.html
+---
+
+<span>Questo <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/allergia-da-manuale-delle-istruzioni-e-conseguenzehellip.aspx">manuale</a> proprio non mi va giù :-)</span><br>  <span>Pochissimi giorni fa ho introdotto nel mio toolkit un <a href="http://blogs.ugidotnet.org/topics/archive/2009/09/29/wpf-ldquodrag-amp-droprdquo-behavior-embrionale.aspx">behavior per generalizzare</a> la gestione del Drag & Drop, a breve il tutto probabilmente finirà su CodePlex, ma non è questo l’argomento odierno.</span><br>  <span><a href="http://it.wikipedia.org/wiki/Apollo_13"><strong>Houston abbiamo un problema</strong></a> <cit.></span><br>  <span>Nel post di cui sopra, per agganciare il behavior ad una ListView facevamo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">Margin</span><span style="color: blue">="5" </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+          </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">DragDropManager.DataObject</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=ItemsToDrag}"
+          </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">DragDropManager.DataObjectType</span><span style="color: blue">="myType"
+          </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Items}"></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Funzionare funziona ma ha l’effetto collaterale di permettere il drag & drop di qualsiasi cosa si trovi all’interno della ListView, compresi eventuali column header e scrollbar… poco simpatico :-)</span><br>
+
+<span>Se ci pensiamo bene in realtà è giusto così, anche con un’implementazione “tradizionale” del drag & drop avremmo lo stesso problema, solo che con un’implementazione tradizionale possiamo discernere direttamente nell’handler chi sia la “cosa” che stiamo draggando mentre qui è un po’ più complesso.</span><br>
+
+<span>Per ora però ho risolto così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">Margin</span><span style="color: blue">="5" </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+          </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Persons}">
+    
+    <</span><span style="color: #a31515">ListView.ItemContainerStyle</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Style </span><span style="color: red">TargetType</span><span style="color: blue">="ListViewItem">
+            <</span><span style="color: #a31515">Setter </span><span style="color: red">Property</span><span style="color: blue">="HorizontalContentAlignment" </span><span style="color: red">Value</span><span style="color: blue">="Stretch" />
+            <</span><span style="color: #a31515">Setter </span><span style="color: red">Property</span><span style="color: blue">="behaviors:DragDropManager.DataObject" </span><span style="color: red">Value</span><span style="color: blue">="{</span><span style="color: #a31515">Binding</span><span style="color: blue">}" />
+            <</span><span style="color: #a31515">Setter </span><span style="color: red">Property</span><span style="color: blue">="behaviors:DragDropManager.DataObjectType" </span><span style="color: red">Value</span><span style="color: blue">="mySampleType" />
+        </</span><span style="color: #a31515">Style</span><span style="color: blue">>
+    </</span><span style="color: #a31515">ListView.ItemContainerStyle</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span><em>Wpf & Styles rulez!!!</em></span><br>
+
+<span>Sposto cioè l’assegnazione del behavior sui singoli ListViewItem e il problema scompare, l’effetto collaterale di questa cosa per ora è che non c’è mezzo di draggare più item(s) insieme, ma non mi serve. Ho anche in mente un altro paio di possibilità e miglioramenti, vedremo.</span><br>
+
+<span>.m</span><br>
+

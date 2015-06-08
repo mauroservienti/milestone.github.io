@@ -1,0 +1,93 @@
+---
+layout: post
+title: Wpf e la message pump
+date: '2009-10-10T09:01:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:01:52.401+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1520308725076833502
+blogger_orig_url: http://milestone.topics.it/2009/10/wpf-e-la-message-pump.html
+---
+
+<span>La necessità è quella di intercettare il plug/unplug di un qualsiasi device USB. Il problema è che il sistema operativo <em>sparapacchia</em> la notifica nella massage pump e il subclassing in Wpf è concetto inesistente… </span><br>  <span><strong>Quindi?</strong></span><br>  <span>E’ un po’ contorto ma alla fine con una manciata di righe di codice ci si arriva:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">Public Interface </span>IHardwareMonitor
+    <span style="color: blue">Event </span>DeviceAttached <span style="color: blue">As </span>EventHandler
+    <span style="color: blue">Event </span>DeviceRemoved <span style="color: blue">As </span>EventHandler
+<span style="color: blue">End Interface</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>definiamo quello che vogliamo ottenere: un semplice <em>observer</em>.</span><br>
+
+<span><strong>The Trick</strong></span><br>
+
+<span>A questo punto lo possiamo implementare, ad esempio, in questo modo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">Public NotInheritable Class </span>WpfHardwareMonitor
+    <span style="color: blue">Implements </span>IHardwareMonitor
+
+    <span style="color: blue">Public Event </span>DeviceAttached(<span style="color: blue">ByVal </span>sender <span style="color: blue">As Object</span>, <span style="color: blue">ByVal </span>e <span style="color: blue">As </span>System.EventArgs) <span style="color: blue">Implements </span>Plc.IHardwareMonitor.DeviceAttached
+    <span style="color: blue">Private Sub </span>OnDeviceAttached()
+        <span style="color: blue">RaiseEvent </span>DeviceAttached(<span style="color: blue">Me</span>, EventArgs.Empty)
+    <span style="color: blue">End Sub
+
+    Public Event </span>DeviceRemoved(<span style="color: blue">ByVal </span>sender <span style="color: blue">As Object</span>, <span style="color: blue">ByVal </span>e <span style="color: blue">As </span>System.EventArgs) <span style="color: blue">Implements </span>Plc.IHardwareMonitor.DeviceRemoved
+    <span style="color: blue">Private Sub </span>OnDeviceRemoved()
+        <span style="color: blue">RaiseEvent </span>DeviceRemoved(<span style="color: blue">Me</span>, EventArgs.Empty)
+    <span style="color: blue">End Sub
+
+    Dim </span>source <span style="color: blue">As </span>HwndSource
+
+    <span style="color: blue">Public Sub New</span>()
+
+        <span style="color: blue">AddHandler </span>Application.Current.Exit, <span style="color: blue">AddressOf </span>OnAppExit
+        <span style="color: blue">AddHandler </span>Application.Current.MainWindow.Loaded, <span style="color: blue">AddressOf </span>OnLoaded
+
+    <span style="color: blue">End Sub
+
+    Sub </span>OnAppExit(<span style="color: blue">ByVal </span>sender <span style="color: blue">As Object</span>, <span style="color: blue">ByVal </span>e <span style="color: blue">As </span>ExitEventArgs)
+        source.RemoveHook(<span style="color: blue">New </span>HwndSourceHook(<span style="color: blue">AddressOf </span>WndProc))
+        <span style="color: blue">RemoveHandler </span>Application.Current.Exit, <span style="color: blue">AddressOf </span>OnAppExit
+    <span style="color: blue">End Sub
+
+    Sub </span>OnLoaded(<span style="color: blue">ByVal </span>sender <span style="color: blue">As Object</span>, <span style="color: blue">ByVal </span>e <span style="color: blue">As </span>RoutedEventArgs)
+        source = HwndSource.FromHwnd(<span style="color: blue">New </span>WindowInteropHelper(Application.Current.MainWindow).Handle)
+        source.AddHook(<span style="color: blue">New </span>HwndSourceHook(<span style="color: blue">AddressOf </span>WndProc))
+
+        <span style="color: blue">RemoveHandler </span>Application.Current.MainWindow.Loaded, <span style="color: blue">AddressOf </span>OnLoaded
+    <span style="color: blue">End Sub
+
+    Const </span>WM_DEVICECHANGE <span style="color: blue">As Integer </span>= &H219
+    <span style="color: blue">Const </span>DBT_DEVICEARRIVAL <span style="color: blue">As Integer </span>= &H8000
+    <span style="color: blue">Const </span>DBT_DEVICEREMOVECOMPLETE <span style="color: blue">As Integer </span>= &H8004
+
+    <span style="color: blue">Function </span>WndProc(<span style="color: blue">ByVal </span>hwnd <span style="color: blue">As </span>IntPtr, <span style="color: blue">ByVal </span>msg <span style="color: blue">As Integer</span>, <span style="color: blue">ByVal </span>wParam <span style="color: blue">As </span>IntPtr, <span style="color: blue">ByVal </span>lParam <span style="color: blue">As </span>IntPtr, <span style="color: blue">ByRef </span>handled <span style="color: blue">As Boolean</span>) <span style="color: blue">As </span>IntPtr
+        <span style="color: blue">If </span>msg = WM_DEVICECHANGE <span style="color: blue">Then
+
+            If </span>wParam.ToInt32() = DBT_DEVICEARRIVAL <span style="color: blue">Then
+                Me</span>.OnDeviceAttached()
+            <span style="color: blue">ElseIf </span>wParam.ToInt32() = DBT_DEVICEREMOVECOMPLETE <span style="color: blue">Then
+                Me</span>.OnDeviceRemoved()
+            <span style="color: blue">End If
+        End If
+    End Function
+
+End Class</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il giochetto di fondo è quello di risuscire a ricavare l’handle di una finestra, top level, che in Wpf non serve:</span><br>
+
+<blockquote>
+  <pre class="code">source = HwndSource.FromHwnd(<span style="color: blue">New </span>WindowInteropHelper(Application.Current.MainWindow).Handle)
+source.AddHook(<span style="color: blue">New </span>HwndSourceHook(<span style="color: blue">AddressOf </span>WndProc))</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il resto è normale codice per la gestione dei messaggi.</span><br>
+
+<blockquote>
+  <span><em>ndr</em>
+
+    <br>E’ VB.Net :-), mamma mia che fatica! non so se è perchè lo uso veramente di rado ma lo trovo decisamente ostico, decisamente. E’ evidente che dal punto di vista delle potenzialità non c’è differenza ma alcune cose mi laciano molto perplesso, molto.</span><br>
+</blockquote>
+
+<span>.m</span><br>

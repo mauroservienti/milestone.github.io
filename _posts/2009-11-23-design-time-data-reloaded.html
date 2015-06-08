@@ -1,0 +1,189 @@
+---
+layout: post
+title: Design Time Data, reloaded.
+date: '2009-11-23T13:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Design Time Data
+modified_time: '2012-08-04T19:42:29.435+02:00'
+thumbnail: https://lh4.googleusercontent.com/--MfxcUBiqjw/TzJxgeHEA9I/AAAAAAAABAw/YWttiPRg_zI/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3983269272897217471
+blogger_orig_url: http://milestone.topics.it/2009/11/design-time-data-reloaded.html
+---
+
+<span>Ne abbiamo <a href="http://blogs.ugidotnet.org/topics/archive/2009/07/09/wpf-blend-3.0-sampledatasource-molto-bello.aspx">parlato</a> <a href="http://blogs.ugidotnet.org/corrado/archive/2009/07/10/blend3-design-time-data.aspx">non</a> <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/in-medio-stat-virtus-blend-3-e-i-design-time.aspx">poco</a> sia io che <a href="http://blogs.ugidotnet.org/corrado">Corrado</a> e l’argomento è stato ripreso durante il <a href="http://www.facebook.com/event.php?eid=158254653951&index=1">corso su Wpf</a> che abbiamo tenuto questa settimana, a proposito:</span><br>  <blockquote>   <span>trovo che sia decisamente produttivo, in particolare per la platea, partecipare ad un corso dove la docenza è in pair, con 2 docenti, con un background tecnico paragonabile, ma con un background lavorativo diverso perchè porta un arricchimento non da poco.</span><br> </blockquote>  <span>…torniamo “<em>in topic</em>” che è meglio :-)</span><br>  <span>L’obiettivo è poter avere, in Blend, questo:</span><br>  <span><a href="https://lh6.googleusercontent.com/-rj3JE3zk33M/TzJxgz3E54I/AAAAAAAABA0/otLLTUEI9Wc/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/--MfxcUBiqjw/TzJxgeHEA9I/AAAAAAAABAw/YWttiPRg_zI/image_thumb.png" width="244" height="95"></a> </span><br>  <span>Quindi semplicemente una design time experience degna del suo nome. L’inghippo, nel mio caso, è che usando M-V-VM, seguendo l’approccio <em>ViewModel first</em>, il ViewModel è fatto più o meno così:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">SubjectsListViewModel </span>:
+    <span style="color: #2b91af">ItemsListViewModel</span><<span style="color: #2b91af">ISubjectsListView</span>, <span style="color: #2b91af">Subject</span>, <span style="color: #2b91af">Subject</span>, <span style="color: #2b91af">Subject</span>>,
+    <span style="color: #2b91af">ISubjectsListViewModel
+</span>{
+    <span style="color: blue">public </span>SubjectsListViewModel( <span style="color: #2b91af">IDispatcher </span>dispatcher, <br>                                  <span style="color: #2b91af">ISubjectsListView </span>view, <br>                                  <span style="color: #2b91af">IMessageBroker </span>broker, <br>                                  <span style="color: #2b91af">IDataContextFactory </span>dataContextFactory, <br>                                  <span style="color: #2b91af">ISubjectsManagementService </span>subjectsService, <br>                                  <span style="color: #2b91af">IUserInteractionService </span>uiService )
+        : <span style="color: blue">base</span>( dispatcher, view, broker, <span style="color: #2b91af">SelectionType</span>.Extended )
+    {<br><br>       ...<br>    }<br>}</pre>
+</blockquote>
+
+<span>il tutto viene gestito dal fido <a href="http://www.castleproject.org/container/index.html">Castle</a> quindi quel costruttore per me è decisamente friction-less, in ottica design time data però quella cosa è decisamente scomoda principalmente per 2 motivi:</span><br>
+
+<ol>
+  <li>la classe non è pubblica e lo xaml si lamenta se cercate di usarla; </li>
+
+  <li>la classe non ha un costruttore pubblico di default senza parametri e questo la rende definitivamente inutilizzabile via xaml; </li>
+</ol>
+
+<span>L’<a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/in-medio-stat-virtus-blend-3-e-i-design-time.aspx">approccio che ho usato fino ad ora</a> funziona senza nessun problema ma è dispendioso in termini di tempo di setup… e questo non è friction-less… allora il cervelletto ravana ravana e stamattina durante il solito viaggio sul lebbrosario di turno mi è venuta una malsana idea… mi sono detto:</span><br>
+
+<ol>
+  <li>perchè non riprendi <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/wrappa-che-ti-passa-ldquohow-to-in-salsa-tddrdquohellip.aspx">quello</a> che hai lasciato in <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/ma-pecccccchhhhegraveegraveegraveegrave.aspx">sospeso</a>…? </li>
+
+  <li>e lo adatti a questo scenario che è decisamente più semplice? </li>
+</ol>
+
+<span>Detto fatto, una mezz’ora e il giochetto era <em>up & runnin’</em>:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Window </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Class</span><span style="color: blue">="SubjectsListViewDocument"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">design</span><span style="color: blue">="http://schemas.topics.it/wpf/subjects/design"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">d</span><span style="color: blue">="http://schemas.microsoft.com/expression/blend/2008" 
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">mc</span><span style="color: blue">="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        </span><span style="color: red">mc</span><span style="color: blue">:</span><span style="color: red">Ignorable</span><span style="color: blue">="d design"</span><span style="color: blue">>
+
+    <</span><span style="color: #a31515">Window.Resources</span><span style="color: blue">>
+        </span><span style="color: blue"><</span><span style="color: #a31515">design</span><span style="color: blue">:</span><span style="color: #a31515">Sample </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="sample" />
+    </span><span style="color: blue"></</span><span style="color: #a31515">Window.Resources</span><span style="color: blue">>
+</span><span style="color: blue">
+    <</span><span style="color: #a31515">Grid </span><span style="color: red">d</span><span style="color: blue">:</span><span style="color: red">DataContext</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">sample</span><span style="color: blue">}">
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>quella classe “<em>Sample</em>” è così definita, scroccando un po’ di sintassi a <a href="http://fluentnhibernate.org/">Fluent NHibernate</a>:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">Sample </span>: <span style="color: #2b91af">DesignTimeHost</span><<span style="color: #2b91af">ISubjectsListViewModel</span>>
+{
+    <span style="color: blue">public </span>Sample()
+    {
+        <span style="color: blue">this</span>.Expose( o => o.Items )
+            .WithValue( <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">Subject</span>>( <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">Subject</span>>()
+            {
+                <span style="color: blue">new </span><span style="color: #2b91af">Person</span>(){ FirstName = <span style="color: #a31515">"Mauro"</span>, LastName = <span style="color: #a31515">"Servienti" </span>},
+                <span style="color: blue">new </span><span style="color: #2b91af">Company</span>(){ CompanyName = <span style="color: #a31515">"topics.it" </span>}
+            } ) )
+            .AsReadOnly();
+    }
+}</pre>
+</blockquote>
+
+
+
+<span>e quello che mi resta da fare è limitarmi a fare quello che farei di solito (funziona perfettamente anche nei vari “property editor” di Blend):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Items}"...</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ottenendo il risultato di cui sopra, comodo semplice e definibile addirittura in un assembly separato. Complicandomi la vita ho cercato di esporre come <em>design time data</em> un modello ben più complesso (un master detail con un grafo decisamente ostico) incappando nei “<em>soliti</em>” <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/ma-pecccccchhhhegraveegraveegraveegrave.aspx">non pochi problemi</a> che però stavolta possono essere brillantemente risolti:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>address1 = <span style="color: #2b91af">MockRepository</span>.GenerateStub<<span style="color: #2b91af">IAddressViewModel</span>>();
+address1.Street = <span style="color: #a31515">"sample street 1"</span>;
+
+<span style="color: blue">var </span>address2 = <span style="color: #2b91af">MockRepository</span>.GenerateStub<<span style="color: #2b91af">IAddressViewModel</span>>();
+address2.Street = <span style="color: #a31515">"sample street 2"</span>;
+
+<span style="color: blue">this</span>.Expose( e => e.Addresses )
+    .AsReadOnly()
+    .WithValue( <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">IAddressViewModel</span>>( <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">IAddressViewModel</span>>()
+    {
+        address1,
+        address2
+    } ) );</pre>
+</blockquote>
+
+<span>utilizzando un tool di mocking, del resto siamo a design time, e producendo di fatto qualcosa di editabile in maniera umana, molto umana:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-AUG2Aa1IpZY/TzJxh44Yz8I/AAAAAAAABBE/HxOgg8TaMjc/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-abvsBMkCuVE/TzJxhdkVfQI/AAAAAAAABA8/vRAjWvE9We4/image_thumb_1.png" width="244" height="209"></a> </span><br>
+
+<span>Finalmente perchè prima quel coso era ridotto ad un groviglio inguardabile, e adesso posso farlo diventare quello che serve diventi.</span><br>
+
+<span>Adesso la domanda potrebbe essere: ma visto che funziona anche con un tool di mocking perchè non usare solo quello?</span><br>
+
+<span><em><strong>Cerca le differenze… :-)</strong></em></span><br>
+
+<table border="0" cellspacing="0" cellpadding="2"><tbody>
+    <tr>
+      <td valign="top"><a href="http://blogs.ugidotnet.org/images/blogs_ugidotnet_org/topics/WindowsLiveWriter/DesignTimeDatareloaded_AAE4/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="82ddcbbc-fea7-4014-9cbf-7a49fcefb092" width="268" height="104"></a> </td>
+
+      <td valign="top"><a href="https://lh5.googleusercontent.com/-WrBvRMzW1pE/TzJxjFhqpzI/AAAAAAAABBU/-0zWaVo7iKw/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-F_sLSCm-Nn8/TzJxieDidnI/AAAAAAAABBQ/9Ot7eVwYQ0s/image_thumb_2.png" width="209" height="104"></a> </td>
+    </tr>
+  </tbody></table>
+
+<span>La cosa interessante è che, per avere a design time quel comportamento, ci possiamo limitare solo ed esclusivamente a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">design</span><span style="color: blue">:</span><span style="color: #a31515">Sample </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="sample" </span><span style="color: red">DesignTimeAreDisplayedDataStale</span><span style="color: blue">="[False]/[True]" />
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Nonostante quel “pannello di warning” sia così definito:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Border </span><span style="color: red">Grid.Row</span><span style="color: blue">="0"
+        </span><span style="color: red">Background</span><span style="color: blue">="#FFFFFB9C"
+        </span><span style="color: red">Visibility</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">AreDisplayedDataStale</span><span style="color: blue">, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">boolVisConv</span><span style="color: blue">}}"
+        </span><span style="color: red">BorderBrush</span><span style="color: blue">="#FFFFF630"
+        </span><span style="color: red">BorderThickness</span><span style="color: blue">="1"
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Quella proprietà “DesignTimeAreDisplayedDataStale” non esiste sul modello, e quindi non esisterebbe per il tool di mocking, ma esiste per il DesignTimeHost<T> che è anche in grado di notificarne il cambiamento:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">Sample </span>: <span style="color: #2b91af">DesignTimeHost</span><<span style="color: #2b91af">ISubjectsListViewModel</span>>
+{
+    <span style="color: blue">public </span>Sample()
+    {
+        <span style="color: blue">this</span>.Expose( o => o.Items )
+            .WithValue( <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">Subject</span>>( <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">Subject</span>>()
+            {
+                <span style="color: blue">new </span><span style="color: #2b91af">Person</span>(){ FirstName = <span style="color: #a31515">"Mauro"</span>, LastName = <span style="color: #a31515">"Servienti" </span>},
+                <span style="color: blue">new </span><span style="color: #2b91af">Company</span>(){ CompanyName = <span style="color: #a31515">"topics.it" </span>}
+            } ) )
+            .AsReadOnly();
+
+        <span style="color: blue">this</span>.Expose( o => o.AreDisplayedDataStale )<br>            .<em><u><strong>BoundTo</strong></u></em>( <span style="color: blue">this</span>, s => s.DesignTimeAreDisplayedDataStale )<br>            .<strong><u><em>WithLiveValue</em></u></strong>( () => <span style="color: blue">this</span>.DesignTimeAreDisplayedDataStale )
+            .AsReadOnly();
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">Boolean </span>_designTimeAreDisplayedDataStale = <span style="color: blue">false</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>DesignTimeAreDisplayedDataStale
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._designTimeAreDisplayedDataStale; }
+        <span style="color: blue">set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.DesignTimeAreDisplayedDataStale )
+            {
+                <span style="color: blue">this</span>._designTimeAreDisplayedDataStale = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( e => e.AreDisplayedDataStale );
+            }
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Quindi:</span><br>
+
+<ul>
+  <li>la proprietà <em>AreDisplayedDataStale</em>, esposta dal modello, è registrata con un <em>live value</em>, un delegato, e non con un valore statico come le altre; </li>
+
+  <li>viene aggiunta una proprietà <em>DesignTimeAreDisplayedDataStale</em> che non esiste sul modello e che al momento della variazione notifica il suo cambiamento come una normalissima proprietà…; </li>
+
+  <li>…proprietà che il DesignTimeHost<T> tiene monitorata (<em>BoundTo()</em>) e, al momento della variazione, notifica a sua volta la variazione della proprietà <em>AreDisplayedDataStale</em>… </li>
+</ul>
+
+<span>…a questo punto il buon Blend, che ha istanziato il nostro DesignTimeHost<T>, reagisce alla notifica e viene a rileggersi il valore della proprietà che non esiste invocando di fatto il delegato che rappresenta il live-value… si lo so sembra cervellotico ma funziona che è un piacere. La cosa più bella è che questo mi permette anche di simulare lo stato di abilitazione / disabilitazione degli ICommand esposti dal ViewModel.</span><br>
+
+<span><strong>Concludendo…</strong></span><br>
+
+<span>Con pochissimo codice siamo in grado di dare a Blend un set di dati, da usare a Design Time, anche molto complesso permettendoci di avere una Design Time Experience veramente di qualità.</span><br>
+
+<span>.m</span><br>
+

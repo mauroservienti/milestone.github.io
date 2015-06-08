@@ -1,0 +1,66 @@
+---
+layout: post
+title: A gentle introduction to AngularJS
+date: '2013-12-10T10:57:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+modified_time: '2013-12-10T10:57:00.335+01:00'
+thumbnail: http://lh3.ggpht.com/-3KEzUGPSFxw/UqHYGlfvRPI/AAAAAAAACcw/Mn3M1McreXc/s72-c/image_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4950650535218579737
+blogger_orig_url: http://milestone.topics.it/2013/12/a-gentle-introduction-to-angularjs.html
+---
+
+<p><strong>Why a SPA?</strong></p> <p>First of all forget about web applications, a single page application is not a modern web application it is much more a fully “state full” rich client application that accidentally is written with the same technology also used to write web application and is accidentally delivered to the user via a web browser. but, that’s it.</p> <p>A SPA, and I agree with <a href="http://www.johnpapa.net/pageinspa/" target="_blank">John Papa’s comments</a> on the horrible naming, is another way to deliver a rich client to the end user. So why and when should we choose a SPA as the solution to be delivered to our clients?</p> <p>Generally, generally, speaking wherever we think that the benefit of having:</p> <ul> <li>a State full application;</li> <li>a host agnostic application;</li> <li>a cross browser, cross platform, application;</li> <li>an application that can be easily delivered to every device, other then computers, out there;</li> <li>…and much more…</li></ul> <p>is important we can choose to build a SPA.</p> <p>When dealing with SPAs the first choice must be:</p> <ul> <li>Should I develop everything from scratch?</li> <li>Should I depend on an already developed framework?</li></ul> <p>Well, developing everything from scratch is not a big deal and it is not a big issue. I deeply know which are the problems that must be faced when developing a huge MVVM framework such as <a href="http://radical.codeplex.com" target="_blank">Radical</a> and I can state that is not a complex stuff at all, but sometimes you fell like you are reinventing the wheel, especially if you take a look at what the world offers.</p> <p>My framework of choice is <a href="http://angularjs.org/" target="_blank">AngularJS</a>.</p> <p><strong>My first AngularJS </strong><strong>sample</strong></p> <blockquote><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>My First Sample<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span> 
+            <span class="attr">src</span><span class="kwrd">="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"</span><span class="kwrd">&gt;&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span> <span class="attr">data-ng-app</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+    {{ "{{" }}name}}
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Key points to look at:</p>
+<ul>
+<li>we are “attaching” AngularJS directly from the Google CDN, yes AngularJS is developed by Google;</li>
+<ul>
+<li>it is not a requirement, I prefer to have it offline in my solution basically because a lot of times I develop while offline;</li></ul>
+<li>The “data-ng-app” attribute on the body, it can be put on any element generally it will be put on the html tag, tells AngularJS that from that point down to the DOM tree there is the SPA;</li>
+<li>The “data-ng-model” attribute on the input element tells AngularJS that the input must be data bound, in 2 way mode, with a property named “name” on the model, that in this case is implicitly defined by AngularJS itself;</li>
+<li>The {{ "{{" }}<em>property-name</em>}} syntax that tells AngularJS to setup a one way data binding with the specified property on the model;</li></ul>
+<p>if we run it what we’ll see is:</p>
+<p><a href="http://lh6.ggpht.com/-SWfuBWWCHcI/UqHX8vpGjDI/AAAAAAAACco/qbsaw0JXKZg/s1600-h/image%25255B2%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh3.ggpht.com/-3KEzUGPSFxw/UqHYGlfvRPI/AAAAAAAACcw/Mn3M1McreXc/image_thumb.png?imgmax=800" width="350" height="218"></a><a href="http://lh4.ggpht.com/-5eQlUpPGHeM/UqHYHlJQPPI/AAAAAAAACc4/tQpTghiJ2hE/s1600-h/image%25255B6%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh4.ggpht.com/-29VzKGI7Cz4/UqHYIwnfR5I/AAAAAAAACdA/X97UoZyendc/image_thumb%25255B9%25255D.png?imgmax=800" width="375" height="218"></a></p>
+<p>As soon as we write something in the text box the AngularJS data binding engine kicks in and synchronize the changes to the “readonly” element.</p>
+<p>Easy peasy ;-) </p>
+<p>.m</p>  

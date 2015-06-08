@@ -1,0 +1,183 @@
+---
+layout: post
+title: Monitoring sources for events in a M-V-VM world
+date: '2011-10-05T09:53:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Radical
+- Model View ViewModel
+modified_time: '2012-02-25T12:07:07.760+01:00'
+thumbnail: https://lh6.googleusercontent.com/-7zs0QvEsTuo/T0jA13se9qI/AAAAAAAAB6Q/myjPNLBf7oM/s72-c/wlEmoticon-smile_2_39.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5886500908246126988
+blogger_orig_url: http://milestone.topics.it/2011/10/monitoring-sources-for-events-in-m-v-vm.html
+---
+
+<span>My dear colleague <a href="http://qmatteoq.tostring.it" target="_blank">Matteo</a> yesterday came up with a question, that <em>per se</em> is fairly easy, imagine a scenario where you have a OuterViewModel that exposes an InnerViewModel and a command, such as:</span><br>  <blockquote>   <pre class="csharpcode"><span class="kwrd">class</span> InnerViewModel : INotifyPropertyChanged
+{
+   
+}
+
+<span class="kwrd">class</span> OuterViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> OuterViewModel()
+    {
+        <span class="rem">//your own logic to setup the command and the inner view model</span>
+    }
+
+    <span class="kwrd">public</span> InnerViewModel Inner{ get; set; }
+    <span class="kwrd">public</span> ICommand DoSomething{ get; }
+}</pre>
+</blockquote>
+
+<span>Now Matteo wants that, each time a property exposed by the InnerViewModel changes, the command evaluation status is re-evaluated. As we said the solution is simple, just attach an handler to the PropertyChanged event of the InnerViewModel and re-evaluate the command.</span><br>
+
+<span><strong>So far…so good…</strong><em>with a lot a pollution around </em><img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh6.googleusercontent.com/-7zs0QvEsTuo/T0jA13se9qI/AAAAAAAAB6Q/myjPNLBf7oM/wlEmoticon-smile_2_39.png"></span><br>
+
+<span>Why pollution?</span><br>
+
+<ol>
+  <li>The ICommand interface does not expose a method to request the command re-evaluation; </li>
+
+  <li>You have to remember to attach the event on the inner view model and it is not natural because the focus, during development, is on the command not on the source of the change notification; this is the typical situation where you want a command to react to something that has happened…nothing more; </li>
+</ol>
+
+<span><a href="http://radical.codeplex.com/" target="_blank"><strong>Radical</strong></a><strong> to the rescue</strong></span><br>
+
+<span>Let’s se what you can achieve using the Radical framework:</span><br>
+
+<blockquote>
+  <pre class="csharpcode"><span class="kwrd">class</span> OuterViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> OuterViewModel()
+    {
+        <span class="rem">//your own logic to setup the inner view model</span>
+
+       <strong> <span class="kwrd">this</span>.DoDomething = DelegateCommand.Create()
+                   .OnCanExecute( o => <span class="kwrd">return</span> <span class="kwrd">true</span> ) <span class="rem">//your own validation logic</span>
+                   .OnExecute( o => {  } ) <span class="rem">//your own execution logic</span>
+                   .AddMonitor( PropertyObserver.ForAllPropertiesOf( <span class="kwrd">this</span>.InnerViewModel );</strong>
+    }
+
+    <span class="kwrd">public</span> InnerViewModel Inner{ get; set; }
+    <span class="kwrd">public</span> ICommand DoSomething{ get; }
+}</pre>
+</blockquote>
+
+<span><style type="text/css">
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>Or even easier using the brand new extension method:</span><br>
+
+<blockquote>
+  <pre class="csharpcode"><span class="kwrd">class</span> OuterViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> OuterViewModel()
+    {
+        <span class="rem">//your own logic to setup the inner view model</span>
+
+        <span class="kwrd">this</span>.DoDomething = DelegateCommand.Create()
+                   .OnCanExecute( o => <span class="kwrd">return</span> <span class="kwrd">true</span> ) <span class="rem">//your own validation logic</span>
+                   .OnExecute( o => {  } ) <span class="rem">//your own execution logic</span>
+                   <strong>.Observe( <span class="kwrd">this</span>.InnerViewModel );</strong>
+    }
+
+    <span class="kwrd">public</span> InnerViewModel Inner{ get; set; }
+    <span class="kwrd">public</span> ICommand DoSomething{ get; }
+}</pre>
+</blockquote>
+<style type="text/css">
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style>
+
+<span>easy peasy lemon squeezy <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="9740610d-3ff2-413c-a8d6-1311af70dd98">, implementing your own monitors is really straightforward, just implement the IMonitor interface or even easier inherit from the AbstractMonitor/AbstractMonitor<T> base classes.</span><br>
+
+<span>Side notes:</span><br>
+
+<ul>
+  <li>under the hood the DelegateCommand utilizes the weak event pattern; </li>
+
+  <li>all the presented stuff is available for the full FX, for Silverlight 4 and for the Phone; </li>
+</ul>
+
+<span>Do you want to give it a try? <a href="http://nuget.org" target="_blank"><em>nuget</em></a><em> it</em>: <a href="http://www.nuget.org/List/Packages/Radical" target="_blank">Radical on nuget</a> and <a href="http://www.nuget.org/List/Packages/Radical.Windows" target="_blank">Radical.Windows on nuget</a>. (Radical contains the observers stuff and Radical.Windows the DelegateCommand)</span><br>
+
+<span>.m<style type="text/css">
+
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></span><br>

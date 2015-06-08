@@ -1,0 +1,14 @@
+---
+layout: post
+title: TechEd Developer - Optimizing Performance and Scalability of Distribuited .NET
+  Applications
+date: '2006-11-10T09:18:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T21:24:38.331+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2278372931365343057
+blogger_orig_url: http://milestone.topics.it/2006/11/teched-developer-optimizing-performance.html
+---
+
+<span>Ingo Rammer</span><br> <span>Iniziamo con un commento goliardico sul ns stato di salute dopo aver dormito qualcosa come 2 ore...</span><br> <span><font color="#808080"><em><MessaggioSubliminale><br>Orario noto, condizione accettabile, tasso alcolico nella norma: sono fedele, mi sentirei una m***a se lo facessi...<br>orario indefinito... viaggio dal porto olimpico verso il nulla... OutOfAlcoholicTaxException... stesso personaggio: be insomma il tradimento.. che vuoi che sia... no ma se la baci e basta non è mica tradire... va bene così l'ho fatto un sacco di volte...</em></font></span><br> <span><font color="#808080"><em>ROT[C*]L / </em></font><font color="#808080"><em>*C: "Cab"<br></MessaggioSubliminale></em></font></span><br> <span>Torniamo alle cose serie se no mi gambizzano :-D</span><br> <span>Brev e in ntroduzione sulle best practice da aplicare alle metodoligie di testine e stressing di un'applicazione per essere sicuri che quello che stiamo testando dia dei risultati che siano utili all'analisi di un eventuale problema e/o collo di bottiglia.</span><br> <span>Rammer suggerisce un approccio basato su setp per arrivare ad identificare il collo di bottiglia:</span><br> <span>- network tracing / sniffing: bell'esempio di uso di Etheral per analizzare i pacchetti scambiati tra server e client alla ricerca di eventuali problemi, il primo test viene fatto su un'applicazione remoting il secondo su una WCF;</span><br> <span>- Tracciare l'accesso al db: fondamentale è capire cosa succede dietro le quinte, ci sono situazioni in cui lasciare nelle mani di un tool (leggi DataSet e/o ORM) la generazione del codice SQL è un suicidcio, la seconda cosa fondamentale è ridurre all'osso il locking sulle tabelle;</span><br> <span>- il terzo step rigurda la profilazione della memoria, un tool free a CLR Profiler, una nota fondamentale è che non traccia i memory leaks ma semplicemente l'uso della memoria;</span><br> <span>Va tutto benissimo, abbiamo seguito tutte le best practice ma la ns applicazione continua ad avere problemi... l'indagine deve spostarsi verso i componenti di terzi parti, Ingo ci fa vedere una demo profilando dei componenti di terze parti con risultati a dir poco allarmanti... quindi okkio ;-)</span><br> <span>.m</span><br>

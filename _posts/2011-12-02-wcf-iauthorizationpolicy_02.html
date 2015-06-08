@@ -1,0 +1,112 @@
+---
+layout: post
+title: 'WCF: IAuthorizationPolicy'
+date: '2011-12-02T09:31:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Security
+- Software Mason
+- Wcf
+modified_time: '2012-02-25T12:08:10.499+01:00'
+thumbnail: https://lh6.googleusercontent.com/-PNnFtt5PdY0/T0jBGdqwLWI/AAAAAAAAB74/kI3K8hZZt8I/s72-c/wlEmoticon-smile_2_44.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7233215825316977960
+blogger_orig_url: http://milestone.topics.it/2011/12/wcf-iauthorizationpolicy_02.html
+---
+
+<span>When it comes down to WCF security, especially custom security, WCF authorization policies are a life saver, they are pure power.</span><br>  <span><strong>Back to the beginning</strong></span><br>  <span>From the early period of .net 1.0 CAS guys told us that imperative and declarative security are a good thing. Writing this kind of code is really important:</span><br>  <blockquote>   <pre class="csharpcode">[PrincipalPermission( SecurityAction.Demand, Authenticated = <span class="kwrd">true</span>, Role = <span class="str">"Managers"</span> )]
+<span class="kwrd">public</span> <span class="kwrd">void</span> ReallySecureMethod()
+{
+   <span class="rem">//something that only "Managers" can do</span>
+}</pre>
+  <style type="text/css">
+
+
+
+.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }</style></blockquote>
+
+<span>we have learned that code execution policies and code access security prevents the execution of that method if prerequisites expressed by the attribute are not met.</span><br>
+
+<span><strong>So?</strong></span><br>
+
+<span>If you try to apply the attribute to a WCF operation you always get a security exception basically because the current principal never meets the security assertions expressed by the permission attribute, the reason is fairly simple: when it comes to services the concept of principal is not so clear in the end, at the service level there are at least 2 different possible principal:</span><br>
+
+<ol>
+  <li>the user running the code: e.g. if you are running inside IIS the application pool identity; </li>
+
+  <li>the user the calls the WCF operation; </li>
+</ol>
+
+<span>If the service, for example, is authenticated, you can end up having 2 identities how can WCF choose one for you and use it as the current principal? The are tons of different configuration that can lead to have multiple identities on the service side, WCF configuration is a real pain that can lead to really complex and complicated cumbersome situations.</span><br>
+
+<span><strong>Uhm…</strong></span><br>
+
+<span>Have you ever tried WIF (Windows Identity Foundation)? If you tried it you noticed that the above code works fine, the WCF service instance has a valid current principal out-of-the-box that matches the current claim identity.</span><br>
+
+<span><strong>Why?</strong></span><br>
+
+<span>Basically WIF ads a custom authorization policy to the authorization policies pipeline of WCF. What the hell is the authorization policies pipeline?</span><br>
+
+<span>Authorization policies in WCF are an extension point that lets you take custom decisions about security, they are called in an early stage of the WCF operation call stack so you can do a lot of different thing in this stage but as the name implies they are thought for authorization purpose. Policies are handled in a first come first served manner, following the order in which policies are added to the WCF endpoint behavior configuration.</span><br>
+
+<span>An authorization policy is class that implements the IAuthorizationPolicy interface, the implementation is trivial and the only point of interest is the “Evaluate” method:</span><br>
+
+<blockquote>
+  <pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">bool</span> Evaluate( EvaluationContext evaluationContext, <span class="kwrd">ref</span> <span class="kwrd">object</span> state )
+{
+    <span class="kwrd">if</span>( !evaluationContext.ContainsIdentity() )
+    {
+        evaluationContext.SetPrincipal( Helper.GetAnonymousIdentity() );
+
+        <span class="kwrd">return</span> <span class="kwrd">true</span>;
+    }
+
+    <span class="kwrd">return</span> <span class="kwrd">false</span>;
+}</pre>
+</blockquote>
+
+<span>…what are we doing?</span><br>
+
+<ol>
+  <li>first we check if the current call contains any identity information (ContainsIdentity is an extension method that deals with WCF evaluation context properties that contains the identities list); </li>
+
+  <li>if none is found we setup (SetPrincipal is another extension method) an anonymous identity that suites our business logic needs and return true; </li>
+
+  <li>Otherwise we return false; </li>
+</ol>
+
+<span>returning true means that the policy did its job, returning false means that the policy has nothing to do. At least one authorization policy must return true, so in this sample this authorization policy is the last in the stack and all the others before will ensure that all the expected cases are handled.</span><br>
+
+<span>Adding policies is really easy:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt"><</font></font></span><font style="font-size: 11.3pt"><span style="color: "><font color="#a31515">behavior</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">name</font></span><span style="color: "><font color="#0000ff">=</font></span>""</font></font><font style="font-size: 11.3pt"><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">	<</span></font><span style="color: "><font color="#a31515">serviceMetadata</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">…</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: "> /></span><br><span style="color: ">	<</span></font><span style="color: "><font color="#a31515">serviceDebug</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">…</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: "> /></span><br><span style="color: ">	<</span></font><span style="color: "><font color="#a31515">serviceAuthorization</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">principalPermissionMode</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">Custom</font></span>"</font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">		<</span></font><span style="color: "><font color="#a31515">authorizationPolicies</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">			<</span></font><span style="color: "><font color="#a31515">add</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">policyType</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">MyWcfAuthorizationPolicy, MyExtensions</font></span>"</font><font face="Consolas"><font color="#0000ff"><span style="color: "> /></span><br><span style="color: ">			<</span></font><span style="color: "><font color="#a31515">add</font></span><span style="color: "><font color="#0000ff"> </font></span><span style="color: "><font color="#ff0000">policyType</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">MyAnonymousAuthorizationPolicy, MyExtensions</font></span>"</font><font face="Consolas"><font color="#0000ff"><span style="color: "> /></span><br><span style="color: ">		</</span></font><span style="color: "><font color="#a31515">authorizationPolicies</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br><span style="color: ">	</</span></font><span style="color: "><font color="#a31515">serviceAuthorization</font></span></font><font face="Consolas"><font color="#0000ff"><span style="color: ">></span><br></font></font></font><font face="Consolas"><font style="font-size: 11.3pt"><font color="#0000ff"><br><span style="color: "></</span></font><span style="color: "><font color="#a31515">behavior</font></span></font><span style="color: "><font style="font-size: 11.3pt" color="#0000ff">></font></span></font></pre>
+</blockquote>
+
+<span>After the stack execution we are sure that the current principal has a value that suites our business needs and that meets the CAS requirements that let us write declarative security.</span><br>
+
+<span>Cool <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh6.googleusercontent.com/-PNnFtt5PdY0/T0jBGdqwLWI/AAAAAAAAB74/kI3K8hZZt8I/wlEmoticon-smile_2_44.png"></span><br>
+
+<span>.m</span><br>

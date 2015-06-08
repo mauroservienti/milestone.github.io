@@ -1,0 +1,185 @@
+---
+layout: post
+title: 'Jason v0.2: configuration improvements and breaking changes'
+date: '2013-04-16T10:45:00.001+02:00'
+author: Mauro Servienti
+tags:
+- Jason
+- CQRS
+modified_time: '2013-04-16T10:45:08.814+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-906381735948668933
+blogger_orig_url: http://milestone.topics.it/2013/04/jason-v02-configuration-improvements.html
+---
+
+<p>As we have <a href="{{ site.baseurl }}{% post_url 2012-11-05-jason-way-to-handle-c-of-cqrs %}" target="_blank">already</a> <a href="{{ site.baseurl }}{% post_url 2012-11-19-jason-mvc-webapi-hosting %}" target="_blank">discussed</a> <a href="http://jason.codeplex.com/" target="_blank">Jason</a> is an infrastructure framework to handle the “Command” portion of the CQRS pattern, due to some customer feedback and requests today we released a brand new version of the whole toolkit adding a lot of improvements and, unfortunately, some breaking changes.</p> <h3>One configuration to rule them all</h3> <p>In the previous Jason version there was one different configuration per hosting type, basically in order to host Jason as a WCF service the developer needed to build a specific configuration that was different from the one required to host Jason as a WebAPI controller. This difference leaded to one big issue: you simply cannot host, in the same application, a Jason API controller and a Jason WCF service.</p> <p>In v0.2 we solved this scenario rebuilding the whole configuration stuff:</p> <blockquote><pre class="csharpcode">var jasonConfig = <span class="kwrd">new</span> DefaultJasonServerConfiguration
+(
+    pathToScanForAssemblies: Path.Combine( AppDomain.CurrentDomain.BaseDirectory, <span class="str">"bin"</span> ),
+    assemblySelectPattern: assemblySelectPattern
+);
+
+jasonConfig.AddEndpoint( <span class="kwrd">new</span> Jason.WebAPI.JasonWebAPIEndpoint() 
+{
+    TypeNameHandling = TypeNameHandling.Objects
+} );
+
+jasonConfig.AddEndpoint( <span class="kwrd">new</span> Jason.Server.JasonWcfEndpoint()
+{
+    CommandsSelector = t =&gt;
+    {
+        <span class="kwrd">return</span> t.IsAttributeDefined&lt;DataContractAttribute&gt;()
+            &amp;&amp; ( t.Name.EndsWith( <span class="str">"Command"</span> ) || t.Name.EndsWith( <span class="str">"CommandResponse"</span> ) );
+    }
+} );
+
+jasonConfig.Initialize();</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We are building just one single configuration adding 2 different endpoints each one with its own configuration peculiarities.</p>
+<h3>Inversion of control support</h3>
+<p>Jason heavily relies on the Inversion of Control pattern to work and depends on an Inversion of Control container but we do not want, as in previous versions, to force the user to introduce an IoC container in the solution only to support Jason and we especially do not want you to remember to register the internal Jason type that are required to work.</p>
+<p>In v0.2 we leverage the power of the <a href="http://radical.codeplex.com" target="_blank">Radical</a> built-in <a href="http://milestone.topics.it/search?q=PuzzleContainer" target="_blank">PuzzleContainer</a> (that is now available in all Radical versions) to support the IoC Jason needs, the internal container is exposed by the configuration via the Container property and can be used to register custom types required during the Jason usage.</p>
+<p>Obviously the default internal container can be easily replaced in order to integrate Jason in your development lifecycle using your favorite container of choice. In order to achieve that it is enough to replace the built-in container via the configuration Container property where the IJasonContainer is just a proxy interface to abstract the container concept.</p>
+<p>Here is a sample implementation to inject Castle Windsor:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> WindsorJasonContainerProxy : Jason.Configuration.IJasonContainer
+{
+    IWindsorContainer container;
+
+    <span class="kwrd">public</span> WindsorJasonContainerProxy( IWindsorContainer container )
+    {
+        <span class="kwrd">this</span>.container = container;
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> RegisterAsTransient( IEnumerable&lt;Type&gt; contracts, Type implementation )
+    {
+        <span class="kwrd">this</span>.container.Register( Component.For( contracts ).ImplementedBy( implementation ).LifestyleTransient() );
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> RegisterAsSingleton( IEnumerable&lt;Type&gt; contracts, Type implementation )
+    {
+        <span class="kwrd">this</span>.container.Register( Component.For( contracts ).ImplementedBy( implementation ).LifestyleSingleton() );
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> RegisterInstance( IEnumerable&lt;Type&gt; contracts, <span class="kwrd">object</span> instance )
+    {
+        <span class="kwrd">this</span>.container.Register( Component.For( contracts ).Instance( instance ).LifestyleSingleton() );
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> RegisterTypeAsTransient( Type implementation )
+    {
+        <span class="kwrd">this</span>.container.Register( Component.For( implementation ).LifestyleTransient() );
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> RegisterTypeAsSingleton( Type implementation )
+    {
+        <span class="kwrd">this</span>.container.Register( Component.For( implementation ).LifestyleSingleton() );
+    }
+
+    <span class="kwrd">public</span> IEnumerable&lt;T&gt; ResolveAll&lt;T&gt;()
+    {
+        <span class="kwrd">return</span> <span class="kwrd">this</span>.container.ResolveAll&lt;T&gt;();
+    }
+
+    <span class="kwrd">public</span> T Resolve&lt;T&gt;()
+    {
+        <span class="kwrd">return</span> <span class="kwrd">this</span>.container.Resolve&lt;T&gt;();
+    }
+
+    <span class="kwrd">public</span> IEnumerable&lt;<span class="kwrd">object</span>&gt; ResolveAll( Type t )
+    {
+        <span class="kwrd">return</span> <span class="kwrd">this</span>.container.ResolveAll( t ).Cast&lt;Object&gt;();
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">object</span> Resolve( Type t )
+    {
+        <span class="kwrd">return</span> <span class="kwrd">this</span>.container.Resolve( t );
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">void</span> Release( <span class="kwrd">object</span> instance )
+    {
+        <span class="kwrd">this</span>.container.Release( instance );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>As said just a trivial proxy that can be used in the following manner:</p>
+<blockquote><pre class="csharpcode">var jasonConfig = <span class="kwrd">new</span> DefaultJasonServerConfiguration( Path.Combine( AppDomain.CurrentDomain.BaseDirectory, <span class="str">"bin"</span> ) )
+{
+    Container = <span class="kwrd">new</span> WindsorJasonContainerProxy( yourWindsorInstance )
+};</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>After that Jason will use your container to register its own required types and to resolve at runtime the required components.</p>
+<p><em>Next time: Jason retry policies.</em></p>
+<p>.m</p>  

@@ -1,0 +1,205 @@
+---
+layout: post
+title: A C# TypeLoaderInterceptor
+date: '2011-09-20T08:25:00.000+02:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- Radical
+- AOP
+modified_time: '2012-02-25T12:07:01.364+01:00'
+thumbnail: https://lh6.googleusercontent.com/-1FMK43T9gGc/T0jAxy1CRSI/AAAAAAAAB5o/xhOe_Wn_XbQ/s72-c/image_thumb_16.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6647418809752336995
+blogger_orig_url: http://milestone.topics.it/2011/09/c-typeloaderinterceptor.html
+---
+
+<span>
+	<a href="http://www.twitter.com/AdamCogan" target="_blank">Adam Cogan</a> has convinced me, that I will get a larger audience if I move my blog to English. So here is my first English post. <br>
+	What are your thoughts on this?</span><br>
+<span>
+	Java has the concept of <a href="http://en.wikipedia.org/wiki/JAR_hell" target="_blank">class loader</a>. I cannot define myself as a java expert, I can simply read and understand the code, nothing more, but as far as I have understood class loaders are a really cool feature because they let you inject your own logic into the type loading process.</span><br>
+<span>
+	As with all powerful features, class loaders must be used with caution.</span><br>
+<span>
+	In the .Net world we do not have anything built-in that can be compared to class loaders. Using <a href="http://www.sharpcrafters.com/" target="_blank">PostSharp</a> and a bunch of lines of good-old C# code we can achieve something that is not a real class loader but is much more comparable to type loader interceptor. Well, java class loaders does, technically, a really different thing from what I’m doing here, class loaders have a chance to modify the <em>bytecode</em> at runtime (at class load time), instead PostSharp modifies the IL at compile time letting the developer introduce custom code that will be executed at runtime.</span><br>
+<span>
+	<strong>So what?</strong></span><br>
+<span>
+	Let’s start with a really simple class:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">TestClass</font></span>
+{
+	<span><font color="#0000ff">public</font></span> TestClass()
+	{
+		<span><font color="#0000ff">this</font></span>.Guid = <span><font color="#2b91af">Guid</font></span>.Empty;
+	}
+ 
+	<span><font color="#0000ff">public</font></span> <span><font color="#2b91af">Guid</font></span> Guid { <span><font color="#0000ff">get</font></span>; <span><font color="#0000ff">set</font></span>; }
+}</pre></blockquote>
+<span>
+	And I want these tests to pass:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">[<span><font color="#2b91af">TestMethod</font></span>]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> TypeLoadEngine_intercept_using_valid_interceptor_should_intercept_instance_creation()
+{
+	<span><font color="#0000ff">var</font></span> obj = <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">TestClass</font></span>();
+	obj.Guid.Should().Not.Be.EqualTo( <span><font color="#2b91af">Guid</font></span>.Empty );
+}
+ 
+[<span><font color="#2b91af">TestMethod</font></span>]
+
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> TypeLoadEngine_intercept_using_valid_interceptor_and_activator_create_instance_should_intercept_instance_creation()
+{
+	<span><font color="#0000ff">var</font></span> obj = <span><font color="#2b91af">Activator</font></span>.CreateInstance<<span><font color="#2b91af">TestClass</font></span>>();
+	obj.Guid.Should().Not.Be.EqualTo( <span><font color="#2b91af">Guid</font></span>.Empty );
+}
+ 
+[<span><font color="#2b91af">TestMethod</font></span>]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> TypeLoadEngine_intercept_using_valid_interceptor_and_multiple_class_instance_should_intercept_each_instance_creation()
+{
+	<span><font color="#0000ff">var</font></span> obj1 = <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">TestClass</font></span>();
+	<span><font color="#0000ff">var</font></span> obj2 = <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">TestClass</font></span>();
+	obj1.Guid.Should().Not.Be.EqualTo( obj2.Guid );
+}</pre></blockquote>
+<span>
+	test execution gives:</span><br>
+<span>
+	<a href="https://lh6.googleusercontent.com/-zB8XMHTGA38/T0jAyvCfGOI/AAAAAAAAB5w/gSVc720iRUU/image_2_15.png"><img alt="image" border="0" height="128" src="https://lh6.googleusercontent.com/-1FMK43T9gGc/T0jAxy1CRSI/AAAAAAAAB5o/xhOe_Wn_XbQ/image_thumb_16.png" style="border-width: 0px; margin: 0px; padding-top: 0px; padding-right: 0px; padding-left: 0px; display: inline; background-image: none;" title="image" width="496"></a></span><br>
+<span>
+	<em>Figure</em>: I expect these to fail, but they passed.</span><br>
+<span>
+	Interesting…isn’t it?</span><br>
+<span>
+	<strong>But why?</strong></span><br>
+<span>
+	Before moving on looking at the code you may wonder what I’m trying to achieve, basically the requirement is:</span><br>
+<blockquote>
+	<span>
+		As a developer I do not want to use an ObjectFactory pattern to create instances of the domain model but I need to inject some behavior in my classes without the need to manually do that.</span><br>
+</blockquote>
+<span>
+	<strong>A real world example?</strong></span><br>
+<span>
+	Yes, quite easy. You are building something that is strongly based on DDD and you are using event sourcing strategies to propagate domain events in the whole model but you do not want to use a “static” event broker in your domain, instead you want to inject one using your favorite Inversion of Control container. Basically you do not want this:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">Message</font></span>
+{
+	<span><font color="#0000ff">public</font></span> <span><font color="#2b91af">Boolean</font></span> IsRead
+	{
+		<span><font color="#0000ff">get</font></span>;
+		<span><font color="#0000ff">protected</font></span> <span><font color="#0000ff">set</font></span>;
+	}
+ 
+	<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> MarkAsRead()
+	{
+		<span><font color="#0000ff">if</font></span>( !<span><font color="#0000ff">this</font></span>.IsRead )
+		{
+			<span><font color="#0000ff">this</font></span>.IsRead = <span><font color="#0000ff">true</font></span>;
+ 
+			<span><font color="#2b91af">Broker</font></span>.Current.Dispatch( <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">MessageMarkedAsRead</font></span>( <span><font color="#0000ff">this</font></span> ) );
+		}
+	} 
+
+}</pre></blockquote>
+<span>
+	where Broker.Current is a static reference to the broker, but you want this:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">virtual</font></span> <span><font color="#0000ff">void</font></span> MarkAsRead()
+{
+	<span><font color="#0000ff">if</font></span>( !<span><font color="#0000ff">this</font></span>.IsRead )
+	{
+		<span><font color="#0000ff">this</font></span>.IsRead = <span><font color="#0000ff">true</font></span>;
+ 
+		<span><font color="#0000ff">this</font></span>.Broker.Dispatch( <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">MessageMarkedAsRead</font></span>( <span><font color="#0000ff">this</font></span> ) );
+	}
+}</pre></blockquote>
+<span>
+	One obvious reason is testing.</span><br>
+<span>
+	<strong>So...where’s the magic?</strong></span><br>
+<span>
+	Let’s dive into the solution, first let’s introduce the TypeLoader Engine:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">[<span><font color="#2b91af">TestInitialize</font></span>]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> Setup()
+{
+	<span><font color="#2b91af">TypeLoader</font></span>.Engine.AddInterceptor( <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">TestInterceptor</font></span>() );
+}
+ 
+[<span><font color="#2b91af">TestCleanup</font></span>]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> Teardown()
+{
+	<span><font color="#2b91af">TypeLoader</font></span>.Engine.Shutdown();
+}</pre></blockquote>
+<span>
+	And immediately after the ITypeLoadInterceptor:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">class</font></font></span> <span><font color="#2b91af">TestInterceptor</font></span> : <span><font color="#2b91af">ITypeLoadInterceptor</font></span>
+{
+	<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">bool</font></span> IsInterestedIn( <span><font color="#0000ff">object</font></span> instance, <span><font color="#2b91af">TypeLoadMomentum</font></span> momentum )
+	{
+		<span><font color="#0000ff">return</font></span> instance <span><font color="#0000ff">is</font></span> <span><font color="#2b91af">TestClass</font></span> && momentum == <span><font color="#2b91af">TypeLoadMomentum</font></span>.AtConstructorExit;
+	}
+ 
+	<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">void</font></span> Intercept( <span><font color="#0000ff">object</font></span> instance, <span><font color="#2b91af">TypeLoadMomentum</font></span> momentum )
+	{
+		<span><font color="#0000ff">var</font></span> p = ( <span><font color="#2b91af">TestClass</font></span> )instance;
+		p.Guid = <span><font color="#2b91af">Guid</font></span>.NewGuid();
+	}
+}</pre></blockquote>
+<span>
+	<strong>What’s happening here?</strong></span><br>
+<span>
+	Basically the TypeLoader Engine is just a way to hold a globally known list of interceptors, nothing more, internally it just holds a List<itypeloadinterceptor>. On the other side an ITypeLoadInterceptor is the real worker here, it can decide whether or not it is interested in intercepting a specific instance in a specific moment (AtConstructorEnter or AtConstructorExit), and when interested it can definitely intercept the created instance before it is returned to the calling code.</itypeloadinterceptor></span><br>
+<span>
+	Now every single piece is finding its own place in the puzzle, we simply miss one little thing…</span><br>
+<span>
+	<strong>Who is wiring the two worlds?</strong></span><br>
+<span>
+	As I said I have a great 3rd party utility called PostSharp - that is doing the magic under the covers:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">[<span><font color="#0000ff">assembly</font></span>: <span><font color="#2b91af">InterceptTypeLoadAttribute</font></span>( AttributeTargetTypes = <span><font color="#a31515">"*.TestClass"</font></span> )]
+</pre></blockquote>
+<span>
+	The InterceptTypeLoadAttribute is an aspect we build to instruct the PostSharp post compiler to “inject” some code <strong>at compile time</strong> into our TestClass in order to wire the two world, our attribute is an <a href="http://doc.sharpcrafters.com/postsharp-2.0/##PostSharp-2.0.chm/html/T_PostSharp_Aspects_OnMethodBoundaryAspect.htm" target="_blank">OnMethodBoundaryAspect</a> that basically does 2 things:</span><br>
+<ul>
+	<li>
+		At compile time PostSharp gets the chance to decide whether or not it should be applied to a target type based on the location where it is. We are only interested in constructors;</li>
+	<li>
+		At runtime PostSharp intercepts the constructor call and dispatches one call to the type loader engine before the constructor begins and one call just before the constructor ends;</li>
+</ul>
+<span>
+	So here it is:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">[<span><font color="#2b91af">Serializable</font></span>]
+[<span><font color="#2b91af">AttributeUsage</font></span>( <span><font color="#2b91af">AttributeTargets</font></span>.Assembly | <span><font color="#2b91af">AttributeTargets</font></span>.Constructor | <span><font color="#2b91af">AttributeTargets</font></span>.Class )]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">InterceptTypeLoadAttribute</font></span> : <span><font color="#2b91af">OnMethodBoundaryAspect</font></span>
+{ 
+	<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">override</font></span> <span><font color="#0000ff">void</font></span> OnEntry( <span><font color="#2b91af">MethodExecutionArgs</font></span> args )
+	{
+		<span><font color="#0000ff">base</font></span>.OnEntry( args );
+ 
+		<span><font color="#2b91af">TypeLoader</font></span>.Engine.Intercept( args.Instance, <span><font color="#2b91af">TypeLoadMomentum</font></span>.AtConstructorEnter );
+	}
+ 
+	<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">override</font></span> <span><font color="#0000ff">void</font></span> OnSuccess( <span><font color="#2b91af">MethodExecutionArgs</font></span> args )
+	{
+		<span><font color="#0000ff">base</font></span>.OnSuccess( args );
+ 
+		<span><font color="#2b91af">TypeLoader</font></span>.Engine.Intercept( args.Instance, <span><font color="#2b91af">TypeLoadMomentum</font></span>.AtConstructorExit );
+	}
+
+}</pre></blockquote>
+<span>
+	The following is a screenshot, grabbed using <a href="http://wiki.sharpdevelop.net/ilspy.ashx" target="_blank">ILSpy</a>, of the enhanced class post-compiled by PostSharp:</span><br>
+<span>
+	<a href="https://lh6.googleusercontent.com/-IJzvDZ_8f2I/T0jA0WN4YfI/AAAAAAAAB58/LTOFk9KFE0Y/image_4_12.png"><img alt="image" border="0" height="274" src="https://lh5.googleusercontent.com/-jzV4o-dDhjE/T0jAznr6wUI/AAAAAAAAB54/fidjjI4WGF0/image_thumb_1_12.png" style="border-width: 0px; margin: 0px; padding-top: 0px; padding-right: 0px; padding-left: 0px; display: inline; background-image: none;" title="image" width="625"></a></span><br>
+<span>
+	<em>Figure</em>: The constructor of the TestClass with all the code injected by PostSharp, highlighted in yellow the two call that allows the wiring between to the two worlds.</span><br>
+<span>
+	Do you like it as much as I do? <a href="http://nuget.org/List/Packages/Radical.Extensions.Aspects" target="_blank">Grab it from nuget</a> <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh3.googleusercontent.com/-z-hQGEPTcs0/T0jA0_JjB6I/AAAAAAAAB6E/k9xcUJsHSmM/wlEmoticon-smile_2_38.png"></span><br>
+<span>
+	Tell me if you would use it in your own project or leave a comment for any suggestion. I’d like to thank Adam Cogan, <a href="http://blog.gfader.com/" target="_blank">Peter Gfader</a> and Gael Fraiteur (of Sharp Crafters) for reviewing this post.</span><br>
+<span>
+	.m</span><br>

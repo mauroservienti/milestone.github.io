@@ -1,0 +1,81 @@
+---
+layout: post
+title: 'RavenDB: storing data'
+date: '2012-02-15T10:45:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2012-02-16T07:21:27.750+01:00'
+thumbnail: http://lh5.ggpht.com/-DdyGFJTl5ts/TzqmRJMyyFI/AAAAAAAABQg/6yCKjzTpOho/s72-c/image_thumb%25255B1%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6840057875782372084
+blogger_orig_url: http://milestone.topics.it/2012/02/ravendb-storing-data.html
+---
+
+Before going on with these series of introduction posts on <a href="http://ravendb.net/" target="_blank">RavenDB</a> I suggest you to give a look at the <a href="http://www.codewrecks.com/blog/index.php/tag/ravendb/" target="_blank">excellent work</a> that my dear friend <a href="http://www.codewrecks.com/blog" target="_blank">Gian Maria</a> is doing.<br />
+We have seen how to “<a href="http://mauroservienti.blogspot.com/2012/01/ravendb-start-your-engines.html" target="_blank">install</a>” RavenDB and how to <a href="http://mauroservienti.blogspot.com/2012/02/ravendb-first-contact.html" target="_blank">read data</a>, well…one way to read data: there are lot of options we’ll dive in the near future. Now it’s time to see how to store data in the database, what are the basic concepts behind RavenDB storage engine and some “tricks” to achieve all what you want.<br />
+Let’s do something interesting…<br />
+<blockquote>
+<pre style="background: white;"><span style="font-family: Consolas;"><span style="color: blue;"><span style="font-size: 11.3pt;">var</span></span><span style="font-size: 11.3pt;"> personId = <span style="color: #a31515;">""</span>;
+ 
+<span style="color: blue;">using</span>( <span style="color: blue;">var</span> session = store.OpenSession() )
+{
+ <span style="color: blue;">var</span> person = <span style="color: #2b91af;">Person</span>.CreateNew( <span style="color: #a31515;">"Mauro"</span>, <span style="color: #a31515;">"Servienti"</span> );
+ 
+ session.Store( person );
+ session.SaveChanges();
+ 
+ personId = session.Advanced.GetDocumentId( person );
+}</span></span></pre>
+</blockquote>
+We create a new Person (we’ll see in a minute Person class peculiarities) and simply store it in the database, trivial. We also do one interesting thing we ask to the database to get back the stored person identifier.<br />
+if we take a look at the data we find something like the following:<br />
+<a href="http://lh3.ggpht.com/-7KIrKMNmRWQ/TzqmQKKsS8I/AAAAAAAABQY/yXhRytPCIwI/s1600-h/image%25255B3%25255D.png"><img alt="image" border="0" height="140" src="http://lh5.ggpht.com/-DdyGFJTl5ts/TzqmRJMyyFI/AAAAAAAABQg/6yCKjzTpOho/image_thumb%25255B1%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="330" /></a><br />
+<em>Figure: RavenDB data displaying 2 documents.</em><br />
+Where the “green” document is the person recently saved and the “blue” one the system document that keeps track of the generated identifiers…the name of the document (Hilo) should be familiar to NHibernate developers.<br />
+The key point here is that we have not assigned an identifier to the Person instance, but the database did it for us. This is due to a set of conventions that drives some of the RavenDB behavior, the Person class is defined in the following manner:<br />
+<blockquote>
+<pre style="background: white;"><span style="font-family: Consolas;"><span style="color: blue;"><span style="font-size: 11.3pt;">public</span></span><span style="font-size: 11.3pt;">&nbsp;<span style="color: blue;">class</span>&nbsp;<span style="color: #2b91af;">Person</span>
+{
+ <span style="color: blue;">public</span>&nbsp;<span style="color: blue;">static</span>&nbsp;<span style="color: #2b91af;">Person</span> CreateNew( <span style="color: #2b91af;">String</span> firstName, <span style="color: #2b91af;">String</span> lastName )
+ {
+  <span style="color: blue;">return</span>&nbsp;<span style="color: blue;">new</span>&nbsp;<span style="color: #2b91af;">Person</span>()
+  {
+   FirstName = firstName,
+   LastName = lastName
+  };
+ }
+ 
+ [<span style="color: #2b91af;">JsonConstructor</span>]
+ <span style="color: blue;">private</span> Person()
+ {
+ 
+ }
+ 
+ <span style="color: blue;">public</span>&nbsp;<span style="color: #2b91af;">String</span> Id { <span style="color: blue;">get</span>; <span style="color: blue;">private</span>&nbsp;<span style="color: blue;">set</span>; }
+ <span style="color: blue;">public</span>&nbsp;<span style="color: #2b91af;">String</span> FirstName { <span style="color: blue;">get</span>; <span style="color: blue;">private</span>&nbsp;<span style="color: blue;">set</span>; }
+ <span style="color: blue;">public</span>&nbsp;<span style="color: #2b91af;">String</span> LastName { <span style="color: blue;">get</span>; <span style="color: blue;">private</span>&nbsp;<span style="color: blue;">set</span>; }
+}</span></span></pre>
+</blockquote>
+There are lots of things to notice:<br />
+<ul>
+<li>The class has e read-only “Id” property, the convention is: if the class has a property named Id consider it to be the document identifier (the primary key), if it is null, string empty or a string that ends with “/” append a new identifier; </li>
+<li>The class has a private default constructor decorated with the JsonConstructor attribute whose role is to tell to the json serializer which is the constructor to use to deserialize the document (it is required only if there are no parameter-less constructors); 
+    <ul>
+<li>Have I told that everything is stored in the database as a document in the database? </li>
+</ul>
+</li>
+<li>In future posts we’ll see why I have decided to expose FirstName and LastName property both as read-only, currently trust me…it just works; </li>
+</ul>
+With the generated person identifier in our hands we can go back to the database and ask for the stored document:<br />
+<blockquote>
+<pre style="background: white;"><span style="font-family: Consolas;"><span style="color: blue;"><span style="font-size: 11.3pt;">using</span></span><span style="font-size: 11.3pt;">( <span style="color: blue;">var</span> session = store.OpenSession() )
+{
+ <span style="color: blue;">var</span> person = session.Load&lt;<span style="color: #2b91af;">Person</span>&gt;( personId );
+}</span></span></pre>
+</blockquote>
+Here we can observe another way of loading data, the Load&lt;T&gt; method: the load method expects an identifier (or a set of identifiers) and goes directly to the database, bypassing the indexing engine, and loads the requested document(s), if a document cannot be found null is returned to the caller.<br />
+The keywords are: bypassing the indexing engine (indexing is covered in the next post).<br />
+<strong>Document Shape</strong><br />
+Keep in mind that the database is very flexible and does not impose any requirement on the data shape and design, as we have seen we can use attributes to “drive” the json serializer toward its goal. We’ll discover that document databases suggest a preferred shape for data, shape that can you drive to success.<br />
+.m

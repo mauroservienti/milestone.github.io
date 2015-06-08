@@ -1,0 +1,200 @@
+---
+layout: post
+title: 'UI Composition :: RegionService, RegionManager(s) & Region(s)'
+date: '2009-04-06T05:40:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Architecture
+- UI Composition
+modified_time: '2012-01-31T14:03:53.895+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5303710471641672916
+blogger_orig_url: http://milestone.topics.it/2009/04/ui-composition-regionservice.html
+---
+
+<span>Prima di passare all’argomento centrale di questa lunga trattazione dobbiamo fare un piccolo escursus sul sistema di comunicazione interno all’applicazione.</span><br>  <span><strong>Messaging</strong></span><br>  <span>Il mondo .net ci ha abituato molto bene, gli eventi sono una vera manna dal cielo, ma purtroppo nel nostro caso servono veramente a poco. Facciamo un esempio chiarificatore:</span><br>  <blockquote>   <span>Avete 2 oggetti che devono comunicare tra loro, e per l’esattezza, l’oggetto A deve sapere quando succede qualcosa all’oggetto B.</span><br> </blockquote>  <span>Tradizionalmente fareste:</span><br>  <ul>   <li>Esporre a <em>B</em> un evento; </li>    <li>Aggiungere un handler a <em>B.Event</em> da <em>A</em>; </li> </ul>  <span>Questo comporta però avere una <u>reference</u> a <em>B</em> da <em>A</em>, altrimenti, non c’è trippa per gatti :-D, gli eventi servono ad un gran poco. Facciamo quindi un esempio calato nel nostro scenario:</span><br>  <ul>   <li>La Shell si avvia; </li>    <li>I moduli in esecuzione, che sono stati <u>avviati prima</u> dell’avvio della Shell, hanno bisogno di sapere quando la Shell si sta avviando per iniettare contenuti; </li> </ul>  <span>Decisamente semplice ma non risolvibile con dei <em>semplici</em> eventi, quindi: <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/imessagebroker.aspx" target="_blank">Message Broker</a>.     <br>Siccome nel post linkato direi che la trattazione è esaustiva mi limito solo ad un paio di esempi, nel costruttore del ViewModel della Shell abbiamo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>regionManager = regionService.GetRegionManager( <span style="color: blue">this</span>.View );
+<span style="color: blue">var </span>message = <span style="color: blue">new </span><span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>( <span style="color: blue">this</span>, regionManager );
+
+broker.Dispatch( message );</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Mentre nel metodo Boot di un module potremmo avere qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code">broker.Subscribe<<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>>( <span style="color: blue">this</span>, msg =>
+{
+    <span style="color: blue">var </span>shellRegionManager = msg.RegionManager;
+    <span style="color: blue">var </span>region = shellRegionManager[ <span style="color: #2b91af">ShellKnownRegions</span>.Toolbars ];
+
+    <span style="color: blue">var </span>viewModel = container.Resolve<<span style="color: #2b91af"><em>IInjectableContentViewModel</em></span>>();
+    region.Add( viewModel.View );
+} );</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a>
+
+<span>Per risolvere il problema abbiamo introdotto un nuovo attore, il message broker, che è noto ad entrambi i “giocatori”. La Shell adesso può andare dal borker e chiedergli di “postare” un messaggio, allo stesso modo chiunque (che conosca quel tipo di messaggio) può andare dal broker e sottoscrivere un handler (un normalissimo delegate Action<T>) al fine di essere notificato quando qualcuno posta quel tipo di messaggio. Il tutto può funzionare perchè il message broker è registrato nel service container come singleton, quindi chiunque chieda un’istanza del broker ottiene sempre la stessa reference.</span><br>
+
+<span>Veniamo adesso alla parte interessante…quello che succede nel delegato che utilizziamo per fare la subscription al generico messagio ViewModelLoading<TViewModel>.</span><br>
+
+<span><strong>Region Statiche e Region Dinamiche</strong></span><br>
+
+<span>Cominciamo con il dirimere questa diatriba. La problematica è di questo genere: avete la necessità di definire delle aree in cui poter iniettare contenuti, naturalmente queste aree devono essere note a priori affinchè un terzo attore possa iniettare contenuti, la naturale conseguenza di questa affermazione è che ogni area (Region) sia identificata con un nome univoco (nell’esempio di poco fa ShellKnownRegions.Toolbars è una “const string”, nulla di più). Seguendo questa strada diventa quindi molto facile recuperare una reference ad una Region e fare quello che vogliamo, ma il mondo non è così semplice…purtroppo ;-)</span><br>
+
+<span>Lo scenario reale è un po’ più copmplesso, per esemplificarlo viene molto facile fare un parallelo con la UI di Microsoft Outlook:</span><br>
+
+<ul>
+  <li>Outlook Main Form (la nostra Shell), ad esempio, definisce: 
+    <ul>
+      <li>ToolbarRegion; </li>
+
+      <li>MenuRegion; </li>
+
+      <li>WunderbarRegion; </li>
+
+      <li>ToDoBarRegion; </li>
+
+      <li>…blaBlaRegion…; </li>
+    </ul>
+  </li>
+
+  <li>Quando fate doppio click su un messaggio viene aperta una <u>nuova</u> finestra che potrebbe definire: 
+
+    <ul>
+      <li>MessageRegion; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Il problema dovrebbe essere evidentissimo, possiamo fare doppio click su più di un messaggio e quindi avere in contemporanea disponibili <em>n</em> MessageRegion…con l’inghippo che se l’unico modo per avere un riferimento ad una Region è il suo nome non avremmo nessun modo per scegliere in quale delle istanze esistenti di Region inserire i nostri contenuti.</span><br>
+
+<span>Potremmo quindi dire che il primo tipo di Region (ad esempio ToolbarRegion) è statica perchè per tutto il ciclo di vita dell’applicazione ne esiste una sola istanza, mentre il secondo tipo, quella definita nel messaggio, è dinamica perchè possiamo avere più istanze; questo secondo scenario ci obbliga a “cercare” una Region sulla base di due chiavi e non più una:</span><br>
+
+<ul>
+  <li>Il <u>nome</u> della Region; </li>
+
+  <li>La <u>reference</u> alla View che la ospita; </li>
+</ul>
+
+<span>Questa accoppiata è sicuramente <u>univoca</u>, abbiamo quindi bisogno di supportare i seguenti scenari:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">IView </span>view = ...;
+
+<span style="color: blue">var </span>regionService = container.Resolve<<span style="color: #2b91af">IRegionService</span>>();
+<span style="color: blue">var </span>manager = regionService.GetRegionManager( view );
+manager[ <span style="color: #a31515">"myRegionName" </span>].Add( ... );</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>In questo caso abbiamo una reference ad una View, recuperiamo il region service, accediamo al region manager che gestisce le region contenute in quella specifica view e iniettiamo contenuti, ma possiamo anche fare:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>shellRegionManager = regionService.GetKnownRegionManager<<span style="color: #2b91af">IShellView</span>>();
+shellRegionManager[ <span style="color: #a31515">"myRegionName"</span> ].Add( ... );</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Che è decisamente più semplice, stiamo però assumento che esista una sola istanza della view in questione, internamente succede quasi la stessa cosa dello scenario precedente ma se la nostra architettura prevede che non possano esistere più istanze della Shell questa seconda possibilità è una scorciatoia molto comoda. Possiamo quindi dire che le Region statiche sono inutili, in realtà tutte le region appartengono ad un’istanza di una view sono qundi tutte region dinamiche, solo che alcune sono “singleton”.</span><br>
+
+<span>Ok, ma la domanda è: come funziona tutto ciò?</span><br>
+
+<span><strong>UI Injection: <em>RegionService</em></strong></span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IRegionService
+</span>{
+<span style="color: gray">    </span><span style="color: #2b91af">Boolean </span>HoldsRegionManager( <span style="color: #2b91af">IView </span>owner );
+<span style="color: gray">    </span><span style="color: #2b91af">IRegionManager </span>GetRegionManager( <span style="color: #2b91af">IView </span>owner );
+<span style="color: gray">    </span><span style="color: #2b91af">IRegionManager </span>GetKnownRegionManager<TView>() <span style="color: blue">where </span>TView : <span style="color: #2b91af">IView</span>;
+<span style="color: gray">    </span><span style="color: #2b91af">IRegionManager </span>RegisterRegionManager( <span style="color: #2b91af">IView </span>owner );
+    <span style="color: blue">void </span>UnregisterRegionManager( <span style="color: #2b91af">IView </span>owner );
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Esiste un solo RegionService (Singleton) per ogni istanza dell’applicazione in esecuzione, quello che ci permette di fare è recuperare una reference ad un RegionManager, registrarne uno nuovo o deregistrarlo.</span><br>
+
+<span><strong>UI Injection: <em>RegionManager</em></strong></span><br>
+
+<span>Un RegionManager gestisce le region definite nella view a cui appartiene:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IRegionManager
+</span>{
+    <span style="color: blue">void </span>RegisterRegion( <span style="color: #2b91af">IRegion </span>region );
+    <span style="color: #2b91af">IRegion </span><span style="color: blue">this</span>[ <span style="color: #2b91af">String </span>name ] { <span style="color: blue">get</span>; }
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>nulla di trascendentale, possiamo registrare una region e recuperare una reference attraverso il nome con cui la region è stata registrata.</span><br>
+
+<span><strong>UI Injection: <em>Region</em></strong></span><br>
+
+<span>Una region infine è l’area in cui possiamo effettivamente iniettare contenuti:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IRegion
+</span>{
+<span style="color: gray">    </span><span style="color: #2b91af">String </span>Name { <span style="color: blue">get</span>; }
+<span style="color: gray">    </span><span style="color: #2b91af">IView </span>Owner { <span style="color: blue">get</span>; }
+<span style="color: gray">    </span><span style="color: #2b91af">IView </span>ActiveContent { <span style="color: blue">get</span>; }
+<span style="color: gray">    </span><span style="color: blue">void </span>Add( <span style="color: #2b91af">IView </span>content );
+    <span style="color: blue">void </span>Activate( <span style="color: #2b91af">IView </span>content );<br>    …
+}</pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Perchè esiste il concetto di ActiveContent, Add o Activate? perchè una Region potrebbe essere qualsiasi cosa e quindi non ospitare solo ed esclusivamente un singolo contenuto, un esempio: TabPagesRegion.</span><br>
+
+<span>Adesso che abbiamo definito al nostra infrastruttura come la usiamo? Facciamo il percorso inverso, e partiamo dalla Region questa volta, abbiamo qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">sr</span><span style="color: blue">:</span><span style="color: #a31515">RibbonWindow.Ribbon</span><span style="color: blue">>
+    <</span><span style="color: #a31515">sr</span><span style="color: blue">:</span><span style="color: #a31515">Ribbon </span><span style="color: red">rg</span><span style="color: blue">:</span><span style="color: red">RegionService.Region</span><span style="color: blue">="{</span><span style="color: #a31515">divex</span><span style="color: blue">:</span><span style="color: #a31515">RibbonRegion </span><span style="color: blue">{</span><span style="color: #a31515">x</span><span style="color: blue">:</span><span style="color: #a31515">Static </span><span style="color: red">my</span><span style="color: blue">:</span><span style="color: red">ShellKnownRegions</span><span style="color: blue">.Ribbon}}" </span><span style="color: blue">/>
+</</span><span style="color: #a31515">sr</span><span style="color: blue">:</span><span style="color: #a31515">RibbonWindow.Ribbon</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>oppure, più semplicemente:<a href="http://11011.net/software/vspaste"></a></span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ContentPresenter </span><span style="color: red">rg</span><span style="color: blue">:</span><span style="color: red">RegionService.Region</span><span style="color: blue">="{</span><span style="color: #a31515">rg</span><span style="color: blue">:</span><span style="color: #a31515">ContentPresenterRegion </span><span style="color: blue">{</span><span style="color: #a31515">x</span><span style="color: blue">:</span><span style="color: #a31515">Static </span><span style="color: red">my</span><span style="color: blue">:</span><span style="color: red">MyModuleKnownRegions</span><span style="color: blue">.myRegionName}}"</span><span style="color: blue"> /></span></pre>
+</blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Che dire… <u>Attached Properties Rulez</u>!!!, cosa succede dietro le quinte:</span><br>
+
+<ul>
+  <li>Un FrameworkElement, che contiene quel tipo di markup, viene “avviato”; </li>
+
+  <li>Viene invocata la attached property, partendo dal FrameworkElement in cui è definita la property: 
+    <ul>
+      <li>Viene fatto il walking a “marcia indietro” del VisualTree; </li>
+
+      <li>Il primo elemento che implementa l’interfaccia IView viene considerato come l’owner della region; </li>
+
+      <li>si va dal region service e si recupera (o si crea se non esiste) un region manager per quella view; </li>
+
+      <li>si registra la region con il region manager; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Come si vede dai due frammenti di xaml è possibile definire tutti i tipi di region che si desidera, nell’esempio vediamo una ContentPresenterRegion che è il tipo più semplice, può ospitare un contenuto alla volta e non ha altre funzionalità e vediamo anche una RibbonRegion che è facile intuire definisca un Ribbon in cui è possibile iniettare RibbonTab, quindi supporto per molti contenuti e funzionalità avanzate.</span><br>
+
+<span>Lo sviluppatore che approccia lo sviluppo di un modulo quindi non deve preoccuparsi di nulla, ma semplicemente dichiarare, via xaml, cosa esporre e dove. Se proprio vuole può definire nuove tipologie di region creando una classe che implementa l’interfaccia IRegion e utilizzarla via xaml, l’infrastruttura digerirà il nuovo arrivato senza battere ciglio, che stomaco… ;-)</span><br>
+
+<span>Dal punto di vista WPF invece c’è da notare che:</span><br>
+
+<ul>
+  <li>Esiste una classe base Region<T> che implementa IRegion e che si “smazza” l’implementazione di MarkupExtension al fine di permettere la sintassi esposta: <span style="color: red">Region</span><span style="color: blue">="{</span><span style="color: #a31515">rg</span><span style="color: blue">:</span><span style="color: #a31515">ContentPresenterRegion </span><span style="color: blue">’myRegionName’}"</span>;</li>
+
+  <li>La classe RegionService, che implementa IRegionService, espone anche la logica statica per far funzionare l’Attached Property. Qui purtroppo c’è una magagna che non ho ancora risolto, o meglio ci ho messo una pezza, ho in mente un paio di altre possibilità, ma in generale è comunque una bruttura… L’inghippo è che una Attached property altro non è che una manciata di metodi statici e una dependency property registrata come attached, essendo tutto statico è impossibile iniettare la dipendenza dal region service, la soluzione (brutta, ma efficace) è stata esporre dalla attached property anche un evento statico che viene invocato la prima volta che la attached property ha bisogno del region service; in questa fase è il bootstrapper dell’applicazione che si fa carico di registrare un handler per l’evento e risolvere il region service, si potrebbe pensare di scrivere una facility per Castle, sempre bruttino ma almeno nascosto ;-);</li>
+</ul>
+
+<span>Le Region dinamiche introducono però alcuni problemi di gestione che quelle statiche non avrebbero, è possibile infatti registrare Region/RegionManager direttamente a runtime ma sarebbe anche molto importante deregistrare gli elementi creati al fine di tener sincronizzato il RegionService con lo stato attuale; non esistendo in WPF il concetto di Dispose non è possibile sfruttare quel momento per fare l’operazione di deregistrazione automatica, è quindi necessario fare una piccola acrobazia per capire, dal RegionService, quando un elemento, Window o <em>Region Content</em> che sia, viene chiuso e in quel momento scorrere il LogicalTree alla ricerca di elementi che siano delle view che abbiano registrato delle region al fine di deregistrarle. Vedremo approfonditamente nella prossima, ed ultima, puntata perchè questo è importante.</span><br>
+
+<span>Allego il progetto allo stadio attuale: <a href="http://downloads.topics.it/composite_ui_samples/CompositeUI_v4.zip" target="_blank">CompositeUI_v4.zip</a>.</span><br>
+
+<span>.m</span><br>
+

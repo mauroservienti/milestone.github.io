@@ -1,0 +1,98 @@
+---
+layout: post
+title: 'Castle Windsor: la registrazione dei componenti.'
+date: '2008-11-04T09:32:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Inversion of Control
+- Fluent Interfaces
+- Castle Windsor
+modified_time: '2012-01-30T12:49:25.734+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6016700370026067277
+blogger_orig_url: http://milestone.topics.it/2008/11/castle-windsor-la-registrazione-dei.html
+---
+
+<span>Si sa sono un fun di <a href="http://www.castleproject.org/" target="_blank">Castle Windsor</a> e in generale del mondo IoC, una cosa però veramente tediosa, prona ad errori, scomoda e decisamente ingombrante dei framework di <a href="http://en.wikipedia.org/wiki/Inversion_of_control" target="_blank">Inversion of Control</a> è la gestione del file di configurazione, soprattutto se usate massicciamente i generics. Questo perchè per gestire una situazione, decisamente triviale, come la seguente:</span><br>  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IMyComponent</span><T>
+    <span style="color: blue">where </span>T : <span style="color: #2b91af">IDispatcher
+</span>{
+
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IDispatcher
+</span>{
+    <span style="color: blue">void </span>Say( <span style="color: #2b91af">String </span>msg );
+}
+
+<span style="color: blue">class </span><span style="color: #2b91af">MyComponent </span>: <span style="color: #2b91af">IMyComponent</span><<span style="color: #2b91af">IDispatcher</span>>
+{
+    <span style="color: blue">public </span>MyComponent( <span style="color: #2b91af">IDispatcher </span>dispatcher )
+    {
+        dispatcher.Say( <span style="color: #a31515">"from MyComponent.ctor" </span>);
+    }
+}
+
+<span style="color: blue">class </span><span style="color: #2b91af">MyDispatcher </span>: <span style="color: #2b91af">IDispatcher
+</span>{
+
+}</pre>
+
+<span>il file di configurazione che ne consegue è qualcosa del tipo:</span><br>
+
+<pre class="code"><span style="color: blue"><</span><span style="color: #a31515">components</span><span style="color: blue">>
+  <</span><span style="color: #a31515">component 
+    </span><span style="color: red">id</span><span style="color: blue">=</span>"<span style="color: blue">dispatcher</span>" 
+    <span style="color: red">service</span><span style="color: blue">=</span>"<span style="color: blue">Sample.IDispatcher, Sample</span>" 
+    <span style="color: red">type</span><span style="color: blue">=</span>"<span style="color: blue">Sample.IDispatcher, Sample</span>" <span style="color: blue">/>
+ 
+  <</span><span style="color: #a31515">component 
+    </span><span style="color: red">id</span><span style="color: blue">=</span>"<span style="color: blue">myComponent</span>" 
+    <span style="color: red">service</span><span style="color: blue">=</span>"<span style="color: blue">Sample.IMyComponent`1[[Sample.IDispatcher, Sample]], Sample</span>" 
+    <span style="color: red">type</span><span style="color: blue">=</span>"<span style="color: blue">Sample.MyComponent, Sample</span>" <span style="color: blue">/>
+
+</</span><span style="color: #a31515">components</span><span style="color: blue">></span></pre>
+
+<span>notate come la gestione dei generics in forma di “<em>full type name</em>” non sia proprio “<em>user friendly</em>”, per ovviare a questo problema tempo fa mi ero inventato un tool da command line che fosse in grado di analizzare gli assembly del progetto e sulla base di una serie di atrtributi custom costruire lo scheletro del file di configurazione. la cosa funzionava e funziona tutt’ora molto bene, ma al complicarsi della configurazione il supporto che vi da il tool è sempre minore.</span><br>
+
+<span>A questo punto mi sono fatto una domanda: <em>ma quale è il vantaggio di avere la configurazione in un file xml esterno</em>?</span><br>
+
+<span>la prima risposta potrebbe essere quella di avere la possibilità di manipolare la configurazione a caldo… ma è proprio vero che serva? imho neanche lontanamente se non in casi veramente triviali… cioè se stiamo usando un framewrok di IoC in una applicazione corposa prima di mettere mano alla configurazione in produzione ci pensiamo ben più di 2 volte e passiamo da una serie di stage per testare la nuova configurazione ergo a che ci serve la complessità di un file xml? se la pensiamo unita alle possibilità infide di errore assolutamente a nulla.</span><br>
+
+<span>Perchè allora non pensare di esprimere in una forma diversa la configurazione? perchè non farlo direttamente in C#?</span><br>
+
+<blockquote>
+  <span><em>n.d.r.</em>:Attualmente ci sono anche altre possibilità tra cui la più blasonata, ma con tutta una serie di limiti, è sicuramente Binsor un linguaggio per DSL che si integra con il framework.</span><br>
+</blockquote>
+
+<span>Si potrebbe cioè pensare di esprimere la configurazione in una sintassi a noi ben nota, typesafe e compile time checked, esprimerla in un assembly separato e caricare quallo a runtime e usarlo per configurare il container. In questo modo per variare la configurazione ci basterebbe ricompilare quel singolo assembly e rifare il deploy solo di quello.</span><br>
+
+<span>Con al versione attuale di Castle (1.0RC1) è tutto tranne che un’operazione semplice perchè l’API esposta dal Kernel è tutto tranne che semplice ed intuitiva.</span><br>
+
+<span>Ma… se recupariamo l’ultimissa versione di Castle, la trunk via subversion, ci troviamo di fronte alla possibilità di esprimere la configurazione sopra citata in una maniera decisamente più naturale:</span><br>
+
+<pre class="code"><span style="color: #2b91af">IWindsorContainer </span>container = <span style="color: blue">new </span><span style="color: #2b91af">WindsorContainer</span>();
+<span style="color: #2b91af">IKernel </span>k = container.Kernel;
+k.Register( <span style="color: #2b91af">Component
+    </span>.For<<span style="color: #2b91af">IMyComponent</span><<span style="color: #2b91af">IDispatcher</span>>>()
+    .Named( <span style="color: #a31515">"iMyComponent" </span>)
+    .ImplementedBy<<span style="color: #2b91af">MyComponent</span>>()
+    .LifeStyle.Is( Castle.Core.<span style="color: #2b91af">LifestyleType</span>.Singleton )
+    .Parameters( <span style="color: #2b91af">Parameter
+        </span>.ForKey( <span style="color: #a31515">"dispatcher" </span>)
+        .Eq( <span style="color: #a31515">"${iDispatcher}" </span>) )
+        );
+
+k.Register( <span style="color: #2b91af">Component
+    </span>.For<<span style="color: #2b91af">IDispatcher</span>>()
+    .Named( <span style="color: #a31515">"iDispatcher" </span>)
+    .ImplementedBy<<span style="color: #2b91af">MyDispatcher</span>>() );</pre>
+
+<span>utilizzando infatti il supporto per le fluent interfaces possiamo reggiungere lo stesso scopo che raggiungiamo con il file xml e continuare ad usare il motore di IoC come siamo abituati:</span><br>
+
+<pre class="code"><span style="color: #2b91af">IMyComponent</span><<span style="color: #2b91af">IDispatcher</span>> cmp = container.Resolve<<span style="color: #2b91af">IMyComponent</span><<span style="color: #2b91af">IDispatcher</span>>>();
+cmp.Execute();</pre>
+
+<span>non male, decisamente non male.</span><br>
+
+<span>.m</span><br>
+

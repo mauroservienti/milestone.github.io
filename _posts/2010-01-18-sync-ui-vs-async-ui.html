@@ -1,0 +1,66 @@
+---
+layout: post
+title: Sync UI vs. Async UI
+date: '2010-01-18T13:47:00.000+01:00'
+author: Mauro Servienti
+tags:
+- User Experience
+- Software Mason
+modified_time: '2012-02-08T14:00:25.923+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1247491366421390124
+blogger_orig_url: http://milestone.topics.it/2010/01/sync-ui-vs-async-ui.html
+---
+
+<span>è indubbio che un’interfaccia utente asincrona sia veramente un beneficio per l’utente, basti solo pensare alla <em>bile</em> che consumo io tutti i giorni per <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2914807066457776847" target="_blank">colpa di Outlook</a>, ma è altrettanto indubbio che per lo sviluppatore, quindi sempre io :-), il task sia tutto tranne che semplice…</span><br>  <span>Questa è la “Commit” di base offerta dall’<em>EditorViewModel<TEntity></em> del mio toolkit:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">protected virtual void </span>CommitEdit()
+{<span style="color: green">
+    </span><span style="color: blue">var </span>data = <span style="color: blue">this</span>.EditContext.Entity;
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.IsDirty )
+    {
+        data = <span style="color: blue">this</span>.DataSource.CommitChanges();
+    }
+
+    <span style="color: blue">var </span>dc = <span style="color: blue">this</span>.EditContext.DataPolicy.DataContext;
+
+    <span style="color: blue">var </span>currentState = <span style="color: #2b91af">EntityTransientState</span>.Persistent;
+    <span style="color: blue">var </span>state = <span style="color: blue">this</span>.Memento.GetEntityState( <span style="color: blue">this</span>.DataSource );
+    <span style="color: blue">if</span>( ( state & <span style="color: #2b91af">EntityTrackingStates</span>.IsTransient ) == <span style="color: #2b91af">EntityTrackingStates</span>.IsTransient )
+    {
+        currentState = <span style="color: #2b91af">EntityTransientState</span>.Transient;
+    }
+
+    <span style="color: blue">var </span>args = <span style="color: blue">new </span><span style="color: #2b91af">CommitRequestArgs</span><TEntity>( data, dc, currentState );
+
+    <span style="color: blue">this</span>.Memento.AcceptChanges();
+    
+    <span style="color: blue">this</span>.EditContext.Commit( args );
+
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.EditContext.DataPolicy.CommitPolicy == <span style="color: #2b91af">EditorCommitPolicy</span>.HandledByEditor )
+    {
+        <span style="color: blue">this</span>.OnCommitEdit(args);
+    }
+
+    <span style="color: blue">this</span>.OnEditCommited();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Fa un sacco di belle cose, di cui parleremo, ma è sincrona alla UI quindi se è complessa e comporta un set oneroso di operazioni sul db costa, renderla asincrona è apparentemente banale:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected override void </span>CommitEdit()
+{
+    <span style="color: #2b91af">Action </span>commit = () => <span style="color: blue">base</span>.CommitEdit();
+
+    <span style="color: #2b91af">AsyncWorker</span>.Using( <span style="color: blue">new </span>{ Host = <span style="color: blue">this</span>, Action = commit } )
+        .Configure( cfg =>
+        {
+            cfg.Before = e => e.Argument.Host.IsBusy = <span style="color: blue">true</span>;
+            cfg.After = e => e.Argument.Host.IsBusy = <span style="color: blue">false</span>;
+        } )
+        .Execute( e => e.Argument.Action() );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>In un <em>ViewModel</em> specializzato… ma non è tutto oro quel che luccica e durante una <em>commit</em> può succedere di tutto e se questo di tutto è asincrono è un filino più complesso da gestire.</span><br>
+
+<span>.m</span><br>
+

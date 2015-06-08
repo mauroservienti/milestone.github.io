@@ -1,0 +1,24 @@
+---
+layout: post
+title: 'Radical: customer improvement program'
+date: '2013-01-15T10:18:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+modified_time: '2013-01-15T10:18:01.177+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7425233339789674175
+blogger_orig_url: http://milestone.topics.it/2013/01/radical-customer-improvement-program.html
+---
+
+<p>There is a new nice and interesting feature, at least from my point of view, built-in in <a href="http://radical.codeplex.com/" target="_blank">Radical</a>: <a href="http://radical.codeplex.com/wikipage?title=Customer%20Improvement%20Program">Official documentation</a></p> <h2>Customer Improvement Program</h2> <p>Have you ever thought how important is, from the perspective of an application producer, us, to know what our end users do with the application they use?</p> <ul> <li>we plan a feature;  <li>we invest money in building a feature;  <li>we deploy a feature;</li></ul> <p>…and we do not know nothing about how the user utilizes the feature we invested on, we do not even know if the user utilizes it.</p> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4">AnalyticsServices.UserActionTrackingHandler = evt =&gt;<br>{<br>    <span style="color: #008000">//every user action will be dispatched here asynchronously    </span><br>};<br><br>AnalyticsServices.IsEnabled = <span style="color: #0000ff">true</span>;</pre><br></div></blockquote>
+<p>Writing the above code at the application startup enables the Radical AnalyticsServices what happens is that all the code that in some way invokes a DelegateCommand, in a WPF MVVM based application, will be tracked and we have the opportunity to “save” what the user is doing in order to analyze it later.</p>
+<p>What the UserActionTrackingHandler receives is an AnalyticsEvent with the following shape:</p>
+<blockquote>
+<div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">public</span> <span style="color: #0000ff">class</span> AnalyticsEvent<br>{<br>    <span style="color: #0000ff">public</span> AnalyticsEvent()<br>    {<br>        <span style="color: #0000ff">this</span>.ExecutedOn = DateTimeOffset.Now;<br>        <span style="color: #0000ff">this</span>.Identity = Thread.CurrentPrincipal.Identity;<br>    }<br><br>    <span style="color: #0000ff">public</span> DateTimeOffset ExecutedOn { get; set; }<br><br>    <span style="color: #0000ff">public</span> String Name { get; set; }<br><br>    <span style="color: #0000ff">public</span> Object Data { get; set; }<br><br>    <span style="color: #0000ff">public</span> IIdentity Identity { get; set; }<br>}</pre><br></div></blockquote>
+<p>If you need you can define your own events inheriting from the AnalyticsEvent class and in order to plugin your events you only need to declare a dependency on the IAnalyticsServices service:</p>
+<blockquote>
+<div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">public</span> <span style="color: #0000ff">interface</span> IAnalyticsServices<br>{<br>    Boolean IsEnabled { get; set; }<br>    <span style="color: #0000ff">void</span> TrackUserActionAsync( Analytics.AnalyticsEvent action );<br>}</pre><br></div></blockquote>
+<p>And each time you call TrackUserActionAsync your UserActionTrackingHandler will be invoked.</p>
+<p>Be aware that this is still a preview subject to change.</p>
+<p>.m</p>  

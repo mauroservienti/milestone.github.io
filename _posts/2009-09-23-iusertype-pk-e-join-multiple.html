@@ -1,0 +1,86 @@
+---
+layout: post
+title: IUserType, PK e join multiple
+date: '2009-09-23T18:02:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- NHibernate
+modified_time: '2012-08-04T20:04:42.517+02:00'
+thumbnail: https://lh5.googleusercontent.com/--_7G-Z56NvU/TyvMX_OyzdI/AAAAAAAAAuo/OdcZrtynCA8/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1533225919693034378
+blogger_orig_url: http://milestone.topics.it/2009/09/iusertype-pk-e-join-multiple.html
+---
+
+<span><a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/allergia-da-manuale-delle-istruzioni-e-conseguenzehellip.aspx">L’allergia</a> continua ed evidentemente peggiora… :-) </span><br>  <span>Qualche <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/nhibernate-custom-user-types.aspx">tempo fa ho parlato</a> di <a href="https://www.hibernate.org/343.html">NHibernate</a> e degli IUserType, fortunatamente non ho fatto vedere l’implementazione :-) perchè c’è un <em>leggero</em> bug, moltgo subdolo, ma sempre bug!</span><br>  <blockquote>   <span>Un doveroso grazie a <a href="http://cradle.aspitalia.com/">Marco De Sanctis</a> che mi ha supportato nella ricerca/soluzione del problema.</span><br> </blockquote>  <span>Un minimo di storia, concedetemelo, immaginiamo un modello del tipo:</span><br>  <span> <a href="https://lh5.googleusercontent.com/-kT4JiBWlBqA/TyvMYaH8RcI/AAAAAAAAAus/fz7MezeRbsQ/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/--_7G-Z56NvU/TyvMX_OyzdI/AAAAAAAAAuo/OdcZrtynCA8/image_thumb.png" width="244" height="74"></a> </span><br>  <span>dove avete una classe e delle associazioni, nell’esempio volutamente monodirezionali, non delle <em>collection-association</em>, che hanno la caratteristica di poter essere <em>null</em>. Avete quindi un Prodotto che può avere una Serie e può avere un Formato, ma non è detto che siano valorizzati.</span><br>  <span>Adesso volete semplicemente fare questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: #2b91af">ISession </span>session = <span style="color: #2b91af">SessionHelper</span>.SessionFactory.OpenSession() )
+{
+    <span style="color: #2b91af">ICriteria </span>c = session.CreateCriteria<<span style="color: #2b91af">Product</span>>()
+        .CreateAlias( <span style="color: #a31515">"Format"</span>, <span style="color: #a31515">"f"</span>, <span style="color: #2b91af">JoinType</span>.LeftOuterJoin )
+        .CreateAlias( <span style="color: #a31515">"Series"</span>, <span style="color: #a31515">"s"</span>, <span style="color: #2b91af">JoinType</span>.LeftOuterJoin );
+
+    <span style="color: blue">var </span>res = c.List<<span style="color: #2b91af">Product</span>>();
+
+    <span style="color: blue">var </span>wf = res.Where( p => p.Format == <span style="color: blue">null </span>).ToArray();
+    <span style="color: blue">var </span>ws = res.Where( p => p.Series == <span style="color: blue">null </span>).ToArray();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+
+
+<span>Ergo avere in blocco uno o più prodotti con precaricate le associazioni, ove esistenti. Finchè le cose sono semplici, esattamente come nel modello di cui sopra, tutto funziona come ci si aspetta.</span><br>
+
+<span>Ma se aggiungiamo una paio di “<em>ficiur</em>” al nostro dominio ecco che il tutto fa le bizze… per riprodurre il problema è sufficiente aggiungere:</span><br>
+
+<ul>
+  <li>Il supporto per il Versioning, io utilizzo i timestamp di Sql Server ma poco importa la scelta <em>tennologica</em> <cit.>;</li>
+
+  <li>i <em><a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/nhibernate-custom-user-types.aspx">miei custom user type</a></em> per gestire le primary key;</li>
+</ul>
+
+<span>La cosa estremamente fuorviante è che l’errore l’avete sulla conversione da BinaryBlob verso il Byte[] per la gestione della version, perchè giustamente NH si lamenta perchè state cercando di convertire un DbNull in Byte[]… ma la domanda vera è perchè questo tentativo di conversione?</span><br>
+
+<span>La query prodotta da NH è una cosa del tipo:</span><br>
+
+<blockquote>
+  <span>SELECT this_.Id          as Id0_2_,
+    <br>       this_.Description as Descript2_0_2_,
+
+    <br>       this_.Format_id   as Format3_0_2_,
+
+    <br>       this_.Series_id   as Series4_0_2_,
+
+    <br>       f1_.Id            as Id1_0_,
+
+    <br>       f1_.Description   as Descript2_1_0_,
+
+    <br>       s2_.Id            as Id2_1_,
+
+    <br>       s2_.Description   as Descript2_2_1_
+
+    <br>FROM   [Product] this_
+
+    <br>       left outer join [Format] f1_
+
+    <br>         on this_.Format_id = f1_.Id
+
+    <br>       left outer join [Series] s2_
+
+    <br>         on this_.Series_id = s2_.Id</span><br>
+</blockquote>
+
+<span>Che giustamente nel caso di Prodotti senza Serie e/o senza Formato produce delle righe nel resultset che non contengono valori:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-EFxQanZhx0U/TyvMZeSJrWI/AAAAAAAAAu8/FNo76-wkdrY/image_6.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-gOhgHPxE_Ms/TyvMYh9QObI/AAAAAAAAAu0/wEtshD_bSTM/image_thumb_2.png" width="244" height="56"></a> </span><br>
+
+<span>Guardando il resultset e confrontandolo con quello dell’esempio funzionante non ci sono sostanziali differenze se non i dati in più per fillare le parti nuove del dominio (Version e PK) mi concentro quindi sull’errore e dopo un po’ di verifiche del mapping sentenzio che il problema non sta li… e faccio una prova banale… commento la parte di mapping relativa alla gestione della Version… e tutto funziona senza errori :-)</span><br>
+
+<span>Ma non è tutto oro quel che luccica, infatti non ci sono errori ma il risultato non è lo stesso quello atteso, NHibernate fa una cosa stranissima, all’apparenza, crea cioè proxy per tutte le reference anche dove dovrebbe metterci dei valori null, questi proxy hanno l’unica stranezza di avere tutte le proprietà a null… sempre più strano.</span><br>
+
+<span>Alla fine debuggando un po’ qua e un po’ la e confrontando il risultato con il progetto funzionante scopro l’inghippo…</span><br>
+
+<span>NHibernate fa un ragionamento all’apparenza strano, almeno per me che non ho studiato :-), si aspetta di avere un valore ben preciso per la PK di una entità che non esiste: <em>null</em>, mentre io gli davo un valore predefinito che nel mio dominio significava “null/empty” ma che naturalmente non era <em>null</em>, quello che succede quindi è che NHibernate “va” dallo IUserType e chiama NullSafeGet e siccome lo IUserType gli ritorna qualcosa di diverso da <em>null</em> NHibernate interpreta questo come: li c’è una entità da idratare… e fallisce!</span><br>
+
+<span>Morale della favola: il manuale delle istruzioni se l’hanno inventato a qualcosa servirà pure… :-) altrimenti si rischia sempre di dare la colpa agli altri.</span><br>
+
+<span>.m</span><br>
+

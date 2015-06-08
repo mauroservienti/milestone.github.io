@@ -1,0 +1,34 @@
+---
+layout: post
+title: Ensure.WithPreview( ... )
+date: '2010-05-23T18:08:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Ensure
+- Software Mason
+- Radical
+modified_time: '2012-02-16T07:14:46.111+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5287748223751513806
+blogger_orig_url: http://milestone.topics.it/2010/05/ensurewithpreview.html
+---
+
+<span>
+	A grande richiesta c’è un nuovo update per <a href="http://radical.codeplex.com/" target="_blank">Radical</a>.Ensure:</span><br>
+<blockquote>
+	<pre class="code"><span style="color: #2b91af">Ensure</span>.That( attribute )
+    .Named( () => attribute )
+    .WithPreview( ( v, e ) => 
+    {
+        logger.Error( v.GetFullErrorMessage(), e );
+    } )
+    .IsNotNull();</pre></blockquote>
+<span>
+	è possibile sfruttare il metodo WithPreview per iniettare un log a runtime e loggare le exception prima che vengano sollevate.</span><br>
+<span>
+	Mi è stata posta anche una questione: perchè non far diventare i field della classe <a href="http://mauroservienti.blogspot.com/2010/05/radical-ensure-piccole-idee-crescono.html" target="_blank">KnownRegex</a> delle costanti in modo da poterli usare anche negli attributi, come le DataAnnotations?</span><br>
+<span>
+	<strong>Sarebbe bello… ma…</strong></span><br>
+<span>
+	Nella prima release erano delle costanti ma poi giustamente <a href="http://it.linkedin.com/in/antonioparata" target="_blank">Antonio</a> ha sottolineato che lasciando le costanti si rischiano notevoli fraintendmenti con gli update perchè i valori delle costanti vengono copiati a compile time e un update di una costante in una libreria non ha nessun effetto sulle librerie che referenziano quella costante se non previo rebuild di tutto… ergo sono diventati dei field read-only :-)</span><br>
+<span>
+	.m</span><br>

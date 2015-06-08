@@ -1,0 +1,53 @@
+---
+layout: post
+title: Trattate bene il motore di Binding di Wpf
+date: '2009-10-02T08:03:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:01:03.605+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8005571335122183335
+blogger_orig_url: http://milestone.topics.it/2009/10/trattate-bene-il-motore-di-binding-di.html
+---
+
+<span>Okkio a questo scenario:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>subjects = <span style="color: blue">new </span><span style="color: #2b91af">EntityCollection</span><<span style="color: #2b91af">Subject</span>>();
+<span style="color: blue">var </span>dataView = subjects.DefaultView;
+
+subjects.Add( <span style="color: blue">new </span><span style="color: #2b91af">Person</span>() );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Adesso immaginate che <em>dataView</em> sia in binding con una ListView, dataView è <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.ibindinglistview.aspx">IBindingListView</a> e questo fa si che la ListView sia in grado di reagire alle variazioni che subisce dataView, ecco che il codice di cui sopra fa “magicamente apparire” nella ListView un nuovo item.</span><br>
+
+<span>Adesso fate questa cosa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>subjects = <span style="color: blue">new </span><span style="color: #2b91af">EntityCollection</span><<span style="color: #2b91af">Subject</span>>();
+<span style="color: blue">var </span>dataView = subjects.DefaultView;
+
+<span style="color: blue">for</span>( <span style="color: blue">var </span>i = 0; i < 1000; i++ )
+{
+    subjects.Add( <span style="color: blue">new </span><span style="color: #2b91af">Person</span>() );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>La stessa cosa, ma un po’ di volte in fila… ecco ci mette una vita, ma veramente una vita :-). Il tutto <em>semplicemente</em> perchè ad ogni variazione la ListView deve reagire, capire cosa è successo e mettere in piedi tutto il giro del fumo per far comparire il nuovo elemento, un sacco di lavoro.</span><br>
+
+<span><strong>Rispetto e conoscenza</strong></span><br>
+
+<span>In uno scenario come quello di prima, tipico del caricamento massivo di dati a seguito di una query, è importante trattare bene il motore di binding, ad esempio così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>subjects = <span style="color: blue">new </span><span style="color: #2b91af">EntityCollection</span><<span style="color: #2b91af">Subject</span>>();
+<span style="color: blue">var </span>dataView = subjects.DefaultView;
+
+subjects.BeginInit();
+<span style="color: blue">for</span>( <span style="color: blue">var </span>i = 0; i < 1000; i++ )
+{
+    subjects.Add( <span style="color: blue">new </span><span style="color: #2b91af">Person</span>() );
+}
+subjects.EndInit( <span style="color: blue">true </span>);</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che altro non fa che sospendere la generazione degli eventi, che stimolano il binding, fino a nuovo ordine. E il processo torna ad essere una scheggia.</span><br>
+
+<span>.m</span><br>

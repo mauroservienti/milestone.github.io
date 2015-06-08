@@ -1,0 +1,75 @@
+---
+layout: post
+title: 'Radical.Windows.Presentation: bootstrap conventions'
+date: '2012-04-26T12:25:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Architecture
+- Model View ViewModel
+modified_time: '2012-04-26T12:25:00.281+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-10244816756134741
+blogger_orig_url: http://milestone.topics.it/2012/04/radicalwindowspresentation-bootstrap.html
+---
+
+<p>I’ve released a new version of my Presentation and UI Composition toolkit: <a href="http://nuget.org/packages/Radical.Windows.Presentation">Radical.Windows.Presentation</a>, the new feature is the first drop of the Castle Windsor integration package (<a href="http://nuget.org/packages/Radical.Windows.Presentation.CastleWindsor" target="_blank">Radical.Windows.Presentation.CastleWindsor</a>), this first drop targets only WPF 4.0 (but it is a first drop, next to come will be WinRT, Silverlight 5.0 and Windows Phone 7.5).</p> <p>The integration package simply adds support for the famous Invention of Control toolkit introducing the WindsorApplicationBootstrapper&lt;TShellView&gt; that is the concrete implementation of the abstract ApplicationBootstrapper base class. The role of bootstrapper is:</p> <ul> <li>attach the relevant application events;  <li>wire up stuff to configure the I.o.C. container;  <li>show the shell view (the application main window);</li></ul> <p><strong>Frictionless: convention based</strong></p> <p>As I <a href="{{ site.baseurl }}{% post_url 2012-04-23-frictionless-mvvm %}" target="_blank">have already said</a> my first aim is to remove friction, it is not always easy and cannot be done every single time, but one thing that can give a lot of benefits in this area is to move from a configuration based toolkit to a convention based toolkit, I suppose that this concept is widely accepted and is nothing new.</p> <p>What happens when this lines of code are executed:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">namespace</font></font></span><font style="font-size: 11.3pt"> Radical.Presentation.Samples
+{
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">partial</font></span>&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">App</font></span> : <span style="color: "><font color="#2b91af">Application</font></span>
+	{
+		<span style="color: "><font color="#0000ff">public</font></span> App()
+		{
+			<span style="color: "><font color="#0000ff">var</font></span> bootstrapper = <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">WindsorApplicationBootstrapper</font></span>&lt;<span style="color: "><font color="#2b91af">MainView</font></span>&gt;();
+		}
+	}
+}</font></font></pre></blockquote>
+<p>A lot of things:</p>
+<ol>
+<li>The application Startup event is wired; 
+<li>When the Startup event is fired: 
+<ol>
+<li>The Inversion of Control container is created; 
+<li>The MEF composition container is created; 
+<li>The composition container is composed against the bootstrapper itself (<a href="{{ site.baseurl }}{% post_url 2011-03-29-mef-e-windsor-lunione-fa-la-forza %}" target="_blank">here is why</a>, in Italian unfortunately); 
+<li>The Inversion of Control container is configured using the <strong>bootstrap conventions</strong>; 
+<li>The main window (the one identified by the TShellView generic parameter) is resolved and shown;</li></ol></li></ol>
+<p><strong>Bootstrap conventions</strong></p>
+<p>Bootstrap conventions are mainly related to the way components are registered into the container:</p>
+<ul>
+<li>every class the is defined in a namespace ending with “Services” (*.Services) will be considered a service and will be registered as singleton using as the service contract the first interface, if any, otherwise using the class type; 
+<li>every class the is defined in a namespace ending with “Presentation” (*.Presentation) and whose type name ends with “ViewModel” (*ViewModel) will be considered as a view model and registered as transient; 
+<ul>
+<li>following the same logic every type in the same namespace whose name ends with “View” (*View) will be considered a view, a transient view; 
+<li>if a view or a view model are a shell, type name beginning with Shell* or Main*, they will be registered as singleton 
+<li>be default views and view models will be registered using as service contract the class type and no interface is searched along the way;</li></ul>
+<li>every type defined in the “Messaging.Handler” namespace (*.Messaging.Handler) will be considered a message broker message handler and will be registered as singleton and automatically attached, as an handler, to the broker pipeline;</li></ul>
+<p>These are the main conventions used at boot time, there are a few more but less important. Obviously all these behaviors can be replaced or extended to accomplish the end user needs:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt"> App()
+{
+	<span style="color: "><font color="#0000ff">var</font></span> bootstrapper = <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">WindsorApplicationBootstrapper</font></span>&lt;<span style="color: "><font color="#2b91af">MainView</font></span>&gt;();
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> conventions = bootstrapper.GetService&lt;<span style="color: "><font color="#2b91af">BootstrapConventions</font></span>&gt;();
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> original = conventions.IsService;
+	conventions.IsService = t =&gt;&nbsp; {
+		<span style="color: "><font color="#0000ff">if</font></span>( <span style="color: "><font color="#008000">/* your logic to determine if “t” is a service */</font></span> )
+		{
+			<span style="color: "><font color="#0000ff">return</font></span>&nbsp;<span style="color: "><font color="#0000ff">true</font></span>;
+		}
+ 
+		<span style="color: "><font color="#0000ff">return</font></span> original( t );
+	};
+}</font></font></pre></blockquote>
+<p>All the conventions are Func(s) or Predicate(s) and can be easily replaced as shown in the above sample, here is the list of the currently defined and used conventions:</p>
+<ul>
+<li><em>IsService</em>: determines if a type should be considered a service or not; 
+<li><em>SelectServiceContracts</em>: given the service type returns the list of contracts that should be used to register the given service; 
+<li><em>IsMessageHandler</em>:determines if a type should be considered a message handler or not; 
+<li><em>SelectMessageHandlerContracts</em>: given the message handler type returns the list of contracts that should be used to register the given message handler; 
+<li><em>IsView</em>: determines if a type should be considered a view or not; 
+<li><em>IsViewModel</em>: determines if a type should be considered a view model or not; 
+<li><em>IsShellView</em>: determines if a type should be considered a shell view or not; 
+<li><em>IsShellViewModel</em>: determines if a type should be considered a shell view or not; 
+<li><em>SelectViewContracts</em>: given the view type returns the list of contracts that should be used to register the given view; 
+<li><em>SelectViewModelContracts</em>: given the view model type returns the list of contracts that should be used to register the given view model;</li></ul>
+<p>In the next post will deal with runtime conventions.</p>
+<p>.m</p>  

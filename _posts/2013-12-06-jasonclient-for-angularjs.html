@@ -1,0 +1,60 @@
+---
+layout: post
+title: Jason.Client for AngularJS
+date: '2013-12-06T11:33:00.001+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+- Jason
+modified_time: '2013-12-06T11:33:54.025+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1445675600549827273
+blogger_orig_url: http://milestone.topics.it/2013/12/jasonclient-for-angularjs.html
+---
+
+<p>We have <a href="http://milestone.topics.it/search/label/Jason" target="_blank">already talked</a> about <a href="http://jason.codeplex.com/" target="_blank">Jason</a> and its role in CQRS, for an introduction you can read my <a href="{{ site.baseurl }}{% post_url 2012-11-05-jason-way-to-handle-c-of-cqrs %}" target="_blank">original post</a>.</p> <p>In the last year I’ve been amazed by the power of <a href="http://angularjs.org/" target="_blank">AngularJS</a>, more to come in the near future, and I decided to write a <a href="https://www.nuget.org/packages/Jason.Client.AngularJS/" target="_blank">JavaScript client for Jason</a>, obviously as an AngularJS module.</p> <blockquote><pre class="csharpcode">angular.module(<span class="str">'myControllers'</span>, []);
+angular.module(<span class="str">'myApp'</span>, [<span class="str">'myControllers'</span>, <span class="str">'jason.client'</span>]);
+
+(<span class="kwrd">function</span>(module){
+
+   <span class="kwrd">var</span> ctrl = <span class="kwrd">function</span>($scope, jason){
+
+      <span class="kwrd">var</span> promise = jason.execute({
+         <span class="str">'$type'</span>: <span class="str">'my-command-type'</span>,
+         sampleProperty: <span class="str">'sample value'</span>
+      });
+
+   };
+   ctrl.$inject = [<span class="str">'$scope'</span>, <span class="str">'jasonClient'</span>];
+   module.controller( <span class="str">'sample'</span>, ctrl);
+
+}(angular.module(<span class="str">'myControllers'</span>));</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>And on the server you can benefit of the whole Jason infrastructure that now can automatically generate and handle correlation ids for us.</p>
+<p>.m</p>  

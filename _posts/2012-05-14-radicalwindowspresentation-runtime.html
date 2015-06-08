@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'Radical.Windows.Presentation: runtime conventions'
+date: '2012-05-14T10:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Radical
+- Model View ViewModel
+modified_time: '2012-05-14T10:00:10.924+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6994786380742246702
+blogger_orig_url: http://milestone.topics.it/2012/05/radicalwindowspresentation-runtime.html
+---
+
+<p>We <a href="{{ site.baseurl }}{% post_url 2011-10-27-m-v-vm-simple-view-provider_27 %}" target="_blank">have already introduced</a> some of the runtime conventions used by <a href="http://nuget.org/packages/Radical.Windows.Presentation" target="_blank">Radical.Windows.Presentation</a>. Radical.Windows.Presentation has also a lot of runtime conventions mainly related to two different areas:</p> <ul> <li>View – ViewModel relation;</li> <li>UI Composition;</li></ul> <p>Here they are:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">interface</font></span>&nbsp;<span style="color: "><font color="#2b91af">IConventionsHandler</font></span>
+{
+	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">Type</font></span>, <span style="color: "><font color="#2b91af">Type</font></span>&gt; ResolveViewModelType { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">Type</font></span>, <span style="color: "><font color="#2b91af">Type</font></span>&gt; ResolveViewType { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">Object</font></span>, <span style="color: "><font color="#2b91af">Window</font></span>&gt; FindHostingWindowOf { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Predicate</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>&gt; ViewHasDataContext { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Action</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>, <span style="color: "><font color="#2b91af">Object</font></span>&gt; SetViewDataContext { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>, <span style="color: "><font color="#2b91af">Object</font></span>&gt; GetViewDataContext { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Action</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>, <span style="color: "><font color="#2b91af">Object</font></span>&gt; AttachViewToViewModel { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">Object</font></span>, <span style="color: "><font color="#2b91af">DependencyObject</font></span>&gt; GetViewOfViewModel { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>, <span style="color: "><font color="#2b91af">Action</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>&gt;, <span style="color: "><font color="#2b91af">DependencyObject</font></span>&gt; TryHookClosedEventOfHostOf { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Func</font></span>&lt;<span style="color: "><font color="#2b91af">FrameworkElement</font></span>, <span style="color: "><font color="#2b91af">Boolean</font></span>&gt; IsHostingView { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 	<span style="color: "><font color="#2b91af">Action</font></span>&lt;<span style="color: "><font color="#2b91af">DependencyObject</font></span>&gt; AttachViewBehaviors { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+}</font></font></pre></blockquote>
+<p><strong>ResolveViewModelType</strong></p>
+<p>The first convention is used internally by the ViewResolver and given the view type returns the ViewModel type for the given view, the default behavior is that the view model is in the same namespace of the view and has the same type name suffixed with “Model” (e.g.: MainView and MainViewModel)</p>
+<p><strong>ResolveViewType</strong></p>
+<p>The ResolveViewType convention is currently under development and not used, but basically does the opposite stuff, using the same default behavior, as the ResolveViewModelType convention.</p>
+<p><strong>FindHostingWindowOf</strong> </p>
+<p>This convention is currently used to find the Window that hosts a given view model, quite certainly this convention will be changed in the near future to support the fact that in Windows 8 Metro style apps a Window object does not exists.</p>
+<p>This task is performed finding the current view of the given view model (using another convention) and then reverse walking the visual tree looking fir the first Window.</p>
+<p>The convention accomplish two needs:</p>
+<ol>
+<li>A view model can implement the IExpectViewClosingCallback and the IExpectViewClosedCallback in order to intercept the fact that the hosting Window is closing or has been closed and since we support UI Composition features a view model can be a view model attached to a UserControl that is runtime “inserted” into the visual tree of an existing Window;</li>
+<li>The UI Composition region service, in order to satisfy the above requirement, each time setups a new region need to find the hosting window in order to attach the closing and closed events;</li></ol>
+<p><strong>ViewHasDataContext, SetViewDataContext and GetViewDataContext </strong></p>
+<p>The ViewHasDataContext convention simply checks if the given view DataContext property is not null, this convention accepts a DependencyObject because in WPF the DataContext property is not defined on a single root object but is defined on FrameworkElement and on FrameworkContentElement.</p>
+<p>SetViewDataContext and GetViewDataContext respectively sets and gets the DataContext of the given view.</p>
+<p><strong>AttachViewToViewModel and GetViewOfViewModel</strong></p>
+<p>Internally the Radical.Windows.Presentation MVVM and UI Composition toolkit needs to know runtime View – ViewModel relations in order to know that given a ViewModel instance the corresponding View instance is certainly a specific instance.</p>
+<p>To achieve that the ViewResolver once has resolved both the required instances calls the AttachViewToViewModel convention in order to store the view reference in the view model instance (the view model is already stored in view instance using the DataContext property).</p>
+<p>By design this works out-of-the-box because the AbstractViewModel type implements the IViewModel interface that has a View property internally used for this tasks. If the user does not like this behavior or cannot inherit from the AbstractViewModel type, nor implement the IViewModel interface, can replace this convention in order to store somewhere else the required relation.</p>
+<p>The same logic is used by the GetViewOfViewModel convention that is required to retrieve the stored relation.</p>
+<p><strong>TryHookClosedEventOfHostOf</strong> </p>
+<p>This is really internal and is used by the region service engine to attach the closed event of the hosting window, if any, in order to cleanup stuff when the window closes.</p>
+<p><strong>IsHostingView</strong></p>
+<p>The IsHostingView convention is internally used by the Region base class to determine if a given visual element can be considered a View.</p>
+<p><strong>AttachViewBehaviors</strong> </p>
+<p>The AttachViewBehaviors convention can be hooked by the framework user if there is a requirement to attach behaviors (<em>System.Windows.Interactivity.Behavior&lt;T&gt;</em>) whenever a view is resolved by the ViewResolver.</p>
+<p><strong>Conclusion</strong></p>
+<p>As you can see this post is mainly a documentation post not so interesting, well at least for me, do not worry in the next post we’ll introduce the UI Composition features supported by Radical.Windows.Presentation.</p>
+<p>Stay tuned.</p>
+<p>.m</p>  

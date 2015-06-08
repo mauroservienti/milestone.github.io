@@ -1,0 +1,46 @@
+---
+layout: post
+title: AOP, C# e PostSharp… Update
+date: '2008-10-26T08:01:00.000+01:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- AOP
+modified_time: '2012-01-30T12:49:13.989+01:00'
+thumbnail: https://lh4.googleusercontent.com/-uo2o0Q_X4Yk/TyaDsIr9naI/AAAAAAAAAMY/zh9dRM1Aqc0/s72-c/image_thumb8_7a9319c1-ca74-414e-a23c-371513396bca.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1090283744086830118
+blogger_orig_url: http://milestone.topics.it/2008/10/aop-c-e-postsharp-update.html
+---
+
+<span>Mi riallaccio al <a href="http://blogs.ugidotnet.org/topics/archive/2008/10/25/aop-c-e-postsharp.aspx" target="_blank">post di ieri</a> per fare una precisazione, faccio un nuovo post perchè fare un update dell’altro è pressochè impossibile… sopportatemi ;-)</span><br>  <span>Ieri ho detto che: “<em>…quello che però non ha fatto è stato rimettere sul parametro del metodo privato l’attributo, e questo credo sia un bug, vedremo…;</em>”</span><br>  <span>Riferendomi a questa situazione:</span><br>  <pre class="code">[<span style="color: #2b91af">ArgumentValidatorAspect</span>()]
+<span style="color: blue">class </span><span style="color: #2b91af">MyTestClass
+</span>{
+    <span style="color: blue">public void </span>Foo( [<span style="color: #2b91af">NotNull</span>]<span style="color: #2b91af">String </span>arg )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Foo:" </span>+ arg );
+    }
+}</pre>
+
+<span>e compilando il risultato che otteniamo, visto con il fido Reflector, è questo:</span><br>
+
+<span> <a href="https://lh5.googleusercontent.com/-D1HQVMm7FpQ/TyaDsjr4MqI/AAAAAAAAAMc/yXYwfaGMIOw/image16.png" rel="lightbox"><img title="image_thumb8" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="207" alt="image_thumb8" src="https://lh4.googleusercontent.com/-uo2o0Q_X4Yk/TyaDsIr9naI/AAAAAAAAAMY/zh9dRM1Aqc0/image_thumb8_7a9319c1-ca74-414e-a23c-371513396bca.png" width="622" border="0"></a> </span><br>
+
+<span>cioè l’attributo <em>NotNullAtrtribute</em> è rimasto sul metodo pubblico e non si è “spostato” su quello privato, nel nostro caso questo è un fastidio obbligandoci a fare giri strani per recuperare gli attributi applicati ai parametri.</span><br>
+
+<span>Orbene, <a href="http://www.postsharp.org/forum/postsharp-laos/attribute-parameter-missing-the-generated-private-method-t545.html" target="_blank">è possibile ottenere il comportamento desiderato</a> istruendo opportunamente il post compilatore di PostSharp:</span><br>
+
+<pre class="code">[<span style="color: blue">assembly</span>: PostSharp.Extensibility.<span style="color: #2b91af">ImplementationBoundAttribute</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">NotNullAttribute </span>) )]</pre>
+
+<span>In questo modo stiamo dicendo a PostSharp che vogliamo che il nostro attributo venga “spostato” e legato all’implementazione, ottenendo di fatto questo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-NyG_Cst5Kxc/TyaDtb2DlLI/AAAAAAAAAMw/4CQyocwHXUs/image_2.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="141" alt="image" src="https://lh6.googleusercontent.com/-RXKZJEOJy4E/TyaDsxW8SnI/AAAAAAAAAMk/wLPeW6XWrYs/image_thumb.png" width="296" border="0"></a> </span><br>
+
+<span>che è esattamente quello che ci serve.</span><br>
+
+<span>Adesso abbiamo un altro fastidio… :-D se cerchiamo dall’esterno di analizzare la classe <em>MyTestClass</em> non sapremo mai che uno dei parametri del metodo <em>Foo()</em> è marcato con l’attributo <em>NotNull</em> questo perchè a tutti gli effetti non lo è più. Ho quindi chiesto all’autore se è possibile avere un comportamento misto avendo cioè l’attributo da entrambe le parti, vediamo che ci dice…</span><br>
+
+<span>Buona domenica,</span><br>
+
+<span>.m</span><br>
+

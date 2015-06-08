@@ -1,0 +1,51 @@
+---
+layout: post
+title: 'RavenDB: Integrated Windows Authentication'
+date: '2013-04-12T10:53:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2013-04-12T10:53:00.442+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3626823813204300680
+blogger_orig_url: http://milestone.topics.it/2013/04/ravendb-integrated-windows.html
+---
+
+<p>A couple of days ago I was at a customer and one of the raised issues, when dealing with RavenDB Windows authentication, was how to use a real “Integrated Windows Authentication” in order to have the credentials of the user currently running the client process flow to the server through the HTTP protocol.</p> <p>After a bit of digging in the .net documentation the solution is trivial:</p> <blockquote><pre class="csharpcode">Uri uri = <span class="kwrd">new</span> Uri( <span class="str">"http://localhost:8080/"</span> );
+ICredentials credentials = CredentialCache.DefaultCredentials;
+NetworkCredential credential = credentials.GetCredential( uri, <span class="str">"Basic"</span> );
+
+var store = <span class="kwrd">new</span> DocumentStore()
+{
+    Url = <span class="str">"http://localhost:8080/"</span>,
+    DefaultDatabase = <span class="str">"database-name"</span>,
+    Credentials = credential
+}.Initialize();</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>The above snipped creates a new DocumentStore whose credentials are ready to transport the current user credentials.</p>
+<p>.m</p>  

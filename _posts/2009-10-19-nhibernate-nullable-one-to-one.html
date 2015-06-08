@@ -1,0 +1,98 @@
+---
+layout: post
+title: 'NHibernate: nullable one-to-one'
+date: '2009-10-19T17:32:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:02:50.459+01:00'
+thumbnail: https://lh5.googleusercontent.com/-E_LgoqmYUvE/TyvM2yCetmI/AAAAAAAAAxg/5cEv1QZAYqc/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5329107950986973229
+blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-nullable-one-to-one.html
+---
+
+<span>Questa è una di quelle cose che non si drovrebbero fare… ma se avete un db che non potete toccare non è che ci siano molte scappatoie :-)</span><br>  <span>Il bello è che il <a href="https://www.hibernate.org/343.html">tool</a> risponde alla grande, anche se in questo caso deve essere un po’ addomesticato. Lo scenario è questo:</span><br>  <span><a href="https://lh4.googleusercontent.com/-LdsX8P6YmHk/TyvM3Bes1NI/AAAAAAAAAxk/XXQuvwzKxy4/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-E_LgoqmYUvE/TyvM2yCetmI/AAAAAAAAAxg/5cEv1QZAYqc/image_thumb.png" width="244" height="86"></a> </span><br>  <span>Mappato su un db con, più o meno, questa struttura:</span><br>  <span><a href="https://lh4.googleusercontent.com/-qdCFdt99MTQ/TyvM36AFdYI/AAAAAAAAAxw/f_fVJFYftX8/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-23OBbsGXwbg/TyvM3vjhzSI/AAAAAAAAAxs/UDvnrczsN6c/image_thumb_1.png" width="244" height="58"></a> </span><br>  <span>Nel dominio avete il concetto di Preventivo (Estimate) e di Contratto (Agreement) e le 2 entità sono relazionate tra loro: ad un preventivo <em>potrebbe</em> corrispondere uno ed un solo contratto e ad un contratto <em>potrebbe</em> corrispondere uno ed un solo preventivo.</span><br>  <span>Il “potrebbe” in entrambe le casistiche è derivante dal fatto che un Preventivo:</span><br>  <ul>   <li>“in corso” non ha un ancora un contratto; </li>    <li>“defunto” non avrà mai un contratto; </li> </ul>  <span>In maniera similare un Contratto potrebbe nascere senza essere passato da un Preventivo. La problematica in se non è nulla di trascendentale e <a href="http://ayende.com/Blog/archive/2009/04/19/nhibernate-mapping-ltone-to-onegt.aspx">qui</a> trovate un ottimo riepilogo del problema e della soluzione, o meglio di parte della soluzione.</span><br>  <span>I problemi sorgono quando avete la necessità di <em>cercare tutti i preventivi che non hanno un contratto</em>… che dal punto di vista del modello ad oggetti è una cosa del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">Estimate</span>> list;
+list.Where( e => e.Agreement == <span style="color: blue">null </span>);</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ma volete che il tutto sia fatto da <a href="https://www.hibernate.org/343.html">NHibernate</a> direttamente in fase di fetch con una bella left-outer-join andando a cercare i preventivi che hanno un contratto con pk a null nel resultset.</span><br>
+
+<span><strong>Il Mapping</strong></span><br>
+
+<span>Già la fase di mapping, con il fido <a href="http://fluentnhibernate.org/">Fluent NHibernate</a>, non è proprio delle più intuitive, per come è strutturato il db il mapping da Contratto verso Preventivo è abbastanza triviale:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>AgreementMapping()
+{
+    <span style="color: blue">this</span>.SchemaIs( <span style="color: #a31515">"..." </span>);
+    <span style="color: blue">this</span>.WithTable( <span style="color: #a31515">"..." </span>);
+
+    <span style="color: blue">this</span>.<strong>References</strong>( e => e.Estimate, <span style="color: #a31515">"EstimateUID" </span>)
+        .Cascade.SaveUpdate()
+        .Nullable();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ci limitiamo a definire una “reference” tra il tipo Agreement e il tipo Estimate attraverso al proprietà Agreement.Estimate e specifichiamo il nome della colonna per la FK; spostandoci invece sul tipo Estimate le cose sono un po’ diverse perchè non potete più usare Reference, o perlomeno io non ci sono riuscito:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>EstimateMapping()
+{
+    <span style="color: blue">this</span>.SchemaIs( <span style="color: #a31515">"..." </span>);
+    <span style="color: blue">this</span>.WithTable( <span style="color: #a31515">"..." </span>);
+
+    <span style="color: blue">this</span>.<strong>HasOne</strong>( e => e.Agreement )
+        .WithForeignKey()
+        .<strong>PropertyRef</strong>( a => a.Estimate )
+        .Cascade.SaveUpdate();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>La combinazione vincente è data da HasOne insieme a PropertyRef:</span><br>
+
+<ul>
+  <li>HasOne definisce una simil-relazione 1-1 tra Estimate.Agreement e Agreement; </li>
+
+  <li>la magia la fa PropertyRef perchè istruisce il motore di mapping facendo si che tutte le informazioni per il mapping vengano prese dal mapping della classe Agreement e facendo di conseguensa si che NHibernate sia in grado di generare correttamente gli statement sql; </li>
+</ul>
+
+<span>La cosa va che è un piacere finchè non cerchiamo di fare questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>criteria = provider.CreateCriteria<<span style="color: #2b91af">Estimate</span>>();
+criteria.Add( <span style="color: #2b91af">Restrictions</span>.IsNull( <span style="color: #a31515">"Areement" </span>) );
+<span style="color: blue">var </span>data = criteria.List<<span style="color: #2b91af">Estimate</span>>();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che ci rimbalza perchè siamo dei disgraziati :-D</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-PBAA7At-As0/TyvM49Q3zHI/AAAAAAAAAyA/7v5DfGjljJE/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-50F8n5oNvSw/TyvM4X7faXI/AAAAAAAAAx4/uSUsNc1LWVg/image_thumb_2.png" width="244" height="130"></a> </span><br>
+
+<span>Anche un ipotetico tentativo di questo tipo falisce miseramente:</span><br>
+
+<blockquote>
+  <pre class="code">  <span>criteria.Add( <span style="color: #2b91af">Restrictions</span>.IsNull( <span style="color: #a31515">"Areement.Key" </span>) );</span></pre>
+</blockquote>
+
+<span>Quella cosa non può funzionare, in realtà il giochetto è abbastanza tricky:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>criteria = provider.CreateCriteria<<span style="color: #2b91af">Estimate</span>>();
+criteria.CreateCriteria( <span style="color: #a31515">"Agreement"</span>, <span style="color: #a31515">"a"</span>, <span style="color: #2b91af">JoinType</span>.LeftOuterJoin )
+    .Add( <span style="color: #2b91af">Restrictions</span>.IsNull( <span style="color: #a31515">"a.Key" </span>) );
+<span style="color: blue">var </span>data = criteria.List<<span style="color: #2b91af">Estimate</span>>();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>è cioè sufficiente creare un alias per la proprietà Agreement e poi andare ad indagare la PK alla ricerca di valori null restituiti dalla left outer join, producendo di fatto questa query:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-pPrV7wt1DLo/TyvM6EM4M5I/AAAAAAAAAyU/Y4qzj_CNbJQ/image_8.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-BLTY-a0PVPY/TyvM5kaIaKI/AAAAAAAAAyI/vZIfLprFzCo/image_thumb_3.png" width="244" height="94"></a> </span><br>
+
+<span>che è esattamente quello che ci serve!</span><br>
+
+<span><strong>Concludendo</strong></span><br>
+
+<ol>
+  <li>il tool è impressionante, flessibile e potente; </li>
+
+  <li>l’uso di <a href="http://en.wikipedia.org/wiki/Specification_pattern">Query Specification</a>, <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/wrappare-un-ormhellip.aspx">come ho già avuto modo di dettagliare</a>, permette di incapsulare tutta la logica degli ICriteria nascondendo e centralizzando i dettagli dell’implementazione; </li>
+</ol>
+
+<span>.m</span><br>

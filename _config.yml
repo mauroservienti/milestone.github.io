@@ -1,0 +1,17 @@
+# Site settings
+
+title: Milestone
+# email: mauro@topics.it
+
+description: > # this means to ignore newlines until "baseurl:"
+  The journey is the most important thing, not the destination.
+  Find your next destination and start travelling again.
+
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "http://milestone.topics.it" # the base hostname & protocol for your site
+
+twitter_username: mauroservienti
+github_username:  mauroservienti
+
+# Build settings
+markdown: kramdown

@@ -1,0 +1,75 @@
+---
+layout: post
+title: I file, le cartelle e… questi sconosciuti
+date: '2009-11-02T13:30:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Visual Studio
+modified_time: '2012-08-04T19:44:53.349+02:00'
+thumbnail: https://lh4.googleusercontent.com/-2-y5JK3UCeM/TzEu-Oeqd1I/AAAAAAAAA5o/Aguvh5hYPnE/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4848810112625505235
+blogger_orig_url: http://milestone.topics.it/2009/11/i-file-le-cartelle-e-questi-sconosciuti.html
+---
+
+<span>Iniziamo con una piccola nota polemica, concedetemelo :-)<a rel="lightbox" href="https://lh3.googleusercontent.com/-EkuHvPr5elY/TzEu--RGx2I/AAAAAAAAA5s/oTdpPWQp-hA/image_2.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; MARGIN: 0px 5px 0px 20px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" align="right" width="204" height="209" src="https://lh4.googleusercontent.com/-2-y5JK3UCeM/TzEu-Oeqd1I/AAAAAAAAA5o/Aguvh5hYPnE/image_thumb.png"></a> </span><br>
+<blockquote>
+<span>un dev è un professionista come tanti altri, medici o idraulici ad esempio, e quello che mi aspetto da un medico o da un idraulico è che abbia una buona conoscenza, ma soprattutto confidenza, dei suoi strumenti… quindi come è normale che un idraulico sappia cosa è un sifone mi aspetto che un dev sappia cosa è <em>metticiunpoquellochevuoi</em> di Visual Studio; non mi aspetto che lo sappia usare ma mi aspetto che la curiosità l’abbia spinto almeno a dargli un’occhiata.</span><br>
+<span>Purtroppo sempre più spesso consto che questo è molto lontano dalla realtà di tutti i giorni. Che opinione si farebbe un paziente di un dentista che <em>litiga</em> con uno specillo?… e non ditemi che non sapete cosa sia uno specillo… no non è uno specchietto :-)</span><br>
+</blockquote>
+<span>Detto questo vediamo di affrontare un altro nodo molto importante nell’organizzazione di un qualsiasi progetto software. Nel mio piccolo tendo ad essere un po’ allergico al <em>Class View</em>, non chiedetemi perchè semplicemente faccio fatica ad usarlo e preferisco di gran lunga interfacciarmi con il <em>Solution Explorer</em>.</span><br>
+<span><a rel="lightbox" href="https://lh4.googleusercontent.com/-NUbIbyNuA00/TzEvAO3urKI/AAAAAAAAA6A/qmdMjM4SXLw/image_4.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; MARGIN: 0px 20px 0px 5px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" align="left" width="190" height="244" src="https://lh5.googleusercontent.com/-gcxiaV8WKpc/TzEu_J4ztNI/AAAAAAAAA54/LReBUc8zjX8/image_thumb_1.png"></a></span><br>
+<span>Se confrontate le due immagini non è che ci sia molta differenza quindi direi che la scelta è puramente soggettiva, ma tutto d<em>e</em>pende… <em>da che depende</em>…</span><br>
+<span><strong>Si ma il Class View cerca…</strong></span><br>
+<span>vero, questo è interessante, dal Class View è possibile cercare un membro per nome ma la domanda a questo punto è: se un progetto è ben organizzato a cosa mi serve cercare?</span><br>
+<span>Notate il solution explorer qui a sinistra? che differenze ha con il class view sopra? pressochè nessuna… perchè l’orgnizzazione dei progetti è parallela e sincrona, ad esempio, all’organizzazione dei namespace.</span><br>
+<span>Che senso ha in un’organizzazione di questo tipo cercare? potrebbe avere senso pensare che un qualcosa del tipo: <em>Topics.Radical.Model.NHibernate.NHibernateDataContext</em> stia in un posto diverso dal progetto <em>Radical.Model.NHibernate</em>?</span><br>
+<span>Espandendo uno dei progetti ci rendiamo immediatamente conto della cosa:</span><br>
+<table border="0" cellspacing="0" cellpadding="2" align="center">
+    <tbody>
+        <tr>
+            <td valign="top"><a rel="lightbox" href="https://lh3.googleusercontent.com/-k_SYOIv5qGM/TzEvBrIf9MI/AAAAAAAAA6M/PzkOMBCldcA/image_6.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="244" height="158" src="https://lh4.googleusercontent.com/-VnTbAFNTiJ8/TzEvAqaI_-I/AAAAAAAAA6I/i9sI2KHFRnU/image_thumb_2.png"></a> </td>
+            <td><a rel="lightbox" href="https://lh3.googleusercontent.com/-j9d4Jf2yufI/TzEvCUAMa6I/AAAAAAAAA6c/fZyNUid_MGY/image_8.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="244" height="158" src="https://lh5.googleusercontent.com/-BfVt3F1rQ8E/TzEvB_NYqcI/AAAAAAAAA6U/DzLvOnls93Y/image_thumb_3.png"></a> </td>
+        </tr>
+    </tbody>
+</table>
+<span><strong>Ad ognuno il suo spazio</strong> </span><br>
+<span>Supponiamo adesso di dover distribuire nella solution i seguenti elementi:</span><br>
+<blockquote>
+<pre class="code"><span style="COLOR: blue">interface </span><span style="COLOR: #2b91af">IEngine
+</span>{
+    <span style="COLOR: #2b91af">Boolean </span>IsActive { <span style="COLOR: blue">get</span>; }
+}
+
+<span style="COLOR: blue">interface </span><span style="COLOR: #2b91af">IEngine</span><T> : <span style="COLOR: #2b91af">IEngine
+</span>{
+    <span style="COLOR: #2b91af">EngineOperationResult </span>OperateOn( T data );
+}
+
+<span style="COLOR: blue">enum </span><span style="COLOR: #2b91af">EngineOperationResult
+</span>{
+    Success,
+    Aborted,
+    Denied
+}</pre>
+<a href="http://11011.net/software/vspaste"></a></blockquote>
+<span>tralasciate il design che è tutto tranne che importante adesso e nello specifico probabilmente è pure errato ;-) ma non ci interessa quello… come distribuireste gli elementi di cui sopra nella solution? così:</span><br>
+<span><a rel="lightbox" href="https://lh3.googleusercontent.com/-CgFAPS32Pqw/TzEvDTOQ8eI/AAAAAAAAA6s/fofZ_jWxNX4/image_10.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="207" height="107" src="https://lh6.googleusercontent.com/-gvTDscWpp8U/TzEvCpUmcAI/AAAAAAAAA6k/n958NVV1Av4/image_thumb_4.png"></a> </span><br>
+<span>Con dentro il file Engine.cs tutto il necessario? o così:</span><br>
+<span><a rel="lightbox" href="https://lh6.googleusercontent.com/-seGgxSoCOnY/TzEvEQoLpCI/AAAAAAAAA7A/v571xg6nx5Y/image_12.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="207" height="122" src="https://lh6.googleusercontent.com/-Jwsc-3jXdSI/TzEvD7MVU4I/AAAAAAAAA60/RApezu1up3o/image_thumb_5.png"></a> </span><br>
+<span>lascio a voi la scelta, ma io preferisco la seconda soluzione, ci metto 12 secondi, netti, in più ma ho un colpo d’occhio molto più efficace, molto, ma molto :-)</span><br>
+<span>Il vostro obiettivo è la produttività e la produttività non si misura di certo con il tempo che il compilatore impiega ad analizzare 100.000 files piuttosto che 1 con 10.000.000 di righe, chi se ne frega, intanto che lui compila io bevo il caffè :-)</span><br>
+<span>La produttività secondo me si misura in dimistichezza, facilità di manutenzione, facilità di passaggio di consegne e condivisione del lavoro, facilità di capire al volo dove devo mettere mano per fare una certa cosa, nel primo esempio (Engine.cs) se devo mettere mano all’enumerazione devo per forza usare il Class View, nel secondo no… e se poriettate questo su una solution media:</span><br>
+<span><a rel="lightbox" href="https://lh4.googleusercontent.com/-VVznBuwT19U/TzEvFSCJF6I/AAAAAAAAA7I/Mxesj5W9Iks/image_14.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="244" height="56" src="https://lh5.googleusercontent.com/-1BbL2UpG49o/TzEvFH2PlpI/AAAAAAAAA7E/5Y_jKS6VHvU/image_thumb_6.png"></a> </span><br>
+<span>con qualcosa come 5000 file, di soli sorgenti, è evidente che se le cose non sono <u>maniacalmente</u> organizzate come si deve è più il tempo che passate a cercare che quello che passate a lavorare :-) non parliamo poi del fatto che magari dovete riprendere in mano lavori di qualche mese fa… se l’organizzazione è fallace: panico.</span><br>
+<span><strong>ma… le Partial Class?</strong></span><br>
+<span>Diciamocelo subito, secondo me puzzano :-)</span><br>
+<span>Se non ricordo male le partial class sono state introdotte per poter tenere separato il codice generato dal designer di Windows Forms dal nostro codice, da li le possibilità sono cresciute e lo stesso meccanismo viene sfruttato da Wpf per la separazione tra il codebehind e lo xaml:</span><br>
+<span><a rel="lightbox" href="https://lh3.googleusercontent.com/-lG26KdAOn48/TzEvGEh58dI/AAAAAAAAA7c/g-_cV5Q3stU/image_16.png"><img style="BORDER-BOTTOM: 0px; BORDER-LEFT: 0px; DISPLAY: inline; BORDER-TOP: 0px; BORDER-RIGHT: 0px" title="image" border="0" alt="image" width="304" height="49" src="https://lh4.googleusercontent.com/-q3Ce8yvMCV4/TzEvF9Rn21I/AAAAAAAAA7U/Mgmr74re8Zg/image_thumb_7.png"></a> </span><br>
+<span>Le possiamo usare per organizzare meglio le nostre classi? certo che si, secondo me però prima di farlo val la pena di fare qualche considerazione: </span><br>
+<ul>
+    <li>non è che stiamo utilizzando le Partial Class come utilizzeremmo le #region? </li>
+    <li>non è che le stiamo facendo diventare il tappeto sotto cui nascondere la fuffa?</li>
+</ul>
+<span>Secondo me il rischio c’è e io tendo a sfruttare queste sensazioni per far emergere potenziali problemi di design: ho una semplice regola se il codice della <em>roba</em> che sto scrivendo non ci sta tutto sullo schermo, e la scroll bar te lo fa capire molto bene, allora forse è il caso di fare un po’ di refactoring e non di fuffizzare il tutto in una Partial Class.</span><br>
+<span>Ovviamente, come per tutte le regole, non è un dogma e va valutato di caso in caso: ad esempio i controller di MVC e i ViewModel di M-V-VM tipicamente, in quanto accentratori, sono anche un collo di bottiglia per l’organizzazione del codice perchè da li ci passa un intero UseCase, o addirittura più di uno…</span><br>
+<span>.m</span><br>

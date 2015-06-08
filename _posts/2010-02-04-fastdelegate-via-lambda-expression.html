@@ -1,0 +1,80 @@
+---
+layout: post
+title: FastDelegate via Lambda Expression
+date: '2010-02-04T06:19:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T20:15:14.377+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1926657455220890467
+blogger_orig_url: http://milestone.topics.it/2010/02/fastdelegate-via-lambda-expression.html
+---
+
+<span>Se ne trovano tante di implementazioni e tutte più o meno fanno la stessa cosa: evitano il costo di una chiamata <em>late bound</em> via reflection sfruttando in maniera decisamente figosa le Lambda Expression:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public delegate object </span><span style="color: #2b91af">LateBoundMethod</span>( <span style="color: blue">object </span>target, <span style="color: blue">object</span>[] arguments );
+
+<span style="color: blue">public static class </span><span style="color: #2b91af">DelegateFactory
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">LateBoundMethod </span>CreateDelegate( <span style="color: blue">this </span><span style="color: #2b91af">MethodInfo </span>method )
+    {
+        <span style="color: blue">var </span>instanceParameter = <span style="color: #2b91af">Expression</span>.Parameter( <span style="color: blue">typeof</span>( <span style="color: blue">object </span>), <span style="color: #a31515">"target" </span>);
+        <span style="color: blue">var </span>argumentsParameter = <span style="color: #2b91af">Expression</span>.Parameter( <span style="color: blue">typeof</span>( <span style="color: blue">object</span>[] ), <span style="color: #a31515">"arguments" </span>);
+        
+        <span style="color: blue">var </span>call = CreateMethodCallExpression( method, instanceParameter, argumentsParameter );
+        
+        <span style="color: blue">var </span>lambda = <span style="color: #2b91af">Expression</span>.Lambda<<span style="color: #2b91af">LateBoundMethod</span>>(
+                <span style="color: #2b91af">Expression</span>.Convert( call, <span style="color: blue">typeof</span>( <span style="color: blue">object </span>) ),
+                instanceParameter,
+                argumentsParameter );
+
+        <span style="color: blue">return </span>lambda.Compile();
+    }
+
+    <span style="color: blue">private static </span><span style="color: #2b91af">MethodCallExpression </span>CreateMethodCallExpression( <span style="color: #2b91af">MethodInfo </span>method, <span style="color: #2b91af">ParameterExpression </span>instanceParameter, <span style="color: #2b91af">ParameterExpression </span>argumentsParameter )
+    {
+        <span style="color: blue">var </span>call = <span style="color: #2b91af">Expression</span>.Call(
+            <span style="color: #2b91af">Expression</span>.Convert( instanceParameter, method.DeclaringType ),
+            method, CreateParameterExpressions( method, argumentsParameter ) );
+
+        <span style="color: blue">return </span>call;
+    }
+
+    <span style="color: blue">private static </span><span style="color: #2b91af">Expression</span>[] CreateParameterExpressions( <span style="color: #2b91af">MethodInfo </span>method, <span style="color: #2b91af">Expression </span>argumentsParameter )
+    {
+        <span style="color: blue">return </span>method.GetParameters().Select( ( parameter, index ) =>
+            <span style="color: #2b91af">Expression</span>.Convert(
+                <span style="color: #2b91af">Expression</span>.ArrayIndex( argumentsParameter, <span style="color: #2b91af">Expression</span>.Constant( index ) ),
+                parameter.ParameterType ) ).ToArray();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>A cosa serve in realtà? serve in tutti quegli scenari in cui dovete chiamare <em>n</em> volte un metodo via reflection (o simili), <u>okkio che ho detto</u> <em>n</em> volte perchè anche la chiamata al metodo Compile() della Lambda Expression ha un costo ma una volta fatta avete in mano qualcosa di “cachabile” e quindi dalla seconda chiamata in poi vi “<em>leccate le orecchie</em>” :-)</span><br>
+
+<span>Altra nota da redazione, quella cosa si schianta immedatamente (con una Exception decisamente poco comunicativa) se state cercando di creare un “<em>fast delegate</em>” per un metodo “<em>void</em>”:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public delegate void </span><span style="color: #2b91af">LateBoundVoidMethod</span>( <span style="color: blue">object </span>target, <span style="color: blue">object</span>[] arguments );
+<font color="#0000ff"></font>
+<span style="color: blue">public static class </span><span style="color: #2b91af">DelegateFactory
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">LateBoundVoidMethod </span>CreateVoidDelegate( <span style="color: blue">this </span><span style="color: #2b91af">MethodInfo </span>method )
+    {
+        <span style="color: blue">var </span>instanceParameter = <span style="color: #2b91af">Expression</span>.Parameter( <span style="color: blue">typeof</span>( <span style="color: blue">object </span>), <span style="color: #a31515">"target" </span>);
+        <span style="color: blue">var </span>argumentsParameter = <span style="color: #2b91af">Expression</span>.Parameter( <span style="color: blue">typeof</span>( <span style="color: blue">object</span>[] ), <span style="color: #a31515">"arguments" </span>);
+        
+        <span style="color: blue">var </span>call = CreateMethodCallExpression( method, instanceParameter, argumentsParameter );
+        
+        <span style="color: blue">var </span>lambda = <span style="color: #2b91af">Expression</span>.Lambda<<span style="color: #2b91af">LateBoundVoidMethod</span>>(
+                call,
+                instanceParameter,
+                argumentsParameter );
+
+        <span style="color: blue">return </span>lambda.Compile();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>è decisamente <em>uguale</em> a quella di prima… ma la firma del delegato deve rispettare il fatto che il <em>target method</em> sia void.</span><br>
+
+<span>.m</span><br>
+

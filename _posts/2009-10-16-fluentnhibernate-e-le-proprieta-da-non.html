@@ -1,0 +1,44 @@
+---
+layout: post
+title: FluentNHibernate e le proprietà da non mappare…
+date: '2009-10-16T15:05:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:02:30.821+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5951387093452469613
+blogger_orig_url: http://milestone.topics.it/2009/10/fluentnhibernate-e-le-proprieta-da-non.html
+---
+
+<span>Supponendo di aver bisogno di mappare un’entità che espone delle proprietà calcolate con FluentNHibernate avete qualche problema…</span><br>  <span>L’inghippo di fondo è questo: quando mappate una entity, in fase di inizializzazione dei proxy (e qui vado a intuito) il <em>proxy builder</em> cerca tutte le proprietà e si lamenta, con una sonora exception, se una delle proprietà non è <em>virtual</em> o se manca del <em>set accessor</em>. Il messaggio di errore poi è quantomeno fuorviante :-)</span><br>  <span>Girovagando su internet si trovano tante colorite soluzioni (pezze direi io) tra cui la più bella è quella di disabilitare in toto il <em>proxy validator</em>:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">property </span><span style="color: red">name</span><span style="color: blue">=</span>"<span style="color: blue">use_proxy_validator</span>"<span style="color: blue">></span>false<span style="color: blue"></</span><span style="color: #a31515">property</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ma a casa mia non è un’opzione piuttosto una porcata.</span><br>
+
+<span>Ergo mi sono messo a cercare e salta fuori che FluentNHibernate ha una strana sintassi, che in teoria dovrebbe funzionare, ma che in realtà non produce alcun effetto tangibile:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>SubjectMapping()
+{
+    <span style="color: blue">this</span>.Not.Map( s => s.RuntimeEvaluatedProperty );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Quel “Not” dovrebbe impedire il tentativo di mapping… ciccia… alla fine la soluzione è comunque semplice:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>SubjectMapping()
+{
+    <span style="color: blue">this</span>.WithTable( <span style="color: #a31515">"Subjects" </span>);
+
+    <span style="color: blue">this</span>.Not.LazyLoad();
+    
+    <span style="color: blue">this</span>.HasMany( s => s.Addresses )
+        .LazyLoad()
+        .Inverse()
+        .Cascade.AllDeleteOrphan()
+        .KeyColumnNames.Add( <span style="color: #a31515">"SubjectId" </span>);</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e consiste nel disabilitare il <em>lazy loading</em> a livello di classe (this.Not.LazyLoad()) e riabilitarlo eplicitamente ove serve.</span><br>
+
+<span>.m</span><br>

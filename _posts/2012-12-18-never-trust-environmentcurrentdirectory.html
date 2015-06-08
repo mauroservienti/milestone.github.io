@@ -1,0 +1,14 @@
+---
+layout: post
+title: Never trust Environment.CurrentDirectory
+date: '2012-12-18T10:38:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-12-18T10:38:00.327+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3377395789476211529
+blogger_orig_url: http://milestone.topics.it/2012/12/never-trust-environmentcurrentdirectory.html
+---
+
+<p>If your code relies on “Environment.CurrentDirectory” to get the directory your application is “running in” you can get really surprising behaviors.</p> <p>Environment.CurrentDirectory can be changed at any time by any piece of code, even by code not directly under your control, it is much better to build your own logic to get the “startup” directory, such as:</p> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> <span style="color: #0000ff">class</span> FileSystem<br>{<br>    <span style="color: #0000ff">public</span> <span style="color: #0000ff">static</span> String GetCurrentDirectory() <br>    {<br>        <span style="color: #0000ff">return</span> Path.GetDirectoryName( Assembly.GetEntryAssembly().Location );<br>    }<br>}</pre><br></div></blockquote>
+<p>.m</p>  

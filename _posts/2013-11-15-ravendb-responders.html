@@ -1,0 +1,297 @@
+---
+layout: post
+title: 'RavenDB: responders'
+date: '2013-11-15T10:50:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2013-11-15T10:50:30.561+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9192125898465751720
+blogger_orig_url: http://milestone.topics.it/2013/11/ravendb-responders.html
+---
+
+<p><a href="http://ravendb.net/" target="_blank">RavenDB</a> has an really good extensibility support that is based on Bundles and Responders. Bundles can be seen as plugins they are the high level extensibility API. RavenDB comes with a lot of <a href="http://ravendb.net/docs/2.5/studio/bundles" target="_blank">built-in bundles</a> and it is <a href="http://ravendb.net/docs/2.5/server/extending/plugins?version=2.5" target="_blank">pretty easy to create our own</a>.</p> <p>On the other side responders are the low level API to extend RavenDB. If you are used to ASP.Net a responder can be compared to an HttpHandler, a responder in RavenDB is bound to a URI as in the following sample:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> MyResponder : AbstractRequestResponder
+{
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">string</span> UrlPattern
+    {
+        get { <span class="kwrd">return</span> <span class="str">"^/my/(.+)"</span>; }
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">string</span>[] SupportedVerbs
+    {
+        get { <span class="kwrd">return</span> <span class="kwrd">new</span> <span class="kwrd">string</span>[] { <span class="str">"GET"</span> }; }
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">void</span> Respond( IHttpContext context )
+    {
+        var transactionInformation = GetRequestTransaction( context );
+
+        <span class="kwrd">using</span> ( Database.DisableAllTriggersForCurrentThread() )
+        {
+            var result = <span class="kwrd">new</span> 
+            {
+                MyData = <span class="str">"Hi, there"</span>
+            };
+
+            context.WriteJson( result );
+        }
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>if we build our assembly and drop it in the “plugins” folder of the RavenDB server we can invoke our responder using the following URL: <a href="http://raven-server-url/databases/myDatabaseName/my">http://raven-server-url/databases/<strong><font style="background-color: #ffff00">myDatabaseName</font></strong>/<strong><font style="background-color: #00ff00">my</font></strong></a> 
+<p>The database name in the URL identifies for which database we want to trigger the responder and the “my” segment identifies, in this specific case, our responder since “my” matches the UrlPattern property of the responder itself. As we saw in the above sample we can specify http verbs we want to support and we also saw that we can write our response to the http response stream.</p>
+<p><strong>A real world usage: UserPermissions responder</strong></p>
+<p>RavenDB comes with a really amazing bundle, the <a href="http://ravendb.net/docs/2.5/server/extending/bundles/authorization" target="_blank">Authorization Bundle</a>, that let us define, in a really granular and flexible ways documents permissions.</p>
+<p>If we are developing a client, rich client, application such as a SPA with AngularJS we miss the ability to get in one single request the whole permission set of the current user.</p>
+<p><em>Q</em>: why we need it?<br><em>A</em>: simply because we want the client application to know upfront if a button, for example, should be hidden, or disabled, because the current user cannot perform that specific request.</p>
+<blockquote>
+<p><em>We will obviously perform security checks also on the server but we want a user friendly UI that prevents the user to issue non allowed requests and we do not want to ask to the server user permissions for each element on the UI, we want all the permissions up front.</em></p>
+<p><em>And…before you ask: we don’t really care if security settings change server side and the client is not immediately up-to-date because we know that security checks are performed on the server too.</em></p></blockquote>
+<p>we want to be able to issue a request such as <a href="http://raven-server-url/databases/myDatabaseName/my">http://raven-server-url/databases/<font style="background-color: #ffff00">myDatabaseName</font>/security/UserPermissions/<font style="background-color: #ffff00">user-id</font></a> to get <strong>all</strong> the user permissions taking into account the following facts:</p>
+<ul>
+<li>The authorization bundle has the concept of permission priority, we want permissions ordered by priority;</li>
+<li>The authorization bundle has the concept of users and roles and roles can be nested in roles, we want a flat list of permissions that honors the hierarchical relationship of the roles;</li></ul>
+<p>We start by defining the result we want:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> UserPermissionsResult
+{
+    <span class="kwrd">public</span> String UserId { get; set; }
+    <span class="kwrd">public</span> IEnumerable&lt;OperationPermission&gt; Permissions { get; set; }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Where the OperationPermission type is defined by the Authorization Bundle. The second thing we need is a standard way to compare permissions, a way that consider the whole permission structure:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> OperationPermissionComparer : IEqualityComparer&lt;OperationPermission&gt;
+{
+    <span class="kwrd">public</span> <span class="kwrd">bool</span> Equals( OperationPermission x, OperationPermission y )
+    {
+        var sameOp = x.Operation == y.Operation;
+        var sameAllow = x.Allow == y.Allow;
+        var samePriority = x.Priority == y.Priority;
+        var sameTagCount = x.Tags.Count == y.Tags.Count;
+        var sameTags = x.Tags.Select( t =&gt; t.Trim().ToLowerInvariant() )
+            .All( xt =&gt; y.Tags.Select( yt =&gt; yt.Trim().ToLowerInvariant() ).Contains( xt ) );
+
+        <span class="kwrd">return</span> sameOp &amp;&amp; sameAllow &amp;&amp; samePriority &amp;&amp; sameTagCount &amp;&amp; sameTags;
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">int</span> GetHashCode( OperationPermission obj )
+    {
+        var builder = <span class="kwrd">new</span> HashCodeBuilder( <span class="kwrd">typeof</span>( OperationPermission ).GetHashCode() );
+        builder.AddObject( obj.Operation );
+        builder.AddObject( obj.Allow );
+        builder.AddObject( obj.Priority );
+        <span class="kwrd">foreach</span> ( var t <span class="kwrd">in</span> obj.Tags )
+        {
+            builder.AddObject( t.Trim().ToLowerInvariant() );
+        }
+
+        <span class="kwrd">return</span> builder.CombinedHash32;
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>The HashCodeBuilder is provided by the <a href="http://radical.codeplex.com" target="_blank">Radical</a> toolkit.</p>
+<p>We can now <em>easily</em> glue everything together creating our responder:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> UserPermissionsResponder : AbstractRequestResponder
+{
+    <span class="kwrd">static</span> <span class="kwrd">readonly</span> OperationPermissionComparer operationPermissionComparer = <span class="kwrd">new</span> OperationPermissionComparer();
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">string</span> UrlPattern
+    {
+        get { <span class="kwrd">return</span> <span class="str">"^/security/UserPermissions/(.+)"</span>; }
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">string</span>[] SupportedVerbs
+    {
+        get { <span class="kwrd">return</span> <span class="kwrd">new</span> <span class="kwrd">string</span>[] { <span class="str">"GET"</span> }; }
+    }
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> <span class="kwrd">void</span> Respond( IHttpContext context )
+    {
+        var match = urlMatcher.Match( context.GetRequestUrl() );
+        var userId = match.Groups[ 1 ].Value;
+
+        var transactionInformation = GetRequestTransaction( context );
+
+        <span class="kwrd">if</span> ( String.IsNullOrWhiteSpace( userId ) )
+        {
+            context.SetStatusToBadRequest();
+            <span class="kwrd">return</span>;
+        }
+
+        <span class="kwrd">using</span> ( Database.DisableAllTriggersForCurrentThread() )
+        {
+            var user = <span class="kwrd">this</span>.GetDocumentAsEntity&lt;AuthorizationUser&gt;( userId );
+            <span class="kwrd">if</span> ( user == <span class="kwrd">null</span> )
+            {
+                context.SetStatusToBadRequest();
+                <span class="kwrd">return</span>;
+            }
+
+            <span class="rem">// permissions on user</span>
+            var permissions = from permission <span class="kwrd">in</span> user.Permissions
+                                select permission;
+
+            <span class="rem">// permissions on all user's roles</span>
+            permissions = permissions.Concat(
+                from roleName <span class="kwrd">in</span> GetHierarchicalNames( user.Roles )
+                let role = <span class="kwrd">this</span>.GetDocumentAsEntity&lt;AuthorizationRole&gt;( roleName )
+                <span class="kwrd">where</span> role != <span class="kwrd">null</span>
+                from permission <span class="kwrd">in</span> role.Permissions
+                select permission
+            );
+
+            var orderedPermissions = permissions.Distinct( operationPermissionComparer )
+                .OrderByDescending( x =&gt; x.Priority )
+                .ThenBy( x =&gt; x.Allow );
+
+            var result = <span class="kwrd">new</span> UserPermissionsResult()
+            {
+                UserId = userId,
+                Permissions = orderedPermissions.ToList()
+            };
+
+            context.WriteJson( result );
+        }
+    }
+
+    <span class="kwrd">private</span> <span class="kwrd">static</span> <span class="kwrd">string</span> GetParentName( <span class="kwrd">string</span> operationName )
+    {
+        <span class="kwrd">int</span> lastIndex = operationName.LastIndexOf( <span class="str">'/'</span> );
+        <span class="kwrd">if</span> ( lastIndex == -1 )
+            <span class="kwrd">return</span> <span class="str">""</span>;
+        <span class="kwrd">return</span> operationName.Substring( 0, lastIndex );
+    }
+
+    <span class="kwrd">private</span> <span class="kwrd">static</span> IEnumerable&lt;<span class="kwrd">string</span>&gt; GetHierarchicalNames( IEnumerable&lt;<span class="kwrd">string</span>&gt; names )
+    {
+        var hierarchicalNames = <span class="kwrd">new</span> HashSet&lt;<span class="kwrd">string</span>&gt;( StringComparer.InvariantCultureIgnoreCase );
+        <span class="kwrd">foreach</span> ( var name <span class="kwrd">in</span> names )
+        {
+            var copy = name;
+            <span class="kwrd">do</span>
+            {
+                hierarchicalNames.Add( copy );
+                copy = GetParentName( copy );
+            } <span class="kwrd">while</span> ( copy != <span class="str">""</span> );
+        }
+        <span class="kwrd">return</span> hierarchicalNames;
+    }
+
+    <span class="kwrd">private</span> T GetDocumentAsEntity&lt;T&gt;( <span class="kwrd">string</span> documentId ) <span class="kwrd">where</span> T : <span class="kwrd">class</span>
+    {
+        var document = <span class="kwrd">this</span>.Database.Get( documentId, <span class="kwrd">null</span> );
+        <span class="kwrd">if</span> ( document == <span class="kwrd">null</span> )
+            <span class="kwrd">return</span> <span class="kwrd">null</span>;
+        var entity = document.DataAsJson.JsonDeserialization&lt;T&gt;();
+        <span class="kwrd">return</span> entity;
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Besides the fact that the code is long we are doing some really simple steps:</p>
+<ul>
+<li>Using the built-in URL matcher we retrieve the supplied user id</li>
+<li>We disable all triggers in the database during our handling process;</li>
+<li>We iterate over all the user permissions, all the roles and nested roles permissions building the required list;</li>
+<li>We end sorting the list as the client expects it;</li></ul>
+<p>One thing to notice here is that even if we are server side, we are running in the RavenDB server process we are not forced to deal with raw json objects but we can de-serialize them into well-known C# types.</p>
+<p>.m</p>  

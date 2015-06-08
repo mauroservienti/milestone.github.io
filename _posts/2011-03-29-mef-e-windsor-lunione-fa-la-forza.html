@@ -1,0 +1,126 @@
+---
+layout: post
+title: 'MEF e Windsor: l’unione fa la forza :-)'
+date: '2011-03-29T09:15:00.000+02:00'
+author: Mauro Servienti
+tags:
+- MEF
+- Software Mason
+- Inversion of Control
+modified_time: '2012-02-22T09:19:46.983+01:00'
+thumbnail: https://lh3.googleusercontent.com/-i6wl5-zxyh0/T0SlIT_VfcI/AAAAAAAABzw/kuWa_AP3EFk/s72-c/wlEmoticon-smile_2_20.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-909607357968468763
+blogger_orig_url: http://milestone.topics.it/2011/03/mef-e-windsor-lunione-fa-la-forza.html
+---
+
+<span>Avevo dato uno <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3391464066196915283" target="_blank">sguardo a MEF</a> tempo fa, giusto uno sguardo. L’ho poi usato, in un piccolo progetto, per la gestione di un sistema basato su plugin, la morte sua, ed ero rimasto piacevolmente sorpreso dalla semplicità e rapidità con cui avevo messo in piedi la soluzione.</span><br>  <span>Una cosa che però mi ha sempre lasciato un po’ perplesso è che MEF non è un framework di Inversion of Control, come ad esempio il mio amato Castle Windsor, ma piuttosto è un motore per fare “component composition”, è possibile usarlo come motore per IoC ma vi perdete alcune delle feature più interessanti che tutti i motori per IoC mettono a disposizione. Un’altra importante differenza è che MEF ragiona sulle istanze e non sui tipi, non “registrate” un tipo ma piuttosto descrivete (con dei metadati) come volete che gli oggetti (e non le classi) vengano composte a runtime.</span><br>  <span><strong>Una coesistenza pacifica e proficua</strong></span><br>  <span><strong>Q</strong>: è possibile trarre il maggior beneficio dai due mondi?</span><br>  <span><strong>A</strong>: ovviamente la risposta è si, altrimenti che scriverei a fare? <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh3.googleusercontent.com/-i6wl5-zxyh0/T0SlIT_VfcI/AAAAAAAABzw/kuWa_AP3EFk/wlEmoticon-smile_2_20.png"></span><br>  <span><strong>Scenario</strong>: Diciamo che abbiamo una semplice applicazione che fa largo uso di “UI composition” e che per tutta una serie di buoni motivi ha necessariamente bisogno di molte delle feature esposte da un motore di IoC e non erogate da MEF, dall’altra parte però ci rendiamo conto che è ci sono alcune cose che sono una vera menata colossale da realizzare, non tanto difficili quando noiose:</span><br>  <ul>   <li>il discovery dei moduli installati;</li>    <li>il bootstrap dei singoli moduli;</li>    <li>la condivisione tra l’applicazione e i moduli del “container” (che ovviamente deve essere uno ed uno solo);</li> </ul>  <span>Quindi perché non pensare ad una cosa del tipo:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">public</font></font></span><font style="font-size: 12pt"> <span style="color: "><font color="#0000ff">sealed</font></span> <span style="color: "><font color="#0000ff">class</font></span> <span style="color: "><font color="#2b91af">ApplicationBootstrapper</font></span> : <span style="color: "><font color="#2b91af">WindsorApplicationBootstrapper</font></span>
+{
+	[<span style="color: "><font color="#2b91af">ImportMany</font></span>]
+	<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#2b91af">IEnumerable</font></span><<span style="color: "><font color="#2b91af">IWindsorInstaller</font></span>> Installers { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 
+	[<span style="color: "><font color="#2b91af">Export</font></span>]
+	[<span style="color: "><font color="#2b91af">Export</font></span>( <span style="color: "><font color="#0000ff">typeof</font></span>( <span style="color: "><font color="#2b91af">IServiceProvider</font></span> ) )]
+	<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#2b91af">IWindsorContainer</font></span> Container { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">set</font></span>; }
+ 
+	<span style="color: "><font color="#2b91af">CompositionContainer</font></span> MefContainer;
+ 
+	<span style="color: "><font color="#0000ff">protected</font></span> <span style="color: "><font color="#0000ff">override</font></span> <span style="color: "><font color="#2b91af">IWindsorContainer</font></span> CreateServiceProvider()
+	{
+		<span style="color: "><font color="#0000ff">this</font></span>.Container = <span style="color: "><font color="#0000ff">base</font></span>.CreateServiceProvider();
+ 
+		<span style="color: "><font color="#0000ff">var</font></span> catalog = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">DirectoryCatalog</font></span>( <span style="color: "><font color="#2b91af">Environment</font></span>.CurrentDirectory );
+		<span style="color: "><font color="#0000ff">this</font></span>.MefContainer = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">CompositionContainer</font></span>( catalog );
+ 
+		<span style="color: "><font color="#0000ff">return</font></span> <span style="color: "><font color="#0000ff">this</font></span>.Container;
+	}
+ 
+	<span style="color: "><font color="#0000ff">protected</font></span> <span style="color: "><font color="#0000ff">override</font></span> <span style="color: "><font color="#0000ff">void</font></span> InitializeEnvironment( <span style="color: "><font color="#2b91af">IWindsorContainer</font></span> container )
+	{
+		container.Register
+		(
+			<span style="color: "><font color="#2b91af">Component</font></span>.For<<span style="color: "><font color="#2b91af">CompositionContainer</font></span>>()
+				.Instance( <span style="color: "><font color="#0000ff">this</font></span>.MefContainer )
+		);
+ 
+		<span style="color: "><font color="#0000ff">this</font></span>.MefContainer.ComposeParts( <span style="color: "><font color="#0000ff">this</font></span> );
+ 
+		container.Install( <span style="color: "><font color="#0000ff">this</font></span>.Installers.ToArray() );
+ 
+		<span style="color: "><font color="#0000ff">base</font></span>.InitializeEnvironment( container );
+	}
+}</font></pre>
+</blockquote>
+
+<span>L’ApplicationBootstrapper è il “main entry point” della nostra applicazione (deriva da un WindsorApplicationBootstrapper che ha l’unico scopo di ridurre un po’ la <em>frizione</em>):</span><br>
+
+<ul>
+  <li>all’atto della creazione del container fa due cose:</li>
+
+  <ul>
+    <li>Imposta una proprietà pubblica con l’istanza del container appena creato, proprietà decorata con un attributo di MEF che identifica che quella proprietà è “esportabile”;</li>
+
+    <li>costruisce un’istanza di un CompositionContainer che è MEF;</li>
+  </ul>
+
+  <li>All’atto della configurazione:</li>
+
+  <ul>
+    <li>registra in Windsor MEF stesso al fine di renderlo disponibile al mondo;</li>
+
+    <li>chiede a MEF di comporre se stesso: questo scatena il discovery da parte di MEF di tutti i tipi importabili e di tutti i tipi esportabili;</li>
+
+    <li>A seguito del discovery sappiamo che MEF avrà popolato la proprietà pubblica “Installers” con tutte le istanze “esportate” di tipo IWindsorInstaller;</li>
+
+    <li>possiamo quindi chiedere a Windsor di completare il processo di configurazione;</li>
+  </ul>
+</ul>
+
+<span>In uno scenario di questo genere un modulo cosa deve fare? semplicemente ad esempio questo:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font style="font-size: 12pt">[<span style="color: "><font color="#2b91af">Export</font></span>( <span style="color: "><font color="#0000ff">typeof</font></span>( <span style="color: "><font color="#2b91af">IWindsorInstaller</font></span> ) )]
+<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">class</font></span> <span style="color: "><font color="#2b91af">PresentationInstaller</font></span> : <span style="color: "><font color="#2b91af">IWindsorInstaller</font></span>
+{
+	<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">void</font></span> Install( <span style="color: "><font color="#2b91af">IWindsorContainer</font></span> container, <span style="color: "><font color="#2b91af">IConfigurationStore</font></span> store )
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> descriptor = <span style="color: "><font color="#2b91af">AllTypes</font></span>.FromAssemblyNamed( <span style="color: "><font color="#a31515">"<em>MyAssembly</em>"</font></span> );
+ 
+		container.Register
+		(
+			descriptor.Where( t => t.Namespace.IsLike( <span style="color: "><font color="#a31515">"*.Presentation"</font></span> ) )
+				.Unless( t => t.IsAbstract || t.IsNested )
+				.Configure( d =>
+				{
+					<span style="color: "><font color="#0000ff">if</font></span>( d.Implementation.Name.IsLike( <span style="color: "><font color="#a31515">"*Shell*"</font></span> ) )
+					{
+						d.LifeStyle.Is( <span style="color: "><font color="#2b91af">LifestyleType</font></span>.Singleton );
+					}
+					<span style="color: "><font color="#0000ff">else</font></span>
+					{
+						d.LifeStyle.Is( <span style="color: "><font color="#2b91af">LifestyleType</font></span>.Transient );
+					}
+				} )
+				.WithService.Select( ( type, baseTypes ) =>
+				{
+					<span style="color: "><font color="#0000ff">var</font></span> all = type.GetInterfaces()
+							.Where( i => i.IsAttributeDefined<<span style="color: "><font color="#2b91af">ContractAttribute</font></span>>() );
+ 
+					<span style="color: "><font color="#0000ff">return</font></span> all;
+				} )
+		);
+ 
+		container.Register
+		(
+			descriptor.Where( t => t.Namespace.IsLike( <span style="color: "><font color="#a31515">"*.Presentation.Model"</font></span> ) )
+				.Unless( t => t.IsAbstract || t.IsNested )
+				.Configure( d => d.LifeStyle.Is( <span style="color: "><font color="#2b91af">LifestyleType</font></span>.Transient ) )
+		);
+	}
+}</font></pre>
+</blockquote>
+
+<span>Definiamo semplicemente un nuovo “installer” per Windsor e lo marchiamo come “esportabile” e MEF farà tutto il resto.</span><br>
+
+<span>Il tutto è di una semplicità disarmante e riduce drasticamente la complessità, ma ancor di più la quantità di codice ripetitivo e noioso, della realizzazione di un’applicazione modulare; non solo ma sulla falsariga di questo esempio si aprono scenari molto interessanti.</span><br>
+
+<span>.m</span><br>

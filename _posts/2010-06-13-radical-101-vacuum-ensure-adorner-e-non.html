@@ -1,0 +1,127 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): Ensure, Adorner e non solo.'
+date: '2010-06-13T18:57:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Windows Phone 7
+- Silverlight
+modified_time: '2012-02-16T07:19:19.704+01:00'
+thumbnail: https://lh6.googleusercontent.com/-ebhreB0QGAI/Tzyf240W7dI/AAAAAAAABZQ/94XsHfqY5RQ/s72-c/926795c2-fcc7-4726-85e2-3aa56a0a5ff5.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7814233767060428453
+blogger_orig_url: http://milestone.topics.it/2010/06/radical-101-vacuum-ensure-adorner-e-non.html
+---
+
+<span><a href="https://lh4.googleusercontent.com/-EI_p0_L-2us/Tzyf3sMN0-I/AAAAAAAABZY/uDxxqXZTUIU/cd1f7340-4125-4ece-aff2-3a3b95ab8d7e.png" rel="shadowbox"><img style="border-right-width: 0px; margin: 0px 10px 10px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Radical" border="0" alt="Radical" align="left" src="https://lh6.googleusercontent.com/-ebhreB0QGAI/Tzyf240W7dI/AAAAAAAABZQ/94XsHfqY5RQ/926795c2-fcc7-4726-85e2-3aa56a0a5ff5.png" width="37" height="64"></a> è live la prima alpha di <a href="http://radical.codeplex.com/" target="_blank">Radical</a> con il supporto per Silverlight 4 e Windows Phone 7.</span><br>  <span><strong>Che comprende?</strong></span><br>  <span><strong>…</strong>più o meno questo:</span><br>  <span><strong>Ensure<T></strong></span><br>  <span>Tutta l’infrastruttura di <a href="/search/label/ensure" target="_blank">Ensure</a> presente nella versione “desktop” è adesso disponibile anche per Silverlight e Windows Phone.</span><br>  <span><strong>Adorner/AdornerLayer</strong></span><br>  <span>In Wpf gli adorner sono la <a href="/search/label/adorner" target="_blank">manna dal cielo</a> per fare una innumerevole quantià di cose, Silveright e Windows Phone 7 non offrono il supporto per gli Adorner, purtroppo… ma dopo un po’ di ************ alla fine abbiamo gli Adorner in Silverlight e Windows Phone 7 e per non farci mancare nulla abbiamo anche gli AdornerLayer. Questo ci permette ad esempio di ottenere questo risultato:</span><br>  <span><a href="https://lh6.googleusercontent.com/-bG6pcxNbW8M/Tzyf5NHFdyI/AAAAAAAABZo/H3rXPNY07vs/e620cdc9-bda9-4482-90fd-c57d92995370.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-dPtI_YH5Feo/Tzyf4dminhI/AAAAAAAABZc/yTsBwgCailk/ca9e4413-84cb-4d8c-96cb-3708d043dcfa.png" width="244" height="128"></a> </span><br>  <span>Partendo da questo xaml (epurato dei fronzoli inutili all’esempio):</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage
+    </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Class</span><span style="color: blue">="Vacuum.Sample.MainPage"
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">controls</span><span style="color: blue">="clr-namespace:Topics.Radical.Windows.Controls;assembly=Radical.Windows"</span><span style="color: blue">></span><span style="color: blue">    
+    <</span><span style="color: #a31515">controls</span><span style="color: blue">:</span><span style="color: #a31515">AdornerLayer</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Grid </span><span style="color: red">Background</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">PhoneBackgroundBrush</span><span style="color: blue">}">            </span><span style="color: blue">
+            <</span><span style="color: #a31515">Button </span><span style="color: red">Click</span><span style="color: blue">="HyperlinkButton_Click" </span><span style="color: blue">
+                    </span><span style="color: red">Content</span><span style="color: blue">="Button" <br>                    </span><span style="color: red">Margin</span><span style="color: blue">="235,379,76,340" />
+            <</span><span style="color: #a31515">Image </span><span style="color: red">Margin</span><span style="color: blue">="20,19,0,0" 
+                   </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="image"  
+                   </span><span style="color: red">Stretch</span><span style="color: blue">="Fill" 
+                   </span><span style="color: red">Source</span><span style="color: blue">="/Vacuum.Sample;component/Images/MvpPhoto.jpg" 
+                   </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Left" 
+                   </span><span style="color: red">Width</span><span style="color: blue">="178" </span><span style="color: red">Height</span><span style="color: blue">="196" 
+                   </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" /></span><span style="color: green">
+        </span><span style="color: blue"></</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+    </</span><span style="color: #a31515">controls</span><span style="color: blue">:</span><span style="color: #a31515">AdornerLayer</span><span style="color: blue">>
+</</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>L’unica differenza rispetto al solito è che tutto è racchiuso in un AdornerLayer, in realtà non sarebbe necessario ma ho preferito mantenere la simmetria con Wpf. 
+  <br>Anche Wpf ha il concetto di adorner layer che ha lo scopo di raggruppare più adorner e definirne i “limiti” visuali. In Wpf non è necessario inserire manualmente un adorner layer perchè la Window ne contiene sempre almeno uno.</span><br>
+
+<span>Per ottenere l’effetto di cui sopra non ci resta che definire, in questo esempio da codice, il contenuto del nostro adorner:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public partial class </span><span style="color: #2b91af">MainPage </span>: <span style="color: #2b91af">PhoneApplicationPage
+</span>{
+    <span style="color: #2b91af">OverlayAdorner </span>adorner;
+
+    <span style="color: blue">public </span>MainPage()
+    {
+        InitializeComponent();
+
+        <span style="color: blue">var </span>adornerContent = <span style="color: blue">new </span><span style="color: #2b91af">Border</span>()
+        {
+            BorderThickness = <span style="color: blue">new </span><span style="color: #2b91af">Thickness</span>( 1 ),
+            BorderBrush = <span style="color: blue">new </span><span style="color: #2b91af">SolidColorBrush</span>( <span style="color: #2b91af">Colors</span>.Red ),
+            Child = <span style="color: blue">new </span><span style="color: #2b91af">TextBlock</span>()
+            {
+                VerticalAlignment = <span style="color: #2b91af">VerticalAlignment</span>.Bottom,
+                Foreground = <span style="color: blue">new </span><span style="color: #2b91af">SolidColorBrush</span>( <span style="color: #2b91af">Colors</span>.Green ),
+                Text = <span style="color: #a31515">"I'm busy right now..."</span>,
+                FontWeight = <span style="color: #2b91af">FontWeights</span>.Bold,
+                RenderTransform = <span style="color: blue">new </span><span style="color: #2b91af">RotateTransform</span>()
+                {
+                    Angle = -45
+                }
+            }
+        };
+
+        <span style="color: blue">this</span>.adorner = <span style="color: blue">new </span><span style="color: #2b91af">OverlayAdorner</span>( <span style="color: blue">this</span>.image, adornerContent );
+    }</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>OverlayAdorner deriva da Adorner e imposta IsHitTestVisible a false in modo da rendere l’adorner <em>trasparente</em> ai click del mouse. 
+
+  <br>Che cosa abbiamo fatto:</span><br>
+
+<ul>
+  <li>In fase di creazione della page creiamo il contenuto dell’adorner: 
+    <ul>
+      <li>un bordo con del testo ruotato di 45°; </li>
+    </ul>
+  </li>
+
+  <li>creiamo l’istanza dell’adorner passandogli nel costruttore: 
+    <ul>
+      <li>un riferimento allo UIElement che dovrà “<em>adornare</em>”; </li>
+
+      <li>un riferimento al contenuto che dovrà essere usato; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>Per visualizzare l’adorner non ci resta che <em>appenderlo</em> al visual tree:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">private void </span>HyperlinkButton_Click( <span style="color: blue">object </span>sender, <span style="color: #2b91af">RoutedEventArgs </span>e )
+{
+    <span style="color: blue">var </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( <span style="color: blue">this</span>.image );
+    <span style="color: blue">var </span>adorners = layer.GetAdorners( <span style="color: blue">this</span>.image );
+    <span style="color: blue">if</span>( adorners.Contains( <span style="color: blue">this</span>.adorner ) )
+    {
+        layer.Remove( <span style="color: blue">this</span>.adorner );
+    }
+    <span style="color: blue">else
+    </span>{
+        layer.Add( <span style="color: blue">this</span>.adorner );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>utilizzando la stessa tecnica che useremmo con Wpf e quindi passando dall’AdornerLayer.</span><br>
+
+<span><strong>More2Come :-)</strong></span><br>
+
+<span>Ci sono altre novità di cui parlerò a breve:</span><br>
+
+<ul>
+  <li>Utilities per Model View ViewModel; </li>
+
+  <li>Multi-threading </li>
+
+  <li>Memento </li>
+</ul>
+
+<span>Trovate il tutto su CodePlex: <a title="http://radical.codeplex.com/releases/view/46757" href="http://radical.codeplex.com/releases/view/46757">http://radical.codeplex.com/releases/view/46757</a></span><br>
+
+<span>.m</span><br>
+

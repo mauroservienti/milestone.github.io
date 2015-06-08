@@ -1,0 +1,32 @@
+---
+layout: post
+title: 'EmitMapper: tutto bello ma come le mappiamo le liste?'
+date: '2011-05-20T07:14:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Architecture
+- EmitMapper
+- Extensibility
+modified_time: '2012-02-22T09:21:53.637+01:00'
+thumbnail: https://lh5.googleusercontent.com/-ZIuJoft89Rw/T0SloPIsrrI/AAAAAAAAB3k/GdcZAq5A9uk/s72-c/wlEmoticon-smilewithtongueout_2_20.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1405779193826218911
+blogger_orig_url: http://milestone.topics.it/2011/05/emitmapper-tutto-bello-ma-come-le.html
+---
+
+<span>Abbiamo introdotto <a href="http://mauroservienti.blogspot.com/2011/05/pensare-lestendibilita-non-basta-il.html" target="_blank">le problematiche e lo scenario</a>, ma non abbiamo parlato delle soluzione. Cominciamo con il vedere cosa vogliamo dal punto di vista del client:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">mapperManager.GetMapper<<span style="color: "><font color="#2b91af">SpecialCategory</font></span>, <span style="color: "><font color="#2b91af">SpecialCategoryDto</font></span>>
+(<br>     <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">MappingConfiguration</font></span>()<br>         .OnListItemMapping<<span style="color: "><font color="#2b91af">Category</font></span>, <span style="color: "><font color="#2b91af">CategoryDto</font></span>>( e =><br>         {<br>             <span style="color: "><font color="#0000ff">if</font></span>( e.Source <span style="color: "><font color="#0000ff">is</font></span> <span style="color: "><font color="#2b91af">SpecialCategory</font></span> )<br>             {<br>                 e.Destination = specialCategoryMapper.Map( ( <span style="color: "><font color="#2b91af">SpecialCategory</font></span> )e.Source );<br>                 e.Handled = <span style="color: "><font color="#0000ff">true</font></span>;<br>             }<br>         } )<br>         .OnListItemMapping<<span style="color: "><font color="#2b91af">SpecialReferencedType</font></span>>( e =><br>         {<br>             e.Destination = specialReferencedTypeMapper.Map( ( <span style="color: "><font color="#2b91af">SpecialReferencedType</font></span> )e.Source );<br>             e.Handled = <span style="color: "><font color="#0000ff">true</font></span>;<br>         } )<br>         .DeepMap()<br>         .ConvertUsing<<span style="color: "><font color="#2b91af">Category</font></span>, <span style="color: "><font color="#2b91af">Int32</font></span>>( ei => ei == <span style="color: "><font color="#0000ff">null</font></span> ? -1 : ei.Id )
+);</font></font></pre>
+</blockquote>
+
+<span>Vi ricordate lo scenario? bene, cosa risolviamo con la nostra configurazione? due possibili casistiche:</span><br>
+
+<ul>
+  <li><strong>OnListItemMapping<TSource, TDestination></strong>: ci permette di intercettare il processo di mapping in modalità wide-scoped, quindi devo esplicitare i tipi noti ad EmitMapper e non gli eventuali tipi derivati, degli elementi di una list esposta dal nostro modello e decidere se ci interessa prendere in carico il processo di mapping; </li>
+
+  <li><strong>OnListItemMapping<TSource></strong>: ci permette di intercettare il processo di mapping in modalità narrow-scoped, quindi posso esplicitare un qualsiasi tipo e se l’item che si sta convertendo è di quel tipo specifico l’interceptor verrà invocato, degli elementi di una list esposta dal nostro modello e decidere se ci interessa prendere in carico il processo di mapping; </li>
+</ul>
+
+<span>Non sto qui a dilungarmi su come sono state risolte le problematiche, i sorgenti sono su <a href="http://radical.codeplex.com/" target="_blank">Radical</a> e le cicche americane sprecate per combattere le idiosincrasie di EmitMapper sono veramente tante… <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="https://lh5.googleusercontent.com/-ZIuJoft89Rw/T0SloPIsrrI/AAAAAAAAB3k/GdcZAq5A9uk/wlEmoticon-smilewithtongueout_2_20.png"></span><br>
+
+<span>.m</span><br>

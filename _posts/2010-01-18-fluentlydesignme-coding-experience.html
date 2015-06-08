@@ -1,0 +1,64 @@
+---
+layout: post
+title: 'Fluently.Design().Me: “coding experience requirements”'
+date: '2010-01-18T14:30:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Fluent Interfaces
+modified_time: '2012-08-04T17:51:07.491+02:00'
+thumbnail: https://lh4.googleusercontent.com/-gIjH3Q5dGoU/TzJx7Vzo7pI/AAAAAAAABDg/K_ffzC0dOuM/s72-c/e50401ee-972a-4e12-a54d-816c9512b7a8.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6195881680734770140
+blogger_orig_url: http://milestone.topics.it/2010/01/fluentlydesignme-coding-experience.html
+---
+
+<span>
+	<a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3617244789599944224" target="_blank">Abbiamo inziato</a> a parlare di Fluent Interfaces.</span><br>
+<span>
+	<strong>Perchè una Fluent Interface?</strong></span><br>
+<span>
+	2 motivi:</span><br>
+<ol>
+	<li>
+		è un gran comodo poter “guidare” l’utilizzatore finale facendo si che l’intellisense vi proponga solo le cose sensate per il contesto corrente;</li>
+	<li>
+		è un gran facile leggere codice scritto in maniera fluente;</li>
+</ol>
+<span>
+	è tutto? sni… :-)</span><br>
+<span>
+	Nonostante sia un fan di Unit testing e di TDD sono soprattutto innamorato di <em>san csc.exe</em> e adoro gli errori del compilatore, quindi tutto ciò che posso far diventare fortemente strongly-typed diventerà fortemente strongly-typed.</span><br>
+<span>
+	Questo effettivamente è terribile:</span><br>
+<blockquote>
+	<pre class="code"><span style="color: blue">var </span>worker = <span style="color: blue">new </span><span style="color: #2b91af">BackgroundWorker</span>();
+worker.DoWork += ( s, e ) => 
+{
+    <span style="color: blue">var </span>arg = ( <span style="color: blue">int </span>)e.Argument;
+};
+
+worker.RunWorkerAsync( <span style="color: #a31515">"this should be an integer :-)" </span>);</pre></blockquote>
+<span>
+	perchè sbomba da paura a runtime :-)</span><br>
+<span>
+	<strong>Un altro problema…</strong></span><br>
+<span>
+	Scrivo questo:</span><br>
+<blockquote>
+	<span>
+		<a href="https://lh5.googleusercontent.com/-VmkJsDXTl30/TzJx7xEr5jI/AAAAAAAABDk/ZP5ogq6kNts/5ccd2dce-c0fb-47d6-80d2-146eefa76691.png" rel="shadowbox"><img alt="image" border="0" height="129" src="https://lh4.googleusercontent.com/-gIjH3Q5dGoU/TzJx7Vzo7pI/AAAAAAAABDg/K_ffzC0dOuM/e50401ee-972a-4e12-a54d-816c9512b7a8.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="293"></a></span><br>
+</blockquote>
+<span>
+	Notate che l’intellisense mi propone ancora il metodo “AndAfterDo( … )” e pure il metodo “Cancel()” entrambi senza senso in questo contesto? il primo perchè già usato mentre il secondo inutile se il worker non è ancora in esecuzione.</span><br>
+<span>
+	Quindi una delle difficoltà vere del design, e della realizzazione, di una <u>buona</u> Fluent Interface è quella di essere in grado di offrire una “coding experience” degna del suo nome, come ad esempio questa:</span><br>
+<blockquote>
+	<span>
+		<a href="https://lh4.googleusercontent.com/-eK8xVqS-GZM/TzJx8mAPVII/AAAAAAAABD0/_EE1m2emGUo/5fd878fe-71f9-49c9-b517-92d207bf6f6c.png" rel="shadowbox"><img alt="image" border="0" height="159" src="https://lh6.googleusercontent.com/-zP3ENYCkfXY/TzJx8B0_J6I/AAAAAAAABDs/kPRiXW_sRlE/3c055fa9-e8ce-4e9d-a476-efe3d557387c.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="229"></a> <a href="https://lh6.googleusercontent.com/-gFlnr5hTG3M/TzJx9-xQNpI/AAAAAAAABEE/_Tw0aKYeIpg/7bd41beb-dfd7-421b-8030-356360ee5857.png" rel="shadowbox"><img alt="image" border="0" height="159" src="https://lh5.googleusercontent.com/-7oRvx0ZU_Ew/TzJx9P0q9mI/AAAAAAAABEA/kvvNc0XOpgY/e8a6d919-ba62-4e2f-a3fa-d732b8b9ab67.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a></span><br>
+</blockquote>
+<span>
+	dove dopo aver fatto la configurazione del worker posso solo ed esclusivamente mandarlo in esecuzione rendendo di fatto impossibile che il programmatore sbagli ad utilizzare il componente.</span><br>
+<span>
+	Al prossimo giro vediamo come risolvere questo e un altro interessante problema del design di un componente che espone una Fluent Interface.</span><br>
+<span>
+	.m</span><br>

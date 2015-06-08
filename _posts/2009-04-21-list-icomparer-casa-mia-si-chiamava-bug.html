@@ -1,0 +1,86 @@
+---
+layout: post
+title: List<T>.Sort( IComparer<T> )… a casa mia si chiama(va) bug…
+date: '2009-04-21T14:04:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-01-31T14:04:11.513+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6011258017824499523
+blogger_orig_url: http://milestone.topics.it/2009/04/list-icomparer-casa-mia-si-chiamava-bug.html
+---
+
+<span>Noto uno strano comportamento nel metodo <em>Sort()</em> della lista generica <em>List<T></em>.</span><br>  <span>Preambolo. Avete una classe del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Tupla
+</span>{
+    <span style="color: blue">public </span><span style="color: #2b91af">Int32 </span>Value { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Description { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+}</pre>
+</blockquote>
+
+<span>ne avete <em>n</em> istanze in una lista e volete ordinare la lista in base al valore della proprietà <em>Value</em>, per farlo è necessario utilizzare un <em>IComparer<T></em> custom, una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">TuplaComparer </span>: <span style="color: #2b91af">IComparer</span><<span style="color: #2b91af">Tupla</span>>
+{
+    <span style="color: blue">public int </span>Compare( <span style="color: #2b91af">Tupla </span>x, <span style="color: #2b91af">Tupla </span>y )
+    {
+        <span style="color: blue">return </span>x.Value.CompareTo( y.Value );
+    }
+}</pre>
+</blockquote>
+
+<span>peccaco che succedano un po’ di cose curiose :-D, questo test fallisce miseramente:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>tuplaComparer_using_listOfT_sort_should_sort_as_expected()
+{
+    <span style="color: blue">var </span>list = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">Tupla</span>>()
+    {
+        <span style="color: blue">new </span><span style="color: #2b91af">Tupla</span>() { Value = 0, Description = <span style="color: #a31515">"B" </span>},
+        <span style="color: blue">new </span><span style="color: #2b91af">Tupla</span>() { Value = 0, Description = <span style="color: #a31515">"A" </span>}
+    };
+
+    list.Sort( <span style="color: blue">new </span><span style="color: #2b91af">TuplaComparer</span>() );
+
+    <span style="color: #2b91af">Assert</span>.AreEqual<<span style="color: #2b91af">String</span>>( <span style="color: #a31515">"B"</span>, list[ 0 ].Description );
+    <span style="color: #2b91af">Assert</span>.AreEqual<<span style="color: #2b91af">String</span>>( <span style="color: #a31515">"A"</span>, list[ 1 ].Description );
+}</pre>
+</blockquote>
+
+<span><a href="http://11011.net/software/vspaste"></a>il metodo Sort() cioè swappa gli elementi uguali, ma secondo me non è il comportamento corretto, se sono uguali, e lo dice il  vostro <em>IComparer<T></em> perchè ritorna 0, devono restare al loro posto e non essere spostati.</span><br>
+
+<span>Utilizzando infatti un altro meccanismo di sort il comportamento è quello atteso:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>tuplaComparer_using_linq_sort_should_sort_as_expected()
+{
+    <span style="color: blue">var </span>list = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">Tupla</span>>()
+    {
+        <span style="color: blue">new </span><span style="color: #2b91af">Tupla</span>() { Value = 0, Description = <span style="color: #a31515">"B" </span>},
+        <span style="color: blue">new </span><span style="color: #2b91af">Tupla</span>() { Value = 0, Description = <span style="color: #a31515">"A" </span>}
+    };
+
+    <span style="color: blue">var </span>actual = list.OrderBy( t => t, <span style="color: blue">new </span><span style="color: #2b91af">TuplaComparer</span>() );
+
+    <span style="color: #2b91af">Assert</span>.AreEqual<<span style="color: #2b91af">String</span>>( <span style="color: #a31515">"B"</span>, actual.ElementAt( 0 ).Description );
+    <span style="color: #2b91af">Assert</span>.AreEqual<<span style="color: #2b91af">String</span>>( <span style="color: #a31515">"A"</span>, actual.ElementAt( 1 ).Description );
+}</pre>
+</blockquote>
+
+<span><a href="http://11011.net/software/vspaste"></a>In questo caso, utilizzando lo stesso <em>IComparer<T></em>, ma passando dalla <em>OrderBy<T></em> di Linq to Objects la cosa funziona come mi aspetto e infatti il test passa.</span><br>
+
+<span>A casa mia si chiama <strike>bug</strike>, che ne pensate?</span><br>
+
+<span><font color="#ff0000">Update</font>:</span><br>
+
+<blockquote>
+  <span>Non è un bug ma un comportamento documentato: <a title="http://msdn.microsoft.com/en-us/library/234b841s.aspx" href="http://msdn.microsoft.com/en-us/library/234b841s.aspx">http://msdn.microsoft.com/en-us/library/234b841s.aspx</a></span><br>
+
+  <span>Si chiama “<em>Unstable Sort</em>” e non garantisce l’ordine degli elementi in caso di uguaglianza, esattamente il mio caso, mentre la <a href="http://msdn.microsoft.com/en-us/library/bb549422.aspx" target="_blank">OrderBy<T>()</a> invece implementa uno “<em>Stable Sort</em>” garantendo l’ordine degli elementi in caso di uguaglianza.</span><br>
+
+  <span>Grazie a <a href="http://blogs.ugidotnet.org/luka" target="_blank">Luka</a> per la segnalazione.</span><br>
+</blockquote>
+
+<span>.m</span><br>

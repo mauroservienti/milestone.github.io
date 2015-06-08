@@ -1,0 +1,242 @@
+---
+layout: post
+title: 'Il piacere delle “fluent interfaces”: AsyncWorker & Ensure'
+date: '2009-02-08T17:23:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-31T14:02:47.170+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-697151370555572637
+blogger_orig_url: http://milestone.topics.it/2009/02/il-piacere-delle-fluent-interfaces.html
+---
+
+<span>Visto che abbiamo inziato a ballare… balliamo :-D</span><br>  <span>Gli anonymous methods e ancor di più le lambda expressions introducono la possibilità di “scroccare” al proprio codice un’espressvità eccelsa, imho… ;-)</span><br>  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: blue">var </span>worker = <span style="color: blue">new </span><span style="color: #2b91af">BackgroundWorker</span>();
+        worker.DoWork += <span style="color: blue">new </span><span style="color: #2b91af">DoWorkEventHandler</span>( OnWorkerDoWork );
+        worker.RunWorkerCompleted += <span style="color: blue">new </span><span style="color: #2b91af">RunWorkerCompletedEventHandler</span>( OnWorkerRunWorkerCompleted );
+
+        worker.RunWorkerAsync();
+    }
+
+    <span style="color: blue">static void </span>OnWorkerDoWork( <span style="color: blue">object </span>sender, <span style="color: #2b91af">DoWorkEventArgs </span>e )
+    {
+        <span style="color: green">//Code...
+    </span>}
+
+    <span style="color: blue">static void </span>OnWorkerRunWorkerCompleted( <span style="color: blue">object </span>sender, <span style="color: #2b91af">RunWorkerCompletedEventArgs </span>e )
+    {
+        <span style="color: green">//Code
+    </span>}
+}</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>Questo esempio non ha assolutamente nulla di sbagliato, ma questo:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: blue">var </span>worker = <span style="color: blue">new </span><span style="color: #2b91af">BackgroundWorker</span>();
+        worker.DoWork += ( s, e ) => { <span style="color: green">/* code */ </span>};
+        worker.RunWorkerCompleted += ( s, e ) => { <span style="color: green">/* code */ </span>};
+
+        worker.RunWorkerAsync();
+    }
+}</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>forse, questione di gusti sia chiaro, in termini di leggibilità vince. Possiamo però andare oltre e “produrre”, sempliemente wrappando il BackgroundWorker e non reinventando la ruota, questo:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: #2b91af">AsyncWorker</span>.Create<<span style="color: #2b91af">TArgument</span>, <span style="color: #2b91af">TResult</span>>()
+            .BeforeExecution( arg => { <span style="color: green">/* code */ </span>} )
+            .OnExecution( result => { <span style="color: green">/* code */ </span>} )
+            .OnAsyncError( err => { <span style="color: green">/* code */ </span>} )
+            .Run( <span style="color: #a31515">argument… </span>);
+    }
+}</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>rendendo, sempre imho, ancora più bello il risultato. Nello specifico l’AsyncWorker è nato per l’uso in un’applicazione WPF e quindi implementa di suo il dispatch degli eventi nel thread corretto sempre in maniera fluente:</span><br>
+
+<pre class="code"><span style="color: #2b91af">AsyncWorker</span>.Create<<span style="color: #2b91af">String</span>, <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">IMyEntity</span>>>()<br>    .DispatchUsing( dispatcher )
+    .NotifyUsing( broker )<br>    ....</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>Spinto dalla stessa necessità di alta leggibilità, di standardizzazione, di semplicità e rapidità di scrittura, in attesa del framework 4.0 (ndr CodeContracts dato che PostSharp funziona a singhiozzo…) mi sono scritto una semplicissima libreria per fare la validazione dei parametri in ingresso ad un metodo:</span><br>
+
+<pre class="code"><span style="color: blue">public static class </span><span style="color: #2b91af">Ensure
+</span>{
+<span style="color: gray">    </span><span style="color: blue">public static </span><span style="color: #2b91af">Ensure</span><T> That<T>( T obj )
+    {
+        <span style="color: blue">return new </span><span style="color: #2b91af">Ensure</span><T>( obj );
+    }
+}</pre>
+
+<span>la classe static ensure offre un entry point statico per supportare le fluent interface, grazie alla type inference è possibile scrivere semplicemente:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: blue">var </span>ensure = <span style="color: #2b91af">Ensure</span>.That( argument );
+}</pre>
+
+<span><a href="http://11011.net/software/vspaste"></a>e avere in mano un Ensure<String>. La classe generica Ensure<T>, che ha comunque un costruttore pubblico per consetire l’uso tradizionale, ha alcuni metodi utili per la validazione in maniera fluente:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: #2b91af">Ensure</span>.That( argument ).IsNotNull();
+}</pre>
+
+<span>che è implementato così:</span><br>
+
+<pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> IsNotNull()
+{
+    <span style="color: blue">this</span>.If( s => s == <span style="color: blue">null </span>)
+        .Then( ( obj ) =>
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: blue">this</span>.Name );
+        } );
+
+    <span style="color: blue">return this</span>;
+}</pre>
+
+<span>Il metodo Named( String ) serve per assegnare un nome al parametro che si sta validando, in modo che le eventuali exception abbiano il “parameterName” correttamente compilato.</span><br>
+
+<pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> Named( <span style="color: #2b91af">String </span>parameterName )
+{
+    <span style="color: blue">this</span>.Name = parameterName;
+    <span style="color: blue">return this</span>;
+}</pre>
+
+<span>Una prima implementazione prevedeva un uso, <a href="http://blogs.ugidotnet.org/bmatte/archive/2008/11/28.aspx" target="_blank">decisamente sagace</a>, delle lambda expression per evitare quella che a tutti gli effetti è una bruttura e consentire di scrivere, grazie a questo cotruttore:</span><br>
+
+<pre class="code"><span style="color: blue">public </span>Ensure( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> obj )
+{
+    <span style="color: blue">if</span>( obj == <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"obj"</span>, <span style="color: #a31515">"Cannot use a null Expression<Func<T>> as Ensure ctor parameter." </span>);
+    }
+
+    <span style="color: #2b91af">Func</span><T> func = obj.Compile();
+    <span style="color: blue">this</span>.InspectedObject = func();
+
+    <span style="color: blue">var </span>expression = obj.Body <span style="color: blue">as </span><span style="color: #2b91af">MemberExpression</span>;
+    <span style="color: blue">var </span>member = expression.Member <span style="color: blue">as </span><span style="color: #2b91af">FieldInfo</span>;
+    <span style="color: blue">this</span>.Name = member.Name;
+}</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>e questo entry point:</span><br>
+
+<pre class="code"><span style="color: blue">public static </span><span style="color: #2b91af">Ensure</span><T> That<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> obj )
+{
+    <span style="color: blue">return new </span><span style="color: #2b91af">Ensure</span><T>( obj );
+}</pre>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>questa cosa secondo me bellissima:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: #2b91af">Ensure</span>.That( ()=> argument ).IsNotNull();
+}</pre>
+
+<span>peccato che tutto ciò abbia delle performance che non rasentano neanche lontanamenete l’accettabile… veramente un peccato.</span><br>
+
+<span>Tornando all’implementazione atttuale quello che abbiamo visto lascia intendere che ci sia un metodo If(), un metodo Then() e anche, perchè no, un metodo Else() che accettano dei delegati (Predicate<T>/Action<T>):</span><br>
+
+<pre class="code"><span style="color: #2b91af">Boolean </span>state = <span style="color: blue">false</span>;<span style="color: gray">
+</span><span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> If( <span style="color: #2b91af">Predicate</span><T> predicate )
+{
+    state = predicate( <span style="color: blue">this</span>.InspectedObject );
+    <span style="color: blue">return this</span>;
+}
+<span style="color: gray">
+</span><span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> Then( <span style="color: #2b91af">Action</span><T> action )
+{
+    <span style="color: blue">if</span>( state )
+    {
+        action( <span style="color: blue">this</span>.InspectedObject );
+    }
+
+    <span style="color: blue">return this</span>;
+}
+
+<span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> Else( <span style="color: #2b91af">Action</span><T> action )
+{
+    <span style="color: blue">if</span>( !state )
+    {
+        action( <span style="color: blue">this</span>.InspectedObject );
+    }
+
+    <span style="color: blue">return this</span>;
+}
+<span style="color: gray">
+</span><span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> Then( <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>> action )
+{
+    <span style="color: blue">if</span>( state )
+    {
+        action( <span style="color: blue">this</span>.InspectedObject, <span style="color: blue">this</span>.Name );
+    }
+
+    <span style="color: blue">return this</span>;
+}
+
+<span style="color: blue">public </span><span style="color: #2b91af">Ensure</span><T> Else( <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>> action )
+{
+    <span style="color: blue">if</span>( !state )
+    {
+        action( <span style="color: blue">this</span>.InspectedObject, <span style="color: blue">this</span>.Name );
+    }
+
+    <span style="color: blue">return this</span>;
+}</pre>
+
+<span>Ci sono poi una serie di extension methods per aggiungere funzionalità per tipi specifici di Ensure<T>, ad esempio:</span><br>
+
+<pre class="code"><span style="color: blue">public static class </span><span style="color: #2b91af">StringEnsureExtension
+</span>{<span style="color: gray">
+    </span><span style="color: blue">public static </span><span style="color: #2b91af">Ensure</span><<span style="color: #2b91af">String</span>> IsNotEmpty( <span style="color: blue">this </span><span style="color: #2b91af">Ensure</span><<span style="color: #2b91af">String</span>> validator )
+    {
+        validator.If( s => s.Length == 0 )
+            .Then( ( obj ) =>
+            {
+                <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentOutOfRangeException</span>( validator.Name );
+            } );
+
+        <span style="color: blue">return </span>validator;
+    }
+}</pre>
+
+<span>che fa si che se il parametro validato è di tipo System.String possiamo scrivere:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: #2b91af">Ensure</span>.That( argument )
+        .Named( <span style="color: #a31515">"argument" </span>)
+        .IsNotNull()
+        .IsNotEmpty();
+}</pre>
+
+<span>che è più leggibile/manutenibile di:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: blue">if</span>( argument == <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"argument" </span>);
+    }
+
+    <span style="color: blue">if</span>( argument.Length == 0 )
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentOutOfRangeException</span>( <span style="color: #a31515">"argument" </span>);
+    }
+}</pre>
+
+<span>Buona “fine” domenica a tutti ;-)</span><br>
+
+<span>.m<a href="http://11011.net/software/vspaste"></a></span><br>

@@ -1,0 +1,181 @@
+---
+layout: post
+title: IMessageBroker
+date: '2009-02-08T13:08:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-01-31T14:02:30.864+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1281487989644186604
+blogger_orig_url: http://milestone.topics.it/2009/02/imessagebroker.html
+---
+
+<span><a target="_blank" href="http://blogs.ugidotnet.org/topics/archive/2009/02/07/95412.aspx#1415883">Detto</a> fatto :-D</span><br>
+<span>Pochissimo tempo fa ho fatto una <a target="_blank" href="http://blogs.ugidotnet.org/topics/archive/2009/02/07/spettacolo.aspx">lunga digressione</a> su Model-View-ViewModel calato in applicazione complessa dove la complessità risiede principalmente lato presentation.</span><br>
+<span>Una delle necessità è quella di mantenere la separazione tra i vari ViewModel al fine di consentire agili refactoring dell’interfaccia utente e volendo anche molto altro. L’inghippo purtroppo è che i ViewModel in qualche modo devono comunicare tra di loro, l’esempio potrebbe essere:</span><br>
+<ul>
+    <li>finestra principale, la Shell (terminologia presa in prestito da PRISM), che ospita 2 “region”:
+    <ul>
+        <li>Region 1: user control per la ricerca/visualizzazione dei risultati; </li>
+        <li>Region 2: user control, “nascosto” dentro un AdornerLayer, che funge da “<em>BusyBox</em>”; </li>
+    </ul>
+    </li>
+    <li>durante un’operazione asincrona vogliamo visualizzare una sorta di dialo di attesa; </li>
+</ul>
+<span>Per far si che i due ViewModel possano cominicare tra loro senza accoppiarli, ad esempio con un evento, abbiamo bisogno di mettere in mezzo un terzo attore, noto ad entrambi che faccia il dispatch dei messaggi:</span><br>
+<pre class="code"><span style="COLOR: blue">public interface </span><span style="COLOR: #2b91af">IMessageBroker
+</span>{
+<span style="COLOR: gray">    </span><span style="COLOR: blue">void </span>Subscribe<T>( <span style="COLOR: #2b91af">Object </span>subscriber, System.<span style="COLOR: #2b91af">Action</span><T> callback ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage</span>;
+<span style="COLOR: gray">    </span><span style="COLOR: blue">void </span>Unsubscribe( <span style="COLOR: #2b91af">Object </span>subscriber );
+<span style="COLOR: gray">    </span><span style="COLOR: blue">void </span>Unsubscribe<T>( <span style="COLOR: #2b91af">Object </span>subscriber ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage</span>;
+<span style="COLOR: gray">    </span><span style="COLOR: blue">void </span>Unsubscribe<T>( <span style="COLOR: #2b91af">Object </span>subscriber, System.<span style="COLOR: #2b91af">Action</span><T> callback ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage</span>;
+
+<span style="COLOR: gray">    </span><span style="COLOR: blue">void </span>Post<T>( T message ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage</span>;
+}</pre>
+<span>Una rapida carrellata sull’interfaccia:</span><br>
+<ul>
+    <li>Subscribe: il subscriber chiede al message borker di essere notificato, invocando il delegato passsato come secondo parametro, quando un messaggio di tipo T viene postato; </li>
+    <li>i 3 overload di Unsubscribe permettono rispettivamente di:
+    <ul>
+        <li>deregistrare la richiesta di notifica, da parte di un subscriber, per un determinato messaggio registrato con una specifica callback; </li>
+        <li>deregistrare tutte le richieste di notifica per un determinato messaggio T da parte di uno specifico subscriber; </li>
+        <li>deregistrare tutte le richieste di notifica di uno specifico subscriber per tutti i messaggi sottoscritti a prescindere dal tipo di messaggio; </li>
+    </ul>
+    </li>
+    <li>Post: naturalmente ha o scopo di “postare” un messaggio di tipo T; </li>
+</ul>
+<span>IMessage per ora è semplicemente un’interfaccia vuota, li per possibili implementazioni future.</span><br>
+<span>Prima dell’implementazione una semplice nota: ci sono ampi margini di miglioramento e ci possiamo inventare molte altre “funzionalità” ma non mi servivano mi serviva esattamente quello che ho e nulla di più, quindi probabilmente per molti è abbastanza ma per molti altri è decisamente poco… fermatevi un secondo e chiedetevi se è veramente troppo poco tenendo sempre a mente un sanissimo principio: “keep it simple”.</span><br>
+<span>L’implementazione condita da qualche commento:</span><br>
+<pre class="code"><span style="COLOR: blue">public class </span><span style="COLOR: #2b91af">MessageBroker </span>: <span style="COLOR: #2b91af">IMessageBroker
+</span>{
+    <span style="COLOR: blue">private class </span><span style="COLOR: #2b91af">Subscription
+    </span>{
+        <span style="COLOR: blue">public </span>Subscription( <span style="COLOR: #2b91af">Object </span>subscriber, <span style="COLOR: #2b91af">Delegate </span>action )
+        {
+            <span style="COLOR: blue">this</span>.Subscriber = subscriber;
+            <span style="COLOR: blue">this</span>.Action = action;
+        }
+
+        <span style="COLOR: blue">public </span><span style="COLOR: #2b91af">Object </span>Subscriber { <span style="COLOR: blue">get</span>; <span style="COLOR: blue">private set</span>; }
+        <span style="COLOR: blue">public </span><span style="COLOR: #2b91af">Delegate </span>Action { <span style="COLOR: blue">get</span>; <span style="COLOR: blue">private set</span>; }
+    }</pre>
+<span>La classe private “Subscription” è un banale tupla che serve per tenere traccia delle callback di ogni subscriber.</span><br>
+<pre class="code">    <span style="COLOR: blue">readonly </span><span style="COLOR: #2b91af">Dispatcher </span>dispatcher;
+    <span style="COLOR: blue">readonly </span><span style="COLOR: #2b91af">IDictionary</span><<span style="COLOR: #2b91af">Type</span>, <span style="COLOR: #2b91af">IList</span><<span style="COLOR: #2b91af">Subscription</span>>> subscriptions = <span style="COLOR: blue">null</span>;
+
+    <span style="COLOR: blue">public </span>MessageBroker( <span style="COLOR: #2b91af">Dispatcher </span>dispatcher )
+    {
+        <span style="COLOR: #2b91af">Ensure</span>.That( dispatcher ).Named( <span style="COLOR: #a31515">"dispatcher" </span>).IsNotNull();
+
+        <span style="COLOR: blue">this</span>.dispatcher = dispatcher;
+        <span style="COLOR: blue">this</span>.subscriptions = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">Dictionary</span><<span style="COLOR: #2b91af">Type</span>, <span style="COLOR: #2b91af">IList</span><<span style="COLOR: #2b91af">Subscription</span>>>();
+    }</pre>
+<span>Il costruttore si assicura di avere un Dispatcher, essendo per un’applicazione WPF ed essendo targhettizzato per il dialogo con la UI vogliamo evitare le insidiose CrossThreadException e garantirci che le invocazioni delle callback avvengano sempre nel thread giusto.</span><br>
+<span>Costruiamo inoltre un dictionary che avrà lo scopo di tener traccia della lista di subscription per un determinato tipo di messaggio.</span><br>
+<pre class="code"><span style="COLOR: blue">public void </span>Subscribe<T>( <span style="COLOR: blue">object </span>subscriber, System.<span style="COLOR: #2b91af">Action</span><T> callback ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage
+</span>{
+    <span style="COLOR: #2b91af">Ensure</span>.That( subscriber ).Named( <span style="COLOR: #a31515">"subscriber" </span>).IsNotNull();
+    <span style="COLOR: #2b91af">Ensure</span>.That( callback ).Named( <span style="COLOR: #a31515">"callback" </span>).IsNotNull();
+
+    <span style="COLOR: blue">var </span>subscription = <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">Subscription</span>( subscriber, callback );
+
+    <span style="COLOR: blue">if</span>( <span style="COLOR: blue">this</span>.subscriptions.ContainsKey( <span style="COLOR: blue">typeof</span>( T ) ) )
+    {
+        <span style="COLOR: blue">var </span>subscribers = <span style="COLOR: blue">this</span>.subscriptions[ <span style="COLOR: blue">typeof</span>( T ) ];
+        subscribers.Add( subscription );
+    }
+    <span style="COLOR: blue">else
+    </span>{
+        <span style="COLOR: blue">this</span>.subscriptions.Add( <span style="COLOR: blue">typeof</span>( T ), <span style="COLOR: blue">new </span><span style="COLOR: #2b91af">List</span><<span style="COLOR: #2b91af">Subscription</span>>() { subscription } );
+    }
+}</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Subscribe è il metodo che consente a qualcuno, è di tipo Object quindi chiunque, di chiedere di essere notificato quando un determinato tipo di messaggio viene postato, subscribe richiede una reference al subscriber e una reference ad un delegato da invocare quando il messaggio richiesto viene postato.</span><br>
+<pre class="code">    <span style="COLOR: blue">public void </span>Unsubscribe( <span style="COLOR: blue">object </span>subscriber )
+    {
+        <span style="COLOR: #2b91af">Ensure</span>.That( subscriber ).Named( <span style="COLOR: #a31515">"subscriber" </span>).IsNotNull();
+
+        <span style="COLOR: blue">this</span>.subscriptions.Where( msgSubscriptions => msgSubscriptions.Value.Where( subscription => <span style="COLOR: #2b91af">Object</span>.Equals( subscription.Subscriber, subscriber ) ).Any() )
+            .AsReadOnlyCollection()
+            .ForEach( kvp => <span style="COLOR: blue">this</span>.subscriptions.Remove( kvp ) );
+    }
+
+    <span style="COLOR: blue">public void </span>Unsubscribe<T>( <span style="COLOR: blue">object </span>subscriber ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage
+    </span>{
+        <span style="COLOR: #2b91af">Ensure</span>.That( subscriber ).Named( <span style="COLOR: #a31515">"subscriber" </span>).IsNotNull();
+
+        <span style="COLOR: blue">if</span>( <span style="COLOR: blue">this</span>.subscriptions.ContainsKey( <span style="COLOR: blue">typeof</span>( T ) ) )
+        {
+            <span style="COLOR: blue">var </span>allMessageSubscriptions = <span style="COLOR: blue">this</span>.subscriptions[ <span style="COLOR: blue">typeof</span>( T ) ];
+            allMessageSubscriptions.Where( subscription => <span style="COLOR: #2b91af">Object</span>.Equals( subscriber, subscription.Subscriber ) )
+                .AsReadOnlyCollection()
+                .ForEach( subscription => allMessageSubscriptions.Remove( subscription ) );
+        }
+    }
+
+    <span style="COLOR: blue">public void </span>Unsubscribe<T>( <span style="COLOR: blue">object </span>subscriber, System.<span style="COLOR: #2b91af">Action</span><T> callback ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage
+    </span>{
+        <span style="COLOR: #2b91af">Ensure</span>.That( subscriber ).Named( <span style="COLOR: #a31515">"subscriber" </span>).IsNotNull();
+        <span style="COLOR: #2b91af">Ensure</span>.That( callback ).Named( <span style="COLOR: #a31515">"callback" </span>).IsNotNull();
+
+        <span style="COLOR: blue">if</span>( <span style="COLOR: blue">this</span>.subscriptions.ContainsKey( <span style="COLOR: blue">typeof</span>( T ) ) )
+        {
+            <span style="COLOR: blue">var </span>allMessageSubscriptions = <span style="COLOR: blue">this</span>.subscriptions[ <span style="COLOR: blue">typeof</span>( T ) ];
+            allMessageSubscriptions.Where( subscription => <span style="COLOR: #2b91af">Object</span>.Equals( subscriber, subscription.Subscriber ) && <span style="COLOR: #2b91af">Object</span>.Equals( callback, subscription.Action ) )
+                .AsReadOnlyCollection()
+                .ForEach( subscription => allMessageSubscriptions.Remove( subscription ) );
+        }
+    }</pre>
+<span>I vari overload di Unsubscribe direi che non necessitano commenti, altro non fanno che rimuovere una subscription.</span><br>
+<pre class="code">    <span style="COLOR: blue">public void </span>Post<T>( T message ) <span style="COLOR: blue">where </span>T : <span style="COLOR: #2b91af">IMessage
+    </span>{
+        <span style="COLOR: #2b91af">Ensure</span>.That( message ).Named( <span style="COLOR: #a31515">"message" </span>).IsNotNull();
+
+        <span style="COLOR: blue">if</span>( <span style="COLOR: blue">this</span>.subscriptions.ContainsKey( <span style="COLOR: blue">typeof</span>( T ) ) )
+        {
+            <span style="COLOR: blue">var </span>subscribers = <span style="COLOR: blue">this</span>.subscriptions[ <span style="COLOR: blue">typeof</span>( T ) ];
+            subscribers.ForEach( subscription => <span style="COLOR: blue">this</span>.dispatcher.Invoke( subscription.Action, message ) );
+        }
+    }
+
+    <span style="COLOR: blue">#endregion
+</span>}</pre>
+<span>Infine Post che itera sulle subscription di un determinato messaggio e invoca il corrispondente delegato.</span><br>
+<span>Come si usa? Nulla di più semplice:</span><br>
+<pre class="code"><span style="COLOR: blue">public </span>ShellViewModel( <span style="COLOR: #2b91af">Dispatcher </span>dispatcher, <span style="COLOR: #2b91af">IMessageBroker </span>broker )
+    : <span style="COLOR: blue">base</span>( dispatcher )
+{
+    <span style="COLOR: #2b91af">Ensure</span>.That( broker ).Named( <span style="COLOR: #a31515">"broker" </span>).IsNotNull();
+
+    <span style="COLOR: blue">this</span>.broker = broker;
+
+    <span style="COLOR: blue">this</span>.broker.Subscribe<Messaging.<span style="COLOR: #2b91af">AsyncOperationStartedMessage</span>>( <span style="COLOR: blue">this</span>, msg =>
+    {
+        <span style="COLOR: blue">this</span>.IsBusy = <span style="COLOR: blue">true</span>;
+    } );
+
+    <span style="COLOR: blue">this</span>.broker.Subscribe<Messaging.<span style="COLOR: #2b91af">AsyncOperationEndedMessage</span>>( <span style="COLOR: blue">this</span>, msg =>
+    {
+        <span style="COLOR: blue">this</span>.IsBusy = <span style="COLOR: blue">false</span>;
+    } );
+}</pre>
+<span><a href="http://11011.net/software/vspaste"></a>ShellViewModel è il view model che controlla la shell che altro non è che il macro contenitore che però non sa nulla di quello che ospita, una delle “facilty” erogate dalla shell è la possibilità di visualizzare un pannello in overlay (il classico “Please Wait…”) durante le operazioni asincrone, il pannello è uno UserControl ospitato in un AdornerLayer e la Visibility è in binding che la proprietà IsBusy del view model.</span><br>
+<span>la shell quindi chiede al broker di essere notificata quando vengono postati i 2 messaggi che indicano, rispettivamente, l’inizio e la fine di una operazione asincrona.</span><br>
+<span>Qualcuno che vuole notificare semplicemente si limita a fare una cosa del tipo:</span><br>
+<pre class="code"><span style="COLOR: blue">this</span>.broker.Post( <span style="COLOR: blue">new </span>Messaging.<span style="COLOR: #2b91af">AsyncOperationStartedMessage</span>() );</pre>
+<span><a href="http://11011.net/software/vspaste"></a>Evoluzioni possibili? una marea:</span><br>
+<ol>
+    <li>Post: aggiungere il “poster” per ad esempio prendere decisioni in base a chi sia il “mandante”… </li>
+    <li>Broadcast: una sorta di Post che però non sia sincrono/seriale e che quindi non attenda che tutti i subscriber abbiano processato il messaggio per rilasciare il “poster”; </li>
+    <li>Safety/Unsafety:
+    <ol>
+        <li>Questa implementazione usa necessariamente un dispatcher ma non è detto che serva…; </li>
+        <li>Se uno dei subscriber “fallisce” il processo di posting si interrompe potrebbe non essere desiderabile; </li>
+    </ol>
+    </li>
+    <li>Rivedere la logica di Unsubscribe() per farla funzionare come la registrazione/deregistrazione di un handler ad un evento, in questo momento infatti la logica esegue il confronto per reference con le ovvie conseguenze…; </li>
+    <li>Varie ed eventuali.. :-D; </li>
+</ol>
+<span>Ogni commento è come al solito ben accetto.</span><br>
+<span>.m</span><br>

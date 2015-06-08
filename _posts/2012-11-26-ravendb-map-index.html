@@ -1,0 +1,69 @@
+---
+layout: post
+title: 'RavenDB: map index'
+date: '2012-11-26T09:46:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2012-11-26T09:46:00.500+01:00'
+thumbnail: http://lh4.ggpht.com/-OUnWr-rkeWA/UIweAmLtxCI/AAAAAAAACS8/K63woQEFa7o/s72-c/image_thumb%25255B1%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9037702190478636721
+blogger_orig_url: http://milestone.topics.it/2012/11/ravendb-map-index.html
+---
+
+it’s long time that I left this topic alone, <a href="{{ site.baseurl }}{% post_url 2012-05-29-ravendb-i-want-my-data %}" target="_blank">last time I promised</a> we will discuss about the way document database let you get your data back to life, here we are.<br />
+<strong>Indexing</strong><br />
+As we already said, I hope :-), the only way to search/query data in a document database is to use an index, let see what happens using a really trivial example:<br />
+<blockquote>
+<div id="codeSnippetWrapper">
+<div id="codeSnippetWrapper">
+<pre id="codeSnippet" style="background-color: #f4f4f4; border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none; color: black; direction: ltr; font-family: 'Courier New', courier, monospace; font-size: 8pt; line-height: 12pt; margin: 0em; overflow: visible; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px; text-align: left; width: 100%;"><span style="color: blue;">static</span> <span style="color: blue;">void</span> Main( <span style="color: blue;">string</span>[] args )
+{
+    var uri = <span style="color: blue;">new</span> Uri( <span style="color: #006080;">"http://localhost:8181"</span> );
+
+    var store = <span style="color: blue;">new</span> DocumentStore()
+    {
+        DefaultDatabase = <span style="color: #006080;">"Spike"</span>,
+        Url = uri.ToString(),
+        Credentials = CredentialCache.DefaultCredentials.GetCredential( uri, <span style="color: #006080;">"Basic"</span> )
+    }.Initialize();
+    <span style="color: blue;">using</span> ( var session = store.OpenSession() )
+    {
+        session.Store( <span style="color: blue;">new</span> Person() { FirstName = <span style="color: #006080;">"Mauro"</span>, LastName = <span style="color: #006080;">"Servienti"</span> } );
+        session.Store( <span style="color: blue;">new</span> Person() { FirstName = <span style="color: #006080;">"Guido"</span>, LastName = <span style="color: #006080;">"Rossi"</span> } );
+        session.Store( <span style="color: blue;">new</span> Person() { FirstName = <span style="color: #006080;">"Giorgio"</span>, LastName = <span style="color: #006080;">"Verdi"</span> } );
+        session.Store( <span style="color: blue;">new</span> Person() { FirstName = <span style="color: #006080;">"Samuele"</span>, LastName = <span style="color: #006080;">"Bianchi"</span> } );
+
+        session.SaveChanges();
+    }
+}</pre>
+<br /></div>
+<div>
+<br /></div>
+</div>
+</blockquote>
+The first thing we need is to load some test data, and then we can try to search for some of them:<br />
+<blockquote>
+<div id="codeSnippetWrapper">
+<pre id="codeSnippet" style="background-color: #f4f4f4; border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none; color: black; direction: ltr; font-family: 'Courier New', courier, monospace; font-size: 8pt; line-height: 12pt; margin: 0em; overflow: visible; padding-bottom: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px; text-align: left; width: 100%;"><span style="color: blue;">using</span> ( var session = store.OpenSession() )
+{
+    var query = session.Query&lt;Person&gt;().Where( p =&gt; p.FirstName.StartsWith( <span style="color: #006080;">"G"</span> ) );
+    var persons = query.ToList();
+}</pre>
+<br /></div>
+</blockquote>
+The interesting stuff is that if we execute the above query we get back the expected 2 persons (<strong>G</strong>iorgio and <strong>G</strong>uido): how can it be? haven’t we said that we need an index to query for data? we have created nothing.<br />
+<strong>The most amazing feature</strong> (<em>in my humble opinion</em>)<br />
+If we fire up the <a href="http://ravendb.net/" target="_blank">RavenDB</a> Studio and go to the Indexes tab we notice the following:<br />
+<a href="http://lh4.ggpht.com/-62M7ClxpNgA/UIwd_SrSY5I/AAAAAAAACS0/7sQvOoBpvHM/s1600-h/image%25255B3%25255D.png"><img alt="image" border="0" height="169" src="http://lh4.ggpht.com/-OUnWr-rkeWA/UIweAmLtxCI/AAAAAAAACS8/K63woQEFa7o/image_thumb%25255B1%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="320" /></a><br />
+RavenDB has created a brand new index (a temporary index) for us automatically as soon as the query engine has noticed that there is no index that is capable to satisfy the query we issued.<br />
+But…what is the shape of the index?<br />
+<a href="http://lh3.ggpht.com/-Bsu0YZqtCug/UIweBqCw6YI/AAAAAAAACTE/9SrSSytWjgM/s1600-h/image%25255B8%25255D.png"><img alt="image" border="0" height="166" src="http://lh3.ggpht.com/-4SuPSzWQXXg/UIweCzQD7aI/AAAAAAAACTM/XC4UXwMtUcA/image_thumb%25255B4%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="410" /></a><br />
+RavenDB has just created what is called a “Map Index” whose role is to map fields that can be searched so to let the Lucene search engine have something to work on.<br />
+What happens if we issue a new query that involves different fields? Once again we get back the expected results, but:<br />
+<a href="http://lh6.ggpht.com/-nXMj4IovEu8/UIweGROwE0I/AAAAAAAACTU/vceDVXO_630/s1600-h/image%25255B12%25255D.png"><img alt="image" border="0" height="152" src="http://lh5.ggpht.com/-VWVHP1kkjaU/UIweIi1m0sI/AAAAAAAACTc/eNTUQrJGUBY/image_thumb%25255B6%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="349" /></a><br />
+We have now 2 indexes…let’s try one thing, manually delete the first index and re-execute the first query, what happens? No index is created, the query engine realizes that the existing index can be used to satisfy the incoming query, so far so good. The new question now is: is a good practice to let RavenDB auto-magically create indexes? in my opinion the answer is no.<br />
+The basic idea is that since we know how we are going to use our data we can create indexes upfront and use the amazing auto-index creation feature only at development time when for example in order to understand which is the best way to create an index that satisfies a specific query.<br />
+Next time we’ll see options we have out-of-the-box to create and manage indexes.<br />
+.m

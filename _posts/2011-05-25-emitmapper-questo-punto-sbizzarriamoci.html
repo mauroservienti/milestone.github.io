@@ -1,0 +1,39 @@
+---
+layout: post
+title: 'EmitMapper: a questo punto sbizzarriamoci'
+date: '2011-05-25T13:26:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Architecture
+- EmitMapper
+- Extensibility
+modified_time: '2012-02-22T09:21:57.900+01:00'
+thumbnail: https://lh5.googleusercontent.com/-DKP2F0sr8Mw/T0Slo00xlDI/AAAAAAAAB3w/52IZT7CWapc/s72-c/wlEmoticon-smile_2_31.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4766367201573050272
+blogger_orig_url: http://milestone.topics.it/2011/05/emitmapper-questo-punto-sbizzarriamoci.html
+---
+
+<span>
+	Visto che abbiamo <a href="http://mauroservienti.blogspot.com/2011/05/emitmapper-tutto-bello-ma-come-le.html" target="_blank">fatto 30</a> con la nostra configurazione custom perché non fare 31?</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">mapperManager.GetMapper<<span><font color="#2b91af">SpecialCategory</font></span>, <span><font color="#2b91af">SpecialCategoryDto</font></span>>
+(
+     <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">MappingConfiguration</font></span>()
+         .MatchListItemType<<span><font color="#2b91af">SpecialReferencedType</font></span>, <span><font color="#2b91af">SpecialReferencedTypeDto</font></span>>()
+         .DeepMap()
+);</pre></blockquote>
+<span>
+	Molto semplicemente vogliamo che l’utilizzatore possa spiegare come mappare i tipi presenti in una lista, senza necessariamente dover intercettare il processo di conversione. MatchListItemType<tsource, tdestination=""> fa proprio questo vi permette di associare in maniera statica un tipo nel dominio di partenza con un tipo nel dominio di destinazione.</tsource,></span><br>
+<span>
+	A questo punto potreste avere un interessante problema, se il dominio di partenza è gestito da NHibernate i vostri item non saranno mai del tipo “descritto” perché quanto iterate gli elementi in realtà state iterando i proxy generati da NHibernate, per ovviare a questo problema la configurazione vi permette di esplicitare un TypeResolver che è una Func<object, type=""> che vi permette di customizzare in che modo il processo di mapping risolva i tipi:</object,></span><br>
+<blockquote>
+	<span>
+		<font face="Consolas"><span><font color="#0000ff"><font style="font-size: 11.3pt;">new</font></font></span><font style="font-size: 11.3pt;"> <span><font color="#2b91af">MappingConfiguration</font></span>() <br>
+		    .MatchListItemType<<span><font color="#2b91af">SpecialReferencedType</font></span>, <span><font color="#2b91af">SpecialReferencedTypeDto</font></span>>() <br>
+		    .ResolveListItemTypeUsing( o => o.GetType() )</font></font></span><br>
+</blockquote>
+<span>
+	Figo <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh5.googleusercontent.com/-DKP2F0sr8Mw/T0Slo00xlDI/AAAAAAAAB3w/52IZT7CWapc/wlEmoticon-smile_2_31.png">, se poi pensiamo questa cosa combinata con la possibilità di <a href="http://mauroservienti.blogspot.com/2011/05/emitmapper-e-ioc-lunione-fa-la-forza.html" target="_blank">iniettare un container per IoC</a> nella configurazione abbiamo la massima flessibilità.</span><br>
+<span>
+	.m</span><br>

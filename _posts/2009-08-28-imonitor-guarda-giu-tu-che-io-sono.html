@@ -1,0 +1,214 @@
+---
+layout: post
+title: “IMonitor<T>” guarda giù tu che io sono stufo di guardare su :-)
+date: '2009-08-28T15:42:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-02T12:17:54.341+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1069924125365624508
+blogger_orig_url: http://milestone.topics.it/2009/08/imonitor-guarda-giu-tu-che-io-sono.html
+---
+
+<span>Trovo che la sintassi di C# accoppiata ad un po’ di sane <em>Fluent Interfaces</em> porti a qualcosa di semplicemente bello, l’eleganza del risultato è una delle cose che mi piacciono sempre molto.</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>command = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .OnCanExecute( o => <span style="color: blue">true </span>)
+    .OnExecute( o => { } )
+    .TriggerUsing( <span style="color: #2b91af">PropertyChangedObserver
+                        </span>.Monitor( <span style="color: blue">this </span>)
+                        .HandleChangesOf( vm => vm.IsValid ) );</pre>
+</blockquote>
+
+<span>Cosa è? la prima  parta direi che non necessità di spiegazioni, se usate Wpf e avete mai sentito parlare di M-V-VM siete sicuramente incappati in una della migliaia di implementazioni del concetto di <em>DelegateCommand</em> / <em>RelayCommand</em> / <em>OgnunoLoChiamaComeVuoleMaSempreQuelloè</em>… cioè un meccanismo per costruire un ICommand, componente vitale e fantastico nel mondo Wpf, utilizzando i delegati.</span><br>
+
+<span>La necessità però in M-V-VM è spesso quella di poter rivalutare lo stato di CanExecute() di un command a “richiesta” e spesso si arriva a soluzioni di questo genere, perlomeno io ho sempre fatto così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected override void </span>OnPropertyChanged( <span style="color: #2b91af">PropertyChangedEventArgs </span>e )
+{
+    <span style="color: blue">base</span>.OnPropertyChanged( e );
+
+    <span style="color: blue">switch</span>( e.PropertyName )
+    {
+        <span style="color: blue">case </span><span style="color: #a31515">"IsValid"</span>:
+            <span style="color: blue">this</span>.ReevaluateCommands();
+            <span style="color: blue">break</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>che sinceramente sono di una bruttura mai vista :-) oltre al fatto che se volete triggherare per motivi diversi dal “Property Changed” dovete spargere altre brutture.</span><br>
+
+<span><strong>Guarda giù tu…</strong></span><br>
+
+<span>Questo è il classico esempio in cui un piccolo refactoring introducendo un piccolo componente fa la differenza:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IMonitor
+</span>{
+    <span style="color: blue">event </span><span style="color: #2b91af">EventHandler </span>Changed;
+    <span style="color: blue">void </span>StopMonitoring();
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IMonitor</span><T> : <span style="color: #2b91af">IMonitor
+</span>{
+    T Source { <span style="color: blue">get</span>; }
+}</pre>
+</blockquote>
+
+<span>Definiamo che cosa ci serve e come lo vogliamo usare:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">DelegateCommand </span>: <span style="color: #2b91af">ICommand
+</span>{<br>    … omissis …<br>
+    <span style="color: blue">private </span><span style="color: #2b91af">EventHandler </span>triggerHanlder = <span style="color: blue">null</span>;
+
+    <span style="color: blue">public </span><span style="color: #2b91af">DelegateCommand </span>TriggerUsing( <span style="color: #2b91af">IMonitor </span>source )
+    {
+        source.Changed += <span style="color: blue">this</span>.triggerHanlder;
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">DelegateCommand </span>RemoveTrigger( <span style="color: #2b91af">IMonitor </span>source )
+    {
+        source.Changed -= <span style="color: blue">this</span>.triggerHanlder;
+        <span style="color: blue">return this</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>Ho rimosso di tutto e di più, come la RAI :-), e a questo punto proviamo a realizzarne uno di Observer/Monitor.</span><br>
+
+<span><strong>PropertyChangedObserver</strong></span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static class </span><span style="color: #2b91af">PropertyChangedObserver
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">PropertyChangedMonitor</span><T> Monitor<T>( T source ) 
+        <span style="color: blue">where </span>T : <span style="color: blue">class</span>, <span style="color: #2b91af">INotifyPropertyChanged
+    </span>{
+        <span style="color: blue">return new </span><span style="color: #2b91af">PropertyChangedMonitor</span><T>( source );
+    }
+}
+
+<span style="color: blue">public class </span><span style="color: #2b91af">PropertyChangedMonitor</span><T> : <span style="color: #2b91af">INotifyPropertyChanged</span>, <span style="color: #2b91af">IMonitor</span><T>
+    <span style="color: blue">where </span>T : <span style="color: blue">class</span>, <span style="color: #2b91af">INotifyPropertyChanged
+</span>{
+    <span style="color: blue">public event </span><span style="color: #2b91af">EventHandler </span>Changed;
+    <span style="color: blue">public event </span><span style="color: #2b91af">PropertyChangedEventHandler </span>PropertyChanged;
+
+    <span style="color: blue">protected virtual void </span>OnPropertyChanged( <span style="color: #2b91af">PropertyChangedEventArgs </span>args )
+    {
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.PropertyChanged != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">this</span>.PropertyChanged( <span style="color: blue">this</span>, args );
+        }
+
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.Changed != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">this</span>.Changed( <span style="color: blue">this</span>, <span style="color: #2b91af">EventArgs</span>.Empty );
+        }
+    }
+
+    <span style="color: #2b91af">IDictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>>> propertiesToWatch = <span style="color: blue">new </span><span style="color: #2b91af">Dictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>>>();
+    <span style="color: #2b91af">PropertyChangedEventHandler </span>handler = <span style="color: blue">null</span>;
+
+    <span style="color: blue">public </span>PropertyChangedMonitor( T source )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( source ).Named( <span style="color: #a31515">"source" </span>).IsNotNull();
+
+        handler = ( s, e ) =>
+        {
+            <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>> callback;
+            <span style="color: blue">if</span>( propertiesToWatch.TryGetValue( e.PropertyName, <span style="color: blue">out </span>callback ) )
+            {
+                <span style="color: blue">if</span>( callback != <span style="color: blue">null </span>)
+                {
+                    callback( source, e.PropertyName );
+                }
+            }
+
+            <span style="color: blue">if</span>( propertiesToWatch.ContainsKey( e.PropertyName ) )
+            {
+                <span style="color: blue">this</span>.OnPropertyChanged( e );
+            }
+        };
+
+        <span style="color: blue">this</span>.Source = source;
+        <span style="color: blue">this</span>.Source.PropertyChanged += handler;
+    }
+
+    <span style="color: blue">public </span>T Source
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">private set</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">PropertyChangedMonitor</span><T> HandleChangesOf<TProperty>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T, TProperty>> property )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( property ).Named( <span style="color: #a31515">"property" </span>).IsNotNull();
+        
+        <span style="color: blue">this</span>.HandleChangesOf( property, <span style="color: blue">null </span>);
+
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">PropertyChangedMonitor</span><T> HandleChangesOf<TProperty>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T, TProperty>> property, <span style="color: #2b91af">Action</span><T, <span style="color: #2b91af">String</span>> callback )
+    {
+        <span style="color: #2b91af">Ensure</span>.That( property ).Named( <span style="color: #a31515">"property" </span>).IsNotNull();
+
+        <span style="color: blue">var </span>propertyName = property.GetMemberName();
+        <span style="color: blue">if</span>( propertiesToWatch.ContainsKey( propertyName ) )
+        {
+            propertiesToWatch[ propertyName ] = callback;
+        }
+        <span style="color: blue">else
+        </span>{
+            propertiesToWatch.Add( propertyName, callback );
+        }
+
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">PropertyChangedMonitor</span><T> DismissHandlingOf<TProperty>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T, TProperty>> property )
+    {
+        <span style="color: blue">var </span>propertyName = property.GetMemberName();
+        <span style="color: blue">if</span>( propertiesToWatch.ContainsKey( propertyName ) )
+        {
+            propertiesToWatch.Remove( propertyName );
+        }
+
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: blue">public void </span>StopMonitoring()
+    {
+        <span style="color: blue">this</span>.Source.PropertyChanged -= handler;
+        <span style="color: blue">this</span>.Source = <span style="color: blue">null</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>Che altro non fa che tenere sotto controllo una istanza di INotifyPropertyChanged e osservare se viene scatenato l’evento PropertyChanged per una delle proprietà che ci interessano.</span><br>
+
+<span>Con poco codice e decisamente pochi minuti (direi non più di mezz’ora tra pensare la cosa, realizzarla e affinarla) abbiamo incapsulato della logica in un componente riutilizzabile ma soprattutto abbiamo delegato al “coso” giusto il suo compito.</span><br>
+
+<span>Naturalmente i “trigger” sono impilabili e quindi questo funziona come ci si aspetta:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>command = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .OnCanExecute( o => <span style="color: blue">true </span>)
+    .OnExecute( o => { } )
+    .TriggerUsing( <span style="color: #2b91af">PropertyChangedObserver
+                    </span>.Monitor( <span style="color: blue">this </span>)
+                    .HandleChangesOf( vm => vm.IsValid )
+                    .HandleChangesOf( vm => vm.DataSource ) )
+    .TriggerUsing( <span style="color: #2b91af">MementoObserver</span>.Monitor( <span style="color: blue">this</span>.Memento ) );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Dove il MementoObserver è un IMonitor per un “memento service” che è un’altra storia, stay tuned :-)</span><br>
+
+<span><strong>Cosa manca?</strong> </span><br>
+
+<span>probabilmente la gestione degli eventi tramite “weak reference” ma è un’ottimizazzione prematura…</span><br>
+
+<span>.m</span><br>

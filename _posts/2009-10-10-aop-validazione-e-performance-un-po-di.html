@@ -1,0 +1,74 @@
+---
+layout: post
+title: 'AOP, Validazione e performance: un po’ di considerazioni'
+date: '2009-10-10T17:25:00.000+02:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- AOP
+modified_time: '2012-02-03T13:02:05.723+01:00'
+thumbnail: https://lh3.googleusercontent.com/-tAMoNDRk1e8/TyvMuHNXRjI/AAAAAAAAAww/gNjHi4PsUkk/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3820521027760256058
+blogger_orig_url: http://milestone.topics.it/2009/10/aop-validazione-e-performance-un-po-di.html
+---
+
+<span>Tempo fa ho introdotto <a href="http://blogs.ugidotnet.org/topics/Tags/PostSharp/default.aspx">PostSharp</a>, dal primo approccio è passato ormai un anno e da qualche mese lo uso con soddisfazione, in produzione, per la gestione della <a href="http://blogs.ugidotnet.org/topics/archive/2009/06/15/tracinghellip-che-barba-che-noia-ltcit.gt.aspx">parte noiosa del tracing</a>.</span><br>  <span>In questi giorni ho ripreso in mano la parte di AOP per la validazione dei parametri di input di un metodo, tipicamente quello che si fa è questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">void </span>StandardValidation( <span style="color: #2b91af">String </span>v )
+{
+    <span style="color: blue">if</span>( v == <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"v" </span>);
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>oppure, <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/il-piacere-delle-ldquofluent-interfacesrdquo-asyncworker-amp-ensure.aspx">evolvendosi leggermente</a>, si può scrivere questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">void </span>EnsureValidation( <span style="color: #2b91af">String </span>v )
+{
+    <span style="color: #2b91af">Ensure</span>.That( v ).Named( <span style="color: #a31515">"v" </span>).IsNotNull();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che è effettivamente più elegante e anche leggibile (pensatelo proiettato in produzione e quindi applicato in uno scenario complesso). Resta però il fatto che è da scrivere e che sta li in mezzo ai piedi, ricorrendo a PostSharp si può arrivare a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">void </span>AspectValidation( [<span style="color: #2b91af">NotNull</span>]<span style="color: #2b91af">String </span>v )
+{
+
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che ha lo stesso identico risultato e inoltre ha il pregio notevole, IMHO, di non avere nulla in mezzo ai piedi.</span><br>
+
+<span><strong>E le perfomance?</strong></span><br>
+
+<span>tutto bello e funzionale, ma le prestazioni che fine fanno? come al solito dipende da quali sono le nostre necessità: non abbiamo un problema di prestazioni finchè qualcuno non ci dice che va piano.</span><br>
+
+<span>detto questo però ho voluto provare un test molto casalingo ma ridotto all’osso in modo che l’unica variabile fosse proprio o il codice per la validazione o il codice per il tracing.</span><br>
+
+<span>Qui di seguito uno screenshot con i risulati, interessanti direi.</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-g0Y2ZYhOA5E/TyvMug7Uy4I/AAAAAAAAAw4/Is5CtmGfDVA/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-tAMoNDRk1e8/TyvMuHNXRjI/AAAAAAAAAww/gNjHi4PsUkk/image_thumb.png" width="354" height="248"></a></span><br>
+
+<ol>
+  <li>la prima batteria di test è un’iterazione (100k volte) chiamando un metodo con 1 solo parametro, come nel codice di esempio del post, che esegue la validazione tradizionale;</li>
+
+  <li>la seconda è sempre un’iterazione di 100k volte che però chiama un metodo, nei tre modi noti, con 5 parametri… con risultati curiosi: la validazione <em>classica </em>cuba un tempo doppio ma comunque <em>irrilevante</em>, la validazione con le fluent interface, “Ensure”, invece <em>scoppia</em> passando da 198ms a 955ms, pessimo non c’è che dire; la terza invece curiosamente è quella che in termini percentuali perde pochissimo nonostante tempi comunque molto alti in termini assoluti;</li>
+</ol>
+
+<span>E’ altresi vero che se misuriamo la singola chiamata il tempo in tutti i casi scende a 0ms, il terzo test viene penalizzato dall’infrastruttura di PostSharp 1.5 che permette cose mirabolanti ma in questo scenario inutili, il tutto in attesa di PostSharp 2.0 (oggi in CTP1) che promette, e i test iniziali lo dimostrano, di fare una “code injection” intelligente e quindi eliminare l’overhead a runtime ove non necessario.</span><br>
+
+<span>Il secondo test, quello del tracing/logging, in effetti fa questo, in questo caso la fa con uno Weaver per PostSharp 1.5, uno Weaver è un plugin per PostSharp che inietta codice custom direttamente a compile time scrivendo esattamente il codice che scriveremmo noi senza aver bisogno del runtime di PostSharp, che infatti non è più una dipendenza a runtime. Il piccolo problema, sempre in attesa di PostSharp 2.0, è che scrivere un Weaver è un delirio :-)</span><br>
+
+<span><strong>CompileTimeValidate</strong></span><br>
+
+<span>Una nota infine su quella che secondo me è una delle feature migliori e più sottovalutate di cui <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/postsharp-compiletimevalidate.aspx">ho già parlato</a>. In attesa di “Compiler-As-A-Service” di cui si sa poco o nulla sarebbe un gran bello avere degli attributi che vengono considerati dal compilatore come ad esempio <a href="http://msdn.microsoft.com/en-us/library/system.obsoleteattribute.aspx">ObsoleteAttribute</a>.</span><br>
+
+<span><strong>Si… può… fare…! </strong><cit.></span><br>
+
+<span>Non vi tedio con i dettagli tecnici, che ci sono nel post che ho linkato, ma mi soffermo sul fatto che mentre con la versione 1.0 era impossibile fare molte cose a compile time con la 1.5 si può fare pressochè tutto permettendo di intervenire nel processo di compilazione e ad esempio validare anche cose che per il compilatore sarebbe impossibile anche solo prendere in considerazione.</span><br>
+
+<span>.m</span><br>
+

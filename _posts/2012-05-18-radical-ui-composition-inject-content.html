@@ -1,0 +1,117 @@
+---
+layout: post
+title: 'Radical - UI Composition: inject content at runtime'
+date: '2012-05-18T09:50:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Radical
+- UI Composition
+- Model View ViewModel
+modified_time: '2012-05-18T09:50:00.181+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6825288187361461419
+blogger_orig_url: http://milestone.topics.it/2012/05/radical-ui-composition-inject-content.html
+---
+
+<p><a href="{{ site.baseurl }}{% post_url 2012-05-16-radical-ui-composition-concepts %}" target="_blank">We have seen some of the concepts</a> behind the UI Composition features offered by the <a href="http://radical.codeplex.com/" target="_blank">Radical</a> framework, remember that all these concepts aims to be cross platform, currently WPF and Silverlight are supported, next will be Windows 8 Metro and Windows Phone 7.</p> <p><strong>Injection</strong></p> <p>The concept is trivial: a view defines one or more “areas” where another view can be injected.</p> <p>Currently it is a really easy operation, as we have seen the MainView simply defines some regions and the MainViewModel has nothing special:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">class</font></span> <span style="color: "><font color="#2b91af">MainViewModel</font></span> : <span style="color: "><font color="#2b91af">AbstractViewModel</font></span>
+{
+ 
+}</font></font></pre></blockquote>
+<p>Really nothing, on the other side the view that we want to inject (that is the driver of the injection) is defined as follows:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">partial</font></span>&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">SampleContentView</font></span> : <span style="color: "><font color="#2b91af">UserControl</font></span>
+{
+	<span style="color: "><font color="#0000ff">public</font></span> SampleContentView()
+	{
+		InitializeComponent();
+	}
+}</font></font></pre></blockquote>
+<p>Even here nothing special, but…let us give a wider look:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">namespace</font></font></span><font style="font-size: 11.3pt"> Radical.Presentation.Samples.Presentation.<font style="background-color: #ffff00">Partial</font>.<font style="background-color: #ffff00">SampleContentRegion</font>
+{
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">partial</font></span>&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">SampleContentView</font></span> : <span style="color: "><font color="#2b91af">UserControl</font></span>
+	{
+		<span style="color: "><font color="#0000ff">public</font></span> SampleContentView()
+		{
+			InitializeComponent();
+		}
+	}
+}</font></font></pre></blockquote>
+<p>Take a look at the namespace:</p>
+<ul>
+<li>everything that is in the “<em>*.Presentation.Partial.*</em>” (it’s a modifiable convention) namespace will be considered a region content; 
+<li>the last token of the namespace, in this sample “<em>SampleContentRegion</em>” will be considered as the name of the region;</li></ul>
+<p>If this convention cannot satisfy the user needs (and actually there are a lot of cases where the convention cannot be used) the view to inject can be defined as follows:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><font style="background-color: #ffff00">[<span style="color: "><font color="#2b91af">InjectViewInRegion</font></span>( Named = <span style="color: "><font color="#a31515">"InnerContentRegion"</font></span> )]</font>
+<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">partial</font></span>&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">InnerContentView</font></span> : <span style="color: "><font color="#2b91af">UserControl</font></span>
+{
+	<span style="color: "><font color="#0000ff">public</font></span> InnerContentView()
+	{
+		InitializeComponent();
+	}
+}</font></font></pre></blockquote>
+<p>Using the <em>InjectViewInRegion</em> attribute.</p>
+<p><strong>Control is everything</strong></p>
+<p>What happens if we want to have manual control over the injection process? Simply intercept it :-)<br>Inside the framework the process is governed by a message (ViewModelLoaded) broadcasted by the message broker, so just handle the message and do whatever you want with your own logic:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">class</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#2b91af">MainViewModelLoadedHandler</font></span> : <span style="color: "><font color="#2b91af">MessageHandler</font></span>&lt;<span style="color: "><font color="#2b91af">ViewModelLoaded</font></span>&gt;, <span style="color: "><font color="#2b91af">INeedSafeSubscription</font></span>
+{
+	<span style="color: "><font color="#0000ff">readonly</font></span>&nbsp;<span style="color: "><font color="#2b91af">IConventionsHandler</font></span> conventions;
+	<span style="color: "><font color="#0000ff">readonly</font></span>&nbsp;<span style="color: "><font color="#2b91af">IRegionService</font></span> regionService;
+ 
+	<span style="color: "><font color="#0000ff">public</font></span> MainViewModelLoadedHandler( <span style="color: "><font color="#2b91af">IConventionsHandler</font></span> conventions, <span style="color: "><font color="#2b91af">IRegionService</font></span> regionService )
+	{
+		<span style="color: "><font color="#0000ff">this</font></span>.conventions = conventions;
+		<span style="color: "><font color="#0000ff">this</font></span>.regionService = regionService;
+	}
+ 
+	<span style="color: "><font color="#0000ff">protected</font></span>&nbsp;<span style="color: "><font color="#0000ff">override</font></span>&nbsp;<span style="color: "><font color="#0000ff">bool</font></span> OnShouldHandle( <span style="color: "><font color="#2b91af">ViewModelLoaded</font></span> message )
+	{
+		<span style="color: "><font color="#0000ff">return</font></span> message.ViewModel <span style="color: "><font color="#0000ff">is</font></span>&nbsp;<span style="color: "><font color="#2b91af">MainViewModel</font></span>;
+	}
+ 
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">override</font></span>&nbsp;<span style="color: "><font color="#0000ff">void</font></span> Handle( <span style="color: "><font color="#2b91af">ViewModelLoaded</font></span> message )
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> view = <span style="color: "><font color="#0000ff">this</font></span>.conventions.GetViewOfViewModel( message.ViewModel );
+		<span style="color: "><font color="#0000ff">if</font></span>( <span style="color: "><font color="#0000ff">this</font></span>.regionService.HoldsRegionManager( view ) )
+		{
+			<span style="color: "><font color="#0000ff">var</font></span> manager = <span style="color: "><font color="#0000ff">this</font></span>.regionService.GetRegionManager( view );
+ 
+			manager.GetRegion&lt;<span style="color: "><font color="#2b91af">IElementsRegion</font></span>&gt;( <span style="color: "><font color="#a31515">"MainMenuRegion"</font></span> )
+				.Add( <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">MenuItem</font></span>()
+				{
+					Header = <span style="color: "><font color="#a31515">"Injected in main menu"</font></span>,
+					Command = <span style="color: "><font color="#2b91af">DelegateCommand</font></span>.Create()
+								.OnExecute( o =&gt;
+								{
+									<span style="color: "><font color="#2b91af">MessageBox</font></span>.Show( <span style="color: "><font color="#a31515">"Clicked!"</font></span> );
+								} )
+				} );
+ 
+			manager.GetRegion&lt;<span style="color: "><font color="#2b91af">IElementsRegion</font></span>&gt;( <span style="color: "><font color="#a31515">"FileMenuRegion"</font></span> )
+				.Add( <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">MenuItem</font></span>()
+				{
+					Header = <span style="color: "><font color="#a31515">"Injected in File menu"</font></span>,
+					Command = <span style="color: "><font color="#2b91af">DelegateCommand</font></span>.Create()
+								.OnExecute( o =&gt;
+								{
+									<span style="color: "><font color="#2b91af">MessageBox</font></span>.Show( <span style="color: "><font color="#a31515">"Clicked!"</font></span> );
+								} )
+				} );
+		}
+	}
+}</font></font></pre></blockquote>
+<p><em>Note</em>: Simply dropping a class like that in the “<em>*.Messaging.Handlers</em>” namespace defines it as a message handler that will be automatically subscribed to the specified message.</p>
+<p>What happens?</p>
+<ol>
+<li>Inheriting from MessageHandler&lt;TMessage&gt; defines that the class is a message handler of the given type TMessage; 
+<li>The INeedSafeSubscription interface is a empty marker interface that declares to the message broker that we want to be invoked in the main thread using the dispatcher; 
+<li>OnShouldHandle is a easy way to tell to the message broker that we are not interested in handling a specific message, the broker calls OnShouldHandle on every handler of the given message type before calling “Handle”; 
+<li>Handle is where the real work happens: 
+<ol>
+<li>given the ViewModel use the conventions the retrieve a reference to the view; 
+<li>verify if the view has an associated region manager; 
+<li>retrieve a reference to the region manager of the view; 
+<li>use the region manager to access the region by name; 
+<li>add the desired content to the region;</li></ol></li></ol>
+<p><strong>Disclaimer</strong>:</p>
+<p>Currently all what seen in this post is publicly available on <a href="http://nuget.org/" target="_blank">NuGet</a> using a <a href="http://nuget.org/packages/Radical.Windows.Presentation/0.0.5.2-Beta1" target="_blank">couple</a> of <a href="http://nuget.org/packages/Radical.Windows.Presentation.CastleWindsor/0.0.1.2-Beta1" target="_blank">pre-release package</a>.</p>
+<p>.m</p>  

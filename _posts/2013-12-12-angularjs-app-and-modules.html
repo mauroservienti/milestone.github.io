@@ -1,0 +1,108 @@
+---
+layout: post
+title: 'AngularJS: app and modules'
+date: '2013-12-12T09:24:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+modified_time: '2013-12-12T09:24:00.712+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1900912450460443933
+blogger_orig_url: http://milestone.topics.it/2013/12/angularjs-app-and-modules.html
+---
+
+<p>Index:</p> <ul> <li><a href="{{ site.baseurl }}{% post_url 2013-12-10-a-gentle-introduction-to-angularjs %}">A gentle introduction to AngularJS</a></li></ul> <p>Last time we left with a really basic sample, so basic that in the real world it is pretty useless. In that sample there is too much magic, stuff works as expected but there is no evidence of why it works.</p> <p><strong>Modules</strong></p> <p>When <a href="http://angularjs.org/" target="_blank">AngularJS</a> starts inspects at our markup looking for the <em>data-ng-app</em> attribute</p> <blockquote><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>My First Sample<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span> 
+            <span class="attr">src</span><span class="kwrd">="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"</span><span class="kwrd">&gt;&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span> <span class="attr">data-ng-app</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+    {{ "{{" }}name}}
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>When the attribute is found AngularJS creates a module to “coordinate” our application. We can think at modules as assemblies in the .net world, or as namespaces. A module isolates stuff declared in it and a module can declare dependencies on other modules. Since in the above sample we are not defining a name for our application everything is done anonymously.</p>
+<p>If we simply change the “data-ng-app” attribute to data-ng-app="my-app" our sample stops working immediately. It stops working because AngularJS now looks for a module called “my-app” that since is not defined anywhere breaks everything.</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>My First Sample<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span> 
+            <span class="attr">src</span><span class="kwrd">="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"</span><span class="kwrd">&gt;&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"<span class="kwrd">&gt;</span></span>
+       (<span class="kwrd">function</span> () {
+          <span class="str">'use strict'</span>;
+      
+          angular.module(<span class="str">'my-app'</span>, []);
+      
+       }());
+    <span class="kwrd">&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span> <span class="attr">data-ng-app</span><span class="kwrd">="my-app"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+    {{ "{{" }}name}}
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Adding a single line of JavaScript resumes our sample: <strong>angular.module('my-app', []);</strong></p>
+<p>We are telling AngularJS to create a new module that has no dependencies (the empty array, the second parameter of the module method). So defining a module is as simple as calling the module method passing in the module name and a list of dependencies, if needed.</p>
+<p>The question now should be: since it is just plain JavaScript why do we need to declare modules and dependencies?</p>
+<ol>
+<li>Order: giving an ordered shape and reduce the noise is important; 
+<li>Modules initialization, 2 phase startup, is the real reason behind modules definition;</li></ol>
+<p>2 phase startup will be the next topic.</p>
+<p>.m</p>  

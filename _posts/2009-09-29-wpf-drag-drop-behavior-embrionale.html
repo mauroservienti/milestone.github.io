@@ -1,0 +1,84 @@
+---
+layout: post
+title: 'Wpf: “Drag & Drop” Behavior, embrionale.'
+date: '2009-09-29T09:42:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+- Model View ViewModel
+- Attached Behaviors
+modified_time: '2012-02-03T13:00:58.695+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3537735522075721198
+blogger_orig_url: http://milestone.topics.it/2009/09/wpf-drag-drop-behavior-embrionale.html
+---
+
+<span>Se soffrite da dipendenza acuta da M-V-VM questa è una discreta rottura perchè il drag & drop è “roba” totalmente da Presentation (aka View) ma la logica è totalmente da Business (aka ViewModel).</span><br>  <span>La gestione del drag & drop è quindi un ottimo candidato per divertirci con gli attached behavior, nome <em>figoso</em> per le ormai <em>legacy</em> attached properties.</span><br>  <span>Quello che vogliamo ottenere è questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+          </span><span style="color: red">SelectedItem</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Selection}"
+          </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">DragDropManager.DataObject</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Selection}"
+          </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">DragDropManager.DataObjectType</span><span style="color: blue">="mySampleType"
+          </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=TestList}"></span></pre>
+</blockquote>
+
+<span>ergo poter definire, data ad esempio una ListView, ma funziona su qualsiasi UIElement, quale sia il dato (utilizzando il potentissimo strumento di Binding) da “draggare” e quale sia, opzionale, il DataFormat del “dragged object”.</span><br>
+
+<span>E sul drop target limitarci a fare:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Border </span><span style="color: red">Grid.Column</span><span style="color: blue">="1" </span><span style="color: red">Margin</span><span style="color: blue">="10"
+                </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">DragDropManager.OnDropCommand</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">DropCommand</span><span style="color: blue">}"
+                </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch"
+                </span><span style="color: red">AllowDrop</span><span style="color: blue">="True"
+                </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Stretch" </span><span style="color: red">Background</span><span style="color: blue">="Gainsboro" /></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Utilizzando un ICommand come “target” del drop. Utilizziamo un ICommand perchè si sposa molto bene con il concetto di “drop”, il drop è fondamentalmente fatto da 2 fasi:</span><br>
+
+<ul>
+  <li>una fase di analisi, durante di DragOver, per capire se la “roba” che stiamo draggando possa essere droppata sul target –> ICommand.CanExecute( DragOverArgs e );</li>
+
+  <li>una fase in cui effettivamente, se il DragOver ha dato feedback positivo, i dati vengono droppati –> ICommand.Execute( DropArgs e );</li>
+</ul>
+
+<span>Il nostro codice nel VM si potrebbe quindi limitare ad una cosa di questo tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.DropCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .OnCanExecute( o =>
+    {
+        <span style="color: blue">var </span>e = ( <span style="color: #2b91af">DragOverArgs </span>)o;
+        <span style="color: blue">return </span>e.Data.GetDataPresent( <span style="color: #a31515">"mySampleType" </span>);
+    } )
+    .OnExecute( o => 
+    {
+        <span style="color: blue">var </span>e = ( <span style="color: #2b91af">DropArgs </span>)o;
+        <span style="color: blue">var </span>data = e.Data.GetData( <span style="color: #a31515">"mySampleType" </span>);
+        <span style="color: green">//Use "data"...
+    </span>} );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>L’attached behavior DragDropManager si occupa di tutte le fasi essenziali della gestione del Drag & Drop e per ora lo fa in maniera decisamente minimale, ma lo fa.</span><br>
+
+<span>Quello che viene fatto è decisamente semplice (fonti: <a href="http://blogs.msdn.com/jaimer/archive/2007/07/12/drag-drop-in-wpf-explained-end-to-end.aspx">D&D #1</a> e <a href="http://blogs.msdn.com/jaimer/archive/2007/07/12/drag-drop-in-wpf-part2.aspx">D&D #2</a>):</span><br>
+
+<ul>
+  <li>Sull’elemento sorgente (aka DragSource):</li>
+
+  <ul>
+    <li>vengono agganciati i 2 eventi fondamentali: PreviewMouseMove e PreviewMouseLeftButtonDown, non stiamo prendendo in considerazione l’eventualità che i pulsanti del mouse siano invertiti, in cui gestiamo l’inizio dell’operazione di D&D;</li>
+  </ul>
+
+  <li>Sull’elemento destinazione (aka DropTarget):</li>
+
+  <ul>
+    <li>Settiamo a true la proprietà AllowDrop;</li>
+
+    <li>Agganciamo gli eventi DragOver e Drop, nel primo recuperiamo una reference al command e invochiamo CanExecute, mentre nel secondo invochiamo Execute;</li>
+  </ul>
+</ul>
+
+<span>Partendo dal codice di <a href="http://blogs.msdn.com/jaimer/">Jaime</a> non è difficile pssare ad una attached property/behavior, sopratutto se ci accontentiamo di una gestione minimale del D&D senza quindi icone custom o adorner layer che fanno cose mirabolanti.</span><br>
+
+<span>.m</span><br>
+

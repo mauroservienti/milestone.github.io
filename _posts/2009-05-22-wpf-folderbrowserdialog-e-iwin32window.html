@@ -1,0 +1,78 @@
+---
+layout: post
+title: WPF, FolderBrowserDialog e IWin32Window…
+date: '2009-05-22T13:46:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T17:50:41.705+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-437505472827042735
+blogger_orig_url: http://milestone.topics.it/2009/05/wpf-folderbrowserdialog-e-iwin32window.html
+---
+
+<span>Che bel mix… sta di fatto che Wpf non ha, tra le tante cose di cui si sente la mancanza, una ForlderBrowserDialog, niente panico! Si può tranquillamente usare quella presente nell’assembly System.Windows.Forms.dll, o, con un po’ più di lavoro, quella nativa Win32; ma non è questo l’oggetto del post.</span><br>  <span>Dopo avere referenziato l’assembly System.Windows.Forms.dll potete scrivere una cosa del tipo:</span><br>  <pre class="code"><span style="color: #2b91af">String </span>SelectFolderPath( <span style="color: #2b91af">String </span>initialFolder )
+{
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>dialog = <span style="color: blue">new </span>System.Windows.Forms.<span style="color: #2b91af">FolderBrowserDialog</span>() )
+    {
+        dialog.ShowNewFolderButton = <span style="color: blue">true</span>;
+        dialog.RootFolder = <span style="color: #2b91af">Environment</span>.<span style="color: #2b91af">SpecialFolder</span>.Desktop;
+        dialog.SelectedPath = initialFolder;
+
+        <span style="color: blue">if</span>( dialog.ShowDialog() == System.Windows.Forms.<span style="color: #2b91af">DialogResult</span>.OK )
+        {
+            <span style="color: blue">return </span>dialog.SelectedPath;
+        }
+    }
+
+    <span style="color: blue">return null</span>;
+}</pre>
+
+<span>Nulla di che, vero, ma se voleste impostare l’owner, in modo che la dialog sia figlia di una ben precisa Window e non della MainWindow dell’applicazione?</span><br>
+
+<span>Wpf mette a disposizione per gli scenari di interoperability la classe WindowInteropHelper a cui passare nel costruttore una Window e poter avere l’Handle (IntPtr/HWND) per farci un po’ di belle cose, l’inghippo però è che ShowDialog() si aspetta una IWin32Window e non un handle… anche qui niente panico:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">Win32Window </span>: System.Windows.Forms.<span style="color: #2b91af">IWin32Window
+</span>{
+    <span style="color: blue">public </span>Win32Window( <span style="color: #2b91af">IntPtr </span>handle )
+    {
+        <span style="color: blue">this</span>.Handle = handle;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IntPtr </span>Handle
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">private set</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>Implementiamo molto semplicemente l’interfaccia in questione e poi usiamola:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">String </span>SelectFolderPath( <span style="color: #2b91af">Window </span>owner, <span style="color: #2b91af">String </span>initialFolder )
+{
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>dialog = <span style="color: blue">new </span>System.Windows.Forms.<span style="color: #2b91af">FolderBrowserDialog</span>() )
+    {
+        dialog.ShowNewFolderButton = <span style="color: blue">true</span>;
+        dialog.RootFolder = <span style="color: #2b91af">Environment</span>.<span style="color: #2b91af">SpecialFolder</span>.Desktop;
+        dialog.SelectedPath = initialFolder;
+
+        <span style="color: blue">var </span>wih = <span style="color: blue">new </span><span style="color: #2b91af">WindowInteropHelper</span>( owner );
+        <span style="color: blue">var </span>w = <span style="color: blue">new </span><span style="color: #2b91af">Win32Window</span>( wih.Handle );
+
+        <span style="color: blue">if</span>( dialog.ShowDialog( w ) == System.Windows.Forms.<span style="color: #2b91af">DialogResult</span>.OK )
+        {
+            <span style="color: blue">return </span>dialog.SelectedPath;
+        }
+    }
+
+    <span style="color: blue">return null</span>;
+}</pre>
+</blockquote>
+
+<span>Ottenendo il risultato desiderato.</span><br>
+
+<span>.m</span><br>
+

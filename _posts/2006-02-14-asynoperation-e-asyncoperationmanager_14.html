@@ -1,0 +1,67 @@
+---
+layout: post
+title: AsynOperation e AsyncOperationManager
+date: '2006-02-14T22:17:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-24T10:11:41.973+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8925305011753749997
+blogger_orig_url: http://milestone.topics.it/2006/02/asynoperation-e-asyncoperationmanager_14.html
+---
+
+<font face="Verdana" size="2">
+<span>Stasera ripensavo alla chiaccherata fatta con Raffaele durante 
+il tragitto "nevoso" verso la pizzeria di San Felice la sera del workshop, a 
+propostio come sta la testa?, riguardo all'implementazione di ISyncronizeInvoke. 
+Il problema concreto è (forse era) questo:</span><br>
+<span>Ho una collection che implementa tra le tante cose IBindingList questa 
+collection è una collection di classi (in definitiva dei WorkerThread) che a 
+loro volta implementano INotifyPropertyChanged il problema è che una delle 
+proprietà viene aggiornata da un Thread diverso da quello che ha creato la 
+classe, se quindi mettiamo in binding la collection con ad esempio un 
+DataGridView ci becchiamo un sacrosanta exception che ci informa che non 
+possiamo accedere alla UI da un Thread diverso da quello che ha creato i 
+controlli, bene doveroso <img height="19" src="http://www.imhoproject.org/files/occhiolino.gif" width="19" align="absMiddle" border="0">.</span><br>
+<span>Faccio un po' di ricerche e non cavo un ragno dal buco, poi 
+posto sui NG MS e mi rispondono <a title="" href="http://www.boschin.it/imho" target="_blank" name="">Andrea Boschin</a> e <a title="" href="http://blogs.ugidotnet.org/raffaele/" target="_blank" name="">Raffaele 
+Rialdi</a>, il primo suggerendomi di dare un'occhiata all'implemetazione del 
+BackgroundWorker per la versione 1.1 e il secondo postandomi un link al 
+sito di <a title="" href="http://www.idesign.net/idesign/DesktopDefault.aspx?tabindex=5&tabid=11" target="_blank" name="">IDesign</a>  
+         
+            
+   dove trovo l'articolo che ha ispirato colui che ha 
+realizzato il BackgroundWorker per la 1.1, una prima possibile soluzione è 
+quindi questa (è uno snippet scritto al volo in IMHO...):</span><br>
+<span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">void </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">SafeFire( Delegate del )<br>{<br>    Delegate[] invocationList = del.getInvocationList();<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">foreach</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">( Delegate d </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">in </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">invocationList )<br>    {<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">if</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">( d.Target != </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">null </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">)<br>        {<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">//Se c'è un handler procediamo<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">ISynchronizeInvoke isi = d.Target </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">as </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">ISynchronizeInvoke;<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">if</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">( isi != </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">null </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">&& isi.InvokeRequired )<br>            {<br>                isi.Invoke( del, 
+<span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/* ...args... */</span> );<br>            }<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">else<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">{<br>                del.DynamicInvoke( </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/* ...args... */ </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">);<br>            }<br>        }<br>    }<br>}<br></span></span><br>
+<span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Verdana">Fatte un po' di prove il problema persiste perchè alla fine il 
+<strong>Target</strong> 
+            nel mio caso è 
+sempre e solo il CurrencyManager che gestisce i dati quindi non sarà mai <span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">ISynchronizeInvoke</span></span>
+<span>Stasera durante il mio girovagare su MSDN trovo 
+le due classi del titolo del post, faccio un po' di prove e <u>sembrano</u> la 
+manna dal cielo, un esempio per capirci al volo:</span><br>
+<span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">class </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">MyAsyncClass<br>{<br>    AsyncOperation operation;<br>    SendOrPostCallback safeCallback;<br>    MyForm frm;<br><br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">public </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">MyAsyncClass( MyForm frm )<br>    {<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>            Creo un "safe" delegate<br>        */<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.safeCallback = </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">new </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">SendOrPostCallback( SafeCallback );<br>        <br>        </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>            Mi segno un riferimento alla form 
+chiamante<br>            questa è una bruttura ma per l'esempio va<br>            bene così <img height="19" src="http://www.imhoproject.org/files/occhiolino.gif" width="19" align="absMiddle" border="0"><br></span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">            
+Non sparate sul 
+"pianista"!<br>        */<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.frm = frm;<br>    }<br><br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">public void </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">Start()<br>    {<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>            Mi faccio dare dall'AsyncOperationManager una nuova istanza<br>            di AsyncOperation la classe che sotto sotto gestisce la <br>            sincronizzazione tra i thread<br>        */<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.operation = AsyncOperationManager.CreateOperation( </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">null </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">);<br>        <br>        </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>            Creo un thread<br>            e lo faccio partire<br>        */<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">Thread t = </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">new </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">Thread( </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">new </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">ThreadStart( WT ) );<br>        t.Start();<br>    }<br><br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">void </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">WT()<br>    {<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">for</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">( Int32 i = 1; i <= 10; i++ )<br>        {<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>                Simulo un'operazione lunga<br>            */<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">Thread.Sleep( 1000 );<br>            <br>            </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>                La chiave di tutto, chiedo alla classe AsyncOperation<br>                di postare un nuovo "evento" utilizzando il mio<br>                delegato "safeCallback"<br>            */<br>            </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.operation.Post( </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.safeCallback, ( i * 10 ) );<br>        }<br>    }<br>    <br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">void </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">SafeCallback( </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">object </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">arg )<br>    {<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>            Questo viene eseguito nel thread<br>            corretto, infatti possiamo accedere<br>            ai controlli senza che il fx se la prenda<br>            a male :-)<br>        */<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">Int32 c = ( Int32 )arg;<br>        </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.frm.MyLabel.Text = "Hi! " + c.ToString();<br>    }<br>}</span></span><br>
+<span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Verdana"><strong>MyAsyncClass</strong> altro non è che un grezzissimo BackgroundWorker che 
+scatena gli eventi in maniera ThreadSafe, indagando ulteriormente si scopre che 
+il fx stesso fa larghissimo uso di questo sistema (l'accoppiata 
+AsyncOperationManager / AsyncOperation) ad esempio ovunque ci sia il nuovo 
+pattern per le operazioni asincrone <em>DoOperation</em>Async 
+/ <em>DoOperation</em>Completed, è il caso ad esempio dellla PictureBox che 
+espone un nuovo metodo LoadAsync (per caricare un imagine in maniera asincrona) 
+e il corrispondente evento LoadCompleted che sarà scatenato nel Thread corretto 
+in cui la PictureBox è stata creata con tutti i vantaggi che questo 
+comporta.</font></span></span><br>
+<span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Verdana">Adesso non mi resta che proseguire con lo studio del mio scenario 
+e capire se devo costrurimi un mio <em>ThreadSafe</em>CurrencyManager 
+(che internamente gestisca gli eventi in questo modo) o se quello che ho 
+già esposto è più che sufficiente.</font></span></span><br>
+<span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Verdana">Vi terrò aggiornati</font></span></span><br>
+<span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Verdana">.m</font></span>
+
+</font>
+<font face="Verdana" size="2"><span><a href="http://imhoproject.org/"><font face="Verdana" size="1">powered by IMHO 1.3</font></a></span><br></font><!-- Powered by IMHO 1.3 (EN) Instant Blogger Copyright (c) 2005 A.Boschin - http://www.imhoproject.org -->

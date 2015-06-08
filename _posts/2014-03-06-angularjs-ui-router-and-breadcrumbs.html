@@ -1,0 +1,338 @@
+---
+layout: post
+title: 'AngularJS, UI Router and Breadcrumbs: easy peasy'
+date: '2014-03-06T10:10:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+modified_time: '2014-03-06T10:10:00.163+01:00'
+thumbnail: http://lh4.ggpht.com/-TTHs7Hz1G70/UxgReZmCzAI/AAAAAAAACdg/FJ8Tezo4r5o/s72-c/image_thumb%25255B10%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5543326654777693883
+blogger_orig_url: http://milestone.topics.it/2014/03/angularjs-ui-router-and-breadcrumbs.html
+---
+
+<p><a href="http://angularjs.org" target="_blank">AngularJS</a> is simply amazing, the intrinsic power of its architecture and the nature of JavaScript (with which I go on in a love &amp; hate manner) gives us so much power that we cannot fall in love with it.</p> <p><strong>UI Router</strong></p> <p>AngularJS has a built-in routing engine (that in the later versions has been detached from the core and transformed into a plug-in) that is really similar to the Asp.NET MVC routing engine, for whom has experience with it.</p> <p>But…I strongly suggest to give a try to the <a href="https://github.com/angular-ui/ui-router" target="_blank">AngularJS UI Router</a> plug-in that replaces the default routing engine introducing a routing engine that is conceptually based on a state machine, where states are identified by routes (or route matches), take a look at the following sample configuration:</p> <blockquote><pre class="csharpcode">$stateProvider.state(<span class="str">'viewById'</span>, {
+    url: <span class="str">'view/{id}'</span>,
+    views: {
+        <span class="str">''</span>: {
+            templateUrl: <span class="str">'itemView.html'</span>,
+            controller: <span class="str">'itemController'</span>
+        }
+    },
+    data: {
+       settings: {
+           displayName: <span class="str">'View Item'</span>
+       }
+    }
+})</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<p>&nbsp;</p></blockquote>
+<p>We are using the state provider, from the UI Router, to define route states, telling it that there is a state called “viewById” that matches the given url, in this case with parameters, and that when matched should inject in the AngularJS UI composition engine the given view and controller in the default (unnamed) view.</p>
+<p>ne of the really powerful aspect of the UI Router is that it introduces the concept of route hierarchy, we can define routes in the following manner:</p>
+<blockquote><pre class="csharpcode">$stateProvider.state(<span class="str">'sample'</span>, {
+    url: <span class="str">'/sample'</span>,
+    ....
+})
+.state(<span class="str">'sample.item'</span>, {
+    url: <span class="str">'/{id}'</span>,
+    ....
+});</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Notice the “.” in the definition of the second route, it identifies a parent/child relationship between 2 routes, in the above sample the “sample.item” route is child of the “sample” route, thus the url of the second route is “/sample/{id}”, a composition.</p>
+<p><strong>Data…data?</strong></p>
+<p>The data object does not exist on the state object, it is there thanks to the dynamic nature of JavaScript that let me append anything to an existing object, powerful and risky too, but powerful :-)</p>
+<p>We are currently using it t append some custom information to the state itself, in this case the display name.</p>
+<p><strong>Breadcrumbs</strong></p>
+<p>Ok, now…our aim is to build something like the following:</p>
+<p><a href="http://lh4.ggpht.com/-CYgfK5GjS1M/UxgRdpIFCRI/AAAAAAAACdY/1Inmi92CEZs/s1600-h/image%25255B12%25255D.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh4.ggpht.com/-TTHs7Hz1G70/UxgReZmCzAI/AAAAAAAACdg/FJ8Tezo4r5o/image_thumb%25255B10%25255D.png?imgmax=800" width="433" height="104"></a></p>
+<p>Given a route, the highlighted one in the address bar, we want to display a breadcrumb <strong>automatically generated</strong>, with the ability to customize what the breadcrumb displays for each of the items.</p>
+<p><strong>First things first: HTML</strong></p>
+<p>From the UI point of view we want to be able to simply define the following:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">breadcrumbs</span><span class="kwrd">&gt;&lt;/</span><span class="html">breadcrumbs</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Nothing else, full stop. Given the above markup the generated result will be the following: <em>Expenses Accounts –&gt; Account</em>, where all the display values are retrieved (how in a few lines) from the current state of the UI Router.</p>
+<p>Given the requirement that we want to customize all the values:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">breadcrumbs</span> <span class="attr">item-display-name-resolver</span><span class="kwrd">="myResolver(defaultResolver, state, isCurrent)"</span><span class="kwrd">&gt;&lt;/</span><span class="html">breadcrumbs</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We <strong>can</strong> introduce our own display name resolution logic.</p>
+<p><strong>Walking like a shrimp :-)</strong></p>
+<p>Since we are going backward let’s move on backward ;-)</p>
+<blockquote><pre class="csharpcode">$scope.myResolver = <span class="kwrd">function</span> (defaultResolver, state, isCurrent) {
+    <span class="kwrd">if</span> (isCurrent) {
+        <span class="kwrd">return</span> <span class="str">'"'</span> + item.name + <span class="str">'"'</span>;
+    }
+
+    <span class="kwrd">return</span> defaultResolver(state);
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>In the controller of the view where the breadcrumbs directive is defined we can attach to the current $scope our custom resolver, what the resolver gets as inputs are:</p>
+<ul>
+<li>the default built-in resolver that can be called in order to get the default value;</li>
+<li>the current state object of the UI Router;</li>
+<li>an isCurrent Boolean value that can be used to determine is the state object represents the current state, basically the last in hierarchy chain, or if we are still walking down the tree;</li></ul>
+<p>What the controller does, given that the “item” object instance represents the current item we want to display, is simply say that if we are trying to build the display value of the last state, the current one represented by the url, the name property of the object is returned, otherwise let the default resolution logic kick in and do its job.</p>
+<p><strong>The directive</strong></p>
+<p>Finally we can give a look at how the breadcrumbs directive is defined, starting from the template:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">ul</span> <span class="attr">class</span><span class="kwrd">="breadcrumbs"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">li</span> <span class="attr">ng-repeat</span><span class="kwrd">="state in $navigationState.currentState.path"</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">span</span> <span class="attr">ng-if</span><span class="kwrd">="!$navigationState.isCurrent(state)"</span><span class="kwrd">&gt;</span>
+            <span class="kwrd">&lt;</span><span class="html">a</span> <span class="attr">href</span><span class="kwrd">="#{{ "{{" }} state.url.format(params) }}"</span><span class="kwrd">&gt;</span>{{ "{{" }}$navigationState.getDisplayName(state)}}<span class="kwrd">&lt;/</span><span class="html">a</span><span class="kwrd">&gt;</span>
+            <span class="kwrd">&lt;</span><span class="html">span</span> <span class="attr">class</span><span class="kwrd">="glyphicon glyphicon-chevron-right"</span><span class="kwrd">&gt;&lt;/</span><span class="html">span</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;/</span><span class="html">span</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">span</span> <span class="attr">ng-if</span><span class="kwrd">="$navigationState.isCurrent(state)"</span><span class="kwrd">&gt;</span>
+            {{ "{{" }}$navigationState.getDisplayName(state)}}
+        <span class="kwrd">&lt;/</span><span class="html">span</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">li</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">ul</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>As simple as an UL with a repeater that iterates over the state hierarchy, the path property of the currentState represents the state tree, and if the state is the current state simply adds a SPAN element, otherwise adds a SPAN with an A to create a hyperlink to allow navigation, preserving the state parameters, that is really important (state.url.format( … )).</p>
+<p>From the code point of view what we have is pretty simple:</p>
+<blockquote><pre class="csharpcode">(<span class="kwrd">function</span> () {
+
+    angular.module(<span class="str">'radical.directives'</span>)
+        .directive(<span class="str">'breadcrumbs'</span>, [<span class="str">'$log'</span>, <span class="str">'$parse'</span>, <span class="str">'$interpolate'</span>, <span class="kwrd">function</span> ($log, $parse) {
+            <span class="kwrd">return</span> {
+                restrict: <span class="str">'EA'</span>,
+                replace: <span class="kwrd">false</span>,
+                scope: {
+                    itemDisplayNameResolver: <span class="str">'&amp;'</span>
+                },
+                templateUrl: <span class="str">'directives/breadcrumbsDirective.html'</span>,
+                controller: [<span class="str">'$scope'</span>, <span class="str">'$state'</span>, <span class="str">'$stateParams'</span>, <span class="kwrd">function</span> ($scope, $state, $stateParams) {
+
+                    <span class="kwrd">var</span> defaultResolver = <span class="kwrd">function</span> (state) {
+
+                        <span class="kwrd">var</span> displayName = state.data.settings.displayName || state.name;
+
+                        <span class="kwrd">return</span> displayName;
+                    };
+
+                    <span class="kwrd">var</span> isCurrent = <span class="kwrd">function</span>(state){
+                        <span class="kwrd">return</span> $state.$current.name === state.name;
+                    };
+
+                    <span class="kwrd">var</span> setNavigationState = <span class="kwrd">function</span> () {
+                        $scope.$navigationState = {
+                            currentState: $state.$current,
+                            <span class="kwrd">params</span>: $stateParams,
+                            getDisplayName: <span class="kwrd">function</span> (state) {
+
+                                <span class="kwrd">if</span> ($scope.hasCustomResolver) {
+                                    <span class="kwrd">return</span> $scope.itemDisplayNameResolver({
+                                        defaultResolver: defaultResolver,
+                                        state: state,
+                                        isCurrent: isCurrent(state)
+                                    });
+                                }
+                                <span class="kwrd">else</span> {
+                                    <span class="kwrd">return</span> defaultResolver(state);
+                                }
+                            },
+                            isCurrent: <span class="kwrd">function</span> (state) {
+
+                                <span class="kwrd">return</span> isCurrent(state);
+                            }
+                        }
+                    };
+
+                    $scope.$on(<span class="str">'$stateChangeSuccess'</span>, <span class="kwrd">function</span> () {
+                        setNavigationState();
+                    });
+
+                    setNavigationState();
+                }],
+                link: <span class="kwrd">function</span> (scope, element, attrs, controller) {
+                    scope.hasCustomResolver = angular.isDefined(attrs[<span class="str">'itemDisplayNameResolver'</span>]);
+                }
+            };
+        }]);
+
+})();</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Lots of code, I am assuming that the reader has a basic knowledge of how <a href="http://docs.angularjs.org/guide/directive" target="_blank">AngularJS directives works</a>. Let us concentrate on the controller, where the interesting part is:</p>
+<ul>
+<li>we depend on the $state and $stateParams object of the UI Router, and on our $scope, in this case the directive has its own isolated scope;</li>
+<li>we define the default resolver that looks for our data object on the state and fallbacks to the state name if no data object can be found;</li>
+<li>we define the logic that determine is the current state is the last in the hierarchy;</li>
+<li>we define the logic to build the navigation state:</li>
+<ul>
+<li>in the navigation state there is the logic that can handle custom display name resolvers;</li></ul>
+<li>we finally hook the navigation event we are interested in to sync the navigation state;</li></ul>
+<p>An AngularJS directive is not a simple concept but in this case we can say that building a breadcrumb is an easy peasy, lemon squeezy story :-)</p>
+<p>.m</p>  

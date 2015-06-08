@@ -1,0 +1,14 @@
+---
+layout: post
+title: logging…what a mess…
+date: '2012-11-23T10:38:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-11-23T10:38:00.861+01:00'
+thumbnail: http://lh4.ggpht.com/-UAqErtQm47s/UHFqDOviRBI/AAAAAAAACPs/4oVwnPvGwFA/s72-c/image_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1133151434177708123
+blogger_orig_url: http://milestone.topics.it/2012/11/loggingwhat-mess.html
+---
+
+<p>During my daily work I’m currently using <a href="http://nuget.org" target="_blank">nuget</a> a lot and after adding some dependencies the references of one of my projects looks like the following:</p> <p><a href="http://lh5.ggpht.com/-i57OVdES12g/UHFqB9FQjQI/AAAAAAAACPk/Vu6i38KCYFU/s1600-h/image2.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh4.ggpht.com/-UAqErtQm47s/UHFqDOviRBI/AAAAAAAACPs/4oVwnPvGwFA/image_thumb.png?imgmax=800" width="222" height="228"></a></p> <p>everyone tends to use its own favorite logging framework with the consequence that if you are the user of other’s framework you finally end up with something that is really like a traffic jam… </p> <p>I deeply think that a framework should not impose nothing more then the framework functionalities to the user, but in those cases it was imposed to me also the dependency on 2 different logging framework.</p> <p>I have nothing against both logging infrastructure, what I only want to point out is that now in order to have logs in one single place I am forced to adapt the output of one to the other, or, much better (or worse), of both to System.Diagnostics.Trace.</p> <p>.m</p>  

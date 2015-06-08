@@ -1,0 +1,157 @@
+---
+layout: post
+title: 'Metro: navigation service'
+date: '2012-07-25T11:08:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Metro
+- WinRT
+- Radical
+modified_time: '2012-07-25T11:08:00.033+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9116090882902658372
+blogger_orig_url: http://milestone.topics.it/2012/07/metro-navigation-service.html
+---
+
+<p>In the <a href="http://www.qmatteoq.com/blog/post/windows-8-applicazioni-metro-style-navigazione-e-mvvm" target="_blank">same post</a> we have already <a href="{{ site.baseurl }}{% post_url 2012-07-23-puzzle-ioc-container-for-winrt %}" target="_blank">outlined before</a> <a href="http://www.qmatteoq.com/blog/" target="_blank">Matteo</a> introduces the concept of navigation in a WinRT/Metro application, the solution outlined by Matteo is <strong>clean and neat</strong> even if it basically force you to fallback to a view model locator to attach ViewModel(s) to View(s) since the built-in Frame has its own logic (currently not pluggable as in Silverlight) to create views instances. View model locator is absolutely a valid solution, even if I do not really like it, but it is just a matter of opinions.</p> <p>One thing missing in the Matteo’s sample is that “MVVMing” you want to have full control of what’s going on in the ViewModel and when using a navigation infrastructure you need navigation callbacks in the view model.</p> <p>Going on with the Matteo’s implementation a really neat solution is to use behaviors in the view to attach to the navigation events and to call navigation callback methods in the ViewModel, the main problem is that behaviors does not (yet?) exists in the xaml for WinRT. <a href="http://radical.codeplex.com/" target="_blank">Radical</a>&nbsp;<a href="https://nuget.org/packages/Radical.Windows.Metro" target="_blank">introduces</a> this support with its own behavior implementation:</p> <blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">TextBlock</span> <span class="attr">HorizontalAlignment</span><span class="kwrd">="Left"</span> <span class="attr">Margin</span><span class="kwrd">="91,62,0,0"</span> <span class="attr">TextWrapping</span><span class="kwrd">="Wrap"</span> <span class="attr">Text</span><span class="kwrd">="TextBlock"</span> <span class="attr">VerticalAlignment</span><span class="kwrd">="Top"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">bhv:Extensibility.Behaviors</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">foo:SampleBehavior</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">bhv:Extensibility.Behaviors</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">TextBlock</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>where the SampleBehavior is something like:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">namespace</span> Radical.Samples
+{
+    <span class="kwrd">public</span> <span class="kwrd">class</span> SampleBehavior : Topics.Radical.Windows.Behaviors.RadicalBehavior&lt;TextBlock&gt;
+    {
+        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnAttached()
+        {
+
+        }
+
+        <span class="kwrd">protected</span> <span class="kwrd">override</span> <span class="kwrd">void</span> OnDetached()
+        {
+            
+        }
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Now…we have solved all the scenarios, but if we want to go deeper we can build our own <a href="http://radical.codeplex.com/SourceControl/changeset/view/80483#1595755" target="_blank">navigation infrastructure</a> whose purpose is:</p>
+<ol>
+<li>deeply understand how stuff works under the hood;</li>
+<li>get rid, if you want, of the view model locator since you gain control over the view instance creation;</li></ol>
+<p>It is not an easy task, well it is not complex but there are several things that you have to take care of, because you have to support:</p>
+<ul>
+<li><strong>Navigation stack</strong>: as for the Windows Phone apps Metro as the concept of backward navigation so the navigation service must be able to keep track of the navigation stack in order to be able to support a “navigate back” request;</li>
+<li><strong>Navigation caching</strong>: in order to behave as the built-in Frame a back navigation request should not recreate instances of the “world”, but the previous view should be retrieved from the cache;</li>
+<li><strong>Stack persistence and restore</strong>: since we keep track of the navigation stack we need to be able to persist it in order to respond successfully to application suspend requests and we also need, much more important, to be able to restore the navigation stack in order to display to the user the same view where the user left;</li>
+<li><strong>Suspension management</strong>: the previous point requires us to implement a full suspension management system so keep track of the current application state across suspension cycles;</li></ul>
+<p>All those systems <a href="http://radical.codeplex.com/SourceControl/changeset/view/80483#1603999" target="_blank">allows us to do</a> something like this:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> MainViewModel : AbstractViewModel, IExpectNavigatedToCallback, IExpectNavigatingAwayCallback
+{
+    <span class="kwrd">readonly</span> INavigationService ns;
+
+    <span class="kwrd">public</span> MainViewModel( INavigationService ns )
+    {
+        <span class="kwrd">this</span>.ns = ns;
+
+        <span class="kwrd">this</span>.GoToNextPage = DelegateCommand.Create()
+            .OnExecute( o =&gt; 
+            {
+                <font style="background-color: #ffff00"><span class="kwrd">this</span>.ns.Navigate( <span class="str">"/Basic/Foo/Bar"</span>, <span class="str">"hi there!"</span> );</font>
+            } );
+    }
+
+    <span class="kwrd">public</span> ICommand GoToNextPage { get; <span class="kwrd">private</span> set; }
+
+    <font style="background-color: #ffff00"><span class="kwrd"></span></font><font style=""><span class="kwrd">void</span> <font style="background-color: #ffff00">IExpectNavigatedToCallback.OnNavigatedTo</font>( NavigationEventArgs e )
+    {
+            
+    }</font><font style="background-color: #ffff00"></font>
+
+    <font style="background-color: #ffff00"><span class="kwrd"></span></font><font style=""><span class="kwrd">void</span> <font style="background-color: #ffff00">IExpectNavigatingAwayCallback.OnNavigatingAway</font>( NavigatingAwayEventArgs e )
+    {
+            
+    }</font><font style="background-color: #ffff00"></font>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>I have highlighted the part to notice:</p>
+<ul>
+<li>the navigation infrastructure allows you to navigate by URI (currently there is no UriMapper but it is on the roadmap);</li>
+<li>the navigation infrastructure gives you an easy way to get plugged in the navigation pipeline;</li></ul>
+<p>You can still benefit of the view model locator pattern, if you like, and you gain all the goodies of a navigation service implementation that is thought for a world based on Model View ViewModel.</p>
+<p>.m</p>  

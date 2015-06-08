@@ -1,0 +1,70 @@
+---
+layout: post
+title: 'PostSharp: CompileTimeValidate()'
+date: '2008-10-27T08:32:00.000+01:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- AOP
+modified_time: '2012-08-04T17:55:46.993+02:00'
+thumbnail: https://lh5.googleusercontent.com/-DJ9XrKAWhQo/TyaDu8abQPI/AAAAAAAAAM0/9kE_B4hZV2Y/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9025869317273432801
+blogger_orig_url: http://milestone.topics.it/2008/10/postsharp-compiletimevalidate.html
+---
+
+<span>Se vado avanti così potrei diventare <a href="http://www.postsharp.org/" target="_blank">PostSharp</a> addicted… già sono compiler addicted conclamato, sono sulla buona strada per diventare Unit Testing addicted e dopo aver provato la compile time validation di PostSharp posso asserire che si sta chiudendo il cerchio.</span><br>  <span>Un paio di giorni fa abbiamo visto come usare PostSharp per validare a runtime i parametri di un metodo (per inciso funziona anche con i costruttori) facendo semplicemente una cosa del genere:</span><br>  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">MyTestClass
+</span>{
+    <span style="color: blue">public void </span>Foo( [<span style="color: #2b91af">NotNull</span>]<span style="color: #2b91af">String </span>arg )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Foo( String ): " </span>+ arg );
+    }
+}</pre>
+
+<span>e producendo a runtime una <em>ArgumentNullException</em> se chiamiamo <em>Foo()</em> passando un valore <em>null</em>. Adesso immaginiamo di scrivere una cosa del genere:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">MyTestClass
+</span>{
+    <span style="color: blue">public void </span>Foo( [<span style="color: #2b91af">NotNull</span>, <span style="color: #2b91af">Int32RangeValidator</span>( CompareLogic = <span style="color: #2b91af">CompareLogicOperator</span>.Greater, ReferenceValue = 0) ]<span style="color: #2b91af">Int32 </span>arg )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Foo( Int32 ): " </span>+ arg );
+    }
+}</pre>
+
+<span>abbiamo un overload di Foo() che prende un intero e vogliamo che questo sia maggiore di 0 ma erroneamente, perchè Int32 è un value type, vogliamo anche che non sia null… compiliamo e:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-qDdMZSKwrco/TyaDvCyknWI/AAAAAAAAAM4/5rwoevjg96A/image_2.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="157" alt="image" src="https://lh5.googleusercontent.com/-DJ9XrKAWhQo/TyaDu8abQPI/AAAAAAAAAM0/9kE_B4hZV2Y/image_thumb.png" width="350" border="0"></a> </span><br>
+
+<span>Lasciatemi dire: semplicemente fantastico!</span><br>
+
+<span>Il tutto è stato di una semplicità disarmante:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">Serializable</span>]
+<span style="color: blue">public class </span><span style="color: #2b91af">ArgumentValidatorAspect </span>: <span style="color: #2b91af">OnMethodBoundaryAspect
+</span>{
+    <span style="color: blue">public override bool </span>CompileTimeValidate( <span style="color: #2b91af">MethodBase </span>method )
+    {
+        <span style="color: #2b91af">Boolean </span>returnValue = <span style="color: blue">true</span>;
+
+        method.GetParameters()
+                .Where( pi => pi.IsAttributeDefined<<span style="color: #2b91af">NotNullAttribute</span>>() )
+                .ForEach( pi =>
+                    {
+                        <span style="color: blue">if</span>( pi.ParameterType.IsValueType )
+                        {
+                            <span style="color: #2b91af">Message </span>error = <span style="color: blue">new </span><span style="color: #2b91af">Message</span>( <span style="color: #2b91af">SeverityType</span>.Error,<br>                                                         <span style="color: #a31515">"RV0001"</span>, <br>                                                         <span style="color: #a31515">"Cannot apply NotNullAttribute to a ValueType."</span>, <br>                                                         method.Name );
+                            <span style="color: #2b91af">MessageSource</span>.MessageSink.Write( error );
+
+                            returnValue = <span style="color: blue">false</span>;
+                        }
+                    } );
+
+        <span style="color: blue">return </span>returnValue;
+    }<br>}</pre>
+
+<span>PostSharp ha un motore di validazione che viene invocato a compile time e che ci permette di controllare, parzialmente, il processo di build eventualmente interrompendolo se non sono soddisfatti determinati requisiti, come nel nostro caso.</span><br>
+
+<span>Questo apre a scenari notevoli, dimentichiamoci per un momento di tutto quello che PostSharp può fare a runtime e soffermiamoci solo sulla fase a compile time: la manna del programmatore sono gli errori del compilatore avere la possibilità di <em>controllare</em> il processo di build anche attraverso attributi custom/aspect è semplicemente potentissimo.</span><br>
+
+<span>.m</span><br>
+

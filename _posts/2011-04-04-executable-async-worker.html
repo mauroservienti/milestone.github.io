@@ -1,0 +1,70 @@
+---
+layout: post
+title: “Executable Async Worker”
+date: '2011-04-04T12:22:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T19:47:46.214+02:00'
+thumbnail: https://lh4.googleusercontent.com/-tADKZYzNfX0/T0SlMQka61I/AAAAAAAAB0Q/mX_e6G33GKs/s72-c/Radical_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7031718750599605460
+blogger_orig_url: http://milestone.topics.it/2011/04/executable-async-worker.html
+---
+
+<span><a href="https://lh6.googleusercontent.com/-VRwylT-zrn4/T0SlNZXAWxI/AAAAAAAAB0Y/bCaYuiKh11c/Radical_2.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; margin: 0px 5px 5px 0px; padding-left: 0px; padding-right: 0px; display: inline; float: left; border-top: 0px; border-right: 0px; padding-top: 0px" title="Radical" border="0" alt="Radical" align="left" src="https://lh4.googleusercontent.com/-tADKZYzNfX0/T0SlMQka61I/AAAAAAAAB0Q/mX_e6G33GKs/Radical_thumb.png" width="47" height="83"></a>vi ricordate dell’<a href="http://milestone.topics.it/blog/search?q=AsyncWorker&searchButton=Go" target="_blank">AsyncWorker</a> di <a href="http://radical.codeplex.com/" target="_blank">Radical</a>?</span><br>  <span>Ci sono delle interessanti novità, su richiesta di <a href="http://tostring.it" target="_blank">Ughetto</a> ho implementato la possibilità di riutilizzare lo stesso worker più volte al fine di poter creare dei job asincroni che possono essere poi mandati in esecuzione.</span><br>  <span>Quello che è possibile fare in più ora è ad esempio questo:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font style="font-size: 12pt">[<span style="color: "><font color="#2b91af">TestMethod</font></span>]
+[<span style="color: "><font color="#2b91af">TestCategory</font></span>( <span style="color: "><font color="#a31515">"AsyncWorker"</font></span> ), <span style="color: "><font color="#2b91af">TestCategory</font></span>( <span style="color: "><font color="#a31515">"Threading"</font></span> )]
+<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">void</font></span> asyncWorker_asAsyncAction_should_return_an_executable_asyncAction()
+{
+	<span style="color: "><font color="#0000ff">var</font></span> wa = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">ManualResetEvent</font></span>( <span style="color: "><font color="#0000ff">false</font></span> );
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> asyncAction = <span style="color: "><font color="#2b91af">AsyncWorker</font></span>.Using( 10 )
+		.OnExecute( e =>
+		{
+			<span style="color: "><font color="#2b91af">Thread</font></span>.Sleep( 5 );
+		} );
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> worker = asyncAction.Execute();
+ 
+	worker.Completed += ( s, e ) =>
+	{
+		wa.Set();
+	};
+ 
+	wa.WaitOne();
+}</font></pre>
+</blockquote>
+
+<span>è quindi possibile creare una “async action” (che non ha nulla a che spartire con Action<T>) che poi può essere eseguita in qualsiasi momento, ma anche accantonata per usi futuri. A questo punto mi sono detto perché non supportare anche uno scenario di questo genere?:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font style="font-size: 12pt">[<span style="color: "><font color="#2b91af">TestMethod</font></span>]
+[<span style="color: "><font color="#2b91af">TestCategory</font></span>( <span style="color: "><font color="#a31515">"AsyncWorker"</font></span> ), <span style="color: "><font color="#2b91af">TestCategory</font></span>( <span style="color: "><font color="#a31515">"Threading"</font></span> )]
+<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">void</font></span> asyncWorker_asAsyncAction_should_return_an_executable_asyncAction_with_support_for_triggers()
+{
+	<span style="color: "><font color="#0000ff">var</font></span> wa = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">ManualResetEvent</font></span>( <span style="color: "><font color="#0000ff">false</font></span> );
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> asyncAction = <span style="color: "><font color="#2b91af">AsyncWorker</font></span>.Using( 10 )
+		.OnExecute( e =>
+		{
+			<span style="color: "><font color="#2b91af">Thread</font></span>.Sleep( 5 );
+		} );
+ 
+	<span style="color: "><font color="#2b91af">IMonitor</font></span> timerTrigger = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">TimerTrigger</font></span>( 5000, <span style="color: "><font color="#2b91af">TriggerMode</font></span>.Once );
+	<span style="color: "><font color="#2b91af">IExecutableWorker</font></span> worker = asyncAction.AddTrigger( timerTrigger );<br>
+	timerTrigger.NotifyChanged();
+ 
+	worker.Completed += ( s, e ) =>
+	{
+		wa.Set();
+	};
+ 
+	<span style="color: "><font color="#0000ff">var</font></span> actual = wa.WaitOne( 10 );
+	actual.Should().Be.True();
+}</font></pre>
+</blockquote>
+
+<span>Con quindi la possibilità di iniettare dei trigger, utilizzando la già nota interfaccia <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1069924125365624508" target="_blank">IMonitor</a>, al fine di scatenare l’esecuzione.</span><br>
+
+<span>Questa seconda funzionalità al momento non è ancora completa sto scrivendo i test e implementando un po’ di logica basata su WeakReference al fine di evitare “simpatici” leak.</span><br>
+
+<span>.m</span><br>

@@ -1,0 +1,229 @@
+---
+layout: post
+title: Tracing… che barba che noia :-) <cit.>
+date: '2009-06-15T08:55:00.000+02:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- AOP
+modified_time: '2012-08-04T20:08:06.138+02:00'
+thumbnail: https://lh3.googleusercontent.com/-bg72WVAtbq4/Tym-80NOIaI/AAAAAAAAAeo/caxWX6H-l2k/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2527590254250787170
+blogger_orig_url: http://milestone.topics.it/2009/06/tracing-che-barba-che-noia.html
+---
+
+<span>Un paio di assiomi ;-):</span><br>  <ul>   <li>Il Tracing è necessario; </li>    <li>Il Tracing è di una noia mortale; </li> </ul>  <span>Però… ci sono due macro categorie di Tracing in realtà, io divido tra:</span><br>  <ul>   <li><strong>Tracing</strong>: quello che fa il codice: il metodo tal dei tali è stato invocato con la lista di parametrei xyz; </li>    <li><strong>Logging</strong>: quello che fa l’utente: l’utente ‘mauro’ alla tal ora del tal giorno ha salvato la tal anagrafica cliente; </li> </ul>  <span>Quello che più mi pesa è la prima categoria, facendo un esempio decisamente triviale di quello che siamo abituati a scrivere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static </span><span style="color: #2b91af">TraceSource </span>tracer = <span style="color: blue">new </span><span style="color: #2b91af">TraceSource</span>( <span style="color: #a31515">"Program" </span>);
+
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: blue">try
+        </span>{
+            tracer.TraceEvent( <span style="color: #2b91af">TraceEventType</span>.Verbose, 0, <span style="color: #a31515">"Entering method..." </span>);
+
+            <span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+            p.FirstName = <span style="color: #a31515">"Mauro"</span>;
+            p.LastName = <span style="color: #a31515">"Servienti"</span>;
+
+            <span style="color: blue">var </span>x = p.Echo( p );
+
+            <span style="color: #2b91af">Console</span>.WriteLine( x );
+        }
+        <span style="color: blue">catch</span>( <span style="color: #2b91af">Exception </span>e )
+        {
+            tracer.TraceEvent( <span style="color: #2b91af">TraceEventType</span>.Critical, 0, <span style="color: #a31515">"Unhandled Exception: {0}"</span>, e );
+
+            <span style="color: blue">throw</span>;
+        }
+        <span style="color: blue">finally
+        </span>{
+            tracer.TraceEvent( <span style="color: #2b91af">TraceEventType</span>.Verbose, 0, <span style="color: #a31515">"Exiting method..." </span>);
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>se pensiamo a quanto tempo investiamo nella scrittura, e manutenzione, di quel codice mi viene male, questo in generale a prescindere dallo strumento di Tracing che usiamo.</span><br>
+
+<span><strong>Introducing AOP with PostSharp</strong></span><br>
+
+<span>Il tracing è uno di quegli aspetti della programmazione in cui AOP potrebbe fare da padrone, alla fine della fiera quel codice è <em>generalizzabilissimo</em> e varrebbe proprio la pena di farlo.</span><br>
+
+<span>Ho già parlato più di una volta di PostSharp: <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/aop-c-e-postsharp.aspx" target="_blank">qui</a>, <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/aop-c-e-postsharphellip-update.aspx" target="_blank">qui</a>, <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/postsharp-compiletimevalidate.aspx" target="_blank">qui</a> e <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/aop-postsharp-e-m-v-vm.aspx" target="_blank">qui</a>. Oggi voglio approfondire alcuni concetti e far vedere come lo sto usando con soddisfazione, molta soddisfazione.</span><br>
+
+<span><strong>AOP: Compile Time Code Injection</strong></span><br>
+
+<span><a href="http://www.postsharp.org/" target="_blank">PostSharp</a> ragiona in maniera completamente diversa rispetto a tutti i framework che fanno policy/behavior injection, in generale siamo abituati ad un qualcosa fatto a runtime utilizzando il concetto di transparent proxy, viene cioè creato a runtime un proxy che wrappa il vostro tipo e inietta codice e comportamento, è evidente che questo ha un costo in termini di performance; ha anche interessanti vantaggi sia chiaro.</span><br>
+
+<span><a href="http://www.postsharp.org/" target="_blank">PostSharp</a> invece interviene a compile time, <a href="http://www.postsharp.org/" target="_blank">PostSharp</a> incorpora un post-compilatore che interviene dopo la compilazione fatta da MSBuild, disassembla il vostro compilato, inietta il codice e ricompila. Vediamo un esempio proprio in materia di Tracing:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">Serializable</span>]
+<span style="color: blue">public class </span><span style="color: #2b91af">TraceAttribute </span>: <span style="color: #2b91af">OnMethodBoundaryAspect
+</span>{
+    <span style="color: blue">public override void </span>OnEntry( <span style="color: #2b91af">MethodExecutionEventArgs </span>eventArgs )
+    {
+        eventArgs.MethodExecutionTag = <span style="color: #2b91af">Guid</span>.NewGuid();
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"--> ctx: {1} - {0}"</span>, eventArgs.Method.Name, eventArgs.MethodExecutionTag );
+    }
+
+    <span style="color: blue">public override void </span>OnExit( <span style="color: #2b91af">MethodExecutionEventArgs </span>eventArgs )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"<-- ctx: {1} - {0}"</span>, eventArgs.Method.Name, eventArgs.MethodExecutionTag );
+    }
+
+    <span style="color: blue">public override void </span>OnException( <span style="color: #2b91af">MethodExecutionEventArgs </span>eventArgs )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"--- Exception at" </span>);
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"--- ctx: {1} - {0}"</span>, eventArgs.Method.Name, eventArgs.MethodExecutionTag );
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"--- Begin of Stack Trace" </span>);
+        <span style="color: #2b91af">Console</span>.WriteLine( eventArgs.Exception.StackTrace );
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"--- End of Stack Trace" </span>);
+    }
+}</pre>
+</blockquote>
+
+<span>Creiamo una classe che deriva da una classe base del framework di PostSharp, in questo caso OnMethodBoundaryAspect che, come lascia intuire il nome, è una sorta di wrapper intorno al codice di un metodo (ove per metodo vengono intesi anche costruttori, proprietà ed eventi).</span><br>
+
+<span>Torniamo al codice di esempio da cui siamo partiti e trasformiamolo così:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: blue">assembly</span>: <span style="color: #2b91af">TraceAttribute</span>( AttributeTargetMembers = <span style="color: #a31515">"*"</span>, <br>                           AttributeTargetAssemblies = <span style="color: #a31515">"PostSharp Tracing" </span>)]
+
+<span style="color: blue">namespace </span>PostSharp_Tracing
+{
+    <span style="color: blue">class </span><span style="color: #2b91af">Program
+    </span>{
+        <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+        {
+            <span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+            p.FirstName = <span style="color: #a31515">"Mauro"</span>;
+            p.LastName = <span style="color: #a31515">"Servienti"</span>;
+
+            <span style="color: blue">var </span>x = p.Echo( p );
+
+            <span style="color: #2b91af">Console</span>.WriteLine( x );
+            <span style="color: #2b91af">Console</span>.Read();
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Se lo compiliamo e manidamo in esecuzione l’output è questo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-28nJmwZjxqI/Tym-9pczV7I/AAAAAAAAAes/qvdnHbIVWr4/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-bg72WVAtbq4/Tym-80NOIaI/AAAAAAAAAeo/caxWX6H-l2k/image_thumb.png" width="244" height="154"></a> </span><br>
+
+<span>Urka :-) praticamente abbiamo “gratis” un trace di tutto quello che è successo nel codice, ma cosa è successo? Apriamo con Reflector l’assembly generato:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-oyyjL_ppn5M/Tym-_Y1ToZI/AAAAAAAAAe4/qo3ByT2qLnw/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-eGc-95WSSd0/Tym--R2636I/AAAAAAAAAew/hQ8RibYIk2I/image_thumb_1.png" width="244" height="178"></a> </span><br>
+
+<span>Il metodo Main() del nostro programma è diventato qualcosa di decisamente diverso, e così tutto il resto. PostSharp ha infatti iniettato una montagna di codice per far si che vengano effettuate le chiamate al codice del nostro attributo.</span><br>
+
+<span>Non mi dilungo oltre perchè ho parlato a lungo di come funziona, tutto bello però c’è un problema. Se osserviamo bene il codice generato c’è un sacco di overhead che per quello che vogliamo fare è pressochè inutile (per altri usi di PostSharp è una manna ma per il tracing non serve proprio a nulla). L’overhead è in soldoni questo:</span><br>
+
+<ul>
+  <li>MSBuild compila il vostro codice; </li>
+
+  <li>PostSharp disassembla e deve iniettare le chiamate; </li>
+
+  <li>Quello che però deve fare non è chiamare il vostro codice perchè non ha idea di come farlo non conoscendolo… deve quindi creare un generico e flessibile ponte: <u>programma</u> –> <em>infrastruttura di PostSharp</em> –> <u>codice di tracing</u> –> <em>infrastruttura di PostSharp</em> –> <u>programma</u>; </li>
+</ul>
+
+<span>E’ evidente che questo costa…</span><br>
+
+<span>Ma non tutto è perso, anzi. PostSharp mette a disposizione anche un livello di intervento decisamente più basso, chiamato Weaver, che vi consete di inserirvi direttamente nel processo di Post-Compilazione al fine di emettere direttamente codice… IL…</span><br>
+
+<span>Naturalmente lungi da me intraprendere questa impervia ed ardua strada, soprattutto se <a href="http://code.google.com/p/postsharp-user-plugins/wiki/Log4PostSharp" target="_blank">altri</a> lo hanno già fatto ;-)</span><br>
+
+<span><strong>Log4PostSharp</strong></span><br>
+
+<span>Dopo aver seguito i <a href="http://www.codeproject.com/KB/dotnet/log4postsharp-intro.aspx?display=PrintAll&fid=1525016&df=90&mpp=25&noise=3&sort=Position&view=Quick&select=2680448" target="_blank">passi</a> per il setup di tutto l’ambaradan possiamo cambiare il nostro codice in questo modo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: blue">assembly</span>: <span style="color: #2b91af">XmlConfigurator</span>( Watch = <span style="color: blue">true </span>)]
+[<span style="color: blue">assembly</span>: <span style="color: #2b91af">Log</span>( AttributeTargetMembers = <span style="color: #a31515">"*"</span>,
+    AttributeTargetAssemblies = <span style="color: #a31515">"PostSharp Tracing"</span>,
+    EntryLevel = <span style="color: #2b91af">LogLevel</span>.Debug,
+    ExitLevel = <span style="color: #2b91af">LogLevel</span>.Debug )]
+
+<span style="color: blue">namespace </span>PostSharp_Tracing
+{
+    <span style="color: blue">class </span><span style="color: #2b91af">Program
+    </span>{
+        <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+        {
+            <span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+            p.FirstName = <span style="color: #a31515">"Mauro"</span>;
+            p.LastName = <span style="color: #a31515">"Servienti"</span>;
+
+            <span style="color: blue">var </span>x = p.Echo( p );
+
+            <span style="color: #2b91af">Console</span>.WriteLine( x );
+            <span style="color: #2b91af">Console</span>.Read();
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>L’unica differenza evidente sono le dichiarazioni in testa, aggiungiamo l’attributo XmlConfiguration che istruisce <a href="http://logging.apache.org/log4net/index.html" target="_blank">log4net</a> (utilizzato come framework di logging da Log4PostSharp) su come gestire la configurazione e rimpiazziamo il nostro attributo TraceAttribute con LogAttribute incluso nella librearia Log4PostSharp, ricordiamoci anche di aggiungere la configurazione di log4net nel file app.config:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">configSections</span><span style="color: blue">>
+  <</span><span style="color: #a31515">section </span><span style="color: red">name</span><span style="color: blue">=</span>"<span style="color: blue">log4net</span>" <span style="color: red">type</span><span style="color: blue">=</span>"<span style="color: blue">log4net.Config.Log4NetConfigurationSectionHandler, log4net</span>" <span style="color: blue">/>
+</</span><span style="color: #a31515">configSections</span><span style="color: blue">>
+
+<</span><span style="color: #a31515">log4net</span><span style="color: blue">>
+  <</span><span style="color: #a31515">appender </span><span style="color: red">name</span><span style="color: blue">=</span>"<span style="color: blue">consoleAppender</span>" <span style="color: red">type</span><span style="color: blue">=</span>"<span style="color: blue">log4net.Appender.ConsoleAppender</span>"<span style="color: blue">>
+    <</span><span style="color: #a31515">layout </span><span style="color: red">type</span><span style="color: blue">=</span>"<span style="color: blue">log4net.Layout.PatternLayout</span>"<span style="color: blue">>
+      <</span><span style="color: #a31515">conversionPattern </span><span style="color: red">value</span><span style="color: blue">=</span>"<span style="color: blue">%date [%thread] %-5level %logger %ndc - %message%newline</span>" <span style="color: blue">/>
+    </</span><span style="color: #a31515">layout</span><span style="color: blue">>
+  </</span><span style="color: #a31515">appender</span><span style="color: blue">>
+
+  <</span><span style="color: #a31515">root</span><span style="color: blue">>
+    <</span><span style="color: #a31515">level </span><span style="color: red">value</span><span style="color: blue">=</span>"<span style="color: blue">ALL</span>" <span style="color: blue">/>
+    <</span><span style="color: #a31515">appender-ref </span><span style="color: red">ref</span><span style="color: blue">=</span>"<span style="color: blue">consoleAppender</span>" <span style="color: blue">/>
+  </</span><span style="color: #a31515">root</span><span style="color: blue">>
+  
+</</span><span style="color: #a31515">log4net</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>Ecco il nuovo metodo Main dopo la Post-Compilazione:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-VHtqc8qtdy4/Tym_AajUt0I/AAAAAAAAAfI/EQYCchcsUz8/image_6.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-gEzCMBB4OzI/Tym-_xV4VpI/AAAAAAAAAe8/x48xHXjpd2M/image_thumb_2.png" width="244" height="198"></a> </span><br>
+
+<span>Le differenze sono evidenti, non c’è più traccia di tutta l’infrastruttura di PostSharp (che infatti non è più una dipendenza a runtime per il nostro programma) ma troviamo solo del sano codice di tracing molto simle (naming a parte) a quello che potremmo scrivere noi. Ed ecco il risultato a runtime con la configurazione di log4net di cui sopra:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-kcmnyZkAJek/Tym_C0Z8EOI/AAAAAAAAAfY/uuBiR-2AQ5g/image_8.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-AYdTm3snOtw/Tym_BqGo6XI/AAAAAAAAAfQ/R3EREq9W-qk/image_thumb_3.png" width="244" height="80"></a> </span><br>
+
+<span>Di nuovo urka ;-)</span><br>
+
+<span>Un paio di note:</span><br>
+
+<ol>
+  <li>il codice iniettato non interferisce in alcun modo con la debug-experience;</li>
+
+  <li>Il codice di tracing dipende da log4net e vi obbliga all’uso di log4net; utilizzando la prima tecnica che abbiamo visto sarebbe abbastanza facile utilizzare IoC/DI nel TraceAttribute per iniettare a runtime il motore di tracing ma:</li>
+
+  <ol>
+    <li>IMVHO: non ne vale la pena neanche dipinti sui muri ;-)</li>
+
+    <li>Generalizzare il sistema di Tracing vi porterebbe ad avere un’infrastruttura di Tracing veramente povera, vedasi come esempio quella di Castle Windsor, perchè le uniche feature che potreste esporre sono il minimo comun denominatore delle feature messe a disposizione dai motori di tracing che volete supportare;</li>
+
+    <li>Generalizzare/cambiare il motore di tracing con la seconda tecnica ha invece un costo altissimo perchè dovete essere dei mezzi guru di IL e della generazione di codice a compile-time… quindi viva log4net ;-)</li>
+  </ol>
+</ol>
+
+<span><u>Quali sono i side effects, sempre che ce ne siano?</u> in generale io per ora ne ho trovato uno solo: i tempi di build si allungano sensibilmente perchè la post-compilazione costa, ma se lo paragono ai benefici il caffè che mi bevo tra una build è l’altra è tempo molto ben speso ;-)</span><br>
+
+<span>Una cosa che ho fatto è stata però ricompilare il plugin Log4PostSharp per la versione 1.5 di PostSharp, la versione originale è per la 1.0, perchè il post-compiler della 1.5 è mostruosamente più veloce.</span><br>
+
+<span>Per quello che rigarda il <em>Logging</em> continuo a farlo a mano, ma quello ha anche aspetti interessanti e problematiche curiose che val la pena affrontare.</span><br>
+
+<span>.m</span><br>
+
+
+
+
+

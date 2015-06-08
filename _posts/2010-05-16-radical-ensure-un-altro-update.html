@@ -1,0 +1,17 @@
+---
+layout: post
+title: 'Radical: Ensure, un altro update :-)'
+date: '2010-05-16T21:29:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Ensure
+- Software Mason
+- Radical
+- Fluent Interfaces
+modified_time: '2012-02-16T07:14:24.208+01:00'
+thumbnail: https://lh4.googleusercontent.com/-WQO72hH_0gY/TzyerW5m2wI/AAAAAAAABSY/OrWmjwc5PwM/s72-c/e6213dd4-a0bd-490a-bbd1-6510e2896744.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1841018011190925084
+blogger_orig_url: http://milestone.topics.it/2010/05/radical-ensure-un-altro-update.html
+---
+
+<span>Questa volta <a href="http://tostring.it/" target="_blank">Ughetto</a> ha colpito nel segno.</span><br>  <span>Sfruttando le <a href="/search/label/fluent+interfaces" target="_blank">“fluent interfaces” e i tricks per costruirle</a> ho ridotto lo scope di un paio di metodi di Ensure<T> che potevano portare a comportamenti fuorvianti.</span><br>  <span>Adesso il metodo <em>Named( … )</em> compare solo se non avete ancora chiamato nessun metodo che invochi la validazione in modo da evitare che sia possibile attribuire un nome al parametro che state validando dopo che una validazione è già stata eseguita, in questo modo c’è la certezza che ogni exception che possa venire sollevata contiene il nome del parametro incriminato.</span><br>  <span>All’inizio il metodo è disponibile:</span><br>  <span><a href="https://lh5.googleusercontent.com/-VPkfTWG538k/TzyesVtDP-I/AAAAAAAABSg/TljqJyWnfFw/d0d28026-c89c-47b5-9dd8-2b8776ec91a5.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-WQO72hH_0gY/TzyerW5m2wI/AAAAAAAABSY/OrWmjwc5PwM/e6213dd4-a0bd-490a-bbd1-6510e2896744.png" width="244" height="75"></a></span><br>  <span>mentre dopo la prima validazione non lo è più:</span><br>  <span><a href="https://lh3.googleusercontent.com/-eo8valt24kY/TzyeuL8CFWI/AAAAAAAABSw/Ej8qfbhN-3g/f47bdc36-ea22-4c82-9cbb-f0de9f676468.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-y5JDSTiQKoQ/TzyetE6M39I/AAAAAAAABSk/U_XAMzKJUz4/6e600e0f-596e-4173-81ac-0f41482d885c.png" width="244" height="50"></a> </span><br>  <span>Al prossimo giro ci sarà anche la possibilità di agganciare un’infratruttura di log che verrà invocata prima della generazione di ogni exception.</span><br>  <span>Purtroppo c’è anche una breaking change, è cambiata la firma di un metodo:</span><br>  <span>da: ThenThrow( Func<String, Exception> exceptionBuilder )    <br>a:   ThenThrow( Func<IEnsure<T>, Exception> exceptionBuilder )</span><br>  <span>.m</span><br>    

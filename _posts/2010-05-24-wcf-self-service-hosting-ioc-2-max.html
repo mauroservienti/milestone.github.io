@@ -1,0 +1,232 @@
+---
+layout: post
+title: 'Wcf self-service hosting: IoC-2-the-max'
+date: '2010-05-24T03:42:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Inversion of Control
+- Wcf
+modified_time: '2012-02-16T07:15:05.728+01:00'
+thumbnail: https://lh5.googleusercontent.com/-GQOF0SQHRXI/Tzye22-VhRI/AAAAAAAABTY/qSQAzUyXWnI/s72-c/906ef99e-7e56-48ef-b5f2-ca3ed4c07395.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3294848484945229101
+blogger_orig_url: http://milestone.topics.it/2010/05/wcf-self-service-hosting-ioc-2-max.html
+---
+
+<span>siamo di nuovo qui… :-), ed è pure di nuovo lunedì…, abbiamo il nostro bel servizio di brokering basato su Wcf, o meglio abbiamo <a href="http://mauroservienti.blogspot.com/2010/05/wcf-i-known-service-type-e-non-solo.html" target="_blank">un’idea di quello che vogliamo</a> e ci troviamo di fronte ad un interessante problema, questo è il contratto (non è più così ma poco importa adesso):</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">ServiceContract</span>( SessionMode = <span style="color: #2b91af">SessionMode</span>.NotAllowed, Namespace = <span style="color: #a31515">"…" </span>)]
+<span style="color: blue">public interface </span><span style="color: #2b91af">IWcfMessageBrokerService
+</span>{
+    [<span style="color: #2b91af">OperationContract</span>( IsOneWay = <span style="color: blue">false </span>)]
+    [<span style="color: #2b91af">ServiceKnownType</span>( <span style="color: #a31515">"GetServiceKnownTypes"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">ServiceKnownTypesProvider </span>) )]
+    <span style="color: #2b91af">ResponseMessage</span>[] Dispatch( <span style="color: #2b91af">TwoWayRequestMessage</span>[] requests );
+
+    [<span style="color: #2b91af">OperationContract</span>( IsOneWay = <span style="color: blue">true </span>)]
+    [<span style="color: #2b91af">ServiceKnownType</span>( <span style="color: #a31515">"GetServiceKnownTypes"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">ServiceKnownTypesProvider </span>) )]
+    <span style="color: blue">void </span>Broadcast( <span style="color: #2b91af">OneWayRequestMessage</span>[] requests );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Implementato “grezzamente” (siamo ancora in draft) in questo modo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">AspNetCompatibilityRequirements</span>( RequirementsMode = <span style="color: #2b91af">AspNetCompatibilityRequirementsMode</span>.Allowed )]
+[<span style="color: #2b91af">ServiceBehavior</span>( InstanceContextMode = <span style="color: #2b91af">InstanceContextMode</span>.PerCall )]
+<span style="color: blue">public class </span><span style="color: #2b91af">WcfMessageBrokerService </span>: <span style="color: #2b91af">IWcfMessageBrokerService
+</span>{
+    <span style="color: blue">public </span><span style="color: #2b91af">ResponseMessage</span>[] Dispatch( <span style="color: #2b91af">TwoWayRequestMessage</span>[] requests )
+    {
+        <span style="color: blue">var </span>tmp = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">ResponseMessage</span>>();
+
+        <span style="color: blue">foreach</span>( <span style="color: blue">var </span>message <span style="color: blue">in </span>requests )
+        {
+            <span style="color: green">//recupera il tipo degli handler in base al messaggio
+            //recupera gli handler in base al tipo</span><span style="color: green">
+            //esegue gli handler passando il messaggio</span>
+            <span style="color: green">//accumula le risposte</span>
+        }
+
+        <span style="color: green">//ritorna le risposte
+        </span><span style="color: blue">return </span>tmp.ToArray();
+    }
+
+    <span style="color: blue">public void </span>Broadcast( <span style="color: #2b91af">OneWayRequestMessage</span>[] requests )
+    {
+        <span style="color: green">//idem con patate :-)</span>
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Probabilmente avete già notato l’oggetto del contendere: “<em>recupera gli handler in base al tipo</em>”; a naso direi che ci sono 2 soluzioni plausibili:</span><br>
+
+<ul>
+  <li>usare uno dei tanti mali del mondo: il <em>service locator pattern</em>; </li>
+
+  <li>cercare di iniettare qualcosa nel nostro servizio wcf; </li>
+</ul>
+
+<blockquote>
+  <span><em>n.d.r.: 
+      <br>Prima che qualcuno lo sottolinei c’è anche l’opzione MEF, ma in questo caso abbiamo bisogno di sfruttare, per cose che vedremo, le facility e la pluggabilità che un service container ci offre. Inoltre conosco ancora troppo poco MEF per metterlo in produzione adesso e per quel che ho capito MEF ragiona sulle “istanze” (inietta istanze) mentre noi per molte cose dobbiamo ragionare sui tipi (fare discovery e altre belle cosette), cosa che con MEF credo non ci sia mezzo di fare</em>.</span><br>
+</blockquote>
+
+<span>siccome il primo approccio <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8999170871682887014" target="_blank">proprio</a> <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/5986291175171232259" target="_blank">non mi piace</a> e il secondo mi sconquinfera parecchio diciamo che vogliamo essere in grado di supportare questo scenario:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">AspNetCompatibilityRequirements</span>( RequirementsMode = <span style="color: #2b91af">AspNetCompatibilityRequirementsMode</span>.Allowed )]
+[<span style="color: #2b91af">ServiceBehavior</span>( InstanceContextMode = <span style="color: #2b91af">InstanceContextMode</span>.PerCall )]
+<span style="color: blue">public class </span><span style="color: #2b91af">WcfMessageBrokerService </span>: <span style="color: #2b91af">IWcfMessageBrokerService
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">IMessageHandlerProvider </span>provider;
+
+    <span style="color: blue">public </span>WcfMessageBrokerService( <span style="color: #2b91af">IMessageHandlerProvider </span>provider )
+    {
+        <span style="color: blue">this</span>.provider = provider;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>“semplicemente” essere in grado di fare DI in un servizio Wcf. Per arrivare li è necessario capire come gira il fumo della genesi di un servizio Wcf, tipicamente per <em>hostare</em> un sevizio in una applicazione potremmo scrivere una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>host = <span style="color: blue">new </span><span style="color: #2b91af">ServiceHost</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">MyService </span>) ) )
+{
+    host.Open();
+
+    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"MyService is waiting for connections..." </span>);
+    <span style="color: #2b91af">Console</span>.Read();
+
+    host.Close();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<blockquote>
+  <span><em>n.d.r.: 
+      <br>Oppure usare un file “.svc” perchè siamo ospitati dentro IIS, boni che ci arriviamo :-)</em></span><br>
+</blockquote>
+
+<span>La prima cosa da notare è che non siamo noi responsabili della creazione dell’istanza del servizio, e ci mancherebbe :-), ma lo possiamo diventare?  decisamente si, non solo: possiamo diventare responsabili della crezione dell’istanza senza doverci prendere carico anche della gestione del ciclo di vita, il che non ci fa certo schifo ;-)</span><br>
+
+<span>Wcf ragiona più o meno così (semplificando al massimo, mamma mia che macello…):</span><br>
+
+<ul>
+  <li>Wcf è dotato di una feature interessantissima: i behavior; </li>
+
+  <li>All’apertura di un “ServiceHost” potete agganciare un behavior al nuovo host, la stessa cosa si può fare anche da configurazione con qualche passaggio in più; </li>
+
+  <li>Il behavior avrà poi la possibilità, “ApplyDispatchBehavior”, di iniettare logica/cambiare proprietà/aggiungere extension in fase di startup; </li>
+
+  <li>Quindi un behavior potrebbe iterare tutti gli endpoint, o quelli che gli interessano, e cambiare un <em>robo</em> che si chiama: IInstanceProvider; </li>
+
+  <li>un IInstanceProvider è a tutti gli effetti un service container (GetInstance/ReleaseInstance) che verrà invocato da Wcf, per gli endpoint a cui è stato assegnato (ergo potreste avere comportamenti diversi per endpoint diversi), nel momento in cui Wcf ha effettivamente bisogno di creare un’istanza del servizio vero e proprio; </li>
+</ul>
+
+<blockquote>
+  <span><em>n.d.r.: 
+      <br>Qui nasce subito un primo problema… la documentazione su Wcf è decisamente poca, San Google non aiuta e se vi dannate a cercare trovate almeno 3 soluzioni diverse per lo stesso problema il che altro non fa che aumentare il disordine.</em></span><br>
+</blockquote>
+
+<span><strong>Ma se siamo hostati in IIS…? Nulla di più semplice :-)</strong></span><br>
+
+<span>C’è semplicemente un attore in più: <em>ServiceHostFactory</em>, partiamo dal fondo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-wjj5AC9j-HY/Tzye3ioQuGI/AAAAAAAABTg/TVCthRq73PQ/652a473f-88f2-4c35-970f-944760d689d7.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Picture1" border="0" alt="Picture1" src="https://lh5.googleusercontent.com/-GQOF0SQHRXI/Tzye22-VhRI/AAAAAAAABTY/qSQAzUyXWnI/906ef99e-7e56-48ef-b5f2-ca3ed4c07395.png" width="240" height="178"></a> </span><br>
+
+<span>Aggiungiamo un file “.svc” senza nessun code-behind. Cosa ci vieta adesso di fare questo?</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public abstract class </span><span style="color: #2b91af">StyxServiceHostFactory </span>: <span style="color: #2b91af">ServiceHostFactory
+</span>{
+    <span style="color: blue">protected abstract </span><span style="color: #2b91af">IServiceBootstrapper </span>CreateBoostrapper();
+
+    <span style="color: blue">protected virtual </span><span style="color: #2b91af">StyxServiceHost </span>OnCreateServiceHost( <span style="color: #2b91af">Type </span>serviceType, <span style="color: #2b91af">Uri</span>[] baseAddresses )
+    {
+        <span style="color: blue">var </span>boostrapper = <span style="color: blue">this</span>.CreateBoostrapper();
+        boostrapper.Boot();
+
+        <span style="color: blue">var </span>host = boostrapper.CreateHost( serviceType, baseAddresses );
+
+        <span style="color: blue">return </span>host;
+    }
+
+    <span style="color: blue">protected override sealed </span><span style="color: #2b91af">ServiceHost </span>CreateServiceHost( <span style="color: #2b91af">Type </span>serviceType, <span style="color: #2b91af">Uri</span>[] baseAddresses )
+    {
+        <span style="color: blue">var </span>host = <span style="color: blue">this</span>.OnCreateServiceHost( serviceType, baseAddresses );
+
+        <span style="color: blue">return </span>host;
+    }
+
+    <span style="color: blue">public override sealed </span><span style="color: #2b91af">ServiceHostBase </span>CreateServiceHost( <span style="color: blue">string </span>constructorString, <span style="color: #2b91af">Uri</span>[] baseAddresses )
+    {
+        <span style="color: blue">return base</span>.CreateServiceHost( constructorString, baseAddresses );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+<a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a>
+
+<span>e di conseguenza questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">WindsorStyxServiceHostFactory </span>: <span style="color: #2b91af">StyxServiceHostFactory
+</span>{
+    <span style="color: blue">protected override </span><span style="color: #2b91af">IServiceBootstrapper </span>CreateBoostrapper()
+    {
+        <span style="color: blue">return new </span><span style="color: #2b91af">WindsorServiceBootstrapper</span>();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>…e infine nel nostro file svc questo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-fSYqdq1n1n0/Tzye5-HDzRI/AAAAAAAABTs/3vA9dCdTQ_A/54fab2d6-2e89-4965-ac63-83a9a92dfcf3.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Picture2" border="0" alt="Picture2" src="https://lh3.googleusercontent.com/-F5QTXHfs9LQ/Tzye4R7J6LI/AAAAAAAABTo/0ASqzqi6TRk/bc27f6bc-8dfa-4529-9e8e-25e1b61d6da3.png" width="501" height="64"></a> </span><br>
+
+<span>Agganciamo cioè il nostro servizio e una nostra factory; una factory è esattamente quello che pensate: un singleton, il cui ciclo di vita è regolato dall’application pool. Singleton a cui IIS si rivolge (una ed una sola volta all’avvio) per avere istanze di un ServiceHost.</span><br>
+
+<span>E’ ovvio che adesso è tutto facilissimo perchè avete “in mano il telecomando” e potete controllare qualsiasi cosa e quindi iniettare quello che volete dove volete:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">WindsorServiceBootstrapper </span>: <span style="color: #2b91af">IServiceBootstrapper
+</span>{
+    <span style="color: #2b91af">IWindsorContainer </span>container;
+
+    <span style="color: blue">protected virtual </span><span style="color: #2b91af">IWindsorContainer </span>CreateContainer()
+    {
+         <span style="color: blue">return new </span><span style="color: #2b91af">WindsorContainer</span>();
+    }
+
+    <span style="color: blue">public virtual void </span>Boot()
+    {
+        <span style="color: blue">this</span>.container = <span style="color: blue">this</span>.CreateContainer();
+
+        <span style="color: #2b91af">Ensure</span>.That( container ).Named( () => container ).IsNotNull();
+
+        <span style="color: blue">this</span>.container.AddFacility<<span style="color: #2b91af">FactorySupportFacility</span>>( <span style="color: #a31515">"factory.support" </span>);
+        <span style="color: blue">this</span>.container.AddFacility<<span style="color: #2b91af">StartableFacility</span>>();
+
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">KharonConfigurationSectionHandler</span>>().UsingFactoryMethod( () =>
+        {
+            <span style="color: blue">var </span>configHandler = ( <span style="color: #2b91af">KharonConfigurationSectionHandler </span>)<span style="color: #2b91af">ConfigurationManager</span>.GetSection( <span style="color: #a31515">"brokerServiceConfiguration" </span>);
+            <span style="color: blue">return </span>configHandler;
+
+        } ).LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Singleton ) );
+            
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IServiceProvider</span>, <span style="color: #2b91af">IWindsorContainer</span>>().Instance( <span style="color: blue">this</span>.container ) );
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IInstanceProvider</span>>().ImplementedBy<<span style="color: #2b91af">WindsorStyxInstanceProvider</span>>().LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Singleton ) );
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IMessageHandlerProvider</span>>().ImplementedBy<<span style="color: #2b91af">WindsorMessageHandlerProvider</span>>().LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Singleton ) );
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IWcfMessageBrokerService</span>>().ImplementedBy<<span style="color: #2b91af">WcfMessageBrokerService</span>>().LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Transient ) );
+
+        <span style="color: blue">this</span>.container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IKharonConfiguration</span>>().ImplementedBy<<span style="color: #2b91af">WindsorConfiguration</span>>().LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Singleton ) );
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">StyxServiceHost </span>CreateHost( <span style="color: #2b91af">Type </span>serviceType, <span style="color: blue">params </span><span style="color: #2b91af">Uri</span>[] baseAddresses )
+    {
+        <span style="color: blue">return new </span><span style="color: #2b91af">WindsorStyxServiceHost</span>( <span style="color: blue">this</span>.container, serviceType, baseAddresses );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Usando semplicemente il vostro service container preferito :-)</span><br>
+
+<span>Abbiamo messo ancora più carne al fuoco e probabilmente lo scenario si è per ora solo complicato, al prossimo giro vediamo come usarlo e perchè sperando di fare luce su ogni dubbio. Purtroppo non posso rilasciare un sample perchè il “robo” è di <a href="http://www.gaia.is.it/" target="_blank">Gaia</a> e sinceramente non ho il tempo di mettere in piedi una code-base parallela, ma, sempre che vi interessi, non disperate… chi vivrà… compilerà e probabilmene mangerà anche un bel po’ di sana carnazza:-)</span><br>
+
+<span>.m</span><br>
+

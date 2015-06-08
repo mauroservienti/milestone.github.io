@@ -1,0 +1,201 @@
+---
+layout: post
+title: RavenDB and the LoadDocument feature
+date: '2014-04-28T10:52:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2014-04-28T10:52:00.091+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3290666315649300410
+blogger_orig_url: http://milestone.topics.it/2014/04/ravendb-and-loaddocument-feature.html
+---
+
+<p>To make a long story short: <strong>handle with care</strong>.</p> <p><strong>The long story…</strong></p> <p>In a relational world you must live with joins, full stop. It is not a problem neither an advantage it is a sort of a non-functional requirement, this is it, a relational model most of the time requires joins.</p> <p>If you have in your object model a Person class with a list of Addresses it will be stored in 2 different tables and in order to load them there are 2 options:</p> <ul> <li>shoot yourself in a foot and perform 2 queries;  <li>issue a join and in one single round-trip to the db get all the data;</li></ul> <p>When it comes to document modeling in a non-relational world the available options are a bit more and ranges from model your document in a relational fashion (most of the time shooting yourself in a foot) or model them in a document oriented manner.</p> <p>Modeling in a document oriented manner open up to an infinite range of options because it barely depends on the context, the usage, the type of the application and much more. For the purpose of the article consider the above Person class, one solution in a document database is the following:</p> <blockquote><pre class="csharpcode">{
+   firstName: <span class="str">'Mauro'</span>,
+   lastName: <span class="str">'Servienti'</span>,
+   addresses: [{
+      country: <span class="str">'Italy'</span>,
+      city: <span class="str">'Milan'</span>
+   },{
+      country: <span class="str">'Ireland'</span>,
+      city: <span class="str">'Dublin'</span>
+   },]
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We can embed everything in one single document with the consequence that we do not need a join to load the entire data set, it is one single trip in all the cases.</p>
+<p>Nothing forces us to model the solution as in the above sample, even if is a good approach, we can model the solution in a relational fashion even if in this case will be the worst solution but in the end I’m just trying to find a simple sample use case for the LoadDocument feature :-)<br>What we can do is store persons and addresses as separate documents introducing a relation (application level relation) between them, something like:</p>
+<blockquote><pre class="csharpcode">{
+   id: <span class="str">'people/123'</span>,
+   firstName: <span class="str">'Mauro'</span>,
+   lastName: <span class="str">'Servienti'</span>,
+   addresses: [ <span class="str">'addresses/123'</span> ]
+}
+
+{
+      id: <span class="str">'addresses/123'</span>
+      country: <span class="str">'Italy'</span>,
+      city: <span class="str">'Milan'</span>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>There are valid use cases for the above choice, what we immediately lose is the ability to easily search a person given an address because with the first design choice we can define an index such as the following:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">from</span> doc <span class="kwrd">in</span> docs.People
+<span class="kwrd">select new</span> 
+{
+   Content = <span class="kwrd">new</span> <span class="kwrd">object</span>[]
+   {
+      doc.FirstName,
+      doc.LastName,
+<br>      doc.Addresses.SelectMany( x =&gt; x.City )
+   }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>and we immediately get full text search capabilities even on addresses, and that is pretty cool. In the second scenario with separate documents the application must decide where to search and if we need to search as in the first scenario we need to issue 2 search queries.</p>
+<p><strong>LoadDocument to the rescue</strong></p>
+<blockquote><pre class="csharpcode"><span class="kwrd">from</span> doc <span class="kwrd">in</span> docs.People
+<span class="kwrd">let</span> addresses doc.Addresses.Select( x =&gt; <font style="background-color: #ffff00">LoadDocument</font>(x))
+<span class="kwrd">select new</span>
+{
+    Content = <span class="kwrd">new</span> <span class="kwrd">object</span>[]
+    {
+        doc.FirstName,
+        doc.LastName,
+        addresses.SelectMany( x =&gt; x.City )
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>The above index definition solves the problem, we have basically defined a join in an index that at indexing time will load related documents and indexes also their content.</p>
+<p><strong>Handle with care</strong></p>
+<p>What we need to take into account, if we decide to use the above feature, are the side effects that the above decision introduces. Under the hood what <a href="http://ravendb.net/" target="_blank">RavenDB</a> does is to keep track of the fact that we have defined the relation, in the index, between a bunch of documents, this is done so that whenever an address document changes the index will be marked as stale simply because this is the expected behavior otherwise the above index will always produce stale results.</p>
+<p>Think about it for a minute: keeps track of the relation to re-evaluate the index at each related document change.</p>
+<p>Once again: …at each related document change…</p>
+<p><strong>Why am I telling all this?</strong></p>
+<p>Simply because we have clearly outlined something that <em><strong>can be a real problem if not handled with care</strong></em>, imagine a scenario where you have a huge team of experienced developers migrating an application from a relational model to a document based model where they approach the migration in a relational manner, as in the second sample, introducing indexes with a lot of “load documents” (where “a lot” means more than 10 per index) everywhere.</p>
+<p>trust me, the result is a nightmare :-) it surely works, on the developer machine only…</p>
+<p>.m</p>  

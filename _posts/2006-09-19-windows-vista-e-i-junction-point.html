@@ -1,0 +1,13 @@
+---
+layout: post
+title: Windows Vista e i Junction Point
+date: '2006-09-19T15:44:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T21:24:38.385+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4923696497572700888
+blogger_orig_url: http://milestone.topics.it/2006/09/windows-vista-e-i-junction-point.html
+---
+
+<span>per diletto e uso personale ho sviluppato un piccolo (ormai mica troppo piccolo) software per sincronizzare il contenuto di 2 o più cartelle tra PC diversi, siano essi in rete locale o ad esempio accessibili via FTP o chi più ne ha più ne metta :-D, facendo qualche test su Windows Vista per verificarne la compatibilità mi sono imbattuto nei Junction Point, in breve i Junction Point sono delle sorte di place holder per garantire la compatibilità con le applicazini legacy, la necessità nasce dal fatto che in Vista la pozione di molte cartelle di sistema è cambiata, ad esempio i profili utente non sono più in "<em>%SystemDrive%\Documents & Settings</em>" ma ora sono in "<em>%SystemDrive%\Users</em>" oppure le cartelle "<em>My Pictures</em>" e "<em>My Music</em>" non sono più all'interno di "<em>My Documents</em>" ma ora sono direttamente figlie della cartella del profilo utente.</span><br> <span>I Junction Point risolvono questo problema permettendo alle applicazioni che si aspettano di trovare un certo "Path" di continuare ad <u>attraversarlo</u> accedendo però alla risorsa nella nuova posizione. Ho sottolinato attraversare perchè di default nelle ACL di un Junction Point i permessi per Everyone sono Deny Read inoltre sembra che l'unica possibilità per un'applicazione sia quella di avere i permessi per "Traverse Folder", quindi non dovrebbe essere possibile enumerare il contenuto di un junction point.</span><br> <span>Da notare quindi che per led applicazioni legacy i permessi devono essere comunque esplicitamente abilitati.</span><br> <span>In effetti questo è proprio il problema in cui mi sono imbattuto, il sistema per distinguere se l'oggetto che abbiamo in mano è un junction point è verificare che negli attributi sia marcato come ReparsePoint e System (in contemporanea), programmaticamente la cosa è molto semplice, un esempio semplice semplice è il seguente:</span><br> <span>foreach( DirectoryInfo sd in myDir.GetDirectories() )<br>{<br>    Boolean isReparsePoint = ( sd.Attributes & FileAttributes.ReparsePoint ) == FileAttributes.ReparsePoint;<br>    Boolean isSystem = ( sd.Attributes & FileAttributes.System ) == FileAttributes.System;<br><br>    if( !isReparsePoint && !isSystem )<br>    {<br>        //Access granted...<br>    }<br>}</span><br> <span>.m</span><br>

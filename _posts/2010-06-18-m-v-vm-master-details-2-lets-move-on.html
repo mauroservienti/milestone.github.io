@@ -1,0 +1,110 @@
+---
+layout: post
+title: 'M-V-VM: master-details (2): let’s move on…'
+date: '2010-06-17T23:30:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Presentation Pattern
+- Model View ViewModel
+modified_time: '2012-02-20T12:09:58.104+01:00'
+thumbnail: https://lh3.googleusercontent.com/-O33h7biNHtQ/T0Ip7OrMN6I/AAAAAAAABaw/GsNGgXrK398/s72-c/126a77aa-a891-4ba5-aafa-03341ee21fe5.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3106295875200875127
+blogger_orig_url: http://milestone.topics.it/2010/06/m-v-vm-master-details-2-lets-move-on.html
+---
+
+<span>Dove siamo rimasti:</span><br>  <ul>   <li><a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2687578760667911994">Abbiamo introdotto</a> il pattern <em>Model View ViewModel</em> partendo dai concetti di base; </li>    <li>Ci siamo spostati in uno <a href="http://mauroservienti.blogspot.com/2010/06/m-v-vm-master-details.html">scenario un po’ più complesso</a>; </li>    <li>Abbiamo <a href="http://mauroservienti.blogspot.com/2010/06/viewmodel-dto.html">piacevolmente divagato</a> su alcuni punti che sono emersi; </li> </ul>  <span>L’ultima volta ci siamo lasciati con due requisiti in sospeso:</span><br>  <ul>   <li>essere in grado di modificare un indirizzo; </li>    <li>essere in grado di eliminare un indirizzo; </li> </ul>  <span>Requsiti che sappiamo introducono le seguenti necessità:</span><br>  <ul>   <li>come tenere traccia dell’elemento selezionato nella lista degli indirizzi? </li>    <li>come visualizzare i dati dell’elemento selezionato? </li>    <li>come gestire un’azione, la cancellazione in questo caso? </li> </ul>  <span><strong>SelectedItem binding</strong></span><br>  <span>Tenere traccia di quale sia l’indirizzo selezionato è un’operazione relativamente banale:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">private </span><span style="color: #2b91af">AddressViewModel </span>_selectedAddress = <span style="color: blue">null</span>;
+<span style="color: blue">public </span><span style="color: #2b91af">AddressViewModel </span>SelectedAddress
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._selectedAddress; }
+    <span style="color: blue">set
+    </span>{
+        <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.SelectedAddress )
+        {
+            <span style="color: blue">this</span>._selectedAddress = <span style="color: blue">value</span>;
+            <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.SelectedAddress );
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Anche se ci pone di fronte ad una prima decisione: chi è responsabile di tenere traccia di quale sia l’elemento selezionato?</span><br>
+
+<ul>
+  <li>PersonViewModel? </li>
+
+  <li>o MainViewModel? </li>
+</ul>
+
+<span>la decisione è tutto tranne che scontata e men che meno universale, dipende molto dal contesto e in questo specifico caso direi che per ora possiamo assegnare tranquillamente questa responsabilità a MainViewModel.</span><br>
+
+<span>Le modifiche da apportare allo xaml sono altrettanto banali:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">Grid.ColumnSpan</span><span style="color: blue">="2" </span><span style="color: red">Grid.Row</span><span style="color: blue">="4" </span><span style="color: red">Margin</span><span style="color: blue">="12" 
+            </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Person.Addresses}"
+            </span><span style="color: red">SelectedItem</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAddress}"
+            </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch"
+            </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Stretch">
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ci limitiamo a chiedere alla ListView di tracciare quale sia l’lemento corrente mettendo in binding la proprietà SelectedItem con la nostra proprietà SelectedAddress. 
+  <br>Visivamente a questo punto non è cambiato nulla ma se mettiamo un breakpoint sul setter della nostra proprietà al variare dell’elemento selezionato il motore di binding viene da noi a impostare il nuovo valore.</span><br>
+
+<span>Naturalmente il binding è bidirezionale quindi possiamo preimpostare un SelectedAddress e vedere che la ListView si adegua di conseguenza:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.SelectedAddress = <span style="color: blue">this</span>.Person.Addresses.FirstOrDefault();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span><a href="https://lh6.googleusercontent.com/-8dt-9HjP-Gg/T0Ip7sIN4-I/AAAAAAAABa4/LpZifq5AmbM/45050eba-4b4c-430d-b79c-b789a268907c.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-O33h7biNHtQ/T0Ip7OrMN6I/AAAAAAAABaw/GsNGgXrK398/126a77aa-a891-4ba5-aafa-03341ee21fe5.png" width="244" height="186"></a> </span><br>
+
+<span><strong>SelectedItem “reverse” binding</strong></span><br>
+
+<span>Ora che abbiamo un elemento selezionato possiamo introdurre nella nostra vista master-details la porzione di UI per l’editing e ringraziare il motore di databinding di Wpf per averci regalato cotanta potenza:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23" 
+         </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+         </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAddress.Street, </span><span style="color: red">UpdateSourceTrigger</span><span style="color: blue">=PropertyChanged}" 
+         </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+         </span><span style="color: red">Grid.Column</span><span style="color: blue">="1" </span><span style="color: red">Grid.Row</span><span style="color: blue">="6" />
+<</span><span style="color: #a31515">TextBlock </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Right" 
+           </span><span style="color: red">Text</span><span style="color: blue">="Number:" 
+           </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+           </span><span style="color: red">Grid.Row</span><span style="color: blue">="7" />
+<</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23" 
+         </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+         </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAddress.Number, </span><span style="color: red">UpdateSourceTrigger</span><span style="color: blue">=PropertyChanged}" 
+         </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+         </span><span style="color: red">Grid.Column</span><span style="color: blue">="1" </span><span style="color: red">Grid.Row</span><span style="color: blue">="7" />        
+<</span><span style="color: #a31515">TextBlock </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Right" 
+           </span><span style="color: red">Text</span><span style="color: blue">="City:" 
+           </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+           </span><span style="color: red">Grid.Row</span><span style="color: blue">="8" />
+<</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23" 
+         </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Stretch" 
+         </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAddress.City, </span><span style="color: red">UpdateSourceTrigger</span><span style="color: blue">=PropertyChanged}" 
+         </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+         </span><span style="color: red">Grid.Column</span><span style="color: blue">="1" </span><span style="color: red">Grid.Row</span><span style="color: blue">="8" />
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Potenza che già a designtime, visto che per ora le cose sono molto semplici, ci fa capire che siamo sulla strada giusta:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-vCmyh0a85y0/T0Ip9zQj4jI/AAAAAAAABbI/K8FLNChU2sQ/8cf9ded9-febe-40e3-9eb1-7f48a60060a3.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-1-CDWfSR8KE/T0Ip8eyqc_I/AAAAAAAABbA/UqC93iWbLPI/66f264b2-a57b-4761-aada-7aab760b6009.png" width="244" height="182"></a> </span><br>
+
+<span>A runtime abbiamo la conferma definitiva:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-ivvyRcSgz4Q/T0Ip_a3X41I/AAAAAAAABbY/EYcq522oe5w/2dc2442a-7bf2-40e7-8cae-648834d26317.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-Tyz1hlGXYOE/T0Ip-jV_vFI/AAAAAAAABbQ/yh_DxLL4iQY/e80f7586-0b7f-45b2-9bfc-cda25f8e9c97.png" width="244" height="186"></a> <a href="https://lh4.googleusercontent.com/-Xfi-7bYmQis/T0IqApdjoWI/AAAAAAAABbk/1Zi_DUSRbgM/61e665ef-35f4-4fad-aace-07cfe3321e6f.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-koyyeWuNcho/T0IqAPZ40PI/AAAAAAAABbc/pySOZE0TiZo/8fba6c65-e5bc-4d81-bc67-066e6ba315c4.png" width="243" height="186"></a> </span><br>
+
+<span>Cambiando la selezione automaticamente il nostro dettaglio si aggiorna, ma non solo, scrivendo qualcosa nel campo “City”, ad esempio, il valore viene riflesso, real-time, anche nella ListView sempre grazie al motore di DataBinding.</span><br>
+
+<span>Adesso che abbiamo un elemento selezionabile, tracciabile e modificabile non ci resta che renderlo anche cancellabile… ma direi che oggi ho scritto un’altra volta fin troppo :-)</span><br>
+
+<span>Sorgenti aggiornati: <a href="http://milestone.topics.it/UserFiles/Downloads/Mvvm.Application-1.2.zip">Mvvm.Application-1.2.zip</a></span><br>
+
+<span>.m</span><br>
+

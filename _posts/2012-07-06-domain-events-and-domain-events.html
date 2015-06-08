@@ -1,0 +1,159 @@
+---
+layout: post
+title: Domain Events and Domain Events
+date: '2012-07-06T12:33:00.001+02:00'
+author: Mauro Servienti
+tags:
+- Event Sourcing
+- Domain Driven Design
+modified_time: '2012-07-06T12:33:59.186+02:00'
+thumbnail: http://lh5.ggpht.com/-cDa8y8d8kUM/T_a_E02T8pI/AAAAAAAACCk/Q_3FTzw_5i0/s72-c/image3_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5148029071532871378
+blogger_orig_url: http://milestone.topics.it/2012/07/domain-events-and-domain-events.html
+---
+
+<p>My friend <a href="http://blog.codiceplastico.com/melkio/" target="_blank">Alessandro</a> is building something <a href="http://blog.codiceplastico.com/melkio/index.php/tag/ddd/" target="_blank">really really interesting around DDD</a> concepts, go and take a look (it’s in Italian).</p> <p>Following up to his series of posts I’d like to analyze some concepts behind domain events, if you recall when <a href="{{ site.baseurl }}{% post_url 2012-06-18-ws-federation-on-top-of-nservicebus %}" target="_blank">we spoke about WS-Federation</a> on top of <a href="http://nservicebus.com" target="_blank">NServiceBus</a> we started using the following picture to summarize to flow:</p> <p><a href="http://lh5.ggpht.com/-CzyPqG2AvJE/T_a_D-5ftKI/AAAAAAAACCc/_B4DqRy1DJM/s1600-h/image32.png"><img title="image3" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image3" src="http://lh5.ggpht.com/-cDa8y8d8kUM/T_a_E02T8pI/AAAAAAAACCk/Q_3FTzw_5i0/image3_thumb.png?imgmax=800" width="244" height="147"></a></p> <p>Keep your eyes on the domain portion of the above picture, we basically have some logic (domain logic) running that when finish<strong>ed</strong> raises a domain event that carries with itself <strong>all</strong> the relevant information so that the event itself is consistent and an eventual listener does not need any other resource to understand what has happen<strong>ed</strong>.</p> <blockquote> <p><em><strong>note</strong></em>: everything is in the past, “<strong>ed</strong>”, a domain event represents something that has happened, something that immutable and that have absolutely no behavior, the past cannot be altered in any way; all what you can do is to try to compensate something you do not really like that is happened.</p></blockquote> <p>Given that an event is something immutable is quite natural to represent an event using a class with only read-only properties such as the following:</p> <blockquote><pre class="csharpcode"><span class="kwrd">class</span> CustomerNameChanged
+{
+    <span class="kwrd">public</span> CustomerNameChanged( String customerId, String oldCustomerName, String newCustomerName )
+    {
+        <span class="rem">//set properties using .ctor values</span>
+    }
+    <span class="kwrd">public</span> String CustomerId{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String OldCustomerName{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String NewCustomerName{ get; <span class="kwrd">private</span> set; }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>now imagine that we need to publish the “same” event to the outside world…we need to face a couple of problem(s):</p>
+<blockquote>
+<p>the class is <em>serializable</em> but not <em>deserializable</em>; private setters prevent the serialization engines to set the properties;</p></blockquote>
+<p>this is a problem that can be circumvented, obviously, for example introducing some custom serialization steps. With NServiceBus (since we are sending the event to the outside world) injecting logic in the serialization process is a bit tricky, to say, because they use a completely custom serialization engine that does not honor the serialization attributes nor the serialization interfaces…but…</p>
+<p><strong>Is this a real problem? or is a smell…?</strong></p>
+<p>let’s move to the second problem, leaving the first one aside for a while, the question is: if we send something to the outside world is it the <strong>same</strong> something? In order to answer the question imagine something a bit more complex (or a bit more real world) such as the following event:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> InvoicePaid
+{
+    <span class="kwrd">public</span> DateTimeOffset PaidOn{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String InvoiceNumber{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String IssuerId{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String PaidUsingBankAccountNumber{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String AuthorizedBy{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> TimeSpan PaymentDelay { get; <span class="kwrd">private</span> set; }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Nothing really complex, now imagine that we need to publish the “same” event to the outside world, is it the same event? or it something much more similar to</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">class</span> InvoicePaid
+{
+    <span class="kwrd">public</span> DateTimeOffset PaidOn{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String InvoiceNumber{ get; <span class="kwrd">private</span> set; }
+    <span class="kwrd">public</span> String IssuerId{ get; <span class="kwrd">private</span> set; }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>where we remove internal/confidential information useless, or worse dangerous, for the outside world?</p>
+<p>I suppose that we all agree that those are two different events, that communicate a similar concept.</p>
+<p><strong>Now…</strong></p>
+<p>This neat separation gives us a huge power: evolution. The application can evolve changing the structure of its own domain events without affecting in any way the external “listeners” that have a completely different event to listen to. But we still have a couple of problems to solve:</p>
+<ul>
+<li>one is still related to coupling;</li>
+<li>the other one is the deserialization of the private properties;</li></ul>
+<p>stay tuned, something is going to happen…</p>
+<p>.m</p>  

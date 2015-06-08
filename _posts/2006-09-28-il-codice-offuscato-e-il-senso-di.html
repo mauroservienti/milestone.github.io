@@ -1,0 +1,27 @@
+---
+layout: post
+title: Il codice offuscato e il senso di sicurezza (presunta...)
+date: '2006-09-28T13:59:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T11:29:26.423+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4209574484994196282
+blogger_orig_url: http://milestone.topics.it/2006/09/il-codice-offuscato-e-il-senso-di.html
+---
+
+<span>Oggi, spinto anche dalla curiosità, mi sono dedicato alla simpatica operazione di hacking di un eseguibile dotnet, perchè?</span><br>
+<span>Semplicemente per scopi accademici, il prodotto in questione di cui non farò nomi, ma che è rilasciato da un importante, molto importante gruppo italiano, serve per "gestire" alcune informazioni presenti in un database di Sql Server.</span><br>
+<span>Al fine di "obbligare" l'utente finale ad usare il prodotto e a non accedere direttamente ai dati su Sql Server alcune informazioni, dicamo quelle cruciali, sono crittografate.</span><br>
+<span>Il prodotto in questione esiste in 2 versioni una stand alone (quella che ho sottomano in questo momento) e una versione nata apposta per l'intergrazione in altre applicazioni, il mio intento era di capire come fare l'integrazione in un'applicazione esistente senza dover necessariamente acquistare la versione ad hoc, il tutto per il semplice fatto che la documentazione dice poco e nulla e di avere una demo non se ne parla neanche...</span><br>
+<span>Bene, il primo obiettivo è stato quindi quello di decifrare le informazioni presenti nel db...<br>Mi sono armato di reflector e dopo aver scoperto che il codice era offuscato mi sono accontentato di leggere l'MSIL che nonostante sia un po' più ostico ha praticamente rivelato in un tempo direi irrosorio tutte le informazioni che mi servivano, dalle chiavi di crittografia a un paio di trucchetti "<em>subdoli</em>" :-D usati usati per "<em>mischiare</em>" le chiavi, all'algoritmo simmetrico usato e via dicendo... diciamo che nel giro di 30 minuti ho scritto un piccolo tool che estrae e decodifica le informazioni che mi servono...</span><br>
+<span>Ma non contento mi sono detto, ma è proprio necessario sto sbattimento?, leggere il codice IL, capire cosa e come è stato pensato e via dicendo? Ebbene no, assolutamente no :-D<br>Ho semplicemente creato un progetto console, ho aggiunto una reference all'eseguibile incriminato e via reflection gli faccio fare quello che voglio ottenendo le informazioni che mi servono... tempo totale 5 minuti e 5 (giuro) righe di codice...</span><br>
+<span><font size="1">Assembly assembly = Assembly.LoadFile( System.IO.Path.Combine( AppDomain.CurrentDomain.BaseDirectory, "NomeEseguibile.exe" ) );<br>Type t = assembly.GetType( "NameSpace.ClassePrivateCheFaIlLlavoroSporco", false, true );<br>Object obj = Activator.CreateInstance( t, new object[] { "StringaPerPiccoloTrucchettoScovataNelDB" } );<br>MethodInfo mi = t.GetMethod( "MetodoPerLaDecodifica" );<br>String decodedResult = ( String )mi.Invoke( obj, new object[] { "StringaCodificata" } );</font></span><br>
+Perchè tutto ciò? semplicemente per dire che offuscare il codice vi protegge, forse..., da quelli che cercano di decompilare al fine di copiare ma vi da anche un senso di sicurezza decisamente fasullo... 
+Non ho idea di che offuscatore sia stato usato, quindi non so se ve ne siano di più sofisticati che rendono il lavoro più arduo... e sinceramente la cosa mi tocca molto poco.<br>Vediamo se il buon <a href="http://www.cantelmosoftware.com/dblog/" target="_blank">Marcello</a> interviene con qualche interessante considerazione. 
+Sottolineo infine 2 cose: 
+<ul>
+<li>Tutto ciò che è fatto dall'uomo è smontabile dall'uomo, è solo una questione di tempo; 
+<li>Tutto è in chiaro, basta saperlo leggere ;-) (cit. l'unico e inimitabile <a href="http://blogs.ugidotnet.org/raffaele/" target="_blank">Raffaele</a>);</li></li></ul>
+<span>Meditate gente, meditate :-D</span><br>
+<span>.m</span><br>

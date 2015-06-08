@@ -1,0 +1,499 @@
+---
+layout: post
+title: Mimando le Dependency Property…
+date: '2009-07-26T08:47:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-02T12:16:37.469+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3498002777709688094
+blogger_orig_url: http://milestone.topics.it/2009/07/mimando-le-dependency-property.html
+---
+
+<span>Partiamo da questo semplice test:</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>entity_set_property_normal_should_raise_propertyChanged_event()
+{
+    <span style="color: blue">var </span>expected = 1;
+    <span style="color: blue">var </span>actual = 0;
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><font color="#2b87af">MockEntity</font>();
+    target.PropertyChanged += ( s, e ) => actual++;
+
+    target.FirstName = <span style="color: #a31515">"Mauro"</span>;
+
+    actual.ShouldBeEqualTo( expected );
+}</pre>
+</blockquote>
+
+<span>Proprio triviale, una semplice entità che implementa INotifyPropertyChanged, tipicamente l’implementazione della proprietà FirstName potrebbe essere una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">Person </span>: <span style="color: #2b91af">INotifyPropertyChanged
+</span>{
+    <span style="color: blue">public event </span><span style="color: #2b91af">PropertyChangedEventHandler </span>PropertyChanged;
+    
+    <span style="color: blue">protected virtual void </span>OnPropertyChanged( <span style="color: #2b91af">String </span>propertyName )
+    {
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.PropertyChanged != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">this</span>.PropertyChanged( <span style="color: blue">this</span>, <span style="color: blue">new </span><span style="color: #2b91af">PropertyChangedEventArgs</span>( propertyName ) );
+        }
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">String </span>_firstName = <span style="color: #2b91af">String</span>.Empty;
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._firstName; }
+        <span style="color: blue">set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.FirstName )
+            {
+                <span style="color: blue">this</span>._firstName = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( <span style="color: #a31515">"FirstName" </span>);
+            }
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Che ha il solo difetto, oltre al fatto che è da scrivere di non digerire bene il refactoring… a questo c’è comunque un’<a href="http://blogs.ugidotnet.org/bmatte/archive/2008/11/28/pattern-model-view-viewmodel-inotifypropertychanged-static-reflection-e-extension-methods.aspx" target="_blank">elegantissima soluzione</a>:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected virtual void </span>OnPropertyChanged<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )
+{
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.PropertyChanged != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>expression = property.Body <span style="color: blue">as </span><span style="color: #2b91af">MemberExpression</span>;
+        <span style="color: blue">var </span>member = expression.Member;
+
+        <span style="color: blue">this</span>.PropertyChanged( <span style="color: blue">this</span>, <span style="color: blue">new </span><span style="color: #2b91af">PropertyChangedEventArgs</span>( member.Name ) );
+    }
+}
+
+<span style="color: blue">private </span><span style="color: #2b91af">String </span>_firstName = <span style="color: #2b91af">String</span>.Empty;
+<span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._firstName; }
+    <span style="color: blue">set
+    </span>{
+        <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.FirstName )
+        {
+            <span style="color: blue">this</span>._firstName = <span style="color: blue">value</span>;
+            <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.FirstName );
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Resta <em>sempre</em> il fatto che è da scrivere. Scroccando un po’ di sintassi alle Dependency Property di Wpf vorremmo limitarci a scrivere questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.GetPropertyValue( () => <span style="color: blue">this</span>.FirstName ); }
+    <span style="color: blue">set </span>{ <span style="color: blue">this</span>.SetPropertyValue( () => <span style="color: blue">this</span>.FirstName, <span style="color: blue">value </span>); }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che ha il vantaggio:</span><br>
+
+<ul>
+  <li>di essere estremamente conciso;</li>
+
+  <li>viene ben digerito dagli strumenti di refactoring;</li>
+
+  <li>e implementa “gratis” INotifyPropertyChanged e, volendo, non solo…;</li>
+</ul>
+
+<span>Dopo un po’ di ragionamenti* ci troviamo però di fronte ad un primo problema che le Dependency Property non risolvono: Boxing/Unboxing dei value type. In un dependency object infatti i metodi SetValue e GetValue prendono e tornano “Object” facendo si che i value type vengano tutte le volte boxed e unboxed.</span><br>
+
+<blockquote>
+  <span>* <em>i ragionamenti da qui in avanti sono tutti frutto di TDD, quindi le feature descritte non feature messe li perchè seg*e mentali, ma piuttosto feature derivanti dall’uso in contesti reali. Scrivo il test che definisce lo scenario e quindi implemento la feature</em>.</span><br>
+</blockquote>
+
+<span>Possiamo aggirare il problema? Direi di si, innanzitutto vediamo la firma che vorremmo avere nei nostri metodi Get/Set:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected void </span>SetPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, T data );</pre>
+
+  <pre class="code"><span style="color: blue">protected </span>T GetPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Cominciamo quindi da subito a liberarci di Object, se però ci pensiamo è evidente che la classe base dovrà trovare un tipo-<em>minimoComunDenominatore</em> per gestire facilmente tutti i valori che possono arrivare, ed è pure evidente che la scelta più facile sia Object, forse…:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public abstract class </span><span style="color: #2b91af">PropertyValue
+</span>{
+
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Perchè no… definiamo un <em>generico</em> tipo che descrive un valore qualsiasi, e poi lo specializziamo così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">PropertyValue</span><T> : <span style="color: #2b91af">PropertyValue
+</span>{
+    <span style="color: blue">public </span>PropertyValue( T value )
+    {
+        <span style="color: blue">this</span>.Value = value;
+    }
+
+    <span style="color: blue">public </span>T Value { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Utilizzando un <em>vero</em> tipo-generico che incapsula il valore che vogliamo memorizzare, questo lo possiamo quindi persistere in una struttura del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">IDictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">PropertyValue</span>> valuesBag;</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Detto questo se continuiamo a pensare a come siamo abituati ad utilizzare una classe di business ci scontriamo con questa necessità:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Person
+</span>{
+    <span style="color: blue">public </span>Person(<span style="color: #2b91af">String </span>name)
+    {
+        <span style="color: blue">this</span>.Name = name;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Name { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Un costruttore che setta un valore di iniziale, o comunque la necessità di inizializzare una proprietà con un valore di default, ma soprattutto la necessità che questa inizializzazione non triggheri tutti gli eventuali meccanismi che stanno dietro il SetPropertyValue<T>; di primo acchito la soluzione che ci inventiamo è probabilmente basata sull’ignobile tentativo di capire, all’interno di SetPpropertyValue<T>(), se siamo o meno in un costruttore, ma è una soluzione pessima perchè porta allo stesso nightmare che saremmo costretti ad affrontare se ci addentrassimo nei meandri dell’implementazione di IQueryable<T>, osservate questo semplice esempio che spiega al volo il problema:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Person
+</span>{
+    <span style="color: blue">public </span>Person()
+    {
+        <span style="color: blue">this</span>.OnInitialize();
+    }
+
+    <span style="color: blue">protected virtual void </span>OnInitialize()
+    {
+        <span style="color: blue">this</span>.Name = <span style="color: #a31515">"default value"</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Name { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Non dico altro :-), la soluzione come sempre è la più semplice di tutte:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">IDictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">PropertyValue</span>> initialValuesBag;
+
+<span style="color: blue">protected void </span>SetInitialPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, T value )
+{
+    ...
+}
+
+<span style="color: blue">protected virtual void </span>SetInitialPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, T value, <span style="color: #2b91af">PropertyMetadata </span>metadata )
+{
+    ...
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che introduce un’altra caratteristica interessante, tipicamente una proprietà fa queste cose:</span><br>
+
+<ul>
+  <li>Memorizza un valore;</li>
+
+  <li>Notifica, se implementato <em>o se necessario</em>, il cambiamento del valore memorizzato;</li>
+
+  <li>Trigghera la notifica in cascata di altre proprietà, esempio tipico la variazione della proprietà <em>BornDate</em> : DateTime triggherà anche la notifica della variazione della proprietà <em>Age</em> : Int32 che probabilmente è in sola lettura;</li>
+</ul>
+
+<span>Abbiamo quindi bisogno di poter definire per ogni singola proprietà un comportamento:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">PropertyMetadata
+</span>{
+    <span style="color: blue">public static readonly </span><span style="color: #2b91af">PropertyMetadata </span>Default = <span style="color: blue">new </span><span style="color: #2b91af">PropertyMetadata</span>();
+
+    <span style="color: blue">readonly </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>> cascadeChangeNotifications = <span style="color: blue">new </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>>();
+
+    <span style="color: blue">public </span>PropertyMetadata()
+    {
+        <span style="color: blue">this</span>.NotifyChanges = <span style="color: blue">true</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>NotifyChanges { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+
+    <span style="color: blue">public void </span>AddCascadeChangeNotifications<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )
+    {
+        <span style="color: blue">this</span>.cascadeChangeNotifications.Add( property.GetMemberName() );
+    }
+
+    <span style="color: blue">public void </span>RemoveCascadeChangeNotifications<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )
+    {
+        <span style="color: blue">var </span>key = property.GetMemberName();
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.cascadeChangeNotifications.Contains( key ) )
+        {
+            <span style="color: blue">this</span>.cascadeChangeNotifications.Remove( key );
+        }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">String</span>> GetCascadeChangeNotifications()
+    {
+        <span style="color: blue">return this</span>.cascadeChangeNotifications.AsEnumerable();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Permettendoci di scrivere questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Person </span>: <span style="color: #2b91af">Entity
+</span>{
+    <span style="color: blue">public </span>Person( <span style="color: #2b91af">DateTime </span>bornDate )
+    {
+        <strong><span style="color: blue">var </span>metadata = <span style="color: blue">new </span><span style="color: #2b91af">PropertyMetadata</span>();
+        metadata.AddCascadeChangeNotifications( () => <span style="color: blue">this</span>.Age );</strong>
+        <br>        <span style="color: blue">this</span>.SetInitialPropertyValue( () => <span style="color: blue">this</span>.BornDate, bornDate, metadata );
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">DateTime </span>BornDate
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.GetPropertyValue( () => <span style="color: blue">this</span>.BornDate ); }
+        <span style="color: blue">set </span>{ <span style="color: blue">this</span>.SetPropertyValue( () => <span style="color: blue">this</span>.BornDate, <span style="color: blue">value </span>); }
+    }
+
+    <span style="color: blue">public int </span>Age
+    {
+        <span style="color: blue">get</span>{ <span style="color: green">/*Eval age base on BornDate*/ </span><span style="color: blue">return </span>0; }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che è decisamente interessante e soddisfa pienamente questo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>person_set_bornDate_should_raise_all_expected_notifications()
+{
+    <span style="color: blue">var </span>expected = 2;
+    <span style="color: blue">var </span>actual = 0;
+
+    <span style="color: blue">var </span>expectedNotifications = <span style="color: blue">new</span>[] { <span style="color: #a31515">"BornDate"</span>, <span style="color: #a31515">"Age" </span>};
+    <span style="color: blue">var </span>actualNotifications = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">String</span>>();
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>( <span style="color: blue">new </span><span style="color: #2b91af">DateTime</span>( 1973, 1, 10 ) );
+    target.PropertyChanged += ( s, e ) =>
+    {
+        actual++;
+        actualNotifications.Add( e.PropertyName );
+    };
+
+    target.BornDate = <span style="color: blue">new </span><span style="color: #2b91af">DateTime</span>( 1978, 11, 5 );
+
+    actual.ShouldBeEqualTo( expected );
+    actualNotifications.ShouldBeSameAs( expectedNotifications );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Abbiamo anche la necessità, molto semplice, di voler impostare dei metadati senza impostare però un valore di default, possiamo soddisfare questo requisito così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">IDictionary</span><<span style="color: #2b91af">String</span>, <span style="color: #2b91af">PropertyMetadata</span>> propertiesMetadata;
+
+<span style="color: blue">protected </span><span style="color: #2b91af">PropertyMetadata </span>GetPropertyMetadata( <span style="color: #2b91af">String </span>propertyName )
+{
+    <span style="color: #2b91af">PropertyMetadata </span>md;
+    <span style="color: blue">if</span>( !<span style="color: blue">this</span>.propertiesMetadata.TryGetValue( propertyName, <span style="color: blue">out </span>md ) )
+    {
+        md = <span style="color: #2b91af">PropertyMetadata</span>.Default;
+    }
+
+    <span style="color: blue">return </span>md;
+}
+
+<span style="color: blue">protected void </span>SetPropertyMetadata<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, <span style="color: #2b91af">PropertyMetadata </span>metadata )
+{
+    <span style="color: #2b91af">Ensure</span>.That( metadata ).Named( <span style="color: #a31515">"metadata" </span>).IsNotNull();
+
+    <span style="color: blue">var </span>key = property.GetMemberName();
+    <span style="color: blue">this</span>.SetPropertyMetadata( key, metadata );
+}
+
+<span style="color: blue">protected virtual void </span>SetPropertyMetadata( <span style="color: #2b91af">String </span>propertyName, <span style="color: #2b91af">PropertyMetadata </span>metadata )
+{
+    <span style="color: #2b91af">Ensure</span>.That( metadata ).Named( <span style="color: #a31515">"metadata" </span>).IsNotNull();
+
+    <span style="color: #2b91af">Ensure</span>.That( propertiesMetadata )
+        .WithMessage( <span style="color: #a31515">"Metadata for the supplied property ({0}) has already been set."</span>, propertyName )
+        .IsFalse( d => d.ContainsKey( propertyName ) );
+
+    propertiesMetadata.Add( propertyName, metadata );
+}</pre>
+</blockquote>
+
+<span>Il focus a questo punto si sposta sulla gestione del valore della proprietà, quello che abbiamo bisogno di fare è:</span><br>
+
+<ul>
+  <li><strong>get</strong>: vogliamo poter recuperare un valore, se questo valore non è mai stato impostato vogliamo l’eventuale valore iniziale e se questo non è mai stato impostato vogliamo il valore di default per il tipo (System.Type) della proprietà;</li>
+
+  <li><strong>set</strong>: vogliamo poter fare il set di un valore, se il valore cambia e la proprietà è impostata per triggherare la notifica vogliamo la notifica, e se ci sono delle proprietà che devono essere “notificate” in cascata vogliamo la notifica in cascata;</li>
+</ul>
+
+<span><strong>get</strong></span><br>
+
+<span>Questo è abbastanza semplice:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected </span>T GetPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )
+{
+    <span style="color: blue">return this</span>.GetPropertyValue<T>( property.GetMemberName() );
+}
+
+<span style="color: blue">protected virtual </span>T GetPropertyValue<T>( <span style="color: #2b91af">String </span>propertyName )
+{
+    <span style="color: #2b91af">PropertyValue </span>actual;
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.valuesBag.TryGetValue( propertyName, <span style="color: blue">out </span>actual ) )
+    {
+        <span style="color: blue">return </span>( ( <span style="color: #2b91af">PropertyValue</span><T> )actual ).Value;
+    }
+
+    <span style="color: blue">return this</span>.GetInitialPropertyValue<T>( propertyName );
+}</pre>
+
+  <pre class="code"><span style="color: blue">protected </span>T GetInitialPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property )
+{
+    <span style="color: blue">return this</span>.GetInitialPropertyValue<T>( property.GetMemberName() );
+}
+
+<span style="color: blue">protected virtual </span>T GetInitialPropertyValue<T>( <span style="color: #2b91af">String </span>propertyName )
+{
+    <span style="color: #2b91af">PropertyValue </span>value;
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.initialValuesBag.TryGetValue( propertyName, <span style="color: blue">out </span>value ) )
+    {
+        <span style="color: blue">return </span>( ( <span style="color: #2b91af">PropertyValue</span><T> )value ).Value;
+    }
+
+    <span style="color: blue">return default</span>( T );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span><strong>set</strong></span><br>
+
+<span>Anche qui nulla di trascendentale a dire il vero:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected void </span>SetPropertyValueCore<T>( <span style="color: #2b91af">String </span>propertyName, T data, <span style="color: #2b91af">PropertyValueChanged</span><T> pvc )
+{
+    <span style="color: blue">var </span>oldValue = <span style="color: blue">this</span>.GetPropertyValue<T>( propertyName );<br>
+    <span style="color: blue">if</span>( !<span style="color: #2b91af">Object</span>.Equals( oldValue, data ) )
+    {
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.valuesBag.ContainsKey( propertyName ) )
+        {
+            <span style="color: blue">this</span>.valuesBag[ propertyName ] = <span style="color: blue">new </span><span style="color: #2b91af">PropertyValue</span><T>( data );
+        }
+        <span style="color: blue">else
+        </span>{
+            <span style="color: blue">this</span>.valuesBag.Add( propertyName, <span style="color: blue">new </span><span style="color: #2b91af">PropertyValue</span><T>( data ) );
+        }
+
+        <span style="color: blue">if</span>( pvc != <span style="color: blue">null </span>)
+        {
+            pvc( <span style="color: blue">new </span><span style="color: #2b91af">PropertyValueChangedArgs</span><T>( data, oldValue ) );
+        }
+
+        <span style="color: blue">this</span>.OnPropertyChanged( propertyName );
+
+        <span style="color: blue">var </span>metadata = <span style="color: blue">this</span>.GetPropertyMetadata( propertyName );
+        <span style="color: blue">var </span>cascadeChanges = metadata.GetCascadeChangeNotifications();
+        <span style="color: blue">if</span>( cascadeChanges.Any() )
+        {
+            <span style="color: blue">foreach</span>( <span style="color: blue">var </span>cascade <span style="color: blue">in </span>cascadeChanges )
+            {
+                <span style="color: blue">this</span>.OnPropertyChanged( cascade );
+            }
+        }
+    }
+}
+
+<span style="color: blue">protected void </span>SetPropertyValue<T>( <span style="color: #2b91af">Expression</span><<span style="color: #2b91af">Func</span><T>> property, T data, <span style="color: #2b91af">PropertyValueChanged</span><T> pvc )
+{
+    <span style="color: blue">var </span>propertyName = property.GetMemberName();
+    <span style="color: blue">this</span>.SetPropertyValue<T>( propertyName, data, pvc );
+}
+
+<span style="color: blue">protected virtual void </span>SetPropertyValue<T>( <span style="color: #2b91af">String </span>propertyName, T data, <span style="color: #2b91af">PropertyValueChanged</span><T> pvc )
+{
+    <span style="color: blue">this</span>.SetPropertyValueCore( propertyName, data, pvc );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ci sono svariati <em>overload</em> di SetPropertyValue<T>, ho lasciato gli unici due degni di nota perchè “corposi”, tutti comunque alla fine arrivano a SetPropertyValueCore<T> che si limita a:</span><br>
+
+<ul>
+  <li>recuperare il valore attuale;</li>
+
+  <li>confrontarlo con quello in arrivo;</li>
+
+  <li>se c’è una differenza:</li>
+
+  <ul>
+    <li>settare il nuovo;</li>
+
+    <li>chiamare l’eventuale callback che una classe derivata può iniettare per sapere quando una proprietà cambia;</li>
+
+    <li>notificare la variazione di stato della proprietà;</li>
+
+    <li>notificare le <em>eventuali</em> “cascade notifications”;</li>
+  </ul>
+</ul>
+
+<span>Tutto questo inoltre apre a scenari “collaterali” alquanto curiosi, osservate questi test:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]<span style="color: green">
+</span><span style="color: blue">public void </span>entity_with_initial_value_rejectChanges_should_reset_property_values()
+{
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"initial value"</span>;
+
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><font color="#2b87af">MockEntity</font>( expected );
+    target.FirstName = <span style="color: #a31515">"Mauro"</span>;
+
+    target.<em>RejectChanges</em>();
+
+    target.FirstName.ShouldBeEqualTo( expected );
+}</pre>
+
+  <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>entity_set_property_should_set_entity_as_changed()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><font color="#2b87af">MockEntity</font>();<br>    target.FirstName = <span style="color: #a31515">"Mauro"</span>;
+
+    target.<em>IsChanged</em>.ShouldBeTrue();
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>entity_rejectChanges_should_reset_isChanged()
+{
+    <span style="color: blue">var </span>target = <span style="color: blue">new </span><font color="#2b87af">MockEntity</font>();
+    target.FirstName = <span style="color: #a31515">"Mauro"</span>;<br>
+    target.<em>RejectChanges</em>();
+
+    target.<em>IsChanged</em>.ShouldBeFalse();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Tralascio l’implementazione perchè esula dallo scopo di questo post e per ora è ad un livello embrionale e probabilmente non vedrà mai la luce, ma credo sia facile immaginare come funzioni ;-)</span><br>
+
+<span>Adesso il prossimo passaggio sarebbe far fare il tutto ad un bel proxy dinamico o a <a href="http://www.postsharp.org/" target="_blank">PostSharp</a> in modo da tendere verso POCO… anche se non lo ritengo un must, piuttosto una seg* mentale.</span><br>
+
+<span>Tendenzialmente sono orientato verso PostSharp anche se ha un complessità implementativa nettamente superiore, a dire il vero l’implementazione con il Dynamic Proxy di Castle c’è ed è pure perfettamente funzionante, circa un paio d’ore di lavoro, ma soffre di una serie di effetti collaterali poco piacevoli… ma è un’altra storia.</span><br>
+
+<blockquote>
+  <span><em>ndr1</em>: gli effetti collaterali non sono derivanti dal Dynamic Proxy in se quanto piuttosto dal concetto di proxy in generale, ho provato anche altri runtime proxy generator e nessuno risolve i problemi che ho incontrato semplicemente perchè è l’infrastruttura del framework che non permette di risolverli a runtime.</span><br>
+
+  <span><em>ndr2</em>: questo non è ancora codice di produzione e probabilmente non lo sarà mai, sto semplicemente sperimentando cosa che grazie all’estrema eleganza di C# è proprio piacevole, per ora sto usando questo esempio in una semplice applicazione per uso “familiare”, chi vivrà vedrà… quello che mi manca per ora, e non ho voglia di fare perchè decisamente noiso, è un serio confronto prestazionale per capire se i vantaggi, notevoli direi, in termini di scrittura non sono del tutto distrutti da una altrettanto notevole perdita di prestazioni… ci proverò?</span><br>
+</blockquote>
+
+<span>Buona domenica tutti.</span><br>
+
+<span>.m</span><br>

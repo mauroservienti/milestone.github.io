@@ -1,0 +1,158 @@
+---
+layout: post
+title: 'M-V-VM: Commanding'
+date: '2010-09-02T09:40:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Presentation Pattern
+- Model View ViewModel
+modified_time: '2012-02-20T12:17:59.519+01:00'
+thumbnail: https://lh6.googleusercontent.com/-n6hzFwypg0Q/T0IrzPJ7RTI/AAAAAAAABno/J28gDNoGm3Q/s72-c/image_thumb_3.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1877664472203948452
+blogger_orig_url: http://milestone.topics.it/2010/09/m-v-vm-commanding.html
+---
+
+<span>
+	Finalmente ci siamo, dopo anni luce dall’<a href="http://mauroservienti.blogspot.com/2010/06/m-v-vm-master-details-2-lets-move-on.html" target="_blank">ultima volta</a>, siamo all’ultimo step della nostra parte introduttiva su <a href="/search/label/m-v-vm" target="_blank">Model View ViewModel</a>. Il bello inzia adesso :-)</span><br>
+<span>
+	L’ultimo requisito che abbiamo, per questa parte, è la possibilità di cancellare un indirizzo dalla lista degli indirizzi della persona corrente.</span><br>
+<span>
+	<strong>Commanding</strong></span><br>
+<span>
+	Prima di addentrarci nei tecnicismi dell’implementazione introduciamo una delle “novità”, alla faccia della novità… 6 anni sono passati, di Wpf, l’accoppiata <a href="http://msdn.microsoft.com/en-us/library/system.windows.input.icommand.aspx" target="_blank">ICommand</a>/<a href="http://msdn.microsoft.com/en-us/library/system.windows.input.icommandsource.aspx" target="_blank">ICommandSource</a>.</span><br>
+<span>
+	<strong>ICommand</strong></span><br>
+<span>
+	Un command è una classe che rappresenta un’azione, concetto semplicissimo per chi arriva da Delphi in cui esistono proprio le Action. Per Wpf un command è una qualsiasi classe che implementa l’interfaccia ICommand che è caratterizzata da:</span><br>
+<ul>
+	<li>
+		<em>Boolean CanExecute( Object )</em>: l’infrastruttura di Wpf chiama CanExecute per sapere se in quel determinato momento il comando debba essere considerato “disponibile”;</li>
+	<li>
+		<em>void Execute( Object )</em>: Execute viene chiamato per effettivamente invocare il comando e permettergli di eseguire l’azione per cui è pensato, Execute verrà invocato se e solo se CanExecute ritorna true;</li>
+	<li>
+		<em>EventHanlder CanExecuteChanged</em>: Un comando può sollevare questo evento per notificare al motore di Wpf che il suo stato è cambiato ed è quindi il caso che Wpf venga a controllare nuovamente con una chiamata a CanExecute;</li>
+</ul>
+<span>
+	Un esempio tipico potrebbe essere un ipotetico SaveCommand che a seguito di un chiamata a CanExecute ritorna true se il grafo è effettivamente modificato, lo stesso command può notificare a Wpf che il suo stato è cambiato quando lo stato del grafo cambia ed infine il command si preoccuperà di innescare la logica per il salvataggio all’atto dell’execute.</span><br>
+<blockquote>
+	<span>
+		<em>n.d.r.</em>: CanExecute ed Execute prendono in ingresso un parametro di tipo object che possiamo usare sulla falsa riga di un command argument che potrebbe essere utile per pilotare dall’esterno parte della logica interna de command.</span><br>
+</blockquote>
+<span>
+	<strong>ICommandSource</strong></span><br>
+<span>
+	La controparte di un ICommand è ICommandSource. Una classe che implementa ICommandSource è qualcosa, tipicamente un controllo della UI, che è in grado di invocare un comando. ICommandSource è così definita:</span><br>
+<ul>
+	<li>
+		<em>ICommand Command{ get; set; }</em>: è la dependency property, quindi con pieno supporto per data binding, che ci consente di impostare quale sia il comando che vogliamo venga eseguito;</li>
+	<li>
+		<em>Object CommandParameter{ get; set; }</em>: è la dependency property che ci consente di impostare l’eventuale parametro da passare al comando;</li>
+	<li>
+		<em>IInputElement CommandTarget{ get; set; }</em>: Ha senso, e viene utilizzata, solo ed esclusivamente se il comando è un RoutedCommand, tipologia di comando che non ci interessa trattare;</li>
+</ul>
+<span>
+	Anche in questo caso un esempio tipico è un bottone, quando impostiamo la proprietà command la prima cosa che succede è che il bottone fa una chiamata a CanExecute per capire lo stato del comando e nel caso in cui l’esito sia negativo automaticamente si disabilita. Allo stesso modo quando il comando scatena l’evento CanExecuteChanged il bottone fa nuovamente una chiamata a CanExecute per rivalutare il suo stato e in caso affermativo si riabilita.</span><br>
+<span>
+	Ogni controllo è libero di implementare a suo piacimento la logica e il comportamento da seguire a seguito della variazione di stato di un comando, come abbiamo detto, ad esempio, il bottone si disabilita.</span><br>
+<span>
+	<strong>DelegateCommand</strong></span><br>
+<span>
+	Wpf mette a disposizione un largo set di command già pronti all’uso, questi sono tutti di tipo RoutedCommand che, in un mondo basato su Model View ViewModel, ha una serie di difetti: in primis quello di non avere nessuna possibilità di controllo sul processo di notifica della variazione di stato del comando. I limiti di RoutedCommand e di RoutedUICommand hanno portato alla nascita di svariate implementazioni dell’interfaccia ICommand, implementazioni che tipicamente cadono sotto il nome di <a href="http://www.bing.com/search?q=DelegateCommand" target="_blank">DelegateCommand</a> o <a href="http://www.bing.com/search?q=RelayCommand" target="_blank">RelayCommand</a>.</span><br>
+<span>
+	Il tutto si “limita” ad un’implementazione più o meno stilisticamente bella che consente di generare un comando agganciando al volo dei delegati, tipicamente facendo largo uso di una sintassi basata sulle lambda, che verranno eseguiti sia per determnare lo stato del comando (CanExecute) sia per eseguire il comando (Execute); inoltre tutti espongono un meccamismo per poter triggherare la notifica della varizione di stato del comando stesso.</span><br>
+<span>
+	Anche <a href="http://radical.codeplex.com/" target="_blank">Radical</a> non è da meno e offre <a href="http://radical.codeplex.com/SourceControl/changeset/view/54110#798621">un’interessante implementazione</a>.</span><br>
+<span>
+	<strong>AddressDeleteCommand</strong></span><br>
+<span>
+	Adesso che sappiamo un po’ meglio la teoria non ci resta che metterla in pratica. La prima cosa che ci interessa fare è esporre la funzionalità dal nostro MainViewModel, semplicemente esponendo una proprietà di tipo ICommand:</span><br>
+<blockquote>
+	<pre style="font-family: consolas"><span style="color: blue">public</span> <span style="color: #2b91af">ICommand</span> DeleteAddressCommand
+{
+	<span style="color: blue">get</span>;
+	<span style="color: blue">private</span> <span style="color: blue">set</span>;
+}</pre></blockquote>
+<span>
+	contestualmente agganciando, via DataBinding, la nuova proprietà ad un nuovo elemento della UI:</span><br>
+<span>
+	<a href="https://lh5.googleusercontent.com/-U27R-7gpr18/T0Ir0Coa0jI/AAAAAAAABns/QQn4-14m3oU/image_2_2.png"><img alt="image" border="0" class="wlDisabledImage" height="183" src="https://lh6.googleusercontent.com/-n6hzFwypg0Q/T0IrzPJ7RTI/AAAAAAAABno/J28gDNoGm3Q/image_thumb_3.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a></span><br>
+<blockquote>
+	<pre style="font-family: consolas"><span style="color: blue"><</span><span style="color: #a31515">Button</span><span style="color: red"> Content</span><span style="color: blue">=</span><span style="color: blue">"Delete"</span> 
+       <span style="color: red"> Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding</span><span style="color: red"> Path</span><span style="color: blue">=</span><span style="color: blue">DeleteAddressCommand</span><span style="color: blue">}</span><span style="color: blue">"</span> 
+       <span style="color: red"> Margin</span><span style="color: blue">=</span><span style="color: blue">"0,0,317,0"</span><span style="color: blue"> /></span></pre></blockquote>
+<span>
+	l’implementazione del nostro comando è decisamente semplice anche se dietro le quinte succedono parecchie cose:</span><br>
+<blockquote>
+	<pre style="font-family: consolas"><span style="color: blue">this</span>.DeleteAddressCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+	.OnCanExecute( o => <span style="color: blue">this</span>.SelectedAddress != <span style="color: blue">null</span> )
+	.OnExecute( o =>
+	{
+		<span style="color: blue">var</span> add = <span style="color: blue">this</span>.SelectedAddress;
+		<span style="color: blue">this</span>.SelectedAddress = <span style="color: blue">null</span>;
+		<span style="color: blue">this</span>.Person.Addresses.Remove( add );
+	} )
+	.AddMonitor
+	( 
+		<span style="color: #2b91af">PropertyObserver</span>.For( <span style="color: blue">this</span> )
+			.Observe( vm => vm.SelectedAddress ) 
+	);</pre></blockquote>
+<span>
+	Radical offre un entry point statico, e anche un costruttore volendo, per la creazione di un nuovo comando. La cosa comoda è il supporto per le fluent interface che vi permette di definire le caratteristiche del comando in maniera decisamente intuitiva:</span><br>
+<ul>
+	<li>
+		OnCanExecute si aspetta un Func<object, boolean=""> il cui scopo è quello di determinare l’eseguibilità del comando, nel nostro esempio il DeleteCommand è disponibile se c’è un indirizzo selezionato; </object,></li>
+	<li>
+		OnExecute accetta invece come parametro una Action<object><object, boolean=""> che rappresenta il delegato che deve essere eseguito all’atto dell’esecuzione del comando; </object,></object></li>
+</ul>
+<span>
+	<object, boolean="">
+	<p>
+		<object><object, boolean="">
+		<p>
+			La parte veramente interessante, <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1069924125365624508" target="_blank">di cui ho già parlato</a> (sintassi a parte che è leggermente cambiata), è AddMonitor che vi permette di agganciare dei “trigger” al command, trigger che altro non fanno che automatizzare il processo di notifica, alla UI, della variazione di stato del comando stesso.</p>
+		<p>
+			Fatto tutto ciò se mandiamo in esecuzione la nostra bellissima applicazione (bellissima è auto-consolatorio <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh4.googleusercontent.com/-saAo6DMCufU/T0Ir0YeoHiI/AAAAAAAABn0/HjkreowseY8/wlEmoticon-smile_2_5.png" style="border-bottom-style: none; border-right-style: none; border-top-style: none; border-left-style: none">) quello che otteniamo è questo:</p>
+		<p>
+			<a href="https://lh3.googleusercontent.com/-Wm85Fp0BBAM/T0Ir16RlzxI/AAAAAAAABoE/rZ1N5Knrxws/image_4_2.png"><img alt="image" border="0" class="wlDisabledImage" height="191" src="https://lh4.googleusercontent.com/-ZWAvyjm_Eus/T0Ir06FOfeI/AAAAAAAABoA/aHwBR_UH1ds/image_thumb_1_2.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a><a href="https://lh3.googleusercontent.com/-iFQTnvj9rsE/T0Ir3VZP8JI/AAAAAAAABoU/r5LrEArYjrE/image_6.png"><img alt="image" border="0" class="wlDisabledImage" height="191" src="https://lh3.googleusercontent.com/-flW3vxyoX_Q/T0Ir2lXi1fI/AAAAAAAABoQ/gJVX2QOhDt8/image_thumb_2_1.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a><a href="https://lh3.googleusercontent.com/-URTutp40vBM/T0Ir5WlTWZI/AAAAAAAABoo/ucNWHClNkcc/image_8.png"><img alt="image" border="0" class="wlDisabledImage" height="191" src="https://lh6.googleusercontent.com/-aKNokNGJWKg/T0Ir4HRv0rI/AAAAAAAABog/D0oQL1bg8u4/image_thumb_3_1.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="253"></a></p>
+		<ol>
+			<li>
+				All’avvio il bottone “Delete” è disabilitato perchè non c’è nessun indirizzo selezionato;</li>
+			<li>
+				Alla selezione di un indirizzo il bottone si abilita:
+				<ol>
+					<li>
+						quando selezioniamo un indirizzo il motore di data binding fa il set della proprietà SelectedAddress;</li>
+					<li>
+						il MainViewModel notifica, via INotifyPropertyChanged, che la proprietà è cambiata;</li>
+					<li>
+						il PropertyObserver (IMonitor) agganciato al comando se ne accorge e notifica al comando che qualcosa è cambiato (poco importa cosa);</li>
+					<li>
+						Il comando notifica (via CanExecuteChanged) che il suo stato potrebbe essere cambiato;</li>
+					<li>
+						il motore di commanding di Wpf se ne accorge e chiede (CanExecute) al comando il suo nuovo stato;</li>
+					<li>
+						in base alla risposta il pulsante, nel nostro esempio, si attiva o disattiva;</li>
+				</ol>
+			</li>
+			<li>
+				A seguito della pressione del bottone viene eseguito il comando che:
+				<ol>
+					<li>
+						rimuove l’indirizzo dalla lista in binding con la ListView;</li>
+					<li>
+						resetta lo stato di SelectedAddress causando la rivalutazione del comando…;</li>
+				</ol>
+			</li>
+		</ol>
+		<p>
+			Come tradizione allego i sorgenti: <a href="http://cid-e5479799f933c3ed.office.live.com/self.aspx/Public/PostsAttachments/Mvvm-Application-1-3.zip" target="_blank">Mvvm.Application 1.3</a></p>
+		<p>
+			Il prossimo requisito? essere in grado di creare una <u>nuova</u> “Person” con la sua simpatica lista di “Address”.</p>
+		<p>
+			.m</p>
+		</object,></object></p>
+	<p>
+		 </p>
+	</object,></span><br>

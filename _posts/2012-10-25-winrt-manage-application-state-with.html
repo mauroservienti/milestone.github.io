@@ -1,0 +1,18 @@
+---
+layout: post
+title: WinRT manage application state with Radical
+date: '2012-10-25T14:15:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Metro
+- WinRT
+- Radical
+- Windows 8
+modified_time: '2012-10-25T14:15:00.893+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5438514679879264414
+blogger_orig_url: http://milestone.topics.it/2012/10/winrt-manage-application-state-with.html
+---
+
+<p>We have seen how to <a href="{{ site.baseurl }}{% post_url 2012-10-05-winrt-manage-navigation-state-with %}" target="_blank">manage the navigation state</a> using <a href="http://radical.codeplex.com/" target="_blank">Radical</a> now going wider is obviously possible to generally manage application state:</p> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">class</span> SampleViewModel : AbstractViewModel<br>{<br>    <span style="color: #0000ff">readonly</span> ISuspensionManager suspensionManager;<br><br>    <span style="color: #0000ff">public</span> SampleViewModel( ISuspensionManager suspensionManager )<br>    {<br>        <span style="color: #0000ff">this</span>.suspensionManager = suspensionManager;<br><br>        <span style="color: #0000ff">this</span>.suspensionManager.SetValue( <span style="color: #006080">"my-value-key"</span>, <span style="color: #006080">"may value"</span>, StorageLocation.Roaming );<br><br>        var myValue = <span style="color: #0000ff">this</span>.suspensionManager.GetValue&lt;String&gt;( <span style="color: #006080">"my-value-key"</span> );<br>    }<br>}</pre><br></div></blockquote>
+<p>Grab a reference to the suspension manager and use it in a dictionary manner, notice that you can specify the storage location choosing among Roaming, as in the sample, and Local; using the Roaming storage local data are automatically shared across different instances of the same application running in different machines linked to the same Live ID account.</p>
+<p>.m</p>  

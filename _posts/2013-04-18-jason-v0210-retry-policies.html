@@ -1,0 +1,132 @@
+---
+layout: post
+title: 'Jason v0.2.1.0: retry policies'
+date: '2013-04-18T15:04:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- CQRS
+modified_time: '2013-04-18T15:04:00.024+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-235096000207448225
+blogger_orig_url: http://milestone.topics.it/2013/04/jason-v0210-retry-policies.html
+---
+
+<p><a href="{{ site.baseurl }}{% post_url 2013-04-16-jason-v02-configuration-improvements %}" target="_blank">As promised</a> here we are :-)</p> <p>One of our customer, using <a href="http://jason.codeplex.com/" target="_blank">Jason</a>, has a requirement to implement the concept of retry during the standard command execution flow. basically they have a situation where some infrastructure/transient exceptions can be raised during the command execution request and they want to be able to retry without bothering the client if not needed.</p> <h3>Retry Policy</h3> <p>In Jason v0.2.1.0, at the time of this writing in beta, we introduced the concept of retry policy; a retry policy is something that implements the ICommandExecutionRetryPolicy interface:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">interface</span> ICommandExecutionRetryPolicy
+{
+    <span class="kwrd">object</span> Execute( Object command, Func&lt;ICommandHandler&gt; handlerFactory );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>And can be injected into the Jason configuration in the following way:</p>
+<blockquote><pre class="csharpcode">jasonConfig.UsingAsRetryPolicy&lt;MyCustomPolicy&gt;();</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Where MyCustomPolicy is a class that implements ICommandExecutionRetryPolicy. In the above sample the policy is registered in the container at initialization time and used by the various Jason entry point to handle all the retry logic.</p>
+<p>There is one built-in retry policy in Jason that can be used to handle retries in case of failure:</p>
+<blockquote><pre class="csharpcode">jasonConfig.UsingAsRetryPolicy( <span class="kwrd">new</span> DelegateCommandExecutionRetryPolicy()
+{
+    DefaultRetryDelay = 200,
+    ShouldRetry = e =&gt; e.Retry = ( e.Error <span class="kwrd">is</span> NotSupportedException &amp;&amp; e.CurrentRetryCount &lt; 5 )
+} );</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>In this case the policy is still registered in the container using the supplied instance, at runtime if a failure occurs the policy is queried to determine if a retry should be attempted.</p>
+<p>.m</p>  

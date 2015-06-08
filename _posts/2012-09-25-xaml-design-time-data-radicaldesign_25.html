@@ -1,0 +1,221 @@
+---
+layout: post
+title: 'Xaml design time data: Radical.Design dynamic reactions'
+date: '2012-09-25T09:19:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Blendability
+- Xaml
+- Design Time Data
+modified_time: '2012-09-25T09:19:00.485+02:00'
+thumbnail: http://lh5.ggpht.com/-rHjutIwidac/UBvIGg93dwI/AAAAAAAACGE/ToeHjAOeuKI/s72-c/image_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2055321527099777336
+blogger_orig_url: http://milestone.topics.it/2012/09/xaml-design-time-data-radicaldesign_25.html
+---
+
+<p>Where we are:</p> <ul> <li>We have <a href="{{ site.baseurl }}{% post_url 2012-09-04-xaml-design-time-data-introduction-to %}" target="_blank">introduced</a> the design time data concepts;</li> <li>We have understood how to <a href="{{ site.baseurl }}{% post_url 2012-09-11-xaml-design-time-data-radicaldesign %}" target="_blank">setup</a> a design time experience using <a href="http://radical.codeplex.com/" target="_blank">Radical</a>;</li> <li>We have discovered how to let the designers <a href="{{ site.baseurl }}{% post_url 2012-09-17-xaml-design-time-data-radicaldesign_17 %}" target="_blank">lively change</a> values at design time;</li></ul> <p><strong>We want more!</strong></p> <p>Start changing the view model we are designing adding a couple of properties:</p> <blockquote><pre class="csharpcode"><span class="kwrd">class</span> PersonViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> <span class="kwrd">event</span> PropertyChangedEventHandler PropertyChanged = ( s, e ) =&gt; { };
+
+    <span class="kwrd">private</span> <span class="kwrd">void</span> OnPropertyChanged( <span class="kwrd">string</span> propertyName )
+    {
+        var h = <span class="kwrd">this</span>.PropertyChanged;
+        h( <span class="kwrd">this</span>, <span class="kwrd">new</span> PropertyChangedEventArgs( propertyName ) );
+    }
+
+    String _firstName;
+
+    <span class="kwrd">public</span> String FirstName
+    {
+        get { <span class="kwrd">return</span> _firstName; }
+        set
+        {
+            _firstName = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"FirstName"</span> );
+        }
+    }
+
+    String _lastName;
+
+    <span class="kwrd">public</span> String LastName
+    {
+        get { <span class="kwrd">return</span> _lastName; }
+        set
+        {
+            _lastName = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"LastName"</span> );
+        }
+    }
+
+    DateTime _bornDate;
+
+    <span class="kwrd">public</span> DateTime BornDate
+    {
+        get { <span class="kwrd">return</span> _bornDate; }
+        set
+        {
+            _bornDate = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"BornDate"</span> );
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"Age"</span> );
+        }
+    }
+
+    <span class="kwrd">public</span> Int32 Age
+    {
+        <span class="rem">//stupid and wrong but it's a sample :-)</span>
+        get { <span class="kwrd">return</span> DateTime.Now.Year - <span class="kwrd">this</span>.BornDate.Year; }
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We want to reflect that behavior in our design time view model, let’s start exposing a live property for the BornDate property:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> DesignTimePersonViewModel()
+{
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.FirstName )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_FirstName );
+
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.LastName )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_LastName );
+
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.BornDate )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_BornDate );
+}
+
+<span class="kwrd">public</span> DateTime DesignTime_BornDate
+{
+    get { <span class="kwrd">return</span> <span class="kwrd">this</span>.GetPropertyValue( () =&gt; <span class="kwrd">this</span>.DesignTime_BornDate ); }
+    set { <span class="kwrd">this</span>.SetPropertyValue( () =&gt; <span class="kwrd">this</span>.DesignTime_BornDate, <span class="kwrd">value</span> ); }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Now we now, <a href="{{ site.baseurl }}{% post_url 2012-09-17-xaml-design-time-data-radicaldesign_17 %}" target="_blank">as we have seen last time</a>, that we can edit the BornDate property directly in the designer,&nbsp; but what about the Age property? it is a runtime evaluated property.</p>
+<p>Enter design time evaluated properties, aka dynamic properties:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> DesignTimePersonViewModel()
+{
+    <font style="background-color: #ffff00"><span class="kwrd">this</span>.GetPropertyMetadata( () =&gt; <span class="kwrd">this</span>.DesignTime_BornDate )
+        .AddCascadeChangeNotifications( <span class="str">"Age"</span> );</font>
+
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.FirstName )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_FirstName );
+
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.LastName )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_LastName );
+
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.BornDate )
+        .WithLiveValue( () =&gt; <span class="kwrd">this</span>.DesignTime_BornDate );
+
+    <font style="background-color: #ffff00"><span class="kwrd">this</span>.Expose( vm =&gt; vm.Age )
+        .AsReadOnly()
+        .WithDynamicValue( ci =&gt; ( <span class="kwrd">int</span> )( ( DateTime.Now - <span class="kwrd">this</span>.DesignTime_BornDate ).TotalDays / 365 ) );</font>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We are doing some important things:</p>
+<ol>
+<li>we are telling to the infrastructure that whenever the DesignTime_BornDate property changes we want a changed event even for the Age property, I’m thinking about a better API to express this;</li>
+<li>We are building a dynamic value based property where the value is a Func&lt;CultureInfo, TValue&gt; that is invoked by the infrastructure to read the property value;</li>
+<li>Least but not last we are telling to the designer that the exposed Age property is a read-only property as in the original ViewModel;</li></ol>
+<p>And obviously the designer behaves as expected, immediately reflecting our inputs:</p>
+<p><a href="http://lh4.ggpht.com/-wtlenJx9028/UBvIFAzMlhI/AAAAAAAACF8/rit-el1SVe4/s1600-h/image%25255B2%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh5.ggpht.com/-rHjutIwidac/UBvIGg93dwI/AAAAAAAACGE/ToeHjAOeuKI/image_thumb.png?imgmax=800" width="244" height="125"></a></p>
+<p>And the generated xaml code is exactly what we expect.</p>
+<p>In the next episode of this series we’ll dive into a much more complex ViewModel scenario.</p>
+<p>Stay tuned!</p>
+<p>.m</p>  

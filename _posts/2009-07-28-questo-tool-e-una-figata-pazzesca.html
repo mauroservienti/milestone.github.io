@@ -1,0 +1,44 @@
+---
+layout: post
+title: Questo tool è una figata pazzesca.
+date: '2009-07-28T19:50:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- NHibernate
+modified_time: '2012-08-04T20:05:05.822+02:00'
+thumbnail: https://lh6.googleusercontent.com/-6xzxtwJWl10/TypwqNdXeYI/AAAAAAAAAmA/KhHDjcN4rs0/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7762882141805473234
+blogger_orig_url: http://milestone.topics.it/2009/07/questo-tool-e-una-figata-pazzesca.html
+---
+
+<span>Alla <a href="http://www.ugialt.net/Meetings.ashx" target="_blank">UGI.Alt Conf</a> ho “vinto” per aver fatto una Open Session una licenza di <a href="http://nhprof.com/" target="_blank">NH Proof</a>.</span><br>  <span>Complice una necessità mi stasera mi sono messo di buona lena e:</span><br>  <ul>   <li>Ho approcciato per la prima volta in vita mia NHibernate:      <ul>       <li>Utilizzando <a href="http://wiki.fluentnhibernate.org/show/HomePage" target="_blank">Fluent Configuration</a>; </li>        <li><a href="http://ayende.com/Blog/archive/2009/07/26/nhibernate-linq-1.0-released.aspx" target="_blank">Linq 2 NHibernate</a>; </li>        <li>In pochi minuti ho prodotto la prima fetch un po’ complessa, almeno per me neofita di NHibernate: </li>     </ul>   </li> </ul>  <blockquote>   <pre class="code"><span style="color: #2b91af">App</span>.SessionFactory = <span style="color: #2b91af">Fluently</span>.Configure( <span style="color: blue">new </span><span style="color: #2b91af">Configuration</span>() )
+    .Mappings( mc => mc.FluentMappings.AddFromAssemblyOf<<span style="color: #2b91af">App</span>>() )
+    .BuildConfiguration()
+    .BuildSessionFactory();
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>session = <span style="color: #2b91af">App</span>.SessionFactory.OpenSession() )
+{
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>tx = session.BeginTransaction() )
+    {
+        <span style="color: blue">var </span>query = session.Linq<<span style="color: #2b91af">Customer</span>>()
+            .Expand( c => c.Addresses )
+            .Where( c => c.Type == 1 );
+
+        <span style="color: blue">var </span>result = query.ToList();
+
+        tx.Commit();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<ul>
+  <li>Ho scoperto che NH Proof probabilmente è un compagno indispensabile; </li>
+</ul>
+
+<span><a href="https://lh5.googleusercontent.com/-Q15Kt_KUwHQ/TypwrRSJmaI/AAAAAAAAAmI/ON202tM1rr4/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-6xzxtwJWl10/TypwqNdXeYI/AAAAAAAAAmA/KhHDjcN4rs0/image_thumb.png" width="244" height="200"></a> </span><br>
+
+<span>La strada è ancora molto lunga ma un doveroso grazie a tutti gli amici di UGI.Alt senza i quali probabilmente la voglia non mi sarebbe venuta.</span><br>
+
+<span>.m</span><br>
+

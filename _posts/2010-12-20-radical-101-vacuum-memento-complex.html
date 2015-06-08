@@ -1,0 +1,103 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): Memento –> “the complex basics”'
+date: '2010-12-20T08:38:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Memento
+modified_time: '2012-02-22T09:19:24.534+01:00'
+thumbnail: https://lh4.googleusercontent.com/-EuOunosSMSU/T0Sk-f2SLJI/AAAAAAAAByY/sllWMZ4Hukw/s72-c/Radical_thumb17_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9183547548233490115
+blogger_orig_url: http://milestone.topics.it/2010/12/radical-101-vacuum-memento-complex.html
+---
+
+<span><a href="https://lh4.googleusercontent.com/-ZTlwGtHbaqc/T0Sk-6G0C8I/AAAAAAAAByc/0mIIx4aTG7U/Radical_thumb17_2.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; margin: 0px 5px 5px 0px; padding-left: 0px; padding-right: 0px; display: inline; float: left; border-top: 0px; border-right: 0px; padding-top: 0px" title="Radical_thumb17" border="0" alt="Radical_thumb17" align="left" src="https://lh4.googleusercontent.com/-EuOunosSMSU/T0Sk-f2SLJI/AAAAAAAAByY/sllWMZ4Hukw/Radical_thumb17_thumb.png" width="41" height="72"></a>zitti… che forse torno a bloggare con un minimo di regolarità… forse <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="https://lh3.googleusercontent.com/-rrV9C9hEiL0/T0Sk_YVdhSI/AAAAAAAAByo/42ruULxB9EI/wlEmoticon-smilewithtongueout_2_11.png">.</span><br>  <span>Perché siamo nuovamente qui? perché un’interessante domanda via mail mi ha fatto capire che gli esempi presenti in <a href="http://radical.codeplex.com/" target="_blank">Radical</a> non sono sempre semplici ed accessibili, soprattutto quando si parla di Memento e ChangeTracking; non lo sono perché oltre alla complessità dell’argomento introducono anche la complessità derivante dal fatto che sono pensati per Wpf/Silverlight e sono basati su Model View ViewModel.</span><br>  <span>E’ però difficile fare un esempio funzionante e fruibile su Memento senza introdurre altre complessità, ergo non lo faccio <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh5.googleusercontent.com/-Sfj8VN4vCKc/T0Sk_8XtWxI/AAAAAAAAByw/6HGAIMlIs_A/wlEmoticon-smile_2_16.png"> ma lo spiego qui.</span><br>  <span><strong>Lo scenario</strong></span><br>  <span>Al solito partiamo dal requisito: vogliamo tracciare le modifiche ad un grafo complesso (dove per complesso ci basta una relazione 1:n) al fine di sapere cosa è stato modificato ed eventualmente quali sono le modifiche.</span><br>  <span><strong>Il modello</strong></span><br>  <span>Sempre il solito triviale e inutile Person/Address <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="d33d0ce4-1dcc-4bf6-b736-e5fde55b9722">:</span><br>  <span><a href="https://lh3.googleusercontent.com/-OF4FgGvN1lk/T0SlB7qXETI/AAAAAAAABzA/og8idBamyEw/image_2_10.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; margin: ; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-meeenCRTb3s/T0SlBDCPAhI/AAAAAAAABy0/mrPnfslSGe0/image_thumb_11.png" width="240" height="125"></a></span><br>  <span>L’unica cosa degna di nota è che entrambe le classi derivano da MementoEntity, non è però l’unico requisito io non sono un amante degli automatismi spintissimi preferisco scrivere un minimo di codice e avere il totale controllo su quello che succede.</span><br>  <span>Le cose da fare perché il tutto funzioni sono fondamentalmente due:</span><br>  <ul>   <li>Scrivere le proprietà in “<em>Radical Style</em>” <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="026d4aaa-ef9f-4ee0-83cc-2027cf4e1bdf">;</li>    <li>Propagare il Memento ove necessario;</li> </ul>  <span><strong>Le proprietà</strong></span><br>  <span>Scrivere le proprietà è banale:</span><br>  <blockquote>   <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">public</font></font></span><font style="font-size: 12pt"> <span style="color: "><font color="#2b91af">String</font></span> FirstName<br>{<br>	<span style="color: "><font color="#0000ff">get</font></span> { <span style="color: "><font color="#0000ff">return</font></span> <span style="color: "><font color="#0000ff">this</font></span>.GetPropertyValue( () => <span style="color: "><font color="#0000ff">this</font></span>.FirstName ); }<br>	<span style="color: "><font color="#0000ff">set</font></span> { <span style="color: "><font color="#0000ff">this</font></span>.SetPropertyValue( () => <span style="color: "><font color="#0000ff">this</font></span>.FirstName, <span style="color: "><font color="#0000ff">value</font></span> ); }<br>}</font></font></pre>
+</blockquote>
+
+<span>Utilizziamo una sintassi molto simile alle Dependency Property di Wpf al fine di consentire alla MementoEntity di intrufolarsi e fare il suo lavoro, alla stessa stregua esponiamo la lista di indirizzi utilizzando una collection ad hoc, o derivando da essa:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">public</font></font></span><font style="font-size: 12pt"> Person()<br><br>{<br>	<span style="color: "><font color="#0000ff">this</font></span>.Addresses = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">MementoEntityCollection</font></span><<span style="color: "><font color="#2b91af">Address</font></span>>();<br>}<br> <br><span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#2b91af">IList</font></span><<span style="color: "><font color="#2b91af">Address</font></span>> Addresses { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">private</font></span> <span style="color: "><font color="#0000ff">set</font></span>; }</font></font></pre>
+</blockquote>
+
+<span>Per le liste non dobbiamo fare nulla di più, facilissimo! <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="bdc682ac-5c28-4851-b69a-370ffc07904e"></span><br>
+
+<span><strong>La propagazione</strong></span><br>
+
+<span>La seconda cosa che dobbiamo fare è propagare il servizio di ChangeTracking all’intero grafo: abbiamo un aggregato che il servizio non conosce è quindi nostra responsabilità, dalla root del nostro grafo, propagare le informazioni necessarie:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">protected</font></font></span><font style="font-size: 12pt"> <span style="color: "><font color="#0000ff">override</font></span> <span style="color: "><font color="#0000ff">void</font></span> OnMementoChanged( <span style="color: "><font color="#2b91af">IChangeTrackingService</font></span> newMemento, <span style="color: "><font color="#2b91af">IChangeTrackingService</font></span> oldMemmento )<br>{<br>	<span style="color: "><font color="#0000ff">base</font></span>.OnMementoChanged( newMemento, oldMemmento );<br> <br>	<span style="color: "><font color="#0000ff">var</font></span> m = <span style="color: "><font color="#0000ff">this</font></span>.Addresses <span style="color: "><font color="#0000ff">as</font></span> <span style="color: "><font color="#2b91af">IMemento</font></span>;<br>	<span style="color: "><font color="#0000ff">if</font></span>( m != <span style="color: "><font color="#0000ff">null</font></span> ) <br>	{<br>		m.Memento = newMemento;<br>	}<br>}</font></font></pre>
+</blockquote>
+
+<span>La MementoEntity offre un metodo ad hoc per fare questa operazione, nell’esempio ci limitiamo a propagare da Person verso la lista di Address, la collection è in grado di propagare autonomamente ad ogni singolo Address il nuovo memento.</span><br>
+
+<span>Una volta sbrigate le formalità vediamo di capire come si usa <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="3e861dd7-0c08-4135-88df-2d7148889c8c"></span><br>
+
+<span><strong>Il setup</strong></span><br>
+
+<span>Il processo di setup è “<em>trivialissimo</em>”, iniziamo con il comporre il nostro grafo esattamente come faremmo con un qualsiasi grafo:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> person = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">Person</font></span>() <br>{<br>	FirstName = <span style="color: "><font color="#a31515">"Mauro"</font></span>,<br>	LastName = <span style="color: "><font color="#a31515">"Servienti"</font></span><br>};<br> <br><span style="color: "><font color="#0000ff">var</font></span> address = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">Address</font></span>( person ) <br>{<br>	Street = <span style="color: "><font color="#a31515">"Foo street"</font></span>,<br>	City= <span style="color: "><font color="#a31515">"Bar City"</font></span>,<br>};<br> <br>person.Addresses.Add( address );</font></font></pre>
+</blockquote>
+
+<span>Sono normalissime classi e come tali le usiamo, a questo punto possiamo cominciare a giocare con le cose interessanti:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> service = <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">ChangeTrackingService</font></span>();<br>service.Attach( person );</font></font></pre>
+</blockquote>
+
+<span>Tutto li? ebbene si tutto li <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="6bf23af9-a20c-4782-bdc4-56d0e4560a92">, fatto quello succede che il ChangeTrackingService si è insinuato con un virus all’interno del grafo e osserva qualsivoglia cosa succede.</span><br>
+
+<span>La prima cosa che potete fare è questa:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> addressState = service.GetEntityState( address );<br><span style="color: "><font color="#0000ff">var</font></span> isTransient = ( addressState & EntityTrackingStates.IsTransient ) == EntityTrackingStates.IsTransient;</font></font></pre>
+</blockquote>
+
+<span>per scoprire lo stato di una entità, EntityTrackingStates è un’enumerazione così definita:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><font style="font-size: 12pt">[<span style="color: "><font color="#2b91af">Flags</font></span>]<br><span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">enum</font></span> EntityTrackingStates<br>{<br>	None =0,<br> 	IsTransient = 1,<br> 	AutoRemove = 2,<br> 	HasBackwardChanges = 4,<br> 	HasForwardChanges = 8,<br>}</font></font></pre>
+</blockquote>
+
+<span>Che vi da tutte le informazioni necessarie per scoprire lo stato di una singola entità, ma se fosse tutto li che gusto ci sarebbe?
+  <br>Proviamo a fare qualche modifica al nostro grafo:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><font style="font-size: 12pt">person.LastName = <span style="color: "><font color="#a31515">"another last name"</font></span>;<br>person.Addresses.Add( <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">Address</font></span>( person ) );<br>person.Addresses[ 0 ].City = <span style="color: "><font color="#a31515">"my city"</font></span>;</font></font></pre>
+</blockquote>
+
+<span>Facciamo un po’ di modifiche “sparse” sul grafo, esattamente come succederebbe in uno scenario reale di editing. Quello che succede dietro le quinte è che il servizio di ChangeTracking ha creato uno stack con la lista delle modifiche che abbiamo apportato e ha un “cursore” che gli dice dove siamo posizionati attualmente con lo stato del nostro grafo, ergo possiamo fare questo:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> isChanged = service.IsChanged;<br><span style="color: "><font color="#0000ff">var</font></span> canUndo = service.CanUndo;<br><span style="color: "><font color="#0000ff">var</font></span> canRedo = service.CanRedo;</font></font></pre>
+</blockquote>
+
+<span>e scoprire che i primi due valori sono true mentre, giustamente CanRedo è false, se quindi facciamo semplicemente un mero “Undo”:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><font style="font-size: 12pt">service.Undo();</font></font><br></pre>
+</blockquote>
+
+<span>scopriamo che il valore della proprietà City dell’indirizzo che abbiamo modificato è tornato al valore precedente, qualunque esso fosse e che a questo punto CanRedo è diventato anch’esso true. Ovviamente se facciamo tre volte Undo, o più semplicemente un RejectChanges, abbiamo il grafo automaticamente riportato allo stato iniziale. La differenza in questo caso tra un set di Undo e un singolo RejectChanges è nel supporto al Redo, utilizzando gli Undo possiamo anche scorrere lo stack delle modifiche in avanti e quindi riportare il grafo in stadi diversi del suo ciclo di vita.</span><br>
+
+<span>Non male <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="ea6ac845-acd9-4865-854f-c7df383a0439"></span><br>
+
+<span>Autocelebrazione a parte… il bello inizia adesso:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> changeSet = service.GetChangeSet();<br><span style="color: "><font color="#0000ff">var</font></span> advisory = service.GetAdvisory();</font></font></pre>
+</blockquote>
+
+<span>Un ChangeSet è una IEnumerable<IChange> che sono tutte le modifiche presenti nello stack in quel momento, ergo è la differenza tra lo stato originale e lo stato attuale, mentre un IAdvisory è una “proposta”:</span><br>
+
+<blockquote>
+  <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">var</font></font></span><font style="font-size: 12pt"> advisedAction = advisory.Where( a => a.Target == person ).SingleOrDefault();<br><span style="color: "><font color="#0000ff">var</font></span> shouldCreate = advisedAction.Action == <span style="color: "><font color="#2b91af">ProposedActions</font></span>.Create;</font></font></pre>
+</blockquote>
+
+<span>possiamo quindi chiedere al ChangeTrackingService cosa farebbe con il grafo che sta tracciando nel momento in cui dovesse rivolgersi ad un ipotetico motore di persistenza, nell’esempio ci sta dicendo che secondo lui la Person che stiamo tracciando andrebbe creata.</span><br>
+
+<span>.m</span><br>

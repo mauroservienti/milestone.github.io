@@ -1,0 +1,369 @@
+---
+layout: post
+title: Utente, perchè sei tu… utente!
+date: '2009-06-12T09:59:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Model View ViewModel
+modified_time: '2012-08-04T19:46:34.171+02:00'
+thumbnail: https://lh5.googleusercontent.com/-vfGeeaxrDFc/Tym-0tsVwcI/AAAAAAAAAdY/66Ec4BKd5Hk/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8940369947979757935
+blogger_orig_url: http://milestone.topics.it/2009/06/utente-perche-sei-tu-utente.html
+---
+
+<span>Una “mailing list” spontanea tra svariati <a href="http://blogs.ugidotnet.org/Corrado" target="_blank">pa</a>r<a href="http://blogs.ugidotnet.org/Raffaele" target="_blank">te</a>c<a href="http://blogs.ugidotnet.org/Pape" target="_blank">ip</a>a<a href="http://blogs.ugidotnet.org/RobyMes" target="_blank">nt</a>i mi porta verso questo post.</span><br>  <span>Il problema è la validazione dell’input dell’utente, vediamo da dove sono partito:</span><br>  <span>La situazione è decisamente banale, classicissima Window (Wpf) per l’editing di una Entity (Person), il tutto basato <u>strettamente</u> su M-V-VM, quindi è un “requisito” che nel code-behind della Window non ci finisca nulla, o xaml o ViewModel. Il problema è la vadilazione dell’input, diamo un paio di regole di business che “incriccano” la cosa:</span><br>  <ul>   <li>Rule A: Person.FirstName non deve essere vuoto; </li>    <li>Rule B: Person.LastName non deve essere vuoto; </li> </ul>  <span>Il requisito conseguente è che se la “form” non è valida devo:</span><br>  <ul>   <li>Evidenziare ogni singolo controllo in uno stato non valido; </li>    <li>All’avvio della Window non visualizzare i controlli come invalidi anche se lo sono; </li>    <li>Visualizzare l’<u>elenco</u> dei problemi solo ed esclusivamente nel momento in cui l’utente cerca di salvare; </li> </ul>  <span>Triviale direi, ma... Wpf è Wpf e nonostante la potenza spaventosa non sempre le cose sono facili come sembrano… partiamo da quello che ci offre nativamente Wpf:</span><br>  <span><strong>ValidationRule</strong></span><br>  <span>Il motore di Data Binding di Wpf ha un suo motore di validazioni dei dati che generalmente utilizziamo senza rendercene conto; quando scriviamo una cosa del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=MyProperty, </span><span style="color: red">ValidatesOnExceptions</span><span style="color: blue">=True</span><span style="color: blue">, </span><span style="color: red">NotifyOnValidationError</span><span style="color: blue">=True</span><span style="color: blue">}" /></span></pre>
+</blockquote>
+
+<span>Chiediamo al motore di binding di intercettare le exception e visualizzare il controllo in stato di errore. La sintassi è esattamente equivalente alla seguente:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox</span><span style="color: blue">>
+    <</span><span style="color: #a31515">TextBox.Text</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">="MyProperty">
+            <</span><span style="color: #a31515">Binding.ValidationRules</span><span style="color: blue">>
+                <</span><span style="color: #a31515">ExceptionValidationRule </span><span style="color: blue">/>
+            </</span><span style="color: #a31515">Binding.ValidationRules</span><span style="color: blue">>
+        </</span><span style="color: #a31515">Binding</span><span style="color: blue">>
+    </</span><span style="color: #a31515">TextBox.Text</span><span style="color: blue">>
+</</span><span style="color: #a31515">TextBox</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che mette ben in evidenza il concetto di <a href="http://msdn.microsoft.com/en-us/library/system.windows.controls.validationrule.aspx" target="_blank">ValidationRule</a>. Una validation rule è una regola che viene valutata per decidere se il dato che sta viaggiando dal controllo verso la entity, o viceversa, debba essere considerato valido, scrivere una ValidationRule è un’operazione banale e rende il vostro processo di validazione decisamente flessibile perchè avete la possibilità di istruire il motore di binding su dove (durante la pipeline di binding) utilizzare la vostra validation rule: potete scegliere in quale direzione intervenire e se intervenire prima o dopo il set del valore. Tutto molto interessante ma:</span><br>
+
+<ul>
+  <li>In un’applicazione, dal mediamente grande in su, avete l’inghippo che decentralizzate la validazione su ogni singola Window/Controllo, se quindi lo stesso dato viene visualizzato/editato in punti diversi l’onere della manutenzione comincia a diventare pesante; </li>
+
+  <li>Spostare la logica di validazione sulla View secondo me è, <u>in ottica M-V-VM</u>, sbagliato perchè da responsabilità, alla View, che non dovrebbe avere; </li>
+
+  <li>Se nel team c’è anche un designer (solo designer, che usa Blend) obbligate il designer a conoscere le regole di business/validazione del dato; </li>
+
+  <li>Infine, per come è pensata una ValidationRule avete il problema che non siete in grado in maniera semplice, dall’interno della rule, di accedere al contesto generale: quello che succede è che la rule ha in mano il dato/valore ma nulla di più quindi si deve limitare a valutare il dato e non lo può fare contestualizzandolo; </li>
+</ul>
+
+<span>L’obiettivo è quindi quello di togliere la validazione dalla View e spostarla sul ViewModel, la possibilità più semplice è quella di gestire la validazione tramite Exception (aspettate a lamentarvi…).</span><br>
+
+<span><strong>Exception Driven Validation</strong></span><br>
+
+<span>La nostra TextBox resta invariata e nel ViewModel possiamo scrivere qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.dataSource.FirstName; }
+    <span style="color: blue">set
+    </span>{
+        <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.FirstName )
+        {
+            <span style="color: blue">if</span>( <span style="color: #2b91af">String</span>.IsNullOrEmpty(<span style="color: blue">value</span>) )
+            {
+                <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentException</span>( <span style="color: #a31515">"Il nome non può essere vuoto." </span>);
+            }
+
+            <span style="color: blue">this</span>.dataSource.FirstName = <span style="color: blue">value</span>;
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Il tutto funziona, producendo questo a runtime senza far schiantare l’applicazione (il che è già qualcosa :-D):</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-ZQYQyYjH8_g/Tym-1Fd4uXI/AAAAAAAAAdg/myaIAAKPavs/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-vfGeeaxrDFc/Tym-0tsVwcI/AAAAAAAAAdY/66Ec4BKd5Hk/image_thumb.png" width="244" height="58"></a> </span><br>
+
+<span>Ci sono però una serie di effetti collaterali:</span><br>
+
+<ul>
+  <li>Utilizzate le eccezioni per “guidare” la logica di business e non sarebbe cosa buona e giusta;</li>
+
+  <li>Dovete inventarvi un sistema per estrarre la vera eccezione perchè come si vede dall’immagine la vostra ArgumentException diventa la InnerException di una TargetInvocationException;</li>
+
+  <li>Non avete la possibilità di valutare il dato nel suo insieme: se le regole per un singolo dato sono più di una la prima che fallisce genera un’eccezione e verrà visualizzata solo quella;</li>
+</ul>
+
+<span>Fortunatamente non tutto è perso :-)</span><br>
+
+<span><strong>IDataErrorInfo</strong></span><br>
+
+<span>Il framework 3.5 aggiunge a Wpf la nozione di <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.idataerrorinfo.aspx" target="_blank">IDataErrorInfo</a>, interfaccia storica, offrendo quello che secondo me è il miglior compromesso in termini di validazione dei dati inseriti dell’utente. Sia chiaro si poteva fare anche prima dell’introduzione del fx 3.5 perchè quello che è stato aggiunto è:</span><br>
+
+<ul>
+  <li>una ValidationRule: <a href="http://msdn.microsoft.com/en-us/library/system.windows.controls.dataerrorvalidationrule.aspx" target="_blank">DataErrorValidationRule</a>, che altro non fa che controllare se il target del data binding è IDataErrorInfo e nel caso delegare la validazione del dato dopo averlo scritto;</li>
+
+  <li>Una nuova versione della classe/markup extension Binding con una proprietà ValidatesOnDataErrors;</li>
+</ul>
+
+<span>Quello che possiamo fare ora è scrivere:</span><br>
+
+<blockquote>
+  <span><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=MyProperty, </span><span style="color: red">ValidatesOnDataErrors</span><span style="color: blue">=True</span><span style="color: blue">, </span><span style="color: red">NotifyOnValidationError</span><span style="color: blue">=True</span><span style="color: blue">}" /></span></span><br>
+</blockquote>
+
+<span>Nel nostro ViewModel avremo invece una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">String </span><span style="color: blue">this</span>[ <span style="color: #2b91af">String </span>propertyName ]
+{
+    <span style="color: blue">get
+    </span>{
+        <span style="color: green">/*
+         * Perform validation and return the
+         * error message for the given property,
+         * otherwise return null.
+         */
+
+        </span><span style="color: blue">return null</span>;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il motore di binding chiamerà, dopo il set della proprietà, quella bruttura* passandovi il nome della proprietà che deve essere validata. La bruttura deve tornare o un messaggio di errore o una stringa nulla per identificare che non ci sono errori.</span><br>
+
+<span>Tutto ciò ha però un “difetto” la validazione viene fatta, decisamente comodo e vedremo tra poco perchè, in maniera “bidirezionale” quindi il motore di binding chiama il vostro sistema (la bruttura) di validazione dopo aver fatto il <em>push</em> del dato dalla UI alla entity e viceversa dopo aver fatto anche il <em>pull</em> del dato dalla entity alla UI. Questo ha quindi un effetto collaterale:</span><br>
+
+<blockquote>
+  <span>La validazione viene effettuata anche la prima volta che viene inizializzato il binding di ogni singolo controllo; il rischio è quindi:</span><br>
+
+  <ul>
+    <li>l’utente chiede di creare una nuova Person;</li>
+
+    <li>la Window per l’inserimento dei dati appare e purtroppo appare con già visualizzati tutti gli errori;</li>
+  </ul>
+
+  <span>Il tutto in termini di UX non è proprio consistente in quanto l’utente non ha ancora fatto nulla, quindi è poco sensato dirgli che ha già sbagliato.</span><br>
+</blockquote>
+
+<span>la cosa è facilmente aggirabile, fortunatamente:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>> propertiesValidatedAtLeastOnce = <span style="color: blue">new </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>>();
+
+<span style="color: blue">public </span><span style="color: #2b91af">String </span><span style="color: blue">this</span>[ <span style="color: #2b91af">String </span>propertyName ]
+{
+    <span style="color: blue">get
+    </span>{
+        <span style="color: blue">if</span>( !<span style="color: blue">this</span>.propertiesValidatedAtLeastOnce.Contains( propertyName ) )
+        {
+            <span style="color: blue">this</span>.propertiesValidatedAtLeastOnce.Add( propertyName );
+            <span style="color: blue">return null</span>;
+        }
+
+        <span style="color: green">/*
+         * Validation for the given property
+         * has been already requested once,
+         * proceed with validation
+         */</span>
+
+        <span style="color: blue">return null</span>;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ci limitiamo a tener traccia di tutte le proprietà che sono state validate almeno una volta, supponendo che la prima volta sia quella che del binding iniziale.</span><br>
+
+<span>Prima di capire come soddisfare l’ultimo requisito, la visualizzazione di un “sommario” degli errori, introduciamo rapidamente il sistema di validazione usato:</span><br>
+
+<span><strong>Enterprise Library: Validation Application Block</strong></span><br>
+
+<span>Perchè reinventare la ruota? abbiamo un motore di validazione che funziona egregiamente, quindi perchè non usare quello? </span><br>
+
+<blockquote>
+  <span><IronicMode Status=”On”>
+    <br>il <a href="http://blogs.ugidotnet.org/pape" target="_blank">capo</a> direbbe che ci sono fior di motivi per <a href="http://www.asp.net/learn/mvc/#MVC_Validation" target="_blank">inventarne</a> uno nuovo… :-D
+
+    <br></IronicMode></span><br>
+</blockquote>
+
+<span>Passando oltre… quello che faccio è una cosa del tipo, sulla entity (con la benedizione del <a href="http://blogs.ugidotnet.org/pape" target="_blank">capo</a>):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Person
+</span>{
+    [<span style="color: #2b91af">NotNullValidator</span>( MessageTemplate = <span style="color: #a31515">"FirstName non può essere nullo." </span>)]<br>    [<span style="color: #2b91af">StringLengthValidator</span>( 0, <span style="color: #2b91af">RangeBoundaryType</span>.Exclusive, 
+        0, <span style="color: #2b91af">RangeBoundaryType</span>.Ignore, 
+        MessageTemplate=<span style="color: #a31515">"FirstName è obbligatorio." </span>)]
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+
+    [<span style="color: #2b91af">StringLengthValidator</span>( 0, <span style="color: #2b91af">RangeBoundaryType</span>.Exclusive, 
+        0, <span style="color: #2b91af">RangeBoundaryType</span>.Ignore, 
+        MessageTemplate = <span style="color: #a31515">"LastName è obbligatorio." </span>)]
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>LastName { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Definisco le regole di validazione a cui la entity deve <u>sempre</u> sottostare, quindi non quelle contestuali all’uso.</span><br>
+
+<span>Il motore di validazione (la bruttura) nel ViewModel diventa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">ValidationResults </span>results;
+
+<span style="color: blue">readonly </span><span style="color: #2b91af">Validator</span><<span style="color: #2b91af">Person</span>> validator = <span style="color: #2b91af">ValidationFactory</span>.CreateValidator<<span style="color: #2b91af">Person</span>>();
+<span style="color: blue">readonly </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>> propertiesValidatedAtLeastOnce = <span style="color: blue">new </span><span style="color: #2b91af">HashSet</span><<span style="color: #2b91af">String</span>>();
+
+<span style="color: blue">public </span><span style="color: #2b91af">String </span><span style="color: blue">this</span>[ <span style="color: #2b91af">String </span>propertyName ]
+{
+    <span style="color: blue">get
+    </span>{
+        <span style="color: blue">if</span>( !<span style="color: blue">this</span>.propertiesValidatedAtLeastOnce.Contains( propertyName ) )
+        {
+            <span style="color: blue">this</span>.propertiesValidatedAtLeastOnce.Add( propertyName );
+            <span style="color: blue">return null</span>;
+        }
+
+        <span style="color: blue">this</span>.results = <span style="color: blue">this</span>.validator.Validate( <span style="color: blue">this</span>.dataSource );
+        <span style="color: blue">if</span>( !results.IsValid )
+        {
+            <span style="color: blue">var </span>error = results.Where( err => err.Key == propertyName )
+                .Select( err => err.Message )
+                .Aggregate( <span style="color: #2b91af">String</span>.Empty, ( a, e ) =>
+                {
+                    a += e + <span style="color: #2b91af">Environment</span>.NewLine;
+                    <span style="color: blue">return </span>a;
+                } )
+                .TrimEnd( <span style="color: #2b91af">Environment</span>.NewLine.ToCharArray() );
+
+            <span style="color: blue">return </span>error;
+        }
+
+        <span style="color: blue">return null</span>;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Creo un validatore “statico”, la creazione di un validatore è la parte veramente onerosa in termini prestazionali della validazione, ad ogni richiesta eseguo la validazione dell’intera entity e mi salvo il risultato, quindi cerco all’interno dei risultati se ci sono degli errori per la proprietà che stiamo validando, nel caso aggrego i messaggi di errore: in questo modo al client tornano tutti gli errori per quella proprietà e non solo il primo.</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-ErnGrOnDNy4/Tym-2ncFinI/AAAAAAAAAdw/t3kaQngdtuA/image_10.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-CEgzqANLC-s/Tym-1-rGJ-I/AAAAAAAAAdk/eSFOwVz-mLA/image_thumb_4.png" width="244" height="86"></a> </span><br>
+
+<span><strong><em>Intermezzo</em></strong></span><br>
+
+<span>Nel frattempo vediamo anche come visualizzare l’errore all’utente: con Wpf nulla di più semplice! Ogni controllo ha una serie di attached property che servono per stabilire cosa e come fare in caso di errori di validazione:</span><br>
+
+<span><em>Validation.ErrorTemplate</em></span><br>
+
+<span>L’ErrorTemplate di un controllo è quella proprietà che ci permette di personalizzare il template che vogliamo assegnare ad un controllo quando il suo stato è “<em>sono in errore</em>”, possiamo quindi definire nelle risorse un ControlTemplate:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ControlTemplate </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="errorTemplate">
+    <</span><span style="color: #a31515">DockPanel</span><span style="color: blue">>
+        <</span><span style="color: #a31515">AdornedElementPlaceholder </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="elementPlaceHolder" />
+        <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Foreground</span><span style="color: blue">="Red" 
+                   </span><span style="color: red">ToolTip</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">ElementName</span><span style="color: blue">=elementPlaceHolder, </span><span style="color: red">Path</span><span style="color: blue">=AdornedElement.(Validation.Errors)[</span>0<span style="color: blue">].ErrorContent}"
+                   </span><span style="color: red">FontSize</span><span style="color: blue">="20"></span><span style="color: #a31515">*</span><span style="color: blue"></</span><span style="color: #a31515">TextBlock</span><span style="color: blue">>
+    </</span><span style="color: #a31515">DockPanel</span><span style="color: blue">>
+</</span><span style="color: #a31515">ControlTemplate</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che definisce come vogliamo visualizzare l’errore, ed infine associarlo al nostro controllo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">Validation.ErrorTemplate</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">errorTemplate</span><span style="color: blue">}" ...</span><span style="color: blue"> /></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Possiamo anche definire uno stile per cambiare, ad esempio il background:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Style </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="textBoxInError" </span><span style="color: red">TargetType</span><span style="color: blue">="{</span><span style="color: #a31515">x</span><span style="color: blue">:</span><span style="color: #a31515">Type </span><span style="color: red">TextBox</span><span style="color: blue">}">
+    <</span><span style="color: #a31515">Style.Triggers</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Trigger </span><span style="color: red">Property</span><span style="color: blue">="Validation.HasError" </span><span style="color: red">Value</span><span style="color: blue">="True">
+            <</span><span style="color: #a31515">Setter </span><span style="color: red">Property</span><span style="color: blue">="Background" </span><span style="color: red">Value</span><span style="color: blue">="#EFB8B8" />
+        </</span><span style="color: #a31515">Trigger</span><span style="color: blue">>
+    </</span><span style="color: #a31515">Style.Triggers</span><span style="color: blue">>
+</</span><span style="color: #a31515">Style</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>e “triggherare” il colore di background quando l’altra proprietà findamentale del motore di validazione cambia di valore: <em>Validation.HasError </em>è l’attached property che ci fornisce lo stato di un controllo.</span><br>
+
+<span><strong>ErrorSummary</strong></span><br>
+
+<span>Ci restano ancora un paio di nodi da scogliere:</span><br>
+
+<ul>
+  <li>Vogliamo visualizzare, ad esempio al tentativo di salvataggio, un elenco di tutti gli errori;</li>
+
+  <li>Vogliamo, quando viene visualizzato il sommario, anche triggherare lo stato invalido sugli eventuali controlli che non sono in stato invalido ma sono invalidi… un esempio chiarificatore:</li>
+
+  <ul>
+    <li>l’utente avvia la creazione di una nuova Person;</li>
+
+    <li>la Window non è ancora in stato non valido perchè l’utente non ha fatto nulla per ora;</li>
+
+    <li>l’utente cerca di pigiare il bottone Salva;</li>
+
+    <li>Visualizziamo l’ErrorSummary;</li>
+
+    <li>Vogliamo fare in modo che tutti i controlli sulla Window, se non validi, visualizzino il loro stato;</li>
+  </ul>
+</ul>
+
+<span>La cosa è abbastanza banale, vediamo prima il codice:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">ObservableCollection</span><<span style="color: #2b91af">String</span>> Errors
+{
+    <span style="color: blue">get</span>;
+    <span style="color: blue">private set</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a>
+
+  <pre class="code"><span style="color: blue">void </span>TrySave()
+{
+    <span style="color: blue">this</span>.Errors.Clear();
+    <span style="color: blue">this</span>.results = <span style="color: blue">this</span>.validator.Validate( <span style="color: blue">this</span>.dataSource );
+    <span style="color: blue">if</span>( !<span style="color: blue">this</span>.results.IsValid )
+    {
+        <span style="color: blue">foreach</span>( <span style="color: blue">var </span>err <span style="color: blue">in </span>results )
+        {
+            <span style="color: blue">if</span>( <span style="color: blue">this</span>.PropertyChanged != <span style="color: blue">null </span>)
+            {
+                <span style="color: blue">this</span>.PropertyChanged( <span style="color: blue">this</span>, <span style="color: blue">new </span><span style="color: #2b91af">PropertyChangedEventArgs</span>( err.Key ) );
+            }
+
+            <span style="color: blue">this</span>.Errors.Add( err.Message );
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Abbiamo una semplice lista di stringhe che rappresenta tutti gli errori, al tentativo di salvataggio:</span><br>
+
+<ul>
+  <li>Ci liberiamo di ogni errore precedente;</li>
+
+  <li>Eseguiamo nuovamente la validazione della entity;</li>
+
+  <li>Se non è valida:</li>
+
+  <ul>
+    <li>Aggiungiamo ogni errore alla lista degli errori;</li>
+
+    <li>Scateniamo un evento PropertyChanged per ognuna delle proprietà non valide;</li>
+  </ul>
+</ul>
+
+<span>Scatenare l’evento PropertyChanged fa si che il motore di validazione validi nuovamente quelle proprietà e dato che non sono valide i controlli passano dallo stato valido a invalido visualizzando l’ErrorTemplate associato.</span><br>
+
+<span>Sulla Window mi sono limitato ad aggiungere una ListBox in binding con la collection Errors.</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-J5TbN_PFXXE/Tym-4Lk05SI/AAAAAAAAAd8/M4-UQ3gMx7Q/image_6.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-__9WZG2GfKQ/Tym-3ReGGvI/AAAAAAAAAd0/nGo80exg-YQ/image_thumb_2.png" width="244" height="244"></a> </span><br>
+
+<span>la form all’avvio… e:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-FRL_Dhym4Ug/Tym-5fJf4OI/AAAAAAAAAeM/7DzOpN0nWFM/image_12.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/--Dt5xikvhkM/Tym-4uGuLII/AAAAAAAAAeE/1HLhVRE34AM/image_thumb_5.png" width="244" height="244"></a> </span><br>
+
+<span>la form dopo aver <em>solamente</em> premuto il pulsante “Salva”.</span><br>
+
+<span><strong><em>N.D.R.</em></strong></span><br>
+
+<span>Se il form che state utilizzando è pregno di controlli attenzione che le validazioni che vengono triggherate possono diventare migliaia nel giro di pochissimo tempo e quindi le performance della UI diventare un problema percepibile anche dall’utente.</span><br>
+
+<span>Il codice di esempio è semplicemente un esempio volutamente semplice, offre parecchi (s)punti di ottimizzazione per cercare di limare il numero di validazioni che vengono eseguite.</span><br>
+
+<span><strong>E adesso?</strong></span><br>
+
+<span>Il prossimo passaggio, materia di un altro post, è quello di avere un sistema che in automatico analizzi le regole di validazione del modello con cui siamo in binding e visualizzi all’utente, di fianco ad ogni controllo, i requisiti per cui quel controllo sia valido. Visualizzando ad esempio, per impostazione predefinita, i controlli obbligatori e a richiesta le regole a cui ogni singolo controllo verrà assoggettato in fase di validazione.</span><br>
+
+<span>.m</span><br>
+
+<span>* <em>mi piacerebbe guardare in faccia quello che ha pensato una proprietà indicizzata invece che un metodo…</em></span><br>
+

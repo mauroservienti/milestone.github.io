@@ -1,0 +1,102 @@
+---
+layout: post
+title: Visual Studio “Zombie Mode”
+date: '2011-05-05T12:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- VSIX
+- Visual Studio
+- Extensibility
+modified_time: '2012-08-04T19:44:53.339+02:00'
+thumbnail: https://lh4.googleusercontent.com/-feHpp1RN_yU/T0SlZw1o5PI/AAAAAAAAB1w/dpsXbk9ZD-8/s72-c/wlEmoticon-smile_2_26.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8538713867398980130
+blogger_orig_url: http://milestone.topics.it/2011/05/visual-studio-zombie-mode.html
+---
+
+<span>
+	Questa è una figata, o meglio il tizio che ha pensato il nome Zombie Mode è il mio idolo <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh4.googleusercontent.com/-feHpp1RN_yU/T0SlZw1o5PI/AAAAAAAAB1w/dpsXbk9ZD-8/wlEmoticon-smile_2_26.png"></span><br>
+<span>
+	Se state sviluppando un’estensione per Visual Studio dovete tenere in considerazione uno scenario decisamente poco documentato…mannaggia a loro <img alt="Smile with tongue out" class="wlEmoticon wlEmoticon-smilewithtongueout" src="https://lh5.googleusercontent.com/-eKKRUCHS1cA/T0SlaaHztpI/AAAAAAAAB10/8FMwNQkleMA/wlEmoticon-smilewithtongueout_2_17.png"></span><br>
+<span>
+	Durante il processo di startup dell’IDE c’è un periodo di tempo (lo Zombie Mode) in cui non potete interagire con l’IDE, come fare quindi a sapere lo stato dell’IDE? Non è proprio immediato… diciamo che avete una <em>ToolWindow</em> in cui avete bisogno di visualizzare informazioni (more to come…<img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="1f204d1b-8e5c-41f5-93e9-51b2fbbfa5f5">) relative allo stato dell’IDE quello che potete fare è:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;">[<span><font color="#2b91af">Guid</font></span>( <span><font color="#a31515">"2f48535f-40c3-45af-bdb1-b4860982d508"</font></span> )]
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">MyToolWindowPane</font></span> : <span><font color="#2b91af">ToolWindowPane</font></span>, <span><font color="#2b91af" style="font-size: 11.3pt;">IVsShellPropertyEvents</font></span></pre></blockquote>
+<ul>
+	<li>
+		Registrare la vostra <em>ToolWindow</em> come qualcuno che è in grado di ricevere eventi relativi alla variazione delle proprietà dell’IDE, implementando l’interfaccia IVsShellPropertyEvents:</li>
+</ul>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">int</font></span> OnShellPropertyChange( <span><font color="#0000ff">int</font></span> propid, <span><font color="#0000ff">object</font></span> var )
+{
+}</pre></blockquote>
+<ul>
+	<li>
+		e specificando in fase di inizializzazione della <em>ToolWindow</em> che volete essere “avvisati”:</li>
+</ul>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">protected</font></font></span> <span><font color="#0000ff">override</font></span> <span><font color="#0000ff">void</font></span> Initialize()
+{     
+      <span><font color="#0000ff">base</font></span>.Initialize();     
+      <span><font color="#0000ff">var</font></span> shellService = GetService( <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">SVsShell</font></span> ) ) <span><font color="#0000ff">as</font></span> <span><font color="#2b91af">IVsShell</font></span>;
+      <span><font color="#0000ff">if</font></span>( shellService != <span><font color="#0000ff">null</font></span> )
+      {
+           <span><font color="#2b91af">Object</font></span> zm;
+           <span><font color="#0000ff">var</font></span> result = shellService.GetProperty( ( <span><font color="#0000ff">int</font></span> )<span><font color="#2b91af">__VSSPROPID</font></span>.VSSPROPID_Zombie, <span><font color="#0000ff">out</font></span> zm );
+           <span><font color="#0000ff">var</font></span> zombieMode = ( <span><font color="#2b91af">Boolean</font></span> )zm;
+           <span><font color="#0000ff">if</font></span>( zombieMode )
+          {
+                     <span><font color="#2b91af">ErrorHandler</font></span>.ThrowOnFailure( shellService.AdviseShellPropertyChanges( <span><font color="#0000ff">this</font></span>, <span><font color="#0000ff">out</font></span> cookie ) );
+          }
+          <span><font color="#0000ff">else</font></span>
+          {
+                     <span><font color="#0000ff">this</font></span>.FinishInitialization();
+          }
+      }
+}</pre></blockquote>
+<span>
+	In fase di inizializzazione verifichiamo se siamo in “Zombie Mode”, se siamo in Zombie Mode ci registriamo per la notifica delle variazioni di valore delle proprietà dell’IDE altrimenti semplicemente procediamo con la nostra inizializzazione.</span><br>
+<span>
+	Per determinare la variazione dello Zombie Mode possiamo fare così:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">uint</font></font></span> cookie;
+ 
+<span><font color="#0000ff">public</font></span> <span><font color="#0000ff">int</font></span> OnShellPropertyChange( <span><font color="#0000ff">int</font></span> propid, <span><font color="#0000ff">object</font></span> var )
+{
+     <span><font color="#0000ff">if</font></span>( ( <span><font color="#0000ff">int</font></span> )<span><font color="#2b91af">__VSSPROPID</font></span>.VSSPROPID_Zombie == propid )
+    {
+         <span><font color="#0000ff">if</font></span>( ( <span><font color="#0000ff">bool</font></span> )var == <span><font color="#0000ff">false</font></span> )
+         {
+             <span><font color="#0000ff">var</font></span> shellService = GetService( <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">SVsShell</font></span> ) ) <span><font color="#0000ff">as</font></span> <span><font color="#2b91af">IVsShell</font></span>;
+             <span><font color="#0000ff">if</font></span>( shellService != <span><font color="#0000ff">null</font></span> )
+             {
+                 <span><font color="#2b91af">ErrorHandler</font></span>.ThrowOnFailure( shellService.UnadviseShellPropertyChanges( <span><font color="#0000ff">this</font></span>.cookie ) );
+             }
+
+             <span><font color="#0000ff">this</font></span>.cookie = 0;
+             <span><font color="#0000ff">this</font></span>.FinishInitialization();
+         }
+     }
+
+     <span><font color="#0000ff">return</font></span> <span><font color="#2b91af">VSConstants</font></span>.S_OK;
+}</pre></blockquote>
+<span>
+	Il metodo OnShellPropertyChange viene chiamato dall’IDE per ogni proprietà il cui stato varia, l’IDE ci passa l’id della proprietà e il valore corrente, quindi se la proprietà è quella che ci interessa e il valore è passato a false significa che non siamo più in Zombie Mode quindi:</span><br>
+<ul>
+	<li>
+		ci deregistriamo dalle notifiche;</li>
+	<li>
+		completiamo il processo di inizializzazione;</li>
+</ul>
+<span>
+	Processo in cui ad esempio possiamo fare questo:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">void</font></font></span> FinishInitialization()
+{
+     <span><font color="#0000ff">var</font></span> dte = <span><font color="#0000ff">this</font></span>.GetService( <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">SDTE</font></span> ) ) <span><font color="#0000ff">as</font></span> <span><font color="#2b91af">DTE</font></span>;
+}</pre></blockquote>
+<span>
+	Il tentativo di recuperare un’istanza dell’IDE in Zombie Mode fallisce e <em>GetService</em> ritorna null, in questo modo siamo invece sicuri che la chiamata venga fatta nel momento corretto.</span><br>
+<span>
+	.m</span><br>

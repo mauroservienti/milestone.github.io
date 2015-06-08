@@ -1,0 +1,24 @@
+---
+layout: post
+title: Radical “Handle” behavior
+date: '2012-12-06T12:40:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Xaml
+modified_time: '2012-12-06T12:40:00.195+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5075937610529674489
+blogger_orig_url: http://milestone.topics.it/2012/12/radical-handle-behavior.html
+---
+
+<p>Imagine that you need to handle from the ViewModel the SelectedIndexChanged of a WPF TreeView, currently the only way (without using any particular framework) is to build your own Behavior to achieve that, or bind, via a style the IsSelected property of the node to a property of the view model, but in this second case the side effect is that to find the selected item you need to visit the whole tree.</p> <p><strong>Enter </strong><a href="http://radical.codeplex.com/" target="_blank"><strong>Radical</strong></a><strong> “Handle”</strong></p> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4"><span style="color: #0000ff">&lt;</span><span style="color: #800000">TreeView</span> <span style="color: #ff0000">Margin</span><span style="color: #0000ff">="5"</span><br>          <span style="color: #ff0000">HorizontalAlignment</span><span style="color: #0000ff">="Stretch"</span> <br>          <span style="color: #ff0000">VerticalAlignment</span><span style="color: #0000ff">="Stretch"</span> <br>          <span style="color: #ff0000">ItemsSource</span><span style="color: #0000ff">="{Binding Path=Accounts}"</span><span style="color: #0000ff">&gt;</span><br>    <span style="color: #0000ff">&lt;</span><span style="color: #800000">i:Interaction.Behaviors</span><span style="color: #0000ff">&gt;</span><br>        <span style="color: #0000ff">&lt;</span><span style="color: #800000">behaviors:Handle</span> <span style="color: #ff0000">RoutedEvent</span><span style="color: #0000ff">="TreeView.SelectedItemChanged"</span> <br>                    <span style="color: #ff0000">WithCommand</span><span style="color: #0000ff">="{Binding Path=SelectOutlookPath}"</span><br>                    <span style="color: #ff0000">PassingIn</span><span style="color: #0000ff">="$args.NewValue"</span> <span style="color: #0000ff">/&gt;</span><br>    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">i:Interaction.Behaviors</span><span style="color: #0000ff">&gt;</span><br>    <span style="color: #0000ff">&lt;</span><span style="color: #800000">TreeView.ItemTemplate</span><span style="color: #0000ff">&gt;</span><br>        <span style="color: #008000">&lt;!-- omitted --&gt;</span><br>    <span style="color: #0000ff">&lt;/</span><span style="color: #800000">TreeView.ItemTemplate</span><span style="color: #0000ff">&gt;</span><br><span style="color: #0000ff">&lt;/</span><span style="color: #800000">TreeView</span><span style="color: #0000ff">&gt;</span></pre><br></div></blockquote>
+<p>As you can imagine the value of the NewValue property of the event arguments is passed as the command parameter to the command, we currently support to placeholder:</p>
+<ul>
+<li>$args: the routed event arguments; 
+<li>$this: the WPF element the behavior is attached to; 
+<li>$source: the source of the routed event; 
+<li>$originalSource: the original source of the routed event;</li></ul>
+<p>Obviously the event we need to handle must be a RoutedEvent.</p>
+<p>Available in the <a href="http://nuget.org" target="_blank">Nuget</a> package “<a href="http://nuget.org/packages/Radical.Windows" target="_blank">Radical.Windows</a>”</p>
+<p>.m</p>  

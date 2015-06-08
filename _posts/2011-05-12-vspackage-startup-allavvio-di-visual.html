@@ -1,0 +1,23 @@
+---
+layout: post
+title: 'VSPackage: startup all’avvio di Visual Studio'
+date: '2011-05-12T12:53:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- VSIX
+- Visual Studio
+- Extensibility
+modified_time: '2012-08-04T19:44:33.530+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7356538014342350059
+blogger_orig_url: http://milestone.topics.it/2011/05/vspackage-startup-allavvio-di-visual.html
+---
+
+<span>Un’estensione per Visual Studio, by default, viene caricata e inizializzata solo ed esclusivamente nel momento in cui l’utente cerca di interagirvi, quindi ad esempio se iniettate un command nei menu nel momento in cui l’utente clicca sul command. mentre se l’estensione ad esempio aggiunge una ToolWindow potreste trovarvi di fronte a comportamenti un po’ bizzarri:</span><br>  <ul>   <li>Visual Studio parte e la ToolWindow <u>non è</u> presente tra quelle visibili: il package <u>non viene</u> inizializzato; </li>    <li>Visual Studio parte e la ToolWindow <u>è</u> presente tra quelle visibili ma non visualizzate (ad esempio perché è collapsed): il package <u>non viene</u> inizializzato; </li>    <li>Visual Studio parte e la ToolWindow <u>è</u> presente tra quelle visibili ed è effettivamente visibile: il package <u>viene</u> inizializzato; </li> </ul>  <span>Ora…è ovvio che non potete fare affidamento sul layout di Visual Studio per inizializzare il vostro package, se quindi avete bisogno di il vostro package venga inizializzato (invocato alla fine della fiera) in momenti ben precisi del ciclo di vita dell’IDE potete decorarlo con un attributo:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">[<span style="color: "><font color="#2b91af">ProvideToolWindow</font></span>( <span style="color: "><font color="#0000ff">typeof</font></span>( <span style="color: "><font color="#2b91af">MyToolWindowPane</font></span> ) )]
+<strong>[<span style="color: "><font color="#2b91af">ProvideAutoLoad</font></span>( <span style="color: "><font color="#2b91af">UIContextGuids</font></span>.NoSolution )]</strong>
+<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">sealed</font></span> <span style="color: "><font color="#0000ff">class</font></span> <span style="color: "><font color="#2b91af">MyPackage</font></span> : </font><span style="color: "><font style="font-size: 11.3pt" color="#2b91af">Package</font></span></font></pre>
+</blockquote>
+
+<span>L’attributo “ProvideAutoLoad” serve proprio per spiegare all’IDE che vogliamo essere invocati in determinati contesti, NoSolution identifica il contesto di default di Visual Studio in fase di avvio, quindi se vogliamo essere inizializzati durate il processo di avvio di Visual Studio e non aspettare l’interazione dell’utente ci basta marcare il nostro package con quell’attributo.</span><br>
+
+<span>.m</span><br>

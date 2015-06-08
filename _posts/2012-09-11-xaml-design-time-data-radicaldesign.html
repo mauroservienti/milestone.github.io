@@ -1,0 +1,236 @@
+---
+layout: post
+title: 'Xaml design time data: Radical.Design setup'
+date: '2012-09-11T11:23:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Blendability
+- Xaml
+- Design Time Data
+modified_time: '2012-09-11T11:23:00.131+02:00'
+thumbnail: http://lh6.ggpht.com/-IMBtyTupxLw/UBuYuc3Br8I/AAAAAAAACDs/gLgJxAFC2c4/s72-c/image_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5849173640428971416
+blogger_orig_url: http://milestone.topics.it/2012/09/xaml-design-time-data-radicaldesign.html
+---
+
+We <a href="{{ site.baseurl }}{% post_url 2012-09-04-xaml-design-time-data-introduction-to %}" target="_blank">have introduced</a> concepts behind the design time experience in the Xaml designer. We have also promised that <a href="http://radical.codeplex.com/" target="_blank">Radical</a> provides a new approach to design time data: <a href="https://nuget.org/packages/radical.design" target="_blank">Radical.Design</a>.<br />
+<strong>How to</strong><br />
+<ol>
+<li>Create a new WPF project in VS 2010 (at the time of this writing VS 2012 RC is not fully supported due to a <a href="http://connect.microsoft.com/VisualStudio/feedback/details/741340/create-data-binding-tool-does-not-respect-icustomtypeprovider-or-icustomtypedescriptor" target="_blank">known bug</a> in the RC);
+<li>Create a new ViewModel such as the following:<br /><pre class="csharpcode"><span class="kwrd">class</span> PersonViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> <span class="kwrd">event</span> PropertyChangedEventHandler PropertyChanged = ( s, e ) =&gt; { };
+
+    <span class="kwrd">private</span> <span class="kwrd">void</span> OnPropertyChanged( <span class="kwrd">string</span> propertyName )
+    {
+        var h = <span class="kwrd">this</span>.PropertyChanged;
+        h( <span class="kwrd">this</span>, <span class="kwrd">new</span> PropertyChangedEventArgs( propertyName ) );
+    }
+
+    String _firstName;
+
+    <span class="kwrd">public</span> String FirstName
+    {
+        get { <span class="kwrd">return</span> _firstName; }
+        set
+        {
+            _firstName = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"FirstName"</span> );
+        }
+    }
+
+    String _lastName;
+
+    <span class="kwrd">public</span> String LastName
+    {
+        get { <span class="kwrd">return</span> _lastName; }
+        set
+        {
+            _lastName = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"LastName"</span> );
+        }
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<em>In order to keep things simple we are not using any framework to do the ViewModel stuff, but this is not a requirement, you can use whatever you want</em>.<br />
+<li>Add a reference to Radical.Design via <a href="http://nuget.org/" target="_blank">Nuget</a>;
+<li>Open the MainWindow.xaml and add the following attributes in the root xml tag:<br /><pre class="csharpcode">xmlns:mc=<span class="str">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> 
+xmlns:d=<span class="str">"http://schemas.microsoft.com/expression/blend/2008"</span> 
+mc:Ignorable=<span class="str">"d"</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+Those three lines, automatically added by Microsoft Expression Blend, add the support for 3 really interesting properties: d:DesignHeight, d:DesignWidth and d:DataContext; those properties are valid, and evaluated only at design time, and the ignorable attribute tells to the Xaml parser to ignore the “d” xml namespace at runtime;<br />Blend for example utilizes the DesignHeight and DesignWidth properties to set the size of a UserControl at design time so that is can be easily designed;</li>
+</li>
+</li>
+</li>
+</ol>
+<strong>Leverage the power of d:DataContext</strong><br />
+let’s move on, the designer is ready to host design time data (remember that if you use Blend the step #4 is done by the designer for you), next steps:<br />
+<ol>
+<li>create a new folder in your project called “Design”, the name is up to you and the folder is just to keep things organized is not a requirement;
+<li>Add a DesignTimePersonViewModel class to the newly created Design folder, now your solution explorer should look like the following screenshot:<br /><a href="http://lh4.ggpht.com/-OudhUBdO1dU/UBuYtenXmdI/AAAAAAAACDk/l-IMWsggfFo/s1600-h/image%25255B2%25255D.png"><img alt="image" border="0" height="161" src="http://lh6.ggpht.com/-IMBtyTupxLw/UBuYuc3Br8I/AAAAAAAACDs/gLgJxAFC2c4/image_thumb.png?imgmax=800" style="background-image: none; border-width: 0px; display: inline; margin: 5px 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="244" /></a>
+<li>Change the DesignTimePersonViewModel class in the following manner:<br /><pre class="csharpcode"><span class="kwrd">class</span> DesignTimePersonViewModel : DesignTimeHost&lt;PersonViewModel&gt;
+{
+
+}</pre>
+<li>Build your project (this is not required in Visual Studio 2012)
+<li>go back to the MainWindow.xaml designer and add the following xml namespace definition:<br /><pre class="csharpcode">xmlns:design=<span class="str">"clr-namespace:DesignTimeSampleProject.Design"</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<em>Change it accordingly to the namespace of your project;</em><br />
+<li>Change to root grid definition in the following manner:<br /><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">Grid</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">d:DesignProperties.DataContext</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">design:DesignTimePersonViewModel</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">d:DesignProperties.DataContext</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">Grid</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+we are telling to the designer that the design time data context of the grid is an instance of our class;</li>
+</li>
+</li>
+</li>
+</li>
+</li>
+</ol>
+<strong>What can we do now?</strong><br />
+if we drop a TextBox on the window design surface and try to use the “Apply DataBinding” menu item in the Text property designer we can see the following:<br />
+<a href="http://lh5.ggpht.com/-Y_1gSPlpXRc/UBuYvZxQdrI/AAAAAAAACDw/67BB__cfKS4/s1600-h/image%25255B6%25255D.png"><img alt="image" border="0" height="155" src="http://lh4.ggpht.com/-VP7zixw-JQA/UBuYwZ_DfOI/AAAAAAAACD8/3Guz1FiGcDc/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border: 0px currentColor; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="302" /></a><br />
+The source data context is what we expect to be, the DesignTimePersonViewModel, but there is no properties exposed by that ViewModel.<br />
+<strong>Expose data</strong><br />
+<ol>
+<li>go back to the DesignTimePersonViewModel and add a public default constructor with the following code:<br /><pre class="csharpcode"><span class="kwrd">public</span> DesignTimePersonViewModel()
+{
+    <span class="kwrd">this</span>.Expose( vm =&gt; vm.FirstName )
+        .WithStaticValue( <span class="str">"Mauro"</span> );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</li>
+<li>rebuild your project (once again won’t be required with VS 2012) and go back to the designer…</li>
+</ol>
+<a href="http://lh5.ggpht.com/-HW17w2wmrtY/UBuYxYgk2LI/AAAAAAAACEA/5SzGoaHRkBg/s1600-h/image%25255B10%25255D.png"><img alt="image" border="0" height="138" src="http://lh3.ggpht.com/-57_Dy3cswow/UBuYyOQv3aI/AAAAAAAACEI/4IjQOS8ORFw/image_thumb%25255B4%25255D.png?imgmax=800" style="background-image: none; border: 0px currentColor; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="323" /></a><br />
+Wow! we now have a property to choose from and the amazing thing is that as soon as we choose it the designer immediately reflects the change on the design time surface:<br />
+<a href="http://lh3.ggpht.com/-gbQkUvQjWSE/UBuYywMIU_I/AAAAAAAACEU/s8FpW4KNqPU/s1600-h/image%25255B13%25255D.png"><img alt="image" border="0" height="141" src="http://lh6.ggpht.com/-AD_NQRoOA_A/UBuY0dWNtZI/AAAAAAAACEc/G0Sx2KG-NLk/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border: 0px currentColor; display: inline; margin: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="244" /></a><br />
+As we can see in the designer the value of the TextBox is the value we statically typed in the constructor of our design time class.<br />
+Everything is setup, in the next post we’ll see the full power of this approach, stay tuned!<br />
+.m

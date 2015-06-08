@@ -1,0 +1,273 @@
+---
+layout: post
+title: 'WPF “Adorner(s)” rulez: #1'
+date: '2009-05-14T07:53:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Behaviors
+modified_time: '2012-08-04T17:52:52.393+02:00'
+thumbnail: https://lh5.googleusercontent.com/-X4DxXDIklVY/Tyfm7sMneeI/AAAAAAAAAW4/zBMMjyKzyMw/s72-c/image_thumb_2.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7118738954459212198
+blogger_orig_url: http://milestone.topics.it/2009/05/wpf-adorners-rulez-1.html
+---
+
+<span>Una delle cose che “pretendo” è che la UX offerta sia consistente con quella dell’ecosistema che ospita l’applicazione, questo per un’applicazione Windows si traduce in moltissime cose, e moltissimo lavoro, tra cui ad esempio:</span><br>  <ul>   <li>Supporto per la navigazione/gestione comandi con la tastiera; </li>    <li>Supporto per la gestione dei comandi tramite shortcut; </li>    <li>Comunicazione con l’utente; </li>    <li>Async, Async, Async (more to come…); </li>    <li>Disposizione, aspetto e layout dei controlli consistente con quello del sistema; </li>    <li>etc.. </li> </ul>  <span>Tra queste una delle particolarità, è un dettaglio, ma è un dettaglio che in termini di UX è vincente, che non vedo mai utilizzate sono i CueBanner. Al tempo di Windows Forms, ormai legacy :-D, ho scritto anche un <a href="http://msdn.microsoft.com/it-it/library/cc185060.aspx" target="_blank">articolo</a> su come implementarli via P/Invoke.</span><br>  <span>Un esempio su tutti:</span><br>  <span><a href="https://lh3.googleusercontent.com/-BSGvI-QObJw/Tyfm8M-nVtI/AAAAAAAAAW8/0jdtAYoLQN0/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-X4DxXDIklVY/Tyfm7sMneeI/AAAAAAAAAW4/zBMMjyKzyMw/image_thumb_2.png" width="244" height="72"></a> </span><br>  <span>Adesso che lo switch tecnologico verso WPF è ormai definitivo mi sono posto lo stesso problema. La soluzione P/Invoke è comunque utilizzabile anche se con qualche “<a href="http://www.danielmoth.com/Blog/2007/03/vista-native-stuff-for-wpf.html" target="_blank">giro</a>” in più, ma WPF offre una soluzione decisamente più figosa.</span><br>  <span><strong>Adorner e AdornerLayer</strong></span><br>  <span>Rimando alla spiegazione ufficiale per i dettagli: <a title="Adorners Overview" href="http://msdn.microsoft.com/en-us/library/ms743737.aspx">Adorners Overview</a></span><br>  <span><strong>CueBanner Adorner</strong></span><br>  <span>Partiamo dal risultato:</span><br>  <span><a href="https://lh3.googleusercontent.com/-xS32WAucUcw/Tyfm81HsPdI/AAAAAAAAAXM/bc4a1S_UP4k/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-D7JLoO8F4fI/Tyfm8dsXbCI/AAAAAAAAAXE/qudl5ZE4DRI/image_thumb.png" width="244" height="57"></a> </span><br>  <span>Nulla di speciale, semplicemente abbiamo quel testo, a mo da hint per l’utente, che nel momento in cui il focus entra nella TextBox scompare e quando la TextBox perde il focus, se è ancora vuota, ricompare. Il tutto è un ottimo supporto per l’utente durante l’uso dell’applicazione. Garantito.</span><br>  <span>Abbiamo <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/13/listview-perchegrave-sei-tu-listviewhellip-part-1.aspx" target="_blank">già parlato</a> di <a href="http://msdn.microsoft.com/en-us/library/ms749011.aspx" target="_blank">attached properties</a> e scopriamo che anche in questo caso sono l’entry point per la soluzione al nostro problema:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">CueBannerService.CueBanner</span><span style="color: blue">="Questo è il testo del CueBanner" </span><span style="color: red">...</span><span style="color: blue"> /></span></pre>
+</blockquote>
+
+<span>Sfortunatamente, si fa per dire, in questo caso sono solo l’entry point, quello di cui abbiamo bisogno è poter <u>disegnare</u> in <u>overlay</u> su un controllo del testo (e volendo qualsiasi cosa ci venga mente… questo è WPF!), la soluzione sono gli Adorner: un adorner è una “sorta” di layer (come se fosse un foglio di acetato) che viene renderizzato sopra l’elemento a cui è associato, l’AdornedElement. Un adorner per poter essere visibile ha bisogno di un AdornerLayer in cui essere “ospitato”, ogni Window (non proprio…, ho un caso che sto cercando di debuggare in cui questo non succede…) ha implicitamente un AdornerLayer anche se non lo inseriamo noi nello xaml. Ogni Window può contenere <em>n</em> AdornerLayer. L’inghippo fastidioso è che non è possibile dichiarare una Adorner via xaml perchè l’unica possibilità è scrivere questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">AdornerLayer </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( control );
+layer.Add( ... );</pre>
+</blockquote>
+
+<span>Ecco perchè una attached property ci viene in aiuto permettendoci di continuare ad utilizzare la potenza espressiva di xaml senza scrivere una “,” di codice nel code-behind, vediamo come:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>CueBannerProperty = <span style="color: #2b91af">DependencyProperty</span>.RegisterAttached(
+                              <span style="color: #a31515">"CueBanner"</span>,
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>), 
+                              <span style="color: blue">typeof</span>( <span style="color: #2b91af">CueBannerService </span>),
+                              <span style="color: blue">new </span><span style="color: #2b91af">FrameworkPropertyMetadata</span>( <span style="color: #2b91af">String</span>.Empty, OnCueBannerPropertyChanged ) );</pre>
+</blockquote>
+
+<span>Partiamo con la solita definizione della proprietà, tralascio la parte Get/Set perchè triviale, e passo direttamente all’handler agganciato all’evento che ci notifica della variazione del valore della proprietà:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static </span><span style="color: #2b91af">RoutedEventHandler </span>onShowCueBanner;
+<span style="color: blue">static </span><span style="color: #2b91af">RoutedEventHandler </span>onHideCueBanner;
+<span style="color: blue">static </span><span style="color: #2b91af">RoutedEventHandler </span>onUnloaded;
+
+<span style="color: blue">static </span>CueBannerService()
+{
+    onShowCueBanner = ( s, e ) => 
+    {
+        <span style="color: blue">var </span>control = ( <span style="color: #2b91af">Control </span>)s;
+        <span style="color: blue">if</span>( ShouldShowCueBanner( control ) )
+        {
+            ShowCueBanner( control );
+        }
+    };
+
+    onHideCueBanner = ( s, e ) => 
+    {
+        <span style="color: blue">var </span>c = ( <span style="color: #2b91af">Control </span>)s;
+        <span style="color: blue">if</span>( ShouldShowCueBanner( c ) )
+        {
+            RemoveCueBanner( c );
+        }
+    };
+
+    onUnloaded = ( s, e ) => 
+    {
+        <span style="color: blue">var </span>control = ( <span style="color: #2b91af">Control </span>)s;
+        control.Loaded -= onShowCueBanner;
+        control.LostFocus -= onShowCueBanner;
+        control.GotFocus -= onHideCueBanner;
+    };
+}</pre>
+</blockquote>
+
+<span>Cominciamo con il prepararci, a monte nel costruttore statico, gli handler che ci serviranno.</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>OnCueBannerPropertyChanged( <span style="color: #2b91af">DependencyObject </span>sender, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{
+    <span style="color: #2b91af">Ensure</span>.That( sender.GetType() )
+        .IsTrue( t => t.Is<<span style="color: #2b91af">ComboBox</span>>() || t.Is<<span style="color: #2b91af">TextBox</span>>() );
+
+    <span style="color: blue">var </span>control = ( <span style="color: #2b91af">Control </span>)sender;
+
+    control.Loaded += onShowCueBanner;<br>    control.Unloaded += onUnloaded;
+    control.LostFocus += onShowCueBanner;
+    control.GotFocus += onHideCueBanner;
+}</pre>
+</blockquote>
+
+<span>Che cosa facciamo, non molto a dire il vero:</span><br>
+
+<ul>
+  <li>abbiamo bisogno di sapere quando il controllo viene caricato/scaricato: Loaded e Unloaded; </li>
+
+  <li>Ci interessano poi gli eventi GotFocus e LostFocus per sapere quando nascondere e visualizzare il CueBanner; </li>
+</ul>
+
+<span>Negli handler di Got/LostFocus altro non facciamo che cercare di capire se dobbiamo visualizzare un CueBanner:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static </span><span style="color: #2b91af">Boolean </span>ShouldShowCueBanner( <span style="color: #2b91af">Control </span>c )
+{
+    <span style="color: blue">var </span>dp = GetTextProperty( c );
+    <span style="color: blue">var </span>value = c.GetValue( dp );
+
+    <span style="color: blue">return </span>( value <span style="color: blue">is </span><span style="color: #2b91af">String </span>&& <span style="color: #2b91af">String</span>.IsNullOrEmpty( ( <span style="color: #2b91af">String </span>)value ) );
+}
+
+<span style="color: blue">static </span><span style="color: #2b91af">DependencyProperty </span>GetTextProperty( <span style="color: #2b91af">Control </span>control )
+{
+    <span style="color: blue">if</span>( control <span style="color: blue">is </span><span style="color: #2b91af">ComboBox </span>)
+    {
+        <span style="color: blue">return </span><span style="color: #2b91af">ComboBox</span>.TextProperty;
+    }
+    <span style="color: blue">else if</span>( control <span style="color: blue">is </span><span style="color: #2b91af">TextBoxBase </span>)
+    {
+        <span style="color: blue">return </span><span style="color: #2b91af">TextBox</span>.TextProperty;
+    }
+    <span style="color: blue">else
+    </span>{
+        <span style="color: blue">throw new </span><span style="color: #2b91af">NotSupportedException</span>();
+    }
+}</pre>
+</blockquote>
+
+<span>e nel caso semplicemente visualizzarlo o nasconderlo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>RemoveCueBanner( <span style="color: #2b91af">Control </span>control )
+{
+    <span style="color: #2b91af">AdornerLayer </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( control );
+    <span style="color: #2b91af">Debug</span>.WriteIf( layer == <span style="color: blue">null</span>, <span style="color: #a31515">"CueBannerService: cannot find any AdornerLayer" </span>);
+
+    <span style="color: blue">if</span>( layer != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>adorners = layer.GetAdorners( control );
+        <span style="color: blue">if</span>( adorners != <span style="color: blue">null </span>)
+        {
+            adorners.OfType<<span style="color: #2b91af">CueBannerAdorner</span>>()
+                .ForEach( adorner =>
+                {
+                    adorner.Visibility = <span style="color: #2b91af">Visibility</span>.Hidden;
+                    layer.Remove( adorner );
+                } );
+        }
+    }
+}
+
+<span style="color: blue">static void </span>ShowCueBanner( <span style="color: #2b91af">Control </span>control )
+{
+    <span style="color: blue">var </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( control );
+    <span style="color: #2b91af">Debug</span>.WriteIf( layer == <span style="color: blue">null</span>, <span style="color: #a31515">"CueBannerService: cannot find any AdornerLayer" </span>);
+
+    <span style="color: blue">if</span>( layer != <span style="color: blue">null </span>)
+    {
+        layer.Add( <span style="color: blue">new </span><span style="color: #2b91af">CueBannerAdorner</span>( control, control.GetValue( CueBannerProperty ) ) );
+    }
+}</pre>
+</blockquote>
+
+<span>Il CueBannerAdorner è l’elemento responsabile di renderizzare il vero e proprio banner:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">CueBannerAdorner </span>: <span style="color: #2b91af">OverlayAdorner
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">ContentPresenter </span>userContent;
+
+    <span style="color: blue">public </span>CueBannerAdorner( <span style="color: #2b91af">UIElement </span>adornedElement, <span style="color: #2b91af">Object </span>content ) :
+        <span style="color: blue">base</span>( adornedElement )
+    {
+        <span style="color: blue">this</span>.IsHitTestVisible = <span style="color: blue">false</span>;
+        <span style="color: blue">this</span>.userContent = <span style="color: blue">new </span><span style="color: #2b91af">ContentPresenter</span>();
+
+        <span style="color: blue">var </span>cueBannerText = content <span style="color: blue">as </span><span style="color: #2b91af">String</span>;
+        <span style="color: blue">if</span>( cueBannerText != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">this</span>.userContent.Content = <span style="color: blue">new </span><span style="color: #2b91af">TextBlock</span>()
+            {
+                FontStyle = <span style="color: #2b91af">FontStyles</span>.Italic,
+                Text = cueBannerText,
+                VerticalAlignment = <span style="color: #2b91af">VerticalAlignment</span>.Center,
+                Margin = <span style="color: blue">new </span><span style="color: #2b91af">Thickness</span>( 4, 0, 0, 0 ),
+                TextTrimming = <span style="color: #2b91af">TextTrimming</span>.CharacterEllipsis
+            };
+        }
+        <span style="color: blue">else
+        </span>{
+            <span style="color: blue">this</span>.userContent.Content = content;
+        }
+
+        <span style="color: blue">this</span>.userContent.Opacity = 0.7;
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">UIElement </span>Content
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.userContent; }
+    }
+}</pre>
+</blockquote>
+
+<span>Per prima cosa rendiamo l’adorner invisibile all’HitTest in questo modo il click del mouse non verrà intercettato dai controlli presenti nell’adorner ma solo da quelli che stanno sotto; poi creiamo il contenuto vero e proprio facendo una sola distinzione: se è testo lo wrappiamo noi in un TextBlock che abbia un aspetto decente altrimenti ci limitiamo a prendere quello che arriva…e questo apre a scenari interessanti:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox</span><span style="color: blue">>
+    <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">CueBannerService.CueBanner</span><span style="color: blue">>
+        <</span><span style="color: #a31515">StackPanel </span><span style="color: red">Orientation</span><span style="color: blue">="Horizontal">
+            <</span><span style="color: #a31515">Image </span><span style="color: red">Margin</span><span style="color: blue">="2,0,0,0" </span><span style="color: red">Source</span><span style="color: blue">="/Samples;component/BalloonTip.gif" </span><span style="color: red">Stretch</span><span style="color: blue">="None" />
+            <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="Try setting focus here..." </span><span style="color: red">FontStyle</span><span style="color: blue">="Italic" </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Center" </span><span style="color: red">Margin</span><span style="color: blue">="2,0,0,0" />
+        </</span><span style="color: #a31515">StackPanel</span><span style="color: blue">>
+    </</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">CueBannerService.CueBanner</span><span style="color: blue">>
+</</span><span style="color: #a31515">TextBox</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>Che produce questo:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-HOhHqCDl1nc/Tyfm-WcE3PI/AAAAAAAAAXc/g3CDri9horI/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-mXQMh01yepU/Tyfm9iW5OaI/AAAAAAAAAXY/tcYJKI0eHAQ/image_thumb_1.png" width="175" height="37"></a> </span><br>
+
+<span><strong>Io adoro WPF!</strong></span><br>
+
+<span>Manca solo un dettaglio: OverlayAdorner, la classe base da cui deriviamo il nostro adorner per il CueBanner:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">abstract class </span><span style="color: #2b91af">OverlayAdorner </span>: <span style="color: #2b91af">Adorner
+</span>{
+    <span style="color: blue">public </span>OverlayAdorner( <span style="color: #2b91af">UIElement </span>adornedElement )
+        : <span style="color: blue">base</span>( adornedElement )
+    {
+
+    }
+
+    <span style="color: blue">protected abstract </span><span style="color: #2b91af">UIElement </span>Content
+    {
+        <span style="color: blue">get</span>;
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">Visual </span>GetVisualChild( <span style="color: blue">int </span>index )
+    {
+        <span style="color: blue">return this</span>.Content;
+    }
+
+    <span style="color: blue">protected override int </span>VisualChildrenCount
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return </span>1; }
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">Size </span>MeasureOverride( <span style="color: #2b91af">Size </span>constraint )
+    {
+        <span style="color: blue">this</span>.Content.Measure( <span style="color: blue">this</span>.AdornedElement.RenderSize );
+
+        <span style="color: blue">return this</span>.AdornedElement.RenderSize;
+    }
+
+    <span style="color: blue">protected override </span><span style="color: #2b91af">Size </span>ArrangeOverride( <span style="color: #2b91af">Size </span>finalSize )
+    {
+        <span style="color: blue">this</span>.Content.Arrange( <span style="color: blue">new </span><span style="color: #2b91af">Rect</span>( finalSize ) );
+
+        <span style="color: blue">return </span>finalSize;
+    }
+
+}</pre>
+</blockquote>
+
+<span>Facciamo un paio di cose interessanti:</span><br>
+
+<ol>
+  <li>L’override di VisualChildrenCount informando il sistema che abbiamo 1 child, e l’override di GetVisualChild ritornando il nostro content; </li>
+
+  <li>Facciamo poi l’override di MeasureOverride e ArrangeOverride perchè ci interessa partecipare nel processo di Rendering al fine di pemettere al nostro contenuto di disegnarsi correttamente, in questo modo supportiamo anche il resize del controllo su cui siamo “adorned”; </li>
+</ol>
+
+<span>Happy WPFing!</span><br>
+
+<span>.m</span><br>
+

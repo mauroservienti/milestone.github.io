@@ -1,0 +1,197 @@
+---
+layout: post
+title: Come, io, uso le enumerazioni
+date: '2009-07-10T14:06:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:40:48.096+01:00'
+thumbnail: https://lh5.googleusercontent.com/-A0R93Uwot1E/Tym_bG_Hn8I/AAAAAAAAAjM/eQrzHKT5TjU/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5146170975959541872
+blogger_orig_url: http://milestone.topics.it/2009/07/come-io-uso-le-enumerazioni.html
+---
+
+<span>Nel <a href="http://blogs.ugidotnet.org/topics/archive/2009/07/09/wpf-blend-3.0-sampledatasource-molto-bello.aspx" target="_blank">post di ieri</a> ho detto che mi piace molto utilizzare le enumerazioni (System.Enum) nei miei ViewModel, le enumerazioni sono un gran comode in quanto fortemente tipizzate, giustamente <a href="http://blogs.ugidotnet.org/matteomigliore" target="_blank">Matteo</a> però nei <a href="http://blogs.ugidotnet.org/topics/archive/2009/07/09/wpf-blend-3.0-sampledatasource-molto-bello.aspx#1476909" target="_blank">commenti</a> chiede:</span><br>  <blockquote>   <span>Domanda: se tutte le proprietà ed i dati devono essere localizzabili gli enum sono ancora cosi necessari?</span><br> </blockquote>  <span>In generale la risposta è si, vediamo nel dettaglio cosa faccio. Ecco come definisco una enumerazione: </span><br>  <blockquote>   <pre class="code"><span style="color: blue">public enum </span><span style="color: #2b91af">AdvertisementInvoiceCadence
+</span>{
+    None = 0,
+    
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"Immediata"</span>, <span style="color: #a31515">"La fattura verrà emessa immediatamente e contestualmente alla creazione del contratto."</span>, 1 )]
+    AgreementContextual = 1,
+    
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"In data di pubblicazione"</span>, <span style="color: #a31515">"La fattura verrà emessa dopo la pubblicazione dell'inserzione con data uguale a quella di pubblicazione."</span>, 2 )]
+    PublicationContextual = 2,
+
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"Mensile"</span>, <span style="color: #a31515">"La fatturazione avrà cadenza mensile, ogni mese verrà emessa una fattura per le inserzioni pubblicate nel mese."</span>, 3 )]
+    Monthly = 3,
+
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"Bimestrale"</span>, <span style="color: #a31515">"La fatturazione avrà cadenza bimestrale, ogni 2 mesi verrà emessa una fattura per le inserzioni pubblicate nei 2 mesi precedenti."</span>, 4 )]
+    Bimonthly = 4,
+
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"Trimestrale"</span>, <span style="color: #a31515">"La fatturazione avrà cadenza trimestrale, ogni 3 mesi verrà emessa una fattura per le inserzioni pubblicate nei 3 mesi precedenti."</span>, 5 )]
+    Quarterly = 5,
+
+    [<span style="color: #2b91af">EnumItemDescription</span>( <span style="color: #a31515">"Semestrale"</span>, <span style="color: #a31515">"La fatturazione avrà cadenza semestrale, ogni 6 mesi verrà emessa una fattura per le inserzioni pubblicate nei 6 mesi precedenti."</span>, 6 )]
+    HalfYearly = 6
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>quel <em>EnumItemDescriptionAttribute</em> è un normalissimo attributo:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">AttributeUsage</span>( <span style="color: #2b91af">AttributeTargets</span>.Field, AllowMultiple = <span style="color: blue">false</span>, Inherited = <span style="color: blue">false </span>)]
+<span style="color: blue">public class </span><span style="color: #2b91af">EnumItemDescriptionAttribute </span>: <span style="color: #2b91af">Attribute
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">String </span>_caption;
+    <span style="color: blue">readonly </span><span style="color: #2b91af">String </span>_description;
+    <span style="color: blue">readonly </span><span style="color: #2b91af">Int32 </span>_index;
+
+    <span style="color: blue">public </span>EnumItemDescriptionAttribute( <span style="color: #2b91af">String </span>caption )
+        : <span style="color: blue">this</span>( caption, <span style="color: #2b91af">String</span>.Empty, -1 )
+    {
+
+    }
+
+    <span style="color: blue">public </span>EnumItemDescriptionAttribute( <span style="color: #2b91af">String </span>caption, <span style="color: #2b91af">Int32 </span>index )
+        : <span style="color: blue">this</span>( caption, <span style="color: #2b91af">String</span>.Empty, index )
+    {
+
+    }
+
+    <span style="color: blue">public </span>EnumItemDescriptionAttribute( <span style="color: #2b91af">String </span>caption, <span style="color: #2b91af">String </span>description, <span style="color: #2b91af">Int32 </span>index )
+    {
+        <span style="color: blue">if</span>( caption == <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"caption" </span>);
+        }
+
+        <span style="color: blue">if</span>( description == <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( <span style="color: #a31515">"description" </span>);
+        }
+
+        <span style="color: blue">this</span>._caption = caption;
+        <span style="color: blue">this</span>._description = description;
+        <span style="color: blue">this</span>._index = index;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Caption
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.OnGetCaption(); }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Description
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.OnGetDescription(); }
+    }
+
+    <span style="color: blue">public virtual </span><span style="color: #2b91af">Int32 </span>Index
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._index; }
+    }
+
+    <span style="color: blue">protected virtual </span><span style="color: #2b91af">String </span>OnGetCaption()
+    {
+        <span style="color: blue">return this</span>._caption;
+    }
+
+    <span style="color: blue">protected virtual </span><span style="color: #2b91af">String </span>OnGetDescription()
+    {
+        <span style="color: blue">return this</span>._description;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ogni commento è superfluo, solo i due metodi protected virtual OnGetXxxx() sono interessanti perchè servono per gestire la localizzazione, ma non è questo il problema adesso.</span><br>
+
+<span>Come utilizziamo il tutto? facciamo un esempio di un ViewModel:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IAgreementConversionWizardViewModel </span>: …
+{
+    <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">EnumBinder</span><<span style="color: #2b91af">AdvertisementInvoiceCadence</span>>> KnownAdvertisementInvoiceCadence { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">AdvertisementInvoiceCadence </span>SelectedAdvertisementInvoiceCadence { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }<br>    …
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il ViewModel espone una “lista” di valori, un po’ starni ma siate fiduciosi, e una proprietà che rappresenta il valore selezionato, a runtime quello che succede è questo:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-_SglH4j60ec/Tym_bvRpdhI/AAAAAAAAAjQ/D0SMIvpLklM/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-A0R93Uwot1E/Tym_bG_Hn8I/AAAAAAAAAjM/eQrzHKT5TjU/image_thumb.png" width="244" height="58"></a> </span><br>
+
+<span>prodotto da questo xaml, ma la stessa cosa funziona con Windows Forms e Asp.Net:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">GroupBox </span><span style="color: red">Header</span><span style="color: blue">="Cadenza">
+    <</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Grid.RowDefinitions</span><span style="color: blue">>
+            <</span><span style="color: #a31515">RowDefinition </span><span style="color: red">Height</span><span style="color: blue">="Auto" />
+            <</span><span style="color: #a31515">RowDefinition </span><span style="color: red">Height</span><span style="color: blue">="*" />
+        </</span><span style="color: #a31515">Grid.RowDefinitions</span><span style="color: blue">>
+
+        <</span><span style="color: #a31515">ComboBox </span><span style="color: red">ItemsSource</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=KnownAdvertisementInvoiceCadence}" 
+                  </span><span style="color: red">DisplayMemberPath</span><span style="color: blue">="Caption" </span><span style="color: red">SelectedValuePath</span><span style="color: blue">="Value" 
+                  </span><span style="color: red">SelectedValue</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAdvertisementInvoiceCadence}" />
+
+        <</span><span style="color: #a31515">ScrollViewer </span><span style="color: red">Grid.Row</span><span style="color: blue">="2" </span><span style="color: red">Margin</span><span style="color: blue">="4" 
+                  </span><span style="color: red">VerticalScrollBarVisibility</span><span style="color: blue">="Auto" 
+                  </span><span style="color: red">HorizontalScrollBarVisibility</span><span style="color: blue">="Disabled">
+            <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SelectedAdvertisementInvoiceCadence, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">enumDescConverter</span><span style="color: blue">}}"
+           </span><span style="color: red">TextWrapping</span><span style="color: blue">="Wrap" />
+        </</span><span style="color: #a31515">ScrollViewer</span><span style="color: blue">>
+    </</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+</</span><span style="color: #a31515">GroupBox</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il “barbatrucco” è fatto da “EnumBinder” e soci e si limita a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.KnownAdvertisementInvoiceCadence = <span style="color: #2b91af">EnumHelper</span>.ExtractBindingData<<span style="color: #2b91af">AdvertisementInvoiceCadence</span>>();</pre>
+</blockquote>
+
+<span>ExtractBindingData<T>() altro non fa che andare ad indagare il tipo enumerativo e costruire una IEnumerable<EnumBinder> con i dati definiti negli attributi:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public static </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">EnumBinder</span><T>> ExtractBindingData<T>()
+{
+    <span style="color: blue">return </span>ExtractBindingData<T>( <span style="color: blue">null </span>);
+}
+
+<span style="color: blue">public static </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">EnumBinder</span><T>> ExtractBindingData<T>( <span style="color: #2b91af">Predicate</span><T> filter )
+{
+    <span style="color: blue">var </span>lst = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af">EnumBinder</span><T>>();
+
+    <span style="color: #2b91af">Array </span>objs = <span style="color: #2b91af">Enum</span>.GetValues( <span style="color: blue">typeof</span>( T ) );
+    <span style="color: blue">foreach</span>( <span style="color: #2b91af">Object </span>obj <span style="color: blue">in </span>objs )
+    {
+        <span style="color: blue">if</span>( filter == <span style="color: blue">null </span>|| filter( ( T )obj ) )
+        {
+            <span style="color: #2b91af">Enum </span>e = ( <span style="color: #2b91af">Enum </span>)obj;
+            <span style="color: #2b91af">EnumItemDescriptionAttribute </span>attribute;
+            <span style="color: blue">if</span>( e.TryGetDescriptionAttribute( <span style="color: blue">out </span>attribute ) )
+            {
+                <span style="color: blue">var </span>eb = <span style="color: blue">new </span><span style="color: #2b91af">EnumBinder</span><T>( attribute, ( T )obj );
+                lst.Add( eb );
+            }
+        }
+    }
+
+    lst.Sort( ( v1, v2 ) => v1.Index.CompareTo( v2.Index ) );
+
+    <span style="color: blue">return </span>lst.AsReadOnly();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Si potrebbe ipotizzare di creare una MarkupExtension che faccia il giochetto senza doverlo fare a mano nel ViewModel, non è che una riga di codice sia poi sto gran problema.</span><br>
+
+<span>Quale è il vantaggio di questa soluzione?</span><br>
+
+<ul>
+  <li>Lato UI ho dei valori <em><u>umanamente</u></em> comprensibili;</li>
+
+  <li>Lato “codice” ho dei valori “<em><u>macchinalmente</u></em>” :-) comprensibili e <u>garantiti</u> da <em>san</em> Csc.exe!;</li>
+
+  <li>Gestisco tutto in un posto solo semplificando notevolmente la manutenzione perchè non devo ricordarmi di tenere allineati i 2 mondi;</li>
+
+  <li>Esiste infine un <em><strong>Localizable</strong>EnumItemDescriptionAttribute</em> che ha proprio il supporto per la localizzazione e permette di “esternalizzare” le stringhe che nell’esempio sono cablate nel codice;</li>
+</ul>
+
+<span>.m</span><br>

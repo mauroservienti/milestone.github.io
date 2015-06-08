@@ -1,0 +1,13 @@
+---
+layout: post
+title: '[TFS.eX] Le magagne dell''installazione'
+date: '2007-11-22T08:53:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Team Foundation Server
+modified_time: '2012-01-27T15:44:03.169+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2467464375148450968
+blogger_orig_url: http://milestone.topics.it/2007/11/tfsex-le-magagne-dell.html
+---
+
+<span>Sto installando TFS2005 e mi sono inbattuto in una bella magagna che sto cercando di risolvere con il minor danno possibile, che in questo caso si traduce nel minor tempo possibile... <img alt="Open-mouthed" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/teeth_smile.gif"><br><br>Durante il setup dopo aver installato Sql Server 2005 se fate un controllo con Windows Update vi propone di installare il Service Pack 2 di Sql Server, non fatelo! Nonostante il Service Pack sia comulativo il SP2 sembra non essere compatibile con il Setup di TFS che ad un certo punto lamenta un errore nella configurazione dei Reporting Services.</span><br> <span>Controllando con il tool di configurazione di RS l'errore effettivamente è segnalato anche li, e precisamente segnala un problema nella configurazione degli Application Pool di IIS per i "<em>Reporting Services Web Service</em>"... la cosa strana è che controllando a mano la configurazione di IIS è tutto configurato come da manuale...</span><br> <span>Ho trovato un paio di post sui forum di MSDN e una risposta ufficiale MS conferma il problema.</span><br> <span>Adesso mi tocca un bel rollback per tornare ad uno stato consono e ripartire... </span><br> <span><em>uff, che barba che noia <cit.></em></span><br> <span>.m</span><br>

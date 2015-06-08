@@ -1,0 +1,246 @@
+---
+layout: post
+title: WPF power to the DataTemplateSelector(s)
+date: '2012-10-29T12:05:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Model View ViewModel
+modified_time: '2012-10-29T12:05:00.353+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8282124266391745718
+blogger_orig_url: http://milestone.topics.it/2012/10/wpf-power-to-datatemplateselectors.html
+---
+
+Have you ever thought how easy can be to build a Wizard leveraging the power of WPF data templates and data template selectors? take a look at this ViewModel:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">class</span> WelcomeWizardViewModel : AbstractViewModel
+{
+        AbstractWizardPage[] pages;
+        
+        <span class="kwrd">public</span> AbstractWizardPage CurrentPage
+        {
+            get { <span class="kwrd">return</span> <span class="kwrd">this</span>.GetPropertyValue( () =&gt; <span class="kwrd">this</span>.CurrentPage ); }
+            <span class="kwrd">private</span> set { <span class="kwrd">this</span>.SetPropertyValue( () =&gt; <span class="kwrd">this</span>.CurrentPage, <span class="kwrd">value</span> ); }
+        }
+
+        <span class="kwrd">public</span> <span class="kwrd">void</span> MoveToNextPage()
+        {
+            var idx = Array.IndexOf( <span class="kwrd">this</span>.pages, <span class="kwrd">this</span>.CurrentPage );
+            var next = <span class="kwrd">this</span>.pages[ idx + 1 ];
+            <span class="kwrd">this</span>.CurrentPage = next;
+            <span class="kwrd">this</span>.CurrentPage.OnNavigatedTo( WizardNavigationDirection.Forward );
+        }
+
+        <span class="kwrd">public</span> <span class="kwrd">void</span> MoveToPreviousPage()
+        {
+            var idx = Array.IndexOf( <span class="kwrd">this</span>.pages, <span class="kwrd">this</span>.CurrentPage );
+            var prev = <span class="kwrd">this</span>.pages[ idx - 1 ];
+            <span class="kwrd">this</span>.CurrentPage = prev;
+            <span class="kwrd">this</span>.CurrentPage.OnNavigatedTo( WizardNavigationDirection.Backward );
+        }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+We encapsulated all the logic of the Wizard in the view model, and obviously we have a bunch of classes the inherits from AbstractWizardPage.<br />
+The problem now is how can we associate a view to each page? nothing more than this:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">ContentControl</span> <span class="attr">Content</span><span class="kwrd">="{Binding Path=CurrentPage}"</span> <span class="attr">Margin</span><span class="kwrd">="10"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">ContentControl.ContentTemplateSelector</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">ts:ConventionTemplateSelector</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">ContentControl.ContentTemplateSelector</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">ContentControl</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+where the template selector is something like:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> ConventionTemplateSelector : DataTemplateSelector
+{
+    Dictionary&lt;Object, DataTemplate&gt; templatesCache = <span class="kwrd">new</span> Dictionary&lt;Object, DataTemplate&gt;();
+
+    <span class="kwrd">public</span> ConventionTemplateSelector()
+    {
+        <span class="kwrd">this</span>.CacheTemplates = <span class="kwrd">true</span>;
+        <span class="kwrd">this</span>.ConventionHandler = <span class="kwrd">new</span> LayoutTemplateConventionHandler();
+    }
+
+    <span class="kwrd">public</span> Boolean CacheTemplates { get; set; }
+
+    <span class="kwrd">public</span> AbstractTemplateConventionHandler ConventionHandler { get; set; }
+
+    <span class="kwrd">public</span> <span class="kwrd">override</span> DataTemplate SelectTemplate( <span class="kwrd">object</span> item, System.Windows.DependencyObject container )
+    {
+        <span class="kwrd">if</span>( item != <span class="kwrd">null</span> )
+        {
+            DataTemplate template;
+            <span class="kwrd">if</span>( !<span class="kwrd">this</span>.templatesCache.TryGetValue( item, <span class="kwrd">out</span> template ) )
+            {
+                var templateType = <span class="kwrd">this</span>.ConventionHandler.GetTemplateTypeFor( item );
+
+                template = <span class="kwrd">new</span> DataTemplate()
+                {
+                    VisualTree = <span class="kwrd">new</span> FrameworkElementFactory()
+                    {
+                        Type = templateType
+                    }
+                };
+
+                <span class="kwrd">if</span>( <span class="kwrd">this</span>.CacheTemplates )
+                {
+                    <span class="kwrd">this</span>.templatesCache.Add( item, template );
+                }
+            }
+
+            <span class="kwrd">return</span> template;
+        }
+
+        <span class="kwrd">return</span> <span class="kwrd">base</span>.SelectTemplate( item, container );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+We have e template selector that delegates to a convention the way to determine which will be the type of the layout we want at runtime, here we are using FrameworkElementFactory in order to generate a DataTemplate that will be linked to a Type.<br />
+The abstract template convention handler is nothing more then a really simple class:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">abstract</span> <span class="kwrd">class</span> AbstractTemplateConventionHandler
+{
+    <span class="kwrd">public</span> <span class="kwrd">abstract</span> Type GetTemplateTypeFor( Object item );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+and default convention handler is:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">class</span> LayoutTemplateConventionHandler : AbstractTemplateConventionHandler
+{
+    <span class="kwrd">public</span> <span class="kwrd">override</span> Type GetTemplateTypeFor( <span class="kwrd">object</span> item )
+    {
+        var type = item.GetType();
+        var layoutTypeName = String.Format( <span class="str">"{0}.{1}Layout"</span>, type.Namespace, type.Name );
+        var layoutType = Type.GetType( layoutTypeName, <span class="kwrd">true</span> );
+
+        <span class="kwrd">return</span> layoutType;
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+We are basically looking for a type in the same namespace of the item type with a name that ends with layout, so having a page called <em>WelcomePage</em> we will look for a <em>WelcomePageLayout</em> type to be used as the template view.<br />
+.m

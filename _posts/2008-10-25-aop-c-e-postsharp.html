@@ -1,0 +1,271 @@
+---
+layout: post
+title: AOP, C# e PostSharp
+date: '2008-10-25T06:17:00.000+02:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Software Mason
+- AOP
+modified_time: '2012-01-30T12:48:58.420+01:00'
+thumbnail: https://lh3.googleusercontent.com/-rMJ8EULlODA/TyaDlfd73oI/AAAAAAAAALY/jmY7KFDAHBg/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2876592044906758822
+blogger_orig_url: http://milestone.topics.it/2008/10/aop-c-e-postsharp.html
+---
+
+<span>è da un po’ di tempo che mi riprometto di fare delle prove e capire come funziona il <a href="http://www.postsharp.org/" target="_blank">gioiellino</a>.</span><br>  <span>Diciamo che sono partito con una necessità decisamente triviale ma che illustra bene le potenzialità della cosa. Lo scopo è far funzionare questo codice:</span><br>  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">MyTestClass
+</span>{
+    <span style="color: blue">public void </span>Foo( [<span style="color: #2b91af">NotNull</span>]<span style="color: #2b91af">String </span>arg )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Foo:" </span>+ arg );
+    }
+}</pre>
+
+<span>e fare in modo di ottenere una <em>ArgumentNullException( ‘arg’ )</em> se il metodo <em>Foo()</em> viene invocato così:</span><br>
+
+<pre class="code"><span style="color: #2b91af">MyTestClass </span>obj = <span style="color: blue">new </span><span style="color: #2b91af">MyTestClass</span>();
+obj.Foo( <span style="color: blue">null </span>);</pre>
+
+<span>Nello specifico <em>NotNullAttribute</em> è un normalissimo attributo .net, senza nulla di particolare:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">AttributeUsage</span>( <span style="color: #2b91af">AttributeTargets</span>.Parameter )]
+<span style="color: blue">public class </span><span style="color: #2b91af">NotNullAttribute </span>: <span style="color: #2b91af">Attribute
+</span>{<br>
+}</pre>
+
+<span>questo è un tipico scenario in cui AOP (<a href="http://en.wikipedia.org/wiki/Aspect-oriented_programming" target="_blank">Aspect Oriented Programming</a>) ci può essere di grandissimo aiuto, una implementazione dei paradigmi AOP per .net è formita proprio da <a href="http://www.postsharp.org/" target="_blank">PostSharp</a>; partiamo dal codice che è più semplice:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">Serializable</span>]
+<span style="color: blue">public class </span><span style="color: #2b91af">ArgumentValidatorAspect </span>: <span style="color: #2b91af">OnMethodInvocationAspect
+</span>{
+    <span style="color: blue">public override void </span>OnInvocation( <span style="color: #2b91af">MethodInvocationEventArgs </span>context )
+    {
+        context.Proceed();
+    }
+}</pre>
+
+<span>definiamo una nostra classe che deriva da <em>OnMethodInvocationAspect</em>, classe definita nel framework di PostSharp, e ci limitiamo a fare l’override del metodo <em>OnInvocation()</em>.</span><br>
+
+<span>Due cose sono degne di nota:</span><br>
+
+<ol>
+  <li>la nostra classe è a tutti gli effetti un attributo: <em>OnMethodInvocationAspect</em> infatti alla lontana deriva da <em>Attribute</em>; </li>
+
+  <li>la nostra classe deve essere marcata con l’attributo <em>Serializable</em>, vedremo di seguito il motivo, e questo comporta tutta una serie di possibili problematiche e di considerazioni che devono essere fatte quando si sviluppa un “<em>Aspect</em>” con PostSharp; </li>
+</ol>
+
+<span>Fatto ciò possiamo fare una cosa molto interessante:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">ArgumentValidatorAspect</span>()]
+<span style="color: blue">class </span><span style="color: #2b91af">MyTestClass
+</span>{
+    <span style="color: blue">public void </span>Foo( [<span style="color: #2b91af">NotNull</span>]<span style="color: #2b91af">String </span>arg )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Foo:" </span>+ arg );
+    }
+}</pre>
+
+<span>possiamo decorare la nostra classe di test con l’attributo appena definito. Possiamo quindi realizzare una semplice applicazione console che testa il tutto:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: #2b91af">MyTestClass </span>tc = <span style="color: blue">new </span><span style="color: #2b91af">MyTestClass</span>();
+        tc.Foo( <span style="color: #a31515">"Hello World!" </span>);
+    }
+}</pre>
+
+<span>Una volta che abbiamo configurato Visual Studio per “usare” PostSharp, vedremo dopo cosa comporta, possiamo compilare il nostro semplicissimo progetto e premere F5 quello che otteniamo è esattamente quello che ci asspettiamo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-Chh1fjT8ZR8/TyaDl7_RozI/AAAAAAAAALc/Lm4NCs7F2RM/image_2.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="194" alt="image" src="https://lh3.googleusercontent.com/-rMJ8EULlODA/TyaDlfd73oI/AAAAAAAAALY/jmY7KFDAHBg/image_thumb.png" width="364" border="0"></a> </span><br>
+
+<span>Se però siamo curiosi e andiamo ad indagare con Reflector che cosa contiene il nostro assembly scopriamo delle cose decisamente interessanti:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-t_F1mksw8eo/TyaDn3t1GFI/AAAAAAAAALs/njrYGC6GDv4/image_4.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="199" alt="image" src="https://lh3.googleusercontent.com/-Xys4pGDccmo/TyaDnVhzRGI/AAAAAAAAALo/yzpyOUJZe8o/image_thumb_1.png" width="307" border="0"></a> </span><br>
+
+<span>La nostra classe infatti contiene qualcosa che non ci aspetteremmo di trovare: contiene il metodo pubblico <em>Foo()</em> che abbiamo definito noi e contiene anche un metodo privato <em>~Foo()</em>, se andiamo a vedere il corpo dei metodi scopriamo che il nostro codice sta nel metodo privato e non in quello pubblico:</span><br>
+
+<span> <a href="https://lh5.googleusercontent.com/-5AZSBWqK-sM/TyaDpIAKzRI/AAAAAAAAAL8/v-WAd_8N2QU/image_8.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="207" alt="image" src="https://lh4.googleusercontent.com/-bJRaUWaCCcU/TyaDoAHZ1dI/AAAAAAAAAL4/ilcSWqd_rUU/image_thumb_3.png" width="622" border="0"></a> </span><br>
+
+<span>Che cosa è successo? la cosa è abbastanza semplice: </span><br>
+
+<ul>
+  <li>il primo step è quello di configurare Visual Studio aggiungendo al progetto i target di MSBuild di PostSharp: l’help di PostSharp è decisamente esauastivo nei passaggi da seguire; </li>
+
+  <li>Quando lanciate una build al termine della compilazione vengono invocati i task di PostSharp che in questo caso non fanno <em>altro</em> che: 
+
+    <ul>
+      <li>disassemblare l’assembly prodotto; </li>
+
+      <li>andare alla ricerca dei tipi marcati con l’attributo “<em>ArgumentValidatorAspect</em>”; </li>
+
+      <li>modificare il codice dei tipi in modo che le chiamate vengano redirette all’aspect; </li>
+
+      <li>istanziare il vostro aspect e serializzarlo, ecco perchè è necessario che sia <em>Serializable</em>, e infine salvare l’aspect serializzato nelle risorse; </li>
+
+      <li>rigenerare l’assembly e completare la build; </li>
+    </ul>
+  </li>
+</ul>
+
+<span>A runtime succede che quando invocate il metodo <em>Foo()</em> in realtà state invocando il nuovo metodo <em>Foo()</em> che, utilizzando l’aspect deserializzato, è in grado di redirigere la chiamata prima all’aspect e poi dall’aspect verso il vero metodo <em>~Foo()</em>:</span><br>
+
+<ol>
+  <li>Foo(); </li>
+
+  <li>Aspect: 
+    <ol>
+      <li>Aspect –> Proceed(); </li>
+    </ol>
+  </li>
+
+  <li>~Foo(); </li>
+</ol>
+
+<span>A questo punto penso che anche a voi si sia accesa la lampadine e abbiate detto: mumble mumble… ma se definiamo il nostro attributo così:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">AttributeUsage</span>( <span style="color: #2b91af">AttributeTargets</span>.Parameter )]
+<span style="color: blue">public class </span><span style="color: #2b91af">NotNullAttribute </span>: <span style="color: #2b91af">Attribute
+</span>{
+    <span style="color: blue">public void </span>Validate( <span style="color: #2b91af">ParameterInfo </span>parameter, <span style="color: #2b91af">Object </span>value )
+    {
+        <span style="color: blue">if</span>( value == <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>( parameter.Name );
+        }
+    }
+}</pre>
+
+<span>e il nostro aspect cosà:</span><br>
+
+<pre class="code">[<span style="color: #2b91af">Serializable</span>]
+<span style="color: blue">public class </span><span style="color: #2b91af">ArgumentValidatorAspect </span>: <span style="color: #2b91af">OnMethodInvocationAspect
+</span>{
+    <span style="color: blue">public override void </span>OnInvocation( <span style="color: #2b91af">MethodInvocationEventArgs </span>context )
+    {
+        <span style="color: green">//L'array di valori passati al metodo
+        </span><span style="color: blue">object</span>[] values = context.GetArgumentArray();
+
+        <span style="color: green">//Il nome del metodo pubblico: PostSharp genera un metodo private con anteposta la tilde
+        </span><span style="color: #2b91af">String </span>publicMethodName = context.Delegate.Method.Name.Substring( 1 );
+
+        <span style="color: green">//Un rifermento al metodo pubblico
+        </span><span style="color: #2b91af">MethodInfo </span>mi = context.Delegate.Method.DeclaringType.GetMethod( publicMethodName );
+        
+        <span style="color: green">//Lambda, lambda e lambda ;-)
+        </span>mi.GetParameters()
+            .Where( pi => pi.IsAttributeDefined<<span style="color: #2b91af">NotNullAttribute</span>>() )
+            .Select( pi => <span style="color: blue">new
+                        </span>{
+                            Parameter = pi,
+                            Attribute = pi.GetAttribute<<span style="color: #2b91af">NotNullAttribute</span>>(),
+                            Value = values[ pi.Position ]
+                        } )
+            .ForEach( tupla => tupla.Attribute.Validate( tupla.Parameter, tupla.Value ) );
+
+        context.Proceed();
+    }
+}</pre>
+
+<span>scopriamo che il seguente codice funziona esattamente come ci aspettiamo:</span><br>
+
+<pre class="code"><span style="color: blue">try
+</span>{
+    <span style="color: #2b91af">MyTestClass </span>tc = <span style="color: blue">new </span><span style="color: #2b91af">MyTestClass</span>();
+    tc.Foo( <span style="color: blue">null </span>);
+}
+<span style="color: blue">catch</span>( <span style="color: #2b91af">ArgumentNullException </span>anex )
+{
+    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Exception: {0}"</span>, anex.Message );
+}</pre>
+Producendo questo risultato: 
+
+<span><a href="https://lh3.googleusercontent.com/-McfTVuhrxpw/TyaDpziVipI/AAAAAAAAAMM/-Kp7XyWGpqQ/image_10.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="137" alt="image" src="https://lh3.googleusercontent.com/-aL87n2IU_rk/TyaDpbX3Q_I/AAAAAAAAAMA/eE4AsE2mohk/image_thumb_4.png" width="349" border="0"></a> </span><br>
+
+<span>Bingo ;-)</span><br>
+
+<span>Facciamo un po’ di commenti sul codice dell’apect perchè merita:</span><br>
+
+<pre class="code"><span style="color: blue">    public override void </span>OnInvocation( <span style="color: #2b91af">MethodInvocationEventArgs </span>context )</pre>
+
+<span>il metodo <em>OnInvocation</em> ci passa un’istanza di una classe <em>MethodInvocationEventArgs</em> che ci da accesso a tutte le informazioni relative al metodo che stiamo intercettando, attenzione che qui c’è uso di reflection, ma:</span><br>
+
+<ul>
+  <li>a detta dell’autore viene usata una ed una sola volta e poi le informazioni cachate; </li>
+
+  <li>nelle versioni future molte parti stanno per essere sostituite con generazione di codice MSIL custom in fase di build per superare le problematiche di performance di reflection a runtime; </li>
+</ul>
+
+<pre class="code"><span style="color: green">    //L'array di valori passati al metodo
+</span><span style="color: blue">    object</span>[] values = context.GetArgumentArray();
+
+<span style="color: green">    //Il nome del metodo pubblico: PostSharp genera un metodo private con anteposta la tilde
+</span><span style="color: #2b91af">    String </span>publicMethodName = context.Delegate.Method.Name.Substring( 1 );</pre>
+
+<pre class="code"><span style="color: green">    //Un rifermento al metodo pubblico
+</span><span style="color: #2b91af">    MethodInfo </span>mi = context.Delegate.Method.DeclaringType.GetMethod( publicMethodName );</pre>
+
+<span>Le informazioni che possiamo quindi recuperare sono ad esempio:</span><br>
+
+<ul>
+  <li>l’array dei valori dei parametri in ingresso al metodo: e qui possiamo comiciare ad immaginarci tutti gli scenari di logging e tracing semiautomatico…; </li>
+
+  <li>un’istanza della classe <em>MethodInfo</em> che ci da accesso a tutte le informazioni sul metodo chiamato. Come probabilmente avrete notato il codice fa un’operazione apparentemente strana: 
+
+    <ul>
+      <li>abbiamo decorato il parametro con l’attributo “<em>NotNull</em>”; </li>
+
+      <li>PostSharp in fase di build ha rinominato il nostro metodo trasformandolo in privato e anteponendo al nome la tilde; </li>
+
+      <li>quello che però non ha fatto è stato rimettere sul parametro del metodo privato l’attributo, e questo credo sia un bug, vedremo…; </li>
+
+      <li>quindi in questo momento quello che dobbiamo fare per recuperare il nostro parametro è un giro un po’ arzigogolato: 
+        <ul>
+          <li>recuperare prima il nome del metodo pubblico: quello privato senza la tilde; </li>
+
+          <li>recuperare un riferimento al metodo pubblico; </li>
+
+          <li>cercare l’eventuale presenza dei parametri e invocare la validazione; </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<pre class="code">mi.GetParameters()
+    .Where( pi => pi.IsAttributeDefined<<span style="color: #2b91af">NotNullAttribute</span>>() )
+    .Select( pi => <span style="color: blue">new
+                </span>{
+                    Parameter = pi,
+                    Attribute = pi.GetAttribute<<span style="color: #2b91af">NotNullAttribute</span>>(),
+                    Value = values[ pi.Position ]
+                } )
+    .ForEach( tupla => tupla.Attribute.Validate( tupla.Parameter, tupla.Value ) );</pre>
+
+<span>Facendo uso di un po’ di sane Lambda e di fluent interface riusciamo a scrivere anche del codice elegante per la validazione, anche qui potremmo fare alchimie notevoli per renderlo ulteriormente flessibile magari introducendo un attributo di base ma non è oggetto del nostro test ;-). <em>ndr</em>: <em>ForEach<T>()</em>, <em>IsAttributeDefined<T>()</em> e <em>GetAttribute<T>()</em> sono degli extension methods miei.</span><br>
+
+<span>Le potenzialità sono notevoli, quello che si pò fare si può certamente fare anche in altri mille modi uno su tutti usando ad esempio i concetti di facility e interception messi a disposizione dai framewrok di inversion of control ma in questo caso con il vincolo che il componente che volete intercettare sia gestito dal framewrok di IoC e questo non è detto che sia possibile.</span><br>
+
+<span>PostSharp ci mette ad disposzione un modello che ci consente di fare intercept anche di qualcosa che non abbiamo scritto noi:</span><br>
+
+<pre class="code">[<span style="color: blue">assembly</span>: MyOnMethodInvocationAspect( <br>    AttributeTargetAssemblies = <span style="color: #a31515">"mscorlib"</span>, <br>    AttributeTargetTypes = <span style="color: #a31515">"System.Threading.*" </span>)]</pre>
+
+<span>mi limito a riportare un semplice e esempio lasciando a voi l’onere/onore di capirne le potenzialità ;-)</span><br>
+
+<span>Un’altra cosa decisamente interessante che si può fare è usare PostSharp per fare validazione a <u>Compile Time</u>, si avete capito bene a Compile Time ed eventualmente “<em>rompere</em>” la build sulla base di considerazione fatte da vostro codice custom che viene invocato dal compilatore… e questo mi stuzzica decisamente di più ;-)</span><br>
+
+<pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MySampleAspect </span>: <span style="color: #2b91af">OnMethodInvocationAspect
+</span>{
+    <span style="color: blue">public override bool </span>CompileTimeValidate( <span style="color: #2b91af">MethodBase </span>method )
+    {
+        <span style="color: #2b91af">Message </span>error = <span style="color: blue">new </span><span style="color: #2b91af">Message</span>( <span style="color: #2b91af">SeverityType</span>.Error, <span style="color: #a31515">"ErrorCode"</span>, <span style="color: #a31515">"Error message."</span>, <span style="color: #a31515">"Error Location" </span>);
+        <span style="color: #2b91af">MessageSource</span>.MessageSink.Write( error );
+
+        <span style="color: blue">return false</span>;
+    }<br>}</pre>
+
+<span>Interessante, decisamente… qui concentrerò i miei prossimi esperimenti.</span><br>
+
+<span>.m</span><br>
+

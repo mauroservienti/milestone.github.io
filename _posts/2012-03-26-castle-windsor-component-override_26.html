@@ -1,0 +1,75 @@
+---
+layout: post
+title: 'Castle Windsor - component override: a solution'
+date: '2012-03-26T14:46:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Architecture
+- Inversion of Control
+modified_time: '2012-03-26T14:46:00.303+02:00'
+thumbnail: http://lh5.ggpht.com/--TqZ-5612pU/T24IYyq_6_I/AAAAAAAAB9k/lPps4didmtU/s72-c/wlEmoticon-smile%25255B2%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5748116703366299110
+blogger_orig_url: http://milestone.topics.it/2012/03/castle-windsor-component-override_26.html
+---
+
+<p>In the <a href="{{ site.baseurl }}{% post_url 2012-03-14-castle-windsor-component-override %}" target="_blank">last post we have deeply analyzed</a> the problem and we have seen the high level solution we adopted:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">container.Register
+(
+	<span style="color: "><font color="#2b91af">Component</font></span>.For&lt;<span style="color: "><font color="#2b91af">ISecurityService</font></span>&gt;()
+		.ImplementedBy&lt;<span style="color: "><font color="#2b91af">DefaultSecurityService</font></span>&gt;()
+		<font style="background-color: #ffff00"></font></font></font><font face="Consolas"><font style="font-size: 11.3pt">.Overridable()</font></font><font face="Consolas"><font style="font-size: 11.3pt"><font style="background-color: #ffff00">
+</font>);</font></font></pre></blockquote>
+<p>First of all, Castle Windsor has the ability to remove a registration from the dependency graph but we cannot use that feature when we do not know the order in which components arte registered and at the end of the registration process that feature, obviously, does not work any more since the component we are trying to remove can have dependencies on other components, and so on...</p>
+<p><strong>So far…not so good…</strong></p>
+<p>We have to find another way to achieve the goal, basically we can say:</p>
+<ul>
+<li>register all what you want; 
+<li>mark something as “overridable”; 
+<li>at resolve time: 
+<ul>
+<li>if there are 2 components that satisfies the request and one is marked as “overridable”: 
+<ul>
+<li>use the other one;</li></ul>
+<li>otherwise let Castle take a decision;</li></ul></li></ul>
+<p><strong>Please welcome the “NamingSubsystem”</strong></p>
+<p>Castle has tons of extension points, so many that sometimes it is difficult to understand which one is the right one, in this specific case one really good candidate is the NamingSubsystem that is responsible, well can be, to choose which handler should be used to resolve a dependency.</p>
+<p>In our scenario I’ve setup a <em>DelegateNamingSubSystem</em> (that can be found on <a href="http://nuget.org/packages/Radical.Extensions.CastleWindsor">NuGet</a>):</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">var</font></font></span><font style="font-size: 11.3pt"> nss = <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">DelegateNamingSubSystem</font></span>()
+{
+	SubSystemHandler = ( s, hs ) =&gt;
+	{
+		<span style="color: "><font color="#0000ff">if</font></span>( hs.Any( h =&gt; h.ComponentModel.IsOverridable() ) )
+		{
+			<span style="color: "><font color="#0000ff">var</font></span> nonOverridable = hs.Except( hs.Where( h =&gt; h.ComponentModel.IsOverridable() ) );
+			<span style="color: "><font color="#0000ff">if</font></span>( nonOverridable.Any() )
+			{
+				<span style="color: "><font color="#0000ff">return</font></span> nonOverridable.Single();
+			}
+		}
+ 
+		<span style="color: "><font color="#0000ff">return</font></span>&nbsp;<span style="color: "><font color="#0000ff">null</font></span>;
+	}
+};</font></font></pre></blockquote>
+<p>This naming sub system simply delegates the problem to the end user code, in which we simply say:</p>
+<blockquote>
+<p>if in the handler list (hs) there is any handler whose component model is marked as overridable choose the other one, trivial, otherwise return null so to let Castle take a decision.</p></blockquote>
+<p>Registering a naming sub system is a really easy operation:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">var </font></font></span><font style="font-size: 11.3pt">container = <span style="color: "><font color="#0000ff">new</font></span> Castle.Windsor.<span style="color: "><font color="#2b91af">WindsorContainer</font></span>();
+container.Kernel.AddSubSystem( <span style="color: "><font color="#2b91af">SubSystemConstants</font></span>.NamingKey, nss );</font></font></pre></blockquote>
+<p><strong>Wait a minute!</strong></p>
+<p>How does the “Overridable” and “IsOverridable” extension methods work?</p>
+<p><em>Overridable</em>:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#2b91af">ComponentRegistration</font></span>&lt;T&gt; Overridable&lt;T&gt;( <span style="color: "><font color="#0000ff">this</font></span>&nbsp;<span style="color: "><font color="#2b91af">ComponentRegistration</font></span>&lt;T&gt; registration )
+{
+	registration.ExtendedProperties
+	(&nbsp; <span style="color: "><font color="#2b91af">Property</font></span>.ForKey( OVERRIDABLE_OVERRIDABLE_REGISTRATION )
+			.Eq( <span style="color: "><font color="#0000ff">true</font></span> )&nbsp; );
+			
+	<span style="color: "><font color="#0000ff">return</font></span> registration;
+}</font></font></pre></blockquote>
+<p><em>IsOverridable</em>:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#2b91af">Boolean</font></span> IsOverridable( <span style="color: "><font color="#0000ff">this</font></span>&nbsp;<span style="color: "><font color="#2b91af">ComponentModel</font></span> componentModel )
+{
+	<span style="color: "><font color="#0000ff">return</font></span> componentModel.ExtendedProperties.Contains( OVERRIDABLE_OVERRIDABLE_REGISTRATION );
+}</font></font></pre></blockquote>
+<p>Nothing special, nothing… only frictionless <img class="wlEmoticon wlEmoticon-smile" style="border-top-style: none; border-bottom-style: none; border-right-style: none; border-left-style: none" alt="Smile" src="http://lh5.ggpht.com/--TqZ-5612pU/T24IYyq_6_I/AAAAAAAAB9k/lPps4didmtU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
+<p>.m</p>  

@@ -1,0 +1,136 @@
+---
+layout: post
+title: WS-Federation on top of NServiceBus
+date: '2012-06-18T07:48:00.001+02:00'
+author: Mauro Servienti
+tags:
+- NServiceBus
+- Identity
+modified_time: '2012-08-04T19:54:58.623+02:00'
+thumbnail: http://lh6.ggpht.com/-Ab0KFr-Umxg/T97BGvH9eCI/AAAAAAAACA0/zsny1AKsIiw/s72-c/image_thumb1.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3733970847692461562
+blogger_orig_url: http://milestone.topics.it/2012/06/ws-federation-on-top-of-nservicebus.html
+---
+
+<p>Imagine a scenario like the following:</p> <p><a href="http://lh6.ggpht.com/-krMk3qLzkKM/T97BFhoJwYI/AAAAAAAACAw/VCF0hjwgssg/s1600-h/image3.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh6.ggpht.com/-Ab0KFr-Umxg/T97BGvH9eCI/AAAAAAAACA0/zsny1AKsIiw/image_thumb1.png?imgmax=800" width="299" height="180"></a></p> <p>Trivial, if you are used to “Commands” and “Events”. Now imagine that the “SomethingExecutedEvent” is interesting for someone <strong>not</strong> in the same process of the WCF Back End, like this:</p> <p><a href="http://lh3.ggpht.com/-XSvBm8ls0GA/T97BHi3-t8I/AAAAAAAACA8/nbqZwepfeDc/s1600-h/image7.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh3.ggpht.com/-EJKqQx06gTc/T97BIp8CI7I/AAAAAAAACBE/wfTciepZn1o/image_thumb3.png?imgmax=800" width="297" height="186"></a></p> <p>Now…in order to complicate things the requirement is that the Windows Service must know the security context of the WCF Back End or even worse must access other services using the same user identity that sent the “ExecuteSomethingCommand”.</p> <p><a href="http://nservicebus.com" target="_blank">NServiceBus</a> has the ability to impersonate the sender of a message, but, IMHO, is a really basic implementation that simply cannot be used in production. What happens is that the bus simply puts in the message header the value of the Thread.CurrentPrincipal.Identity.Name property and, on the other side of the message handling pipeline, assigns to the Thread.CurrentPrincipal property of the working thread a new GenericPrincipal using the identity name found in the message headers.</p> <p><strong>Another kid on the block</strong></p> <p>Without entering in the detail of the default implementation we simply cannot rely on that implementation because we (our application) live in a federated environment based on Windows Identity Foundation and WS-Federation:</p> <p><a href="http://lh4.ggpht.com/-Bsfwq9LaZLU/T97BJgHzz4I/AAAAAAAACBQ/iFC9tPiaYGI/s1600-h/image11.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh6.ggpht.com/-o4nCIazYyKI/T97BKiQ9l2I/AAAAAAAACBU/6SWhGVEpzTg/image_thumb5.png?imgmax=800" width="285" height="188"></a></p> <p>As you can see from the above figure the security token that identifies the caller is correctly attached (and verified) when the web application calls the WCF service but is not sent to the windows service attached to message so when the service tries&nbsp; to call another service that relies on the same security token service the second call fails because the user is not authenticated anymore.</p> <p><strong>Options…</strong></p> <p>to solve the problem there are basically to options:</p> <ol> <li><strong>Application Level Impersonation</strong>: the third party service authenticates the windows service using an internal/system user that is allowed to do everything and the call to the service brings with itself the identity of the original caller; it works, but you need a way to trust the sender of the NServiceBus message, otherwise anyone can send you a message issuing a request to do something on behalf of someone else; signing and encryption with a shared secret (read certificate) are there for you;  <li><strong>Introduce WS-Federation in NServiceBus</strong> basically letting the original security token flow, with the message, from the sender of the message to the receiver and automatically impersonating, setting the correct ClaimsIdentity in the thread, the caller user;</li></ol> <p><strong>Configuring NServiceBus</strong></p> <p>From the developer point of view the usage is really, really simple:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">NServiceBus.<span style="color: "><font color="#2b91af">Configure</font></span>.WithWeb()
+	.Log4Net()
+	.CastleWindsorBuilder( _container )
+	.DisableTimeoutManager()
+	.XmlSerializer()
+	.MsmqTransport()
+	.IsTransactional( <span style="color: "><font color="#0000ff">true</font></span> )
+	.PurgeOnStartup( <span style="color: "><font color="#0000ff">false</font></span> )
+	.UnicastBus()
+	.LoadMessageHandlers()
+	.<font style="background-color: #ffff00">EnableWSFederation</font>()
+	.CreateBus()
+	.Start();</font></font></pre></blockquote>
+<p>The above is a standard NServiceBus configuration when used, typically as sender/publisher, in a web application. The only thing to notice is the EnableWSFederation extension method that disables the default impersonation mechanism and enables the sending of the WS-Federation security token. The method does really nothing interesting:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">ConfigureWSFederation</font></span>
+{
+	<span style="color: "><font color="#0000ff">static</font></span> ConfigureWSFederation()
+	{
+		UseWSFederation = <span style="color: "><font color="#0000ff">false</font></span>;
+	}
+ 
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#2b91af">ConfigUnicastBus</font></span> EnableWSFederation( <span style="color: "><font color="#0000ff">this</font></span>&nbsp;<span style="color: "><font color="#2b91af">ConfigUnicastBus</font></span> config )
+	{
+		<span style="color: "><font color="#0000ff">return</font></span> EnableWSFederation( config, <span style="color: "><font color="#0000ff">null</font></span> );
+	}
+ 
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#2b91af">ConfigUnicastBus</font></span> EnableWSFederation( <span style="color: "><font color="#0000ff">this</font></span>&nbsp;<span style="color: "><font color="#2b91af">ConfigUnicastBus</font></span> config, <span style="color: "><font color="#2b91af">String</font></span> serviceConfigurationName )
+	{
+		config.ImpersonateSender( <span style="color: "><font color="#0000ff">false</font></span> );
+ 
+		UseWSFederation = <span style="color: "><font color="#0000ff">true</font></span>;
+		ServiceConfigurationName = serviceConfigurationName;
+ 
+		<span style="color: "><font color="#0000ff">return</font></span> config;
+	}
+ 
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#0000ff">bool</font></span> UseWSFederation { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">private</font></span>&nbsp;<span style="color: "><font color="#0000ff">set</font></span>; }
+	<span style="color: "><font color="#0000ff">public</font></span>&nbsp;<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#2b91af">String</font></span> ServiceConfigurationName { <span style="color: "><font color="#0000ff">get</font></span>; <span style="color: "><font color="#0000ff">private</font></span>&nbsp;<span style="color: "><font color="#0000ff">set</font></span>; }
+}</font></font></pre></blockquote>
+<p>This is a standard NServiceBus configuration extension whose role is to capture the intent. the real work is done at runtime intercepting the message flow:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt">&nbsp;<span style="color: "><font color="#0000ff">class</font></span>&nbsp;<span style="color: "><font color="#2b91af">WSFederationManager</font></span> : <span style="color: "><font color="#2b91af">INeedInitialization</font></span>, <span style="color: "><font color="#2b91af">IMutateOutgoingTransportMessages</font></span>
+{
+	<span style="color: "><font color="#0000ff">void</font></span>&nbsp;<span style="color: "><font color="#2b91af">INeedInitialization</font></span>.Init()
+	{
+		<span style="color: "><font color="#2b91af">Configure</font></span>.Instance.Configurer.ConfigureComponent&lt;<span style="color: "><font color="#2b91af">WSFederationManager</font></span>&gt;( <span style="color: "><font color="#2b91af">DependencyLifecycle</font></span>.SingleInstance );
+		<span style="color: "><font color="#2b91af">Configure</font></span>.ConfigurationComplete += () =&gt; <span style="color: "><font color="#2b91af">Configure</font></span>.Instance.Builder.Build&lt;<span style="color: "><font color="#2b91af">ITransport</font></span>&gt;().TransportMessageReceived += OnTransportMessageReceived;
+	}
+ 
+	<span style="color: "><font color="#0000ff">static</font></span>&nbsp;<span style="color: "><font color="#0000ff">void</font></span> OnTransportMessageReceived( <span style="color: "><font color="#0000ff">object</font></span> sender, <span style="color: "><font color="#2b91af">TransportMessageReceivedEventArgs</font></span> e )
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> _xmlDictionaryReaderQuotas = <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">XmlDictionaryReaderQuotas</font></span>()
+		{
+			MaxArrayLength = 2097152,
+			MaxStringContentLength = 2097152
+		};
+ 
+		<span style="color: "><font color="#0000ff">var</font></span> resultXml = e.Message.Headers[ <span style="color: "><font color="#a31515">"WS-Federation-Token"</font></span> ];
+		<span style="color: "><font color="#0000ff">using</font></span>( <span style="color: "><font color="#2b91af">XmlDictionaryReader</font></span> textReader = <span style="color: "><font color="#2b91af">XmlDictionaryReader</font></span>.CreateTextReader( <span style="color: "><font color="#2b91af">Encoding</font></span>.UTF8.GetBytes( resultXml ), _xmlDictionaryReaderQuotas ) )
+		{
+			<span style="color: "><font color="#0000ff">var</font></span> cfg = GetServiceConfiguration();
+ 			<span style="color: "><font color="#0000ff">var</font></span> token = cfg.SecurityTokenHandlers.ReadToken( textReader );
+			<span style="color: "><font color="#0000ff">var</font></span> identities = cfg.SecurityTokenHandlers.ValidateToken( token );
+ 
+			<span style="color: "><font color="#0000ff">var</font></span> p = <span style="color: "><font color="#2b91af">ClaimsPrincipal</font></span>.CreateFromIdentities( identities );
+			<span style="color: "><font color="#2b91af">Thread</font></span>.CurrentPrincipal = p;
+		}
+	}
+ 
+	<span style="color: "><font color="#0000ff">static</font></span> Microsoft.IdentityModel.Configuration.<span style="color: "><font color="#2b91af">ServiceConfiguration</font></span> GetServiceConfiguration()
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> cfg = <span style="color: "><font color="#2b91af">FederatedAuthentication</font></span>.ServiceConfiguration;
+		<span style="color: "><font color="#0000ff">if</font></span>( !<span style="color: "><font color="#2b91af">String</font></span>.IsNullOrWhiteSpace( <span style="color: "><font color="#2b91af">ConfigureWSFederation</font></span>.ServiceConfigurationName ) )
+		{
+			cfg = <span style="color: "><font color="#0000ff">new</font></span> Microsoft.IdentityModel.Configuration.<span style="color: "><font color="#2b91af">ServiceConfiguration</font></span>( <span style="color: "><font color="#2b91af">ConfigureWSFederation</font></span>.ServiceConfigurationName );
+		}
+ 
+		<span style="color: "><font color="#0000ff">return</font></span> cfg;
+	}
+ 
+	<span style="color: "><font color="#0000ff">void</font></span>&nbsp;<span style="color: "><font color="#2b91af">IMutateOutgoingTransportMessages</font></span>.MutateOutgoing( <span style="color: "><font color="#0000ff">object</font></span>[] messages, <span style="color: "><font color="#2b91af">TransportMessage</font></span> transportMessage )
+	{
+		<span style="color: "><font color="#0000ff">var</font></span> ci = ( <span style="color: "><font color="#2b91af">ClaimsIdentity</font></span> )<span style="color: "><font color="#2b91af">Thread</font></span>.CurrentPrincipal.Identity;
+		<span style="color: "><font color="#0000ff">var</font></span> token = ci.BootstrapToken;
+ 
+		<span style="color: "><font color="#0000ff">using</font></span>( <span style="color: "><font color="#0000ff">var</font></span> ms = <span style="color: "><font color="#0000ff">new</font></span>&nbsp;<span style="color: "><font color="#2b91af">MemoryStream</font></span>() )
+		{
+			<span style="color: "><font color="#0000ff">using</font></span>( <span style="color: "><font color="#2b91af">XmlDictionaryWriter</font></span> textWriter = <span style="color: "><font color="#2b91af">XmlDictionaryWriter</font></span>.CreateTextWriter( ms, <span style="color: "><font color="#2b91af">Encoding</font></span>.UTF8 ) )
+			{
+				<span style="color: "><font color="#0000ff">var</font></span> cfg = GetServiceConfiguration();
+ 
+				cfg.SecurityTokenHandlers.WriteToken( textWriter, token );
+ 
+				textWriter.Flush();
+ 
+				<span style="color: "><font color="#0000ff">var</font></span> result = <span style="color: "><font color="#2b91af">Encoding</font></span>.UTF8.GetString( ms.ToArray() );
+ 
+				<span style="color: "><font color="#0000ff">if</font></span>( transportMessage.Headers.ContainsKey( <span style="color: "><font color="#a31515">"WS-Federation-Token"</font></span> ) )
+					transportMessage.Headers.Remove( <span style="color: "><font color="#a31515">"WS-Federation-Token"</font></span> );
+ 
+				transportMessage.Headers.Add( <span style="color: "><font color="#a31515">"WS-Federation-Token"</font></span>, result );
+			}
+		}
+	}
+}</font></font></pre></blockquote>
+<p><em>For simplicity I’ve removed all the error checks and all the validation logic required to understand if the WS-Federation security token must be attached to message, it’s just a bunch of ifs and try/catches.</em></p>
+<p><strong>This is it</strong></p>
+<p>the WSFederationManager class does 2 main things:</p>
+<ol>
+<li>implements the INeedInitialization interface in order to be plugged into the initialization pipeline of NServiceBus, in this stage:</li>
+<ol>
+<li>configure itself with the container as singleton;</li>
+<li>Attaches the ConfigurationComplete in order to be able to retrieve a reference to the ITransport implementation and attach an handler to the TransportMessageReceived event;</li></ol>
+<li>implements the IMutateOutgoingTransportMessages interface in order to intercepts all outgoing messages to manipulate the message content;</li></ol>
+<p>This single implementation can be used both on the sender side and on the receiver side. The implementation is really straightforward:</p>
+<p><strong>Outgoing messages</strong></p>
+<p>For every single outgoing message we retrieve the current claims identity and the attached security token: in order to access the BootstrapToken property you need to set, in the application configuration file, the saveBootstrapTokens attribute:</p>
+<blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">&lt;</font></font></span><font style="font-size: 11.3pt"><span style="color: "><font color="#a31515">microsoft.identityModel</font></span><span style="color: "><font color="#0000ff">&gt;</font></span>
+<span style="color: "><font color="#0000ff">	&lt;</font></span><span style="color: "><font color="#a31515">service</font></span><span style="color: "><font color="#0000ff">&nbsp;</font></span><span style="color: "><font color="#ff0000">saveBootstrapTokens</font></span><span style="color: "><font color="#0000ff">=</font></span>"<span style="color: "><font color="#0000ff">true</font></span>"</font><span style="color: "><font style="font-size: 11.3pt" color="#0000ff">&gt;</font></span></font></pre></blockquote>
+<p>After having retrieved a reference to the security token we “simply” ask to the WIF configuration to serialize the current token. On the other side whenever a message is received we ask to the WIF configuration to de-serialize the token and after that we build the relative claim identity.</p>
+<p><strong>Warning!</strong></p>
+<p>I’m not a WIF expert so be aware that this implementation is a draft based on my current WIF knowledge, as soon as I’ll discover something new or, much worse, something wrong I’ll post an update here.</p>
+<p>.m</p>  

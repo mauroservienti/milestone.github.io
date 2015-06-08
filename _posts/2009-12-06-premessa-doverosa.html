@@ -1,0 +1,150 @@
+---
+layout: post
+title: 'Premessa: doverosa :-)'
+date: '2009-12-06T22:15:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T20:06:19.843+02:00'
+thumbnail: https://lh6.googleusercontent.com/-BvTROouMPNc/TzJxpES3J2I/AAAAAAAABBw/M1TCcmwzeCA/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2798946394036308721
+blogger_orig_url: http://milestone.topics.it/2009/12/premessa-doverosa.html
+---
+
+<em>…che in quanto tale forse andava fatta prima… :-)</em>   <span>Approfitto dell <a href="http://blogs.ugidotnet.org/topics/archive/2009/11/23/design-time-data-reloaded.aspx#1612116">commento</a> di <a href="http://blogs.ugidotnet.org/Nick60/Default.aspx">Nicolò</a> per farla adesso, nonostante <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/wrappa-che-ti-passa-ldquohow-to-in-salsa-tddrdquohellip.aspx">ne abbia già parlato</a> anche se mi rendo conto solo ora che probabilmente annegata in un discorso ampio e complesso <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/ma-pecccccchhhhegraveegraveegraveegrave.aspx">la cosa</a> possa passare inosservata.</span><br>  <span><strong>Attenzione… :-)</strong></span><br>  <span>Osservate il post di <a href="http://blogs.ugidotnet.org/corrado">Corrado</a> sulla <a href="http://blogs.ugidotnet.org/corrado/archive/0001/01/01/localization-of-model-view-viewmodel-based-applications.aspx">localizzazione</a>:</span><br>  <span><a href="https://lh3.googleusercontent.com/-qH9bLYhri9k/TzJxps_--SI/AAAAAAAABB0/GAFojyVuCF8/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-BvTROouMPNc/TzJxpES3J2I/AAAAAAAABBw/M1TCcmwzeCA/image_thumb.png" width="185" height="154"></a><a href="https://lh3.googleusercontent.com/-XGbXPy4C_OE/TzJxqox2_FI/AAAAAAAABCI/1VS3_6sZe-E/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-pJ2Af3jAmLY/TzJxqBP8pkI/AAAAAAAABB8/NFVvYPbMRS4/image_thumb_1.png" width="161" height="154"></a></span><br>  <span>Se provate, in un qualsiasi punto del ViewModel, a scrivere “this.LocalizedText.” scoprite che l’intellisense non vi fa vedere un bel nulla…eppure questo funziona che è un piacere:</span><br>  <span><a href="https://lh5.googleusercontent.com/-xwtIjF6P9iA/TzJxr8VLxQI/AAAAAAAABCU/khUqlrhHUMM/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-iWrWa5sBZi8/TzJxrU7niSI/AAAAAAAABCM/vHW8cN0yMN8/image_thumb_2.png" width="298" height="69"></a> </span><br>  <span><strong>Come è possibile?</strong></span><br>  <span>Il giochetto è abbastanza semplice ed è basato su qualcosa che esiste da che mondo è mondo nel framework: <em>Reflection</em>.</span><br>  <span><strong>Buffaldino e pure un po’ sacripante :-)</strong></span><br>  <span>Se però andiamo a <a href="http://msdn.microsoft.com/it-it/library/aa970683(VS.85).aspx#data_binding">spulciare un po’ meglio</a> scopriamo che non è sempre così… esiste infatti un sistema, che ad esempio la PropertyGrid usa massicciamente, ben più sofisticato: <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.typedescriptor.aspx">TypeDescriptor</a>; </span><br>  <span>Il motore di Data Binding di Wpf utilizza un TypeDescriptor nel momento in cui l’oggetto (la sorgente dati) con cui deve andare in binding implementa l’interfaccia <a href="http://msdn.microsoft.com/it-it/library/system.componentmodel.icustomtypedescriptor(en-us,VS.85).aspx">ICustomTypeDescriptor</a>.</span><br>  <span><strong>Ciack si gira!</strong></span><br>  <blockquote>   <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MyCustomEntity </span>: <span style="color: #2b91af">ICustomTypeDescriptor
+</span>{
+    <span style="color: blue">public </span><span style="color: #2b91af">PropertyDescriptorCollection </span>GetProperties( <span style="color: #2b91af">Attribute</span>[] attributes )
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">NotImplementedException</span>();
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">PropertyDescriptorCollection </span>GetProperties()
+    {
+        <span style="color: blue">return this</span>.GetProperties( <span style="color: blue">null </span>);
+    }</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Facciamo la cosa più semplice possibile, implementiamo su una nostra entità l’interfaccia ICustomTypeDescriptor, noterete che ha una pletora di metodi che in un contesto di data binding fortemente basato su proprietà possiamo tranquillamente ignorare.</span><br>
+
+<span>Essenziale è implementare i 2 metodi <em>GetProperties()</em> implementazione in cui possiamo tranquillamente demandare tutto il lavoro a uno dei 2 oveload, credo non esista nessuno nel framework (forse la sola PropertyGrid) che chiami l’overload di GetProperties che prende un array di attributi passando qualcosa di diverso da null.</span><br>
+
+<span>Quello che dobbiamo ritornare è una lista di <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.propertydescriptor.aspx">PropertyDescriptor</a> che essendo però abstract non può essere usata direttamente:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MyCustomPropertyDescriptor </span>: <span style="color: #2b91af">PropertyDescriptor
+</span>{
+    <span style="color: blue">public </span>MyCustomPropertyDescriptor( <span style="color: #2b91af">String </span>propertyName, <span style="color: #2b91af">Type </span>propertyType )
+        : <span style="color: blue">base</span>( propertyName, <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">this</span>._propertyType = propertyType;
+    }
+
+    <span style="color: blue">public override bool </span>CanResetValue( <span style="color: blue">object </span>component )
+    {
+        <span style="color: blue">return false</span>;
+    }
+
+    <span style="color: blue">public override </span><span style="color: #2b91af">Type </span>ComponentType
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return typeof</span>( <span style="color: #2b91af">MyCustomEntity </span>); }
+    }
+
+    <span style="color: blue">public override bool </span>IsReadOnly
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return false</span>; }
+    }
+
+    <span style="color: blue">public override void </span>ResetValue( <span style="color: blue">object </span>component )
+    {
+        <span style="color: blue">throw new </span><span style="color: #2b91af">NotSupportedException</span>();
+    }
+
+    <span style="color: blue">public override bool </span>ShouldSerializeValue( <span style="color: blue">object </span>component )
+    {
+        <span style="color: blue">return false</span>;
+    }
+
+    <span style="color: #2b91af">Type </span>_propertyType;
+    <span style="color: blue">public override </span><span style="color: #2b91af">Type </span>PropertyType
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._propertyType; }
+    }
+
+    <span style="color: blue">public override object </span>GetValue( <span style="color: blue">object </span>component )
+    {
+        <span style="color: blue">return</span> <span style="color: #a31515">"Hello World!"</span>;
+    }
+
+    <span style="color: blue">public override void </span>SetValue( <span style="color: blue">object </span>component, <span style="color: blue">object </span>value )
+    {
+        
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Lascio a voi il tedioso lavoro di scoprire su MSDN il significato, che direi intuitivo, dei vari metodi e delle proprietà.</span><br>
+
+<span>I due metodi fondamentali sono GetValue e SetValue, quest’ultimo <em>chiamabile</em> solo se IsReadOnly è false; quello che succede a runtime è che:</span><br>
+
+<ul>
+  <li>l’infrastruttura di binding si accorge che l’istanza che ha in mano come data source implementa ICustomTypeDescriptor; </li>
+
+  <li>Sull’istanza che ha per “le mani” chiama GetProperties(), o meglio chiama TypeDescriptor.GetProperties( instance ) lasciando al TypeDescriptor l’onere di maneggiare un ICustomTypeDescriptor, per avere l’elenco delle proprietà supportate, e qui potete spudoratamente mentire :-); </li>
+
+  <li>Sulla base della <em>binding expression</em> va alla ricerca della proprietà tra quelle che avete generato e chiama GetValue passandovi l’istanza del componente (la data source) per cui vuole ottenere il valore. Stesso discorso per SetValue(); </li>
+</ul>
+
+<span>A questo punto è facile immaginarsi che in quel GetValue() potete fare il bello e cattivo tempo. Il discorso è molto diverso, e pure molto più complesso, se volete prendere in considerazione anche una chiamata di questo tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">TypeDescriptor</span>.GetProperties( <span style="color: blue">typeof</span>( <span style="color: #2b91af">MyCustomEntity </span>) );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Questa da ingannare è decisamente peggio, fattibile (forse) ma molto complessa, e per ora il gioco non vale la candela… ma io non mollo! :-P</span><br>
+
+<span>Adesso che avete un’abbozzo di infrastruttura potete provare ad usarla:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">PropertyDescriptorCollection </span>GetProperties( <span style="color: #2b91af">Attribute</span>[] attributes )
+{
+    <span style="color: blue">var </span>property = <span style="color: blue">new </span><span style="color: #2b91af">MyCustomPropertyDescriptor</span>( <span style="color: #a31515">"Foo"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>) );
+    <span style="color: blue">return new </span><span style="color: #2b91af">PropertyDescriptorCollection</span>( <span style="color: blue">new</span>[] { property } );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e da Wpf/xaml fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Window </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Class</span><span style="color: blue">="WpfApplication1.Window1"
+        </span><span style="color: red">xmlns</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">x</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml"
+        </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">local</span><span style="color: blue">="clr-namespace:WpfApplication1"
+        </span><span style="color: red">Title</span><span style="color: blue">="Window1" </span><span style="color: red">Height</span><span style="color: blue">="300" </span><span style="color: red">Width</span><span style="color: blue">="300">
+    <</span><span style="color: #a31515">Window.DataContext</span><span style="color: blue">>
+        <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">MyCustomEntity </span><span style="color: blue">/>
+    </</span><span style="color: #a31515">Window.DataContext</span><span style="color: blue">>
+    <</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+        <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Foo}" />
+    </</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+</</span><span style="color: #a31515">Window</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Adesso…:</span><br>
+
+<ol>
+  <li>aprite la stessa solution con un altro Visual Studio (il <em>debuggatore</em>); </li>
+
+  <li>dal <em>debuggatore</em> attaccate il debugger al Visual Studio di partenza; </li>
+
+  <li>dal <em>debuggatore</em> piazzate un po’ di breakpoint; </li>
+
+  <li>provate dal “<em>debuggato</em>” ad aprire il designer visuale della Window1.xaml… :-) </li>
+</ol>
+
+<span>Ne riparleremo abbiate fede… :-)</span><br>
+
+<span>.m</span><br>
+
+
+

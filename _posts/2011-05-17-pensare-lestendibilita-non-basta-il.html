@@ -1,0 +1,161 @@
+---
+layout: post
+title: 'Pensare l’estendibilità non basta: il caso EmitMapper'
+date: '2011-05-17T11:15:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Architecture
+- EmitMapper
+- Extensibility
+modified_time: '2012-02-22T09:21:44.506+01:00'
+thumbnail: https://lh3.googleusercontent.com/-uHFFx8wzMEw/T0SliY0FdDI/AAAAAAAAB24/pSmyZ0defRM/s72-c/image_thumb_1_9.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8593595165631479675
+blogger_orig_url: http://milestone.topics.it/2011/05/pensare-lestendibilita-non-basta-il.html
+---
+
+<span>
+	Ho già parlato di EmitMapper, lodandone le prestazioni, in questi giorni stiamo però lavorando ad un progetto dove abbiamo la necessità di personalizzare, in piccola parte a dire il vero, il processo di mapping.</span><br>
+<span>
+	<strong>Lo scenario</strong></span><br>
+<span>
+	Avete un bel servizio WCF che fa da front-end per un modello, il servizio espone un ampio set di operazioni, siccome gli use case sono molto vari, il servizio WCF modella i DTO che ritorna proprio un base allo use case; quindi avete un Product che viene mappato su un ProductDto, ma avete anche una <em>projection</em> di Product che viene mappata su un ProductSummaryDto.</span><br>
+<blockquote>
+	<span>
+		<em>n.d.r.: </em>i DTO sulla carta sono una gran bella cosa ma in pratica rischiate di passare la vita a manutenere DTO, EmitMapper (o uno strumento per automatizzare il processo di mapping) diventa uno strumento vitale, soprattutto nel caso di un servizio WCF che fa uso di NHibernate e che per ovvio motivi non può far viaggiare <em>on-the-wire</em> il dominio. Una delle cose interessanti di EmitMapper, oltre alle prestazioni, è che facendo uso di IL generato a runtime, sono ovviamente spaziali, è che potete mappare i costruttori quindi nulla vi vieta di avere oltre ad un mapping automatico “modello –> DTO” anche uno “DTO –> modello”</span><br>
+</blockquote>
+<span>
+	A complicare le cose avete un albero di elementi “Category” e volete un albero di elementi “CategoryDto”, la peculiarità è che “Category” è una classe base da cui ad esempio deriva “SpecialCategory”, quindi se uno dei nodi è una “SpecialCategory” volete che il corrispondente DTO sia uno “SpecialCategoryDto”:</span><br>
+<span>
+	<a href="https://lh6.googleusercontent.com/-lCDqXSvyKwE/T0Sli692W6I/AAAAAAAAB3A/AEAS8-0oe_k/image_4_9.png"><img alt="image" border="0" height="315" src="https://lh3.googleusercontent.com/-uHFFx8wzMEw/T0SliY0FdDI/AAAAAAAAB24/pSmyZ0defRM/image_thumb_1_9.png" style="border-width: 0px; padding-top: 0px; padding-right: 0px; padding-left: 0px; display: inline; background-image: none;" title="image" width="404"></a></span><br>
+<span>
+	Se avete giocato un po’ con EmitMapper la prima cosa che fate è definire i mapper:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">var</font></font></span> mapperManager = <span><font color="#2b91af">ObjectMapperManager</font></span>.DefaultInstance;
+ 
+<span><font color="#0000ff"><font style="font-size: 11.3pt;">var</font></font></span> specialCategoryMapper = mapperManager.GetMapper<<span><font color="#2b91af">SpecialCategory</font></span>, <span><font color="#2b91af"><span><font color="#2b91af">SpecialCategory</font></span>Dto</font></span>>
+(
+     <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">DefaultMapConfig</font></span>()
+         .DeepMap()
+         .ConvertUsing<<span><font color="#2b91af">Category</font></span>, <span><font color="#2b91af">Int32</font></span>>( p => p == <span><font color="#0000ff">null</font></span> ? -1 : p.Id )
+);
+ 
+<span><font color="#0000ff"><font style="font-size: 11.3pt;">var</font></font></span> categoryMapper = mapperManager.GetMapper<<span><font color="#2b91af">Category</font></span>, <span><font color="#2b91af">CategoryDto</font></span>>
+(
+     <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">DefaultMapConfig</font></span>()
+         .DeepMap()
+         .ConvertUsing<<span><font color="#2b91af">Category</font></span>, <span><font color="#2b91af">Int32</font></span>>( p => p == <span><font color="#0000ff">null</font></span> ? -1 : p.Id )
+);</pre></blockquote>
+<span>
+	Qualche commento sul codice:</span><br>
+<ul>
+	<li>
+		<em>DeepMap</em> serve per istruire il mapper che vogliamo che l’intero grafo, e non solo il primo livello, venga mappato;</li>
+	<li>
+		<em>ConvertUsing</em> istruisce il mapper che nel momento in cui trova una <u>proprietà</u> di tipo Category e la vuole mappare su una di tipo Int32 (perché i nomi delle proprietà coincidono) deve chiamare la nostra Func<,>;</li>
+</ul>
+<span>
+	La configurazione che abbiamo definito non funziona, ma direi che è anche abbastanza evidente che non possa funzionare, anche se fastidioso, il processo di mapping incontra una lista di nodi che è di tipo <em>IList<category></category></em>, esposti dalla proprietà ChildCategories, e non si sogna minimamente di cercare di capire che l’istanza dell’elemento <em>n</em> può essere qualcosa che eredita da Category limitandosi a mappare l’oggetto come se fosse un elemento di tipo Category e basta.</span><br>
+<span>
+	Il primo tentativo che fate è quello di usare ConvertUsing<,> purtroppo senza successo perché non è pensato per gli elementi di una lista ma solo per le proprietà direttamente esposte dagli oggetti coinvolti nel processo di mapping, e già qui io semplicemente storco il naso...</span><br>
+<span>
+	A questo punto vi armate di pazienza e scoprite, non senza fatica per la totale assenza di documentazione, che esiste un metodo ConvertGeneric che prende in pasto 3 parametri:</span><br>
+<ol>
+	<li>
+		Un tipo (che scoprite a vostre spese dover essere generico) che è il tipo di partenza: e.g. <em>IList<></em>;</li>
+	<li>
+		Un tipo (che scoprite a vostre spese dover essere generico, anche se non è sempre vero…) che è il tipo di destinazione: e.g. <em>ISet<></em>;</li>
+	<li>
+		Un oscuro, e quanto meno <em>teribbbbbile</em> <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh4.googleusercontent.com/-pnxcKrayNNA/T0Slkq55AvI/AAAAAAAAB3I/l1eQ1VjlVXg/wlEmoticon-smile_2_29.png">, robo che deve implementare l’interfaccia <em>ICustomConverterProvider</em>;</li>
+</ol>
+<span>
+	dopo non pochi smadonnamenti (fate molto prima a spulciare nel terrificante sorgente di EmitMapper) scoprite che un ICustomConverterProvider ha lo scopo di fornire al mapper (o meglio alla configurazione) un’istanza di un CustomConverterDescriptor…che è molto peggio…</span><br>
+<span>
+	Un CustomConverterDescriptor ha 3 proprietà:</span><br>
+<ol>
+	<li>
+		ConversionMethodName: è il nome del metodo che il custom converter implementerà al fine di eseguire la conversione;</li>
+	<li>
+		ConverterImplementation: è il tipo (System.Type) del custom converter;</li>
+	<li>
+		ConverterClassTypeArguments: è un Type[] che rappresentano i tipi di ingresso e i tipi di ritorno del <em>famigerato</em> ConversionMethodName;</li>
+</ol>
+<span>
+	Ora…già qui io sono inorridito…perché mi sono chiesto: <em>a che serve un’interfaccia</em>? e mi è sorto il primo sospetto che l’autore di EmitMapper non avesse mai provato neanche di striscio il suo meccanismo di estendibilità.</span><br>
+<span>
+	Ma andiamo avanti perché c’è una sorpresa più interessante…. <img alt="Confused smile" class="wlEmoticon wlEmoticon-confusedsmile" src="https://lh3.googleusercontent.com/-TvDxkeD_byQ/T0SlldVBD6I/AAAAAAAAB3Q/eHmeRt0hvD0/wlEmoticon-confusedsmile_2_4.png"></span><br>
+<span>
+	Tornando al nostro problema quello che abbiamo bisogno di fare è intercettare la conversione di ogni singolo item della lista sorgente al fine di decidere come convertirlo, vi armate di pazienza, molta…ma proprio molta, e cercate di capire come funziona il meccanismo basato sul modello che abbiamo appena esposto, la prima cosa che cercate di fare è quindi quella di iniettare un vostro custom ICustomConverterProvider in cui piazzare un bel breakpoint per cominciare a capire come gira il fumo. Una cosa del tipo:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">new</font></font></span> <span><font color="#2b91af">DefaultMapConfig</font></span>()
+      .ConvertGeneric
+      (
+          <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">ICollection</font></span><> ),
+          <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">Array</font></span> ),
+          <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">MyConverterProvider</font></span>()
+      )</pre></blockquote>
+<span>
+	Non viene mai invocato… ma proprio mai. Anche qui dopo un po’ di enumerazioni di santi scoprite che la simpatica DefaultMapConfig ha un metodo protected RegisterDefaultCollectionConverters che registra un “collection converter” che fondamentalmente prende in pasto tutte le casistiche di fatto rendendo pressoché impossibile fare l’override del comportamento di EmitMapper.</span><br>
+<span>
+	Quello che fate quindi è derivare una nuova configurazione da quella di default e cercare di cambiare quel comportamento, con l’obiettivo di rendere iniettabile dall’esterno il default converter. Approfondendo scoprite che non è così semplice perché nella configurazione di default non c’è nulla di lazy e nello specifico quel metodo viene chiamato dal costruttore, quindi in modalità top-down, rendendo di fatto impossibile intercettarlo dall’esterno.</span><br>
+<span>
+	Il primo obiettivo è quindi poter fare questo:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">new</font></font></span> <span><font color="#2b91af">MappingConfiguration</font></span>( mm )
+     .OverrideDefaultCollectionConverter( <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">ICollection</font></span><> ), <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">Array</font></span> ), myProvider )</pre></blockquote>
+<span>
+	La soluzione passa dal capire quale sia la relazione tra l’ObjectsMapperManager e la configurazione: una volta che la configurazione è stata creata la prima cosa che l’ObjectsMapperManager fa è chiamare GetMappingOperations, perché quindi non fare una cosa del tipo:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">MappingConfiguration</font></span> : <span><font color="#2b91af">DefaultMapConfig</font></span>
+{
+     <span><font color="#0000ff">protected</font></span> <span><font color="#0000ff">override</font></span> <span><font color="#0000ff">sealed</font></span> <span><font color="#0000ff">void</font></span> RegisterDefaultCollectionConverters()
+     {
+         <span><font color="#008000">//NOP :-)
+    </font></span> }
+
+     <span><font color="#2b91af">Boolean</font></span> defaultCollectionConverterInitialized = <span><font color="#0000ff">false</font></span>;
+
+     <span><font color="#0000ff">public</font></span> <span><font color="#2b91af">MappingConfiguration</font></span> OverrideDefaultCollectionConverter( <span><font color="#2b91af">Type</font></span> from, <span><font color="#2b91af">Type</font></span> to, <span><font color="#2b91af">ICustomConverterProvider</font></span> converterProvider )
+     {
+         <span><font color="#0000ff">if</font></span>( !<span><font color="#0000ff">this</font></span>.defaultCollectionConverterInitialized )
+         {
+             <span><font color="#0000ff">this</font></span>.ConvertGeneric
+             (
+                 from,
+                 to,
+                 converterProvider
+             );
+
+             <span><font color="#0000ff">this</font></span>.defaultCollectionConverterInitialized = <span><font color="#0000ff">true</font></span>;
+         }
+
+         <span><font color="#0000ff">return</font></span> <span><font color="#0000ff">this</font></span>;
+     }
+
+     <span><font color="#0000ff">void</font></span> RegisterDefaultCollectionConverterIfRequired()
+     {
+         <span><font color="#0000ff">if</font></span>( !<span><font color="#0000ff">this</font></span>.defaultCollectionConverterInitialized )
+         {
+             <span><font color="#0000ff">this</font></span>.ConvertGeneric
+             (
+                 <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">ICollection</font></span><> ),
+                 <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">Array</font></span> ),
+                 <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">CollectionArrayConverterProvider</font></span>()
+             );
+
+             <span><font color="#0000ff">this</font></span>.defaultCollectionConverterInitialized = <span><font color="#0000ff">true</font></span>;
+         }
+     }
+
+     <span><font color="#0000ff">public</font></span> <span><font color="#0000ff">override</font></span> <span><font color="#2b91af">IMappingOperation</font></span>[] GetMappingOperations( <span><font color="#2b91af">Type</font></span> from, <span><font color="#2b91af">Type</font></span> to )
+     {
+         <span><font color="#0000ff">this</font></span>.RegisterDefaultCollectionConverterIfRequired();
+         <span><font color="#0000ff">return</font></span> <span><font color="#0000ff">base</font></span>.GetMappingOperations( from, to );
+     }
+}</pre></blockquote>
+<span>
+	Ci limitiamo a bloccare la funzionalità che non ci piace, per fortuna che il metodo è virtual, e poi esponiamo la nostra invocandola al momento giusto. A questo punto possiamo fare quello che vogliamo con la configurazione, ma che fatica.</span><br>
+<span>
+	Nelle prossime puntate vedremo un bel set di novità che possiamo esporre dalla nostra configurazione custom al fine di renderla veramente malleabile per l’utilizzatore. Questo caso è di sicuro interesse perché ci fa capire come pensare gli extension point senza mai di fatto usarli abbia come risultato solo ed esclusivamente sovra ingegnerizzazione inutile, totalmente inutile.</span><br>
+<span>
+	.m</span><br>

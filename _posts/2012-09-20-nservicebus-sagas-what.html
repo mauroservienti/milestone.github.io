@@ -1,0 +1,14 @@
+---
+layout: post
+title: 'NServiceBus: Saga(s) …what?'
+date: '2012-09-20T16:30:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Domain Driven Design
+- NServiceBus
+modified_time: '2012-09-20T16:30:02.549+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2924937011966732980
+blogger_orig_url: http://milestone.topics.it/2012/09/nservicebus-sagas-what.html
+---
+
+<p>A saga is a workflow and “saga” a cool term, but basically a saga solve the exact same problem a workflow solves.<br>A saga is a wonderful way to orchestrate a set of messages in a single place and let the saga infrastructure handle the persistence of the saga state.</p> <p><strong>State?</strong></p> <p>Yes, exactly. A saga has an associated state, a state that has the shape we need, a state automatically created when the saga is started, persisted when the saga moves on and deleted, generally, when the saga ends.</p> <p><strong>Started, move on, ended?</strong></p> <p>Since a saga is a workflow there is something that triggers the startup of the saga, something that triggers a state change and something that ends the saga. What happens between states, yes multiple states and multiple steps, is up to us.</p> <p><strong>Commands</strong></p> <p>What triggers state changes in a saga are commands, messages on the queue in <a href="http://nservicebus.com" target="_blank">NServiceBus</a> semantically identified “as commands”. Whenever the state in a saga changes an event can be triggered by the saga itself in order to broadcast to the outside world what has happened (in the past and asynchronously).</p> <p><strong>So why NServiceBus?</strong></p> <p>because, even if you can easily manage all the above concern manually, a toolkit gives you the power to forget the non-business relevant part of the story and let us concentrate on the business relevant ones.</p> <p>.m</p>  

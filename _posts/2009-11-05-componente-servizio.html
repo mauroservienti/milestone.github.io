@@ -1,0 +1,39 @@
+---
+layout: post
+title: Componente != Servizio
+date: '2009-11-05T10:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-07T15:04:18.912+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2826426914877941299
+blogger_orig_url: http://milestone.topics.it/2009/11/componente-servizio.html
+---
+
+<span>Stavo leggendo una <a href="http://mikehadlow.blogspot.com/2008/11/windsor-wcf-integration.html">interessante serie di post</a> sull’integrazione tra <a href="http://www.castleproject.org/container/index.html">Castle</a> e WCF, illuminante e istruttiva per molti versi ma sinceramente faccio molta fatica a digerire questo mascheramento.</span><br>  <span>Credo che in generale ci sia un problema di fondo nella teminologia usata: quando si parla di IoC si usa indifferentemente <em>componente</em> o <em>servizio</em>. L’errore secondo me sta nell’utilizzare poi indifferentemente <em>servizio</em> quando questo viene inteso come <em>componente</em> e quando questo invece viene inteso come <em>servizio</em> nel senso <em>SOA</em> del temine, portando alla convinzione che siano concettualmente utilizzabili allo stesso modo.</span><br>  <span>Secondo me non c’è nulla di più sbagliato, ho la ferma convinzione che il codice debba esplicitare, e non nascondere, che si sta utilizzando un servizio nel senso SOA del temine perchè l’approccio da utilizzare e le problematiche da gestire e prendere in considerazione sono abissalmente diverse.</span><br>  <blockquote>   <span>Secondo me è un grave errore pensare che la differenza tra <em>n</em>-layer e <em>n</em>-tier stia solo nel fatto che il boundary è diverso. Non è possibile pensare di scrivere uin’applicazione <em>n</em>-layer e migrarla a <em>n</em>-tier piazzando un po’ qua e un po’ la Wcf e una facility per Castle.</span><br> </blockquote>  <span>Pensate a questo scenario:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">this</span>.dataContextFactory.Create() )
+{
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>tx = dc.BegingTransaction( IsolationLevel.Serializable ) )
+    {
+        dc.Insert( entity );
+        dc.FlushChanges();
+
+        tx.Commit();
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>IDataContextFactory è un <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/wrappare-un-ormhellip.aspx">wrapper</a> per la session factory di <a href="https://www.hibernate.org/343.html">NHibernate</a>, nulla di trascendentale, il codice esplicita molto bene quello che succede. La IDataContextFactory viene iniettata con Castle Windsor. Adesso immaginamo che:</span><br>
+
+<ul>
+  <li>Qualcuno scrive una nuova implementazione di IDataContextFactory e IDataContext che utilizzano Wcf;</li>
+
+  <li>Qualcuno modifica il file di configurazione di Castle per utilizzare la nuova implementazione e la WcfFacility;</li>
+
+  <li>Qualcuno configura Wcf per utilizzare Message Queue;</li>
+</ul>
+
+<span>Il codice la sopra scala immediatamente verso una transazione distribuita senza che nessuno abbia chiesto nulla ma peggio del peggio quella transazione distribuita passa da una Message Queue Transazionale…</span><br>
+
+<span>Cosa succede se il servizio Wcf è giù?</span><br>
+
+<span>.m</span><br>

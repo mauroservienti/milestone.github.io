@@ -1,0 +1,87 @@
+---
+layout: post
+title: WebForms e ShowModalDialog() - intergrazione di JavaScript
+date: '2004-12-27T15:42:00.003+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T21:24:52.942+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5878601806429274270
+blogger_orig_url: http://milestone.topics.it/2004/12/webforms-e-showmodaldialog_9000.html
+---
+
+<span style="FONT-SIZE: 10pt; COLOR: #333333; FONT-FAMILY: tahoma">
+<span>Spesso e volentieri leggo sui vari NG di svariati problemi nel tentativo di 
+integrare finestre modali all'interno di una applicazione web.<br>Innanzitutto 
+vorrei sottolineare che non considero la soluzione "Modale" in ambiente Web una 
+soluzione, il flusso delle informazioni in ambiente web deve essere rivisto al 
+fine di adeguarsi alle caratteristiche del web, i soli problemi di xBrowsing 
+dovrebbero farci dimenticare un sacco di cose.</span><br>
+<span>Comunque in situazioni ben controllate, esempio tipico sono le intranet, la soluzione modale velocizza 
+di molto lo sviluppo e mantiene l'utente "legato" (lo ritento negativo) al 
+tradizionale sitema di imput e di browsing dei dati, classicamente "WindowsForms Like".</span><br>
+<span>Quali sono i problemi nell'uso delle modali?, andiamo con ordine:</span><br>
+<ol>
+  <li>Manipolare il contentuo della pagina chiamante (implicitamente quindi 
+  avere a che fare con il DOM della pagina chiamante) direttamente dalla 
+  finestra modale. <em>TERRIBILE</em>, perchè? perchè in ottica OOP sparpagliamo 
+  il codice in più posti martoriando la manutenibilità della ns applicazione. 
+  Quindi!: </li>
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+  <blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+    <span>Utilizziamo quello che gli strumenti ci forniscono 
+    (vedi MSDN):<br>         <br>
+    <em>vReturnValue</em> = 
+    <i>window</i><b>.showModalDialog(</b><i>sURL</i><b> [</b><b>, 
+    </b><i>vArguments</i><b>]</b><b> [</b><b>, 
+    </b><i>sFeatures</i><b>]</b><b>)</b></span><br>
+    <span>Possiamo costruirci quindi un simil OOP (del resto JavaScript ci prova ad 
+    essere Object Oriented) creando una piccola function che useremo come 
+    <em>classe</em>        
+               
+        per il trasporto delle informazioni 
+    (vArguments) e che la dialog potrà recuperare, estrarre, manipolare e 
+    ritornare infine alla pagina chiamante (vReturnValue):<br><br><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">function MyDialogArguments()<br>{<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.Sender = </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">null</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">;<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">this</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.StringValue = "";<br>}</span></span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><br><br><font face="Tahoma" color="#333333">Possiamo quindi scrivere una cosa del tipo (nel Js 
+    della pagina chiamante):<br><br><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">function OpenMyDialog( sVal )<br>{<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">//dove sVal è il valore da passare alla form Modale<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">dialogArgs = </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">new </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">MyDialogArguments();<br>    dialogArgs.StringValue = sVal;<br>    dialogArgs.Sender = window;<br>    <br>    var retVal = window.showModalDialog( </span><span style="FONT-SIZE: 10pt; COLOR: #ff00ff; FONT-FAMILY: Courier New">'modalUrl'</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">, dialogArgs, </span><span style="FONT-SIZE: 10pt; COLOR: #ff00ff; FONT-FAMILY: Courier New">'winFeatures' </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">);<br>    <br>    </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>        Siccome è Modale l'esecuzione resta in attesa sintanto <br>        che la finestra non si chiude.<br>        Alla chiusura possiamo manipolare il DOM direttamente nel chiamante<br>        ad esempio:<br>    */<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">var txtBox = </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">document</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">.getElementByID( "MyTextBox" );<br>    txtBox.Value = retVal.StringValue;<br>}<br><br><font face="Tahoma" color="#333333">Per far si che sia possibile manipolare il valore, 
+    nella finestra modale:<br><br><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">function SetValue( sVal )<br>{<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">/*<br>        recuperiamo dall'oggetto window la proprietà<br>        dialogArguments che sappiamo essere del tipo da noi impostato<br>        nel chiamante, impostiamo quindi i valori che ci interessano<br>    */<br>    </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">window.dialogArguments.StringValue = sVal;<br>}<br></span><br><font face="Tahoma" color="#333333">E il "gioco" è fatto, 
+    lascio alla vs fantasia tutte le possibili evoluzioni... 
+    ;-)</font></span></font></span></span></span></font></span></span></span><br></blockquote></blockquote>
+  <li>
+  <span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Tahoma" color="#333333"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Tahoma" color="#333333">Altro problemone ricorrente è come invocare il 
+  PostBack dalla finestra modale nella pagina chiamante, anche qui ritengo 
+  assolutamente superfluo accedre al DOM della pagina chiamante dalla modale. La 
+  soluzione che adotto generalmente è decisamente più semplice. Utilizzo un 
+  controllo "Server" tipo ad esempio <asp:button> per l'apertura 
+  della modale agganciando agli Attributes del controllo lo script per 
+  l'apertura della pagina:<br><br><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">//Lato server<br></span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">myButton.Attributes[ "OnClick" ] = "MyJsFunctionToOpenModal();";<br><br><font face="Tahoma" color="#333333">A questo punto l'HTML prodotto conterrà un attributo 
+  on click che verrà eseguito prima del submit del form e siccome la finestra è 
+  modale il submit resterà "bloccato" sintanto che la form modale è aperta. 
+  Utilizzando quindi al tecnica sopra descritta siamo in grado di eventualmente 
+  tornare al server informazioni recuperate lato client da una finestra modale 
+  senza necessariamente fare il postback nella modale (punto 3);<br>Per invocare 
+  un sistema del genere va benissimo qualsiasi controllo server side che sia in 
+  grado di scatenare il 
+  PostBack</font></span></font></span></font></span></span></span></span></span></span><br>
+  <li>
+  <span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Tahoma" color="#333333"><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Tahoma" color="#333333">Ultimo problema che ho affrontato, ma difficilmente 
+  esposto nei NG, è la necessità di eseguire il postback anche nella 
+  finestra modale, pensiamo ad esempio ad una modale per la ricerca di CAP o 
+  codici ABI e CAB. Bene l'inghippo è che IE non permette questo e il risultato 
+  è che la finestra viene <em>postbeccata</em> (terribile :D) in una nuova 
+  finestra scompaginando quindi la ns interfaccia; unica soluzione è creare 
+  dentro alla modale un IFrame e quindi eseguire tutte le pagine all'interno di 
+  questo IFrame, avremo quindi una pagina che rappresenta la modale 
+  (es. "ModalPage.aspx") che, sempre tramite la tecnica del punto 1, si 
+  aspetta di ricevere tra gli arguments l'url della pgina che dovrà caricare nel 
+  suo IFrame, se lo riceve dinamicamente lato client imposteremo la proprietà 
+  src del TAG IFrame al fine di visualizzare la pagina effettivamente 
+  richiesta.. e così via per un eventale ritorno di 
+  informazioni</font></span></font></span></font></span></span></span></span></span></span><br></li></li></ol>
+<div style="FONT-STYLE: italic">
+have a nice day,<br>m.<br></div>
+<div style="FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">whynot [ at ] topics [ dot ] it
+</div>
+<div style="MARGIN-TOP: 5px; FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">
+These postings are provided "AS IS" with no warranties, and confer no 
+rights.<br>The views expressed on this weblog are mine alone.</div>
+</span>

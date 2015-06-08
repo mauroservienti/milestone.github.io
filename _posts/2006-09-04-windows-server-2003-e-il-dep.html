@@ -1,0 +1,13 @@
+---
+layout: post
+title: Windows Server 2003... e il DEP
+date: '2006-09-04T10:04:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-25T11:29:05.639+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4143511237968491635
+blogger_orig_url: http://milestone.topics.it/2006/09/windows-server-2003-e-il-dep.html
+---
+
+<span>Dunque... sul portatile uso Windows Server 2003 in versione standard e sviluppo ormai da parecchio tempo come semplice (o infimo come lo definisco io) User (cosa che dovreste fare tutti.), succede una cosa veramente strana, in maniera apparentemente casuale durante la preparazione per l'hybernate il tutto si blocca e windows "riappare" senza nessun messaggio di errore e senza nulla nei log di sistema, la cosa peggiore è che da quel momento li in avanti l'hybernate non è più disponibile fino al riavvio del sistema.</span><br> <span>Dopo svariate analisi ho scoperto che la casua del tutto è il DEP (Data Exceution Prevention) che, bada ben, blocca Explorer.exe (:-|) durante la fase di preparazione all'hybernate "inpastrocchiando su" tutto...</span><br> <span>La cosa peggiore è che i messaggi di errore del DEP non vengono visualizzati se non si è amministratori della macchina quindi in questo specifico caso il blocco era totalmente silente...</span><br> <span>Una volta modificate le impostazioni del DEP dicendogli di escludere Explorer.exe il tutto ha ripreso a funzionare a meraviglia come un orologio svizzero.</span><br> <span>.m</span><br>

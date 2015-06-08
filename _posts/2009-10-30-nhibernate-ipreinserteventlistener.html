@@ -1,0 +1,170 @@
+---
+layout: post
+title: 'NHibernate: IPreInsertEventListener'
+date: '2009-10-30T09:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- NHibernate
+modified_time: '2012-08-04T19:41:29.986+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5042488519203732971
+blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-ipreinserteventlistener.html
+---
+
+<span>Poco tempo fa ho parlato di strategie di <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/nhibernate-document-identifier.aspx">generazione del document identifier</a> con <a href="https://www.hibernate.org/343.html">NHibernate</a>, quello che vogliamo ottenere è rendere trasparente all’utilizzatore il fatto che un “id”, ad esempio il numero fattura, debba essere generato e dipenda da fattori esterni all’entità.</span><br>  <span>In soldoni vogliamo limitarci ad una cosa del genere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">this</span>.dataContextFactory.Create() )
+{
+    <span style="color: blue">using</span>( <span style="color: blue">var </span>tx = dc.BegingTransaction( <span style="color: #2b91af">IsolationLevel</span>.Serializable ) )
+    {
+        dc.Insert( myEntity );
+        tx.Commit();
+    }
+}</pre>
+</blockquote>
+
+<span>nel post di cui sopra introducevo un elegante soluzione proposta da <a href="http://fabiomaulo.blogspot.com/">Fabio Maulo</a>, oggi mi sono trovato davanti alla prima vera necessità e nell’ottica dello “sviluppo sostenibile” mi sono detto devi mettere il minor effort possibile per raggiungere il risultato desiderato, risultato che è:</span><br>
+
+<ol>
+  <li>generare un identificatore univoco, non una PK okkio, ma un identificatore univoco per l’utente che potrebbe anche essere una PK o Unique ma non è un vincolo che lo sia;</li>
+
+  <li>“nascondere”, per una serie di buoni motivi su cui non mi dilungo, questa logica di generazione;</li>
+</ol>
+
+<span>Se avessi potuto mettere mano al db il tutto probabilmente sarebbe finito in una Stored Procedure e/o una sana User Defined Function… ma non posso mattere mano al db :-/</span><br>
+
+<span><strong>Event Listeners</strong></span><br>
+
+<span>Il tool è fantastico e ha un livello di pluggabilità <em>abbastanza</em> invidsioso :-), recentemente sono stati infatti introdotti i così detti NHibernate Events (prima c’erano, e ci sono ancora, gli interceptor, ma sono un filino più ostici da usare).</span><br>
+
+<span>NHibernate espone una serie di “eventi”, non nel senso del tradizionale evento .Net, che possiamo intercettare; lo scopo quindi è quello di inserirsi nella pipeline di insert e fare li il <em>lavoro sporco</em>:</span><br>
+
+<blockquote>
+  <pre class="code">container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IIdentityGenerationService</span><<span style="color: #2b91af">MyEntity</span>>>()
+    .ImplementedBy<<span style="color: #2b91af">MyEntityIdentityGenerationService</span>>() );
+
+container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">MyEntityPreInsertEventListener</span>>() );
+
+<span style="color: blue">var </span>configuration = container.Resolve<<span style="color: #2b91af">Configuration</span>>();
+configuration.AddListener( e => e.PreInsertEventListeners, <span style="color: blue">this</span>.container.Resolve<<span style="color: #2b91af">MyEntityPreInsertEventListener</span>>() );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Setup:</span><br>
+
+<ol>
+  <li>registriamo, in Castle, “<em>qualcuno</em>” che sia in grado di generare una nuova “<em>identità</em>”;</li>
+
+  <li>registriamo anche il “listener” al fine di, senza saper ne leggere ne scrivere, iniettare le eventuali dipendenze;</li>
+
+  <li>configuariamo NHibernate <a href="http://blogs.ugidotnet.org/topics/archive/2009/10/29/nhibernate-event-listener-che-cosa-scomodahellip.aspx">aggiungendo il nuovo listener</a>, pescandolo dal framework di IoC;</li>
+</ol>
+
+<span><strong>Identità</strong> (che è anche un <a href="http://www.imdb.it/title/tt0309698/">bel film</a> :-))</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IHaveIdentity
+</span>{
+
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IHaveIdentity</span><T> : <span style="color: #2b91af">IHaveIdentity
+</span>{
+    T Identity { <span style="color: blue">get</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>la prima interfaccia sostanzialmente ci servirà da “marker interface”, definiamo poi il <em>tizio</em> che sa fare il lavoro sporco:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IIdentityGenerationService
+</span>{
+    <span style="color: #2b91af">Object </span>GenerateIdentity( <span style="color: #2b91af">IHaveIdentity </span>entity, <span style="color: #2b91af">ISession </span>session );
+}
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IIdentityGenerationService</span><TEntity> : <span style="color: #2b91af">IIdentityGenerationService
+</span>{
+
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>In questo caso invece la seconda interfaccia ci serve per differenziare/univocizzare (teribbbbile :-P) la registrazione in <a href="http://www.castleproject.org/container/index.html">Castle</a>.</span><br>
+
+<span><strong>IPreInsertEventListener</strong></span><br>
+
+<span>finalmente :-)</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MyEntityPreInsertEventListener </span>: <span style="color: #2b91af">IPreInsertEventListener
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">IServiceProvider </span>container;
+
+    <span style="color: blue">public </span>MyEntityPreInsertEventListener( <span style="color: #2b91af">IServiceProvider </span>container )
+    {
+        <span style="color: blue">this</span>.container = container;
+    }
+
+    <span style="color: blue">public bool </span>OnPreInsert( <span style="color: #2b91af">PreInsertEvent </span>evt )
+    {
+        <span style="color: blue">var </span>ihi = evt.Entity <span style="color: blue">as </span><span style="color: #2b91af">IHaveIdentity</span>;
+        <span style="color: blue">if</span>( ihi != <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">var </span>entityType = evt.Entity.GetType();
+            <span style="color: blue">var </span>svcType = <span style="color: blue">typeof</span>( <span style="color: #2b91af">IIdentityGenerationService</span><> ).MakeGenericType( entityType );
+            <span style="color: blue">var </span>svc = ( <span style="color: #2b91af">IIdentityGenerationService </span>)<span style="color: blue">this</span>.container.GetService( svcType );
+
+            <span style="color: blue">using</span>( <span style="color: blue">var </span>innerSession = evt.Session.GetSession( evt.Session.EntityMode ) )
+            {
+                <span style="color: blue">var </span>newIdentity = svc.GenerateIdentity( ihi, innerSession );
+
+                <span style="color: blue">var </span>rh = <span style="color: #2b91af">ReflectionHelper</span>.BoundTo<<span style="color: #2b91af">MyEntity</span>>();
+
+                rh.GetProperty( e => e.Identity )
+                    .SetValue( ihi, newIdentity, <span style="color: blue">null </span>);
+
+                <span style="color: blue">int </span>index = <span style="color: #2b91af">Array</span>.IndexOf( evt.Persister.PropertyNames, rh.NameOf( e => e.Identity ) );
+                <span style="color: blue">if</span>( index != -1 )
+                {
+                    evt.State[ index ] = newIdentity;
+                }
+            }
+        }
+
+        <span style="color: blue">return false</span>;
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Urka, quanta robaccia :-), andiamo per gradi:</span><br>
+
+<ul>
+  <li>abbiamo bisogno di intercettare <u>solo le insert</u> e abbiamo bisogno di essere notificati <u>prima della insert</u>;</li>
+
+  <li>verifichiamo se l’entità che stiamo per inserire ci interessa: IHaveIdentity è li apposta :-)</li>
+
+  <ul>
+    <li>andiamo a recuperare il servizio di generazione delle identità;</li>
+
+    <li>apriamo una nuova sessione, questo è molto importante perchè se riutilizzate la vostra finite in un loop infinito che porta ad una inevitabile StackOverflowException, e lo facciamo con IEventSource.GetSession( … ) in questo modo la <em>child</em> session si porta dietro tutto della <em>parent</em> session: stessa connection e stessa transazione;</li>
+
+    <li>chiediamo al servizio di generare una nuova identità;</li>
+
+    <li>via reflection, ricordate il minor effort possibile, settiamo il nuovo valore;</li>
+
+    <li>dobbiamo ricordarci anche di aggiornare il valore dei parametri di NH che stanno viaggiando verso il db altrimenti l’entità è aggiornata ma il db non è consistente… non è vero… :-) funzionare funziona ma succede una cosa molto curiosa:</li>
+
+    <ul>
+      <li>nh fa la insert…</li>
+
+      <li>si accorge che la entity però è diversa;</li>
+
+      <li>subito dapo la insert fa un update…questo è poco bello perchè fa una operazione inutile ed evitabile aggiornando i valori dei parametri;</li>
+    </ul>
+
+    <li>alla fine ritorniamo “false” e questo concedetemelo ma <em>fa</em> veramente <em>brutto</em>… :-) ritorniamo false perchè alcuni listner, come quello che usiamo noi, possono “votare” se l’operazione deve essere eseguita o meno… falso: in realtà possono votare se l’operazione deve essere abortita o meno, ecco perchè false, ma secondo me è decisamente contro natura il ragionamento da fare;</li>
+  </ul>
+</ul>
+
+<span>Tralascio l’implementazione del servizio di generazione delle identità che si limita ad usare la session per eseguire una “query” (con ICriteria) e recuperare le informazioni che servono per generare una nuova identità, triviale insomma.</span><br>
+
+<span>Il tutto è adesso completamente trasparente, che era esattamente quello che volevamo, e il codice di cui sopra funziona come ci aspettiamo e il fido <a href="http://nhprof.com/">NHProof</a> ce lo conferma. </span><br>
+
+<span>.m</span><br>
+

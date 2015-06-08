@@ -1,0 +1,341 @@
+---
+layout: post
+title: Wrappare un ORM…
+date: '2009-08-21T08:30:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-02T12:17:04.902+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1085259720510327107
+blogger_orig_url: http://milestone.topics.it/2009/08/wrappare-un-orm.html
+---
+
+<span>…sembra una parolaccia, e per molti versi ritengo che lo sia, ma andiamo con ordine: </span><br>  <blockquote>   <span>diciamo che avete il vostro “bel” dominio mappato con il fido <em>Linq to Sql</em> e siete decisamente felici di come funzionano le cose, nonostante gli evidenti limiti di L2S, ma ad un certo punto succede che i requisiti vi impongono di integrare all’interno della vostra applicazione dati che arrivano da una sorgente dati diversa, nello specifico un preistorico database dbase (v.2), che ha il piccolo difetto di non supportare in alcun modo la multiutenza ergo il primo che arriva “locca” e gli altri si attaccano (in una “conversazione” via mail ho usato un termine più colorito :-D). La soluzione più ovvia è nascondere i file di dbase dietro un servizio (ho scelto Wcf ma è poco rilevante la tecnologia) e gestire li gli accessi concorrenti.</span><br> </blockquote>  <span>Adesso siete di fronte ad un problema, siete evidentemente abituati a scrivere una cosa del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">DomainDataContext</span>() )
+{
+    <span style="color: blue">var </span>subjects = dc.Subjects.Where( s => s.Addresses.Count > 0 );
+}</pre>
+</blockquote>
+
+<span>Sfruttando tutta la potenza di Linq con l’effetto collaterale che il dominio di L2S si propaga a macchia d’olio nella vostra applicazione. Il problema di fondo è che il dominio in questo caso non è il <u>vostro</u> ma bensì il <u>suo</u> e questo comporta che metterci mano è assai arduo, mentre siete proprio nella condizione in cui avreste bisogno di aggiungere classi al dominio ma gestire queste classi, <u>dietro le quinte</u>, in maniera diversa lasciando alla facciata la potenza di Linq… diciamolo subito: non c’è mezzo :-)</span><br>
+
+<span>In soldoni quello di cui avete bisogno è semplicemente questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">DomainDataContext</span>() )
+{
+    <span style="color: blue">var </span>subjects = dc.Subjects.Where( s => s.Addresses.Count > 0 );
+
+    <span style="color: blue">var </span>other = dc.<u><strong>DifferentSourceData</strong></u>.Where( ... ).Single();
+    other.SampleProperty = <span style="color: #a31515">"new value..."</span>;
+
+    dc.SubmitChanges();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>perchè? perchè è un gran comodo:</span><br>
+
+<ul>
+  <li>programmate a fronte di una singola API; </li>
+
+  <li>gestite il ciclo di vita della “sessione” sempre allo stesso modo e il comportamente sulle entità di dominio è sempre lo stesso; </li>
+
+  <li>gestite la persistenza in un solo punto; </li>
+
+  <li>gestite la persistenza in maniera transazionale su tutti gli storage, ove abbia senso, in maniera trasparente; </li>
+
+  <li>etc… </li>
+</ul>
+
+<span>Sta di fatto che è impossibile da fare con Linq2Sql, tanto quanto con qualsiasi altro tool, proprio perchè il tool non è pensato per fare quel lavoro, ma è pensato per fare il <u>suo</u> lavoro.</span><br>
+
+<span>Diciamo che la cosa vi serve, e studiando “scoprite” che l’unica possibilità, è <em>wrappare </em>l’ORM dietro un vostro Repository al fine di poter intergrare e gestire le informazioni che arrivano da fonti diverse. Avete 2 fronti su cui lavorare:</span><br>
+
+<ul>
+  <li><strong>Backend</strong>: è tutta la parte che sta dietro il vostro “data context”, è a tutti gli effetti un ORM a cui manca solo la parte di mapping e di generazione delle query (praticamente le 2 parti veramente toste), ma di cui dovete realizzare, tra i tanti pezzi, come minimo: 
+
+    <ul>
+      <li>Motore di persistenza; </li>
+
+      <li>Motore di data mapping; </li>
+
+      <li>IdentityMap; </li>
+    </ul>
+  </li>
+
+  <li><strong>Frontend</strong>: è tutta la parte, l’API pubblica, che viene esposta e che consente di interrogare il vostro modello; </li>
+</ul>
+
+<span>La prima parte non è oggetto del post di oggi, è per certi versi molto complessa e per certi altri di una semplicità disarmante l’importante è affrontarla nel modo giusto.</span><br>
+
+<span>E’ invece decisamente più interessante l’approccio da utilizzare per la realizzazione dell’API pubblica; ma prima di iniziare alcune considerazioni, la domanda di fondo è:</span><br>
+
+<span><strong>Ha senso wrappare?</strong> </span><br>
+
+<span>La risposta dipendende fortemente dal contesto:</span><br>
+
+<ol>
+  <li>se lo faccio perchè è bello si chiama seg* architetturale => non ha senso; </li>
+
+  <li>se lo faccio perchè sono capace e sono figo si chiama seg* architetturale => non ha senso; </li>
+
+  <li>se lo faccio perchè penso di poter rimpiazzare l’ORM a caldo si chiama seg*issima architetturale => non ha senso; </li>
+
+  <li>se lo faccio perchè ritengo che il dominio generato dal tool non sia un dominio decente <u>molto probabilmente è</u> una se*a architetturale => ergo molto probabilmente non ha senso; </li>
+
+  <li>se lo faccio perchè penso che in questo modo posso passare da n-layer a n-tier senza problemi, semplicemente “s c o r d a t e v e l o” => non ha senso, e forse è meglio che rivediate le vostre convinzioni :-); </li>
+
+  <li>se lo faccio perchè devo integrare informazioni che arrivano da storage diversi e voglio gestirle in un dominio unificato allora probabilmente ho trovato un motivo decente, anche qui però dipende molto da quanto queste informazioni devono essere intergrate => <u>forse</u> ha senso; </li>
+</ol>
+
+<span>Diciamo che siete nell’ultima casistica e decidete di farlo. Per semplicità degli esempi e dei concetti che ci interessa approfondire pensiamo di essere nella 4a casistica, è tutto più facile da spiegare e i concetti sono identici. D’istinto la prima cosa che fate è questa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IDataContextWrapper
+</span>{
+    <span style="color: #2b91af">IOrderedQueryable</span><<u><strong>Linq2Sql</strong></u>.<span style="color: #2b91af">Subject</span>> Subjects { <span style="color: blue">get</span>; }
+
+    <span style="color: blue">void </span>SubmitChanges();
+}</pre>
+</blockquote>
+
+<span>ma è evidente che non può funzionare perchè il tipo Subject è ancora il Subject generato da Linq2Sql e non avete risolto proprio un bel nulla, il secondo tentativo è piuttosto simile (se non altro nel fallimento):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IDataContextWrapper
+</span>{
+    <span style="color: #2b91af">IOrderedQueryable</span><<u><strong>MyDomain</strong></u>.<span style="color: #2b91af">Subject</span>> Subjects { <span style="color: blue">get</span>; }
+
+    <span style="color: blue">void </span>SubmitChanges();
+}</pre>
+</blockquote>
+
+<span>Adesso il tipo Subject è parte del <u>vostro</u> dominio quindi all’apparenza la cosa funziona ma:</span><br>
+
+<ul>
+  <li>esporre IQueryable<T> ha il pesantissimo difetto, in questo scenario, di produrre un expression tree che non potete “eseguire” ma che dovete <u><strong>tradurre</strong></u> nell’expression tree che il motore di query sottostante si aspetta… un delirio; </li>
+
+  <li>caliamo la cosa in uno scenario più realistico, diciamo che Subject arriva da un servizio Wcf… domanda che ve ne fate di un expression tree sul “client”? proprio un bel nulla… </li>
+</ul>
+
+<span>Il problema è quindi facilmente identificabile, se espongo IQueryable<T>, dove T è per forza parte del <u>mio</u> dominio, ho un expression tree pensato per il mio dominio e non ho mezzo di mapparlo, con semplicità, verso il dominio di destinazione.</span><br>
+
+<span>Prima di andare avanti cambiamo per un attimo punto di vista e chiediamoci se ha veramente senso esporre un query provider, come IQueryable<T>, e quindi esporre Linq, direttamente dalla nostra API pubblica: la risposta è evidentemente no.</span><br>
+
+<span>Se ci pensiamo la cosa ha molto senso:</span><br>
+
+<ul>
+  <li>state sviluppando un’applicazione non un framework quindi si suppone che conosciate mostruosamente bene il dominio; </li>
+
+  <li>avete un set di informazioni e di possibili interrogazioni noto, probabilmente vasto, ma decisamente noto; </li>
+</ul>
+
+<span>In uno scenario del genere che cosa me ne faccio di una API super-generica? nulla, semplice seg* architetturale :-) del resto chi ha pensato Linq o la ICriteria API di Hibernate/NHibernate aveva/ha uno scopo decisamente diverso dal nostro.</span><br>
+
+<span><strong>Public API</strong></span><br>
+
+<span>Torniamo a noi, dopo una bella serie di ragionamenti, test, prove e riprove, chilometri a piedi avanti e indietro dalla palestra, giungete a partorire quella che a prima vista sembra la soluzione di tutti i mali, e in parte lo è:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IDataContext
+</span>{
+    <span style="color: #2b91af">IEnumerable</span><T> GetByQuery<T>( <span style="color: #2b91af">??</span> querySpec );
+    T GetScalar<T>( <span style="color: #2b91af">??</span> scalarSpec );
+}</pre>
+</blockquote>
+
+<span>Probabilmente molti di voi in base al naming dei parametri hanno già capito dove voglio andare a parare. Cosa abbiamo fatto, semplicemente abbiamo generalizzato e ridotto all’osso le nostre necessità, del resto non ci serve di più: abbiamo bisogno di poter fare query che ritornano “liste” di elementi e abbiamo bisogno di poter recuparare elementi singoli, scalari appunto.</span><br>
+
+<span>In questo momento non ci interessa la fase di persistenza, è evidente che anche quella dovrà essere esposta dalla nostra API pubblica ma li non ci sono problemi di sorta.</span><br>
+
+<span>Abbiamo comunque altri problemi da risolvere:</span><br>
+
+<span><strong>Cosa ci mettiamo come tipi di dato dei parametri?</strong></span><br>
+
+<span>All’inizio la cosa è abbastanza semplice, lo faccio con un esempio che è decisamente meglio:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IQuery</span>{ }
+
+<span style="color: blue">class </span><span style="color: #2b91af">SubjectByCode </span>: <span style="color: #2b91af">IQuery
+</span>{
+    <span style="color: blue">public </span>SubjectByCode( <span style="color: #2b91af">String </span>code )
+    {
+        <span style="color: blue">this</span>.Code = code;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Code
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">private set</span>;
+    }
+}</pre>
+</blockquote>
+
+<span>Interessante non trovate? mi limito semplicemente a creare una gerarchia di classi, più o meno complesse, che modellano le possibili query che l’applicazione farà sullo storage.</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">IDataContext </span>dc;
+<span style="color: blue">using</span>( dc )
+{
+    <span style="color: blue">var </span>query = <span style="color: blue">new </span><span style="color: #2b91af">SubjectByCode</span>( <span style="color: #a31515">"my code" </span>);
+    <span style="color: blue">var </span>result = dc.GetByQuery<<span style="color: #2b91af">Subject</span>>( query );
+}</pre>
+</blockquote>
+
+<span>Sarebbe una pessima idea quella di pensare di modellare un vostro linguaggio di query per il semplice fatto che vi infilereste in un ginepraio mai visto, ma andiamo avanti.</span><br>
+
+<span><strong>La firma dei metodi soddisfa le nostre esigenze?</strong></span><br>
+
+<span>La risposta è evidentemente no, altrimenti cosa avrei fatto a fare la domanda… il problema è che molti tool offrono una bellissima feature: le projection.</span><br>
+
+<span>la nostra necessità è quindi un filino più articolata e la possiamo modellare così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IDataContext
+</span>{
+    <span style="color: #2b91af">IEnumerable</span><TResult> GetByQuery<TSource, TResult>( <span style="color: #2b91af">??</span> querySpec );
+    TResult GetScalar<TSource, TResult>( <span style="color: #2b91af">??</span> scalarSpec );
+}</pre>
+</blockquote>
+
+<span>Diciamo quindi al nostro motore da dove vogliamo pescare i dati (TSource) ma anche in che formato vogliamo i dati (TResult), il nostro esempio di cui sopra diventa semplicemente:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>result = dc.GetByQuery<<span style="color: #2b91af">Subject</span>, <span style="color: #2b91af">Subject</span>>( query );</pre>
+</blockquote>
+
+<span>è evidente che la cosa è bruttina e che ha una serie di piccole complicazioni “interne”, non oggetto di questo post, che però ci portano alla necessità di “spostare” quel requisito ad un livello più alto:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IQuerySpecification</span><TSource, TResult> { }
+
+<span style="color: blue">public interface </span><span style="color: #2b91af">IQuerySpecification</span><T> : <span style="color: #2b91af">IQuerySpecification</span><T, T> { }</pre>
+</blockquote>
+
+<span>definiamo direttamente a livello di query quale sia il suo scopo in termini di projection, e quindi produciamo un qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">SubjectByCode </span>: <span style="color: #2b91af">IScalarSpecification</span><<span style="color: #2b91af">Subject</span>, <span style="color: #2b91af">Subject</span>>
+{
+    <span style="color: blue">public </span>SubjectByCode( <span style="color: #2b91af">String </span>code )
+    {
+        <span style="color: blue">this</span>.Code = code;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>Code { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+</blockquote>
+
+<span>SubjectByCode è un esempio di query in cui non vogliamo projection ma semplicemente un valore scalare, o qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">AddressStringBySubjectQuery </span>: <span style="color: #2b91af">IQuerySpecification</span><<span style="color: #2b91af">Address</span>, <span style="color: #2b91af">String</span>>
+{
+    <span style="color: blue">public </span>AddressStringBySubjectQuery( <span style="color: #2b91af">Subject </span>owner )
+    {
+        <span style="color: blue">this</span>.Subject = owner;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">Subject </span>Subject { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+</blockquote>
+
+<span>Dove c’è una richiesta di projection da Address a String.</span><br>
+
+<span><strong>Un assaggio di “internals”</strong></span><br>
+
+<span>Ok, ma la domanda legittima è perchè tutto questo giro? perchè quello che vi volete limitare a fare è questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">NHDataContext </span>: <span style="color: #2b91af">IDisposable</span>, <span style="color: #2b91af">IDataContext
+</span>{
+    <span style="color: #2b91af">ISession </span>session;
+    <span style="color: #2b91af">IQuerySystemManager </span>querySystemManager;
+    
+    <span style="color: blue">public </span>NHDataContext( <span style="color: #2b91af">ISession </span>session, <span style="color: #2b91af">IQuerySystemManager </span>querySystemManager )
+    {
+        <span style="color: blue">this</span>.session = session;
+        <span style="color: blue">this</span>.querySystemManager = querySystemManager;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IEnumerable</span><TResult> GetByQuery<TSource, TResult>( <span style="color: #2b91af">IQuerySpecification</span><TSource, TResult> querySpec )
+    {
+        <span style="color: blue">var </span>engine = <span style="color: blue">this</span>.querySystemManager.GetQueryEngine<TSource, TResult, TSource>( querySpec );
+        
+        <span style="color: blue">var </span>provider = <span style="color: blue">this</span>.session.Linq<TSource>();
+        <span style="color: blue">var </span>result = engine.ExecuteQuery( querySpec, provider );
+
+        <span style="color: blue">return </span>result;
+    }
+
+    <span style="color: blue">public </span>TResult GetScalar<TSource, TResult>( <span style="color: #2b91af">IScalarSpecification</span><TSource, TResult> scalarSpec )
+    {
+        <span style="color: blue">var </span>evaluator = <span style="color: blue">this</span>.querySystemManager.GetScalarEvaluator<TSource, TResult, TSource>( scalarSpec );
+
+        <span style="color: blue">var </span>provider = <span style="color: blue">this</span>.session.Linq<TSource>();
+        <span style="color: blue">var </span>result = evaluator.Evaluate( scalarSpec, provider );
+
+        <span style="color: blue">return </span>result;
+    }
+}</pre>
+</blockquote>
+
+<span>Nell’esempio, perfettamente funzionante <em>wrappo</em> NHibernate, ho scelto NHibernate per semplicità d’implementazione dell’esempio. La cosa degna di nota per chi non l’avesse notato è al chiamata a quell’istanza querySystemManager, una sorta di motore di IoC:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>engine = <span style="color: blue">this</span>.querySystemManager.GetQueryEngine<TSource, TResult, TSource>( querySpec );</pre>
+</blockquote>
+
+<span>che è dichiarata così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IQuerySystemManager
+</span>{
+    <span style="color: #2b91af">IQueryEngine</span><TSource, TResult, TProvider> GetQueryEngine<<u><strong>TSource</strong></u>, TResult, <strong><u>TProvider</u></strong>>( <span style="color: #2b91af">IQuerySpecification</span><TSource, TResult> querySpec );
+    <span style="color: #2b91af">IScalarEvaluator</span><TSource, TResult, TProvider> GetScalarEvaluator<<u><strong>TSource</strong></u>, TResult, <strong><u>TProvider</u></strong>>( <span style="color: #2b91af">IScalarSpecification</span><TSource, TResult> scalarSpec );
+}</pre>
+</blockquote>
+
+<span>Qui è decisamente più evidente che per avere un “query engine” sia necessario specificare quale sia la sorgente dati nel dominio (TSource), il vostro dominio, quale sia il risultato desiderato (TResult) e anche quale sia la sorgente dati dello storage (TProvider) permettondoci quindi di specificare ad esempio una cosa del tipo: <em>GetQueryEngine<MyDomain.Subject, TResult, Linq2Sql.Subject>( … )</em>.</span><br>
+
+<span>Un query engine infine altro non è che qualcuno che sa trattare una certa query, ed eventualmente sa fare pure il mapping e le projection:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">AddressStringBySubjectQueryEngine </span>: <br>      <span style="color: #2b91af">AbstractQueryEngine</span><<span style="color: #2b91af">AddressStringBySubjectQuery</span>, <span style="color: #2b91af">Address</span>, <span style="color: #2b91af">String</span>, <span style="color: #2b91af">Address</span>>
+{<br><span style="color: blue">   public override</span><span style="color: #2b91af">IEnumerable</span><<span style="color: blue">string</span>> ExecuteQuery( <span style="color: #2b91af">AddressStringBySubjectQuery</span>querySpec, <span style="color: #2b91af">IQueryable</span><<span style="color: #2b91af">Address</span>> provider )
+   { 
+<span style="color: blue">      var </span>address = <span style="color: #a31515">"{0} n° {1}, {2} {3} - {4}"</span>; 
+<span style="color: blue">      return </span>provider.Where( a => a.Subject == querySpec.Subject )<br>                     .Select( a => <span style="color: blue">new <br>                     </span>{ <br>                        Street = a.Street, <br>                        Number = a.Number, <br>                        ZipCode = a.ZipCode, <br>                        City = a.City, <br>                        Country = a.Country <br>                     } )<br>                     .AsEnumerable()<br>                     .Select( a => <span style="color: #2b91af">String</span>.Format( address, a.Street, a.Number, a.ZipCode, a.City, a.Country ) ); <br>   }<br>}</pre>
+</blockquote>
+
+<span>bello, facile e linearissimo, inoltre decisamente componentizzato, “molto tanti e molto piccoli” componenti che fanno ognuno il loro sporco lavoro senza battere ciglio.</span><br>
+
+<span>.m</span><br>
+
+<span><em>p.s. 1</em></span><br>
+
+<span>Il concetto di Specification non è nulla di nuovo e su Google Code trovate un <a href="http://code.google.com/p/linq-specifications/" target="_blank">interessantissmo progetto</a> che implementa proprio lo Specification pattern, il <em>difetto</em> di quell’implementazione è che nel <u>nostro contesto</u> non è applicabile perchè l’implementazione parte dal presupposto che possa operare con Linq direttamente sul vostro dominio senza avere a che fare con un ipotetico mapping da storage diversi.</span><br>
+
+<span><em>p.s. 1.1</em></span><br>
+
+<span>attenzione che se usate solo NHibernate e non avete nessuna delle necessità di cui sopra utilizzare una tecnica come quella esposta insieme allo Specification Pattern potrebbe darvi vantaggi notevoli. Con l’uscita di NHibernate 2 e di NHibernate.Linq avete in mano uno strumento potentissimo che, imvho, non ha rivali in questo momento l’implementazione di Linq che abbiamo a disposizione non è però esaustiva e potreste trovarvi nella condizione di dover ricorrere ad ICriteria o ad hql; in questa direzione è evidente che poter incapsulare la costruzione della query ha una mostruosità di vantaggi.</span><br>
+
+<span><em>p.s. 2</em></span><br>
+
+<span>giusto una coriosità su come potrebbe ragionare un IQuerySystemManager:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">IQueryEngine</span><TSource, TResult, TProvider> GetQueryEngine<TSource, TResult, TProvider>( <span style="color: #2b91af">IQuerySpecification</span><TSource, TResult> querySpec )
+{
+    <span style="color: blue">var </span>qbt = <span style="color: blue">typeof</span>( <span style="color: #2b91af">IQueryEngine</span><,,,> )
+        .MakeGenericType( 
+            querySpec.GetType(),
+            <span style="color: blue">typeof</span>( TSource ), 
+            <span style="color: blue">typeof</span>( TResult ), 
+            <span style="color: blue">typeof</span>( TProvider ) );
+
+    <span style="color: blue">return this</span>.container.GetService( qbt ) <span style="color: blue">as </span><span style="color: #2b91af">IQueryEngine</span><TSource, TResult, TProvider>;
+}</pre>
+</blockquote>
+
+<span><em>Inversion Of Control Rulez :-)</em></span><br>

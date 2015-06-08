@@ -1,0 +1,121 @@
+---
+layout: post
+title: 'Jason: fallback behaviors'
+date: '2013-06-05T12:21:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Jason
+- CQRS
+modified_time: '2013-06-05T12:21:00.369+02:00'
+thumbnail: http://lh6.ggpht.com/-6-Y1PKrCcKo/UaHjmNYEgZI/AAAAAAAACZw/qGM4Qre9JmY/s72-c/jason22_thumb4_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6411868917957550810
+blogger_orig_url: http://milestone.topics.it/2013/06/jason-fallback-behaviors.html
+---
+
+<a href="http://lh5.ggpht.com/-Omv4hyKE9Xc/UaHjlTYCECI/AAAAAAAACZo/9IAgh1nV-os/s1600-h/jason22_thumb4%25255B3%25255D.png"><img title="jason22_thumb4" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; float: right; padding-top: 0px; padding-left: 0px; margin: 0px 0px 5px 10px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="jason22_thumb4" align="right" src="http://lh6.ggpht.com/-6-Y1PKrCcKo/UaHjmNYEgZI/AAAAAAAACZw/qGM4Qre9JmY/jason22_thumb4_thumb.png?imgmax=800" width="85" height="65"></a>  <p>When dealing with a third party toolkit/framework, such as <a href="http://jason.codeplex.com/" target="_blank">Jason</a>, it is really important to be able to instruct the toolkit to behave in some sort of default way if something is not provided/expected.</p> <p>We <a href="{{ site.baseurl }}{% post_url 2013-05-28-jason-validation %}" target="_blank">spoke about validation</a> but what if we would like to plug a default DataAnnotation validator that intercept all the incoming commands and handles all the applied attributes? Such as:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">sealed</span> <span class="kwrd">class</span> ObjectDataAnnotationValidator : AbstractDataAnnotationValidator&lt;Object&gt;
+{
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>the first thing to notice is that Jason supports inheritance so we can inject an AbstractDataAnnotationValidator&lt;<strong>Object</strong>&gt; to intercept _all_ the commands regardless of their type. We can instruct Jason to treat the above validator as a fallback validator if no validator, for the incoming command type, can be found in the following way:</p>
+<blockquote><pre class="csharpcode">var jasonConfig = <span class="kwrd">new</span> DefaultJasonServerConfiguration
+(
+  pathToScanForAssemblies: Path.Combine( AppDomain.CurrentDomain.BaseDirectory, <span class="str">"bin"</span> ),
+  assemblySelectPattern: assemblySelectPattern
+)
+{
+  Container = <span class="kwrd">new</span> WindsorJasonContainerProxy( container ),
+  TypeFilter = t =&gt; !t.Is&lt;JasonToBusRepublishHandler&gt;()
+};
+
+jasonConfig.AddEndpoint( <span class="kwrd">new</span> Jason.WebAPI.JasonWebAPIEndpoint()
+{
+    TypeNameHandling = TypeNameHandling.Objects,
+    DefaultSuccessfulHttpResponseCode = System.Net.HttpStatusCode.Accepted
+} )
+.UsingAsFallbackCommandHandler&lt;JasonToBusRepublishHandler&gt;()
+.UsingAsFallbackCommandValidator&lt;ObjectDataAnnotationValidator&gt;()
+.Initialize();</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+
+<p>The above snippet comes from a web application that is a mere frontend that receives commands from SPA client (Single Page Application) so the applications performs a basic validation and republish commands on the bus (using <a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a> in this case), so we configure Jason to do 2 different things:</p>
+<ol>
+<li>if a command handler for the incoming command cannot be found use the JasonToBusRepublishHandler;</li>
+<li>Since we are using a bus to dispatch commands we are introducing delays, due the <em>async</em> nature of a bus, in the command handling pipeline thus we instruct Jason for WebAPI to return as success HTTP status code “Accepted” instead of the default HTTP-200;</li>
+<li>The last thing to notice is that in the configuration we are telling Jason to ignore (using the TypeFilter delegate) the JasonToBusRepublishHandler that should not be registered as a traditional handler in the Jason configuration;</li></ol>
+<p>.m</p>  

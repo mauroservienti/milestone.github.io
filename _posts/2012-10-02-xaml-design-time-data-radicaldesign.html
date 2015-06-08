@@ -1,0 +1,236 @@
+---
+layout: post
+title: 'Xaml design time data: Radical.Design similar values'
+date: '2012-10-02T15:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Blendability
+- Xaml
+- Design Time Data
+modified_time: '2012-10-02T15:00:01.342+02:00'
+thumbnail: http://lh6.ggpht.com/-cYr_pKWa1Bg/UBzcMFmVkOI/AAAAAAAACGc/GQytyScgKDY/s72-c/image_thumb%25255B1%25255D.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2250003682183537865
+blogger_orig_url: http://milestone.topics.it/2012/10/xaml-design-time-data-radicaldesign.html
+---
+
+Previous posts in this series:<br />
+<ul>
+<li><a href="{{ site.baseurl }}{% post_url 2012-09-04-xaml-design-time-data-introduction-to %}" target="_blank">design time data introduction</a>; </li>
+<li><a href="{{ site.baseurl }}{% post_url 2012-09-11-xaml-design-time-data-radicaldesign %}" target="_blank">setup a basic design time environment</a>;  </li>
+<li><a href="{{ site.baseurl }}{% post_url 2012-09-17-xaml-design-time-data-radicaldesign_17 %}" target="_blank">lively change</a> values at design time;</li>
+<li>using <a href="{{ site.baseurl }}{% post_url 2012-09-25-xaml-design-time-data-radicaldesign_25 %}" target="_blank">dynamic properties to live change</a> other properties;</li>
+</ul>
+What we have seen until now is something trivial, we do not need a design time experience to design a so simple PersonViewModel, but what about the following?:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">class</span> PersonViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> ObservableCollection&lt;AddressViewModel&gt; Addresses { get; <span class="kwrd">private</span> set; }
+
+    <span class="rem">//remaining code omitted for clarity</span>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+where the address view model is:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">class</span> AddressViewModel : INotifyPropertyChanged
+{
+    <span class="kwrd">public</span> <span class="kwrd">event</span> PropertyChangedEventHandler PropertyChanged = ( s, e ) =&gt; { };
+
+    <span class="kwrd">private</span> <span class="kwrd">void</span> OnPropertyChanged( <span class="kwrd">string</span> propertyName )
+    {
+        var h = <span class="kwrd">this</span>.PropertyChanged;
+        h( <span class="kwrd">this</span>, <span class="kwrd">new</span> PropertyChangedEventArgs( propertyName ) );
+    }
+
+    String _street;
+
+    <span class="kwrd">public</span> String Street
+    {
+        get { <span class="kwrd">return</span> _street; }
+        set
+        {
+            _street = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"Street"</span> );
+        }
+    }
+
+    String _city;
+
+    <span class="kwrd">public</span> String City
+    {
+        get { <span class="kwrd">return</span> _city; }
+        set
+        {
+            _city = <span class="kwrd">value</span>;
+            <span class="kwrd">this</span>.OnPropertyChanged( <span class="str">"City"</span> );
+        }
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+And finally this is the UI we want to design with design time data:<br />
+<a href="http://lh6.ggpht.com/-CkXkw3Tqsh8/UBzcLdfcUYI/AAAAAAAACGY/mR0y9sIkbes/s1600-h/image%25255B3%25255D.png"><img alt="image" border="0" height="209" src="http://lh6.ggpht.com/-cYr_pKWa1Bg/UBzcMFmVkOI/AAAAAAAACGc/GQytyScgKDY/image_thumb%25255B1%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="279" /></a><br />
+where obviously we want to see a list of addresses.<br />
+First of all we need to declare to the designer that we want to expose the new property, in the constructor add the following snippet:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">this</span>.Expose( vm =&gt; vm.Addresses );</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+The property is immediately available at design time to be bound to the ItemsSource property of the ListView:<br />
+<a href="http://lh3.ggpht.com/-K9vVhZJQ2Q8/UBzcNA_aLeI/AAAAAAAACGk/yvaeoqKooiE/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="134" src="http://lh6.ggpht.com/-46kGQbfH78Q/UBzcOFuh7LI/AAAAAAAACGw/Q8r3mnnbPy8/image_thumb%25255B6%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="292" /></a><br />
+And in the same manner we can design ListView columns:<br />
+<a href="http://lh6.ggpht.com/--c6q-_ZbSkY/UBzcPnTXxGI/AAAAAAAACG4/dpg7ASljVrg/s1600-h/image%25255B13%25255D.png"><img alt="image" border="0" height="146" src="http://lh6.ggpht.com/-S0VXcZkVJvA/UBzcQscjpkI/AAAAAAAACHA/bTc5T8l1auw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="292" /></a><br />
+But we want more we want to see a list of addresses with values, but now we have to face an interesting type safety problem.<br />
+<strong>Statically typing</strong><br />
+In order to keep things safe everything in <a href="http://radical.codeplex.com/" target="_blank">Radical</a>.Design aims to be type safe in fact if you try to set a value the the Addresses exposed property you get the intellisense ask for a ObservableCollection&lt;AddressViewModel&gt;:<br />
+<a href="http://lh5.ggpht.com/-BqTqqFYuuq4/UBzcRW3r6eI/AAAAAAAACHE/gjvLAhKD1Cc/s1600-h/image%25255B18%25255D.png"><img alt="image" border="0" height="57" src="http://lh4.ggpht.com/-tzfodUOdwBI/UBzcSOWXDWI/AAAAAAAACHQ/YEyfmevoqJg/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="365" /></a><br />
+That is an interesting sitcom :-) we have type safety where basically we do not need it, the designer is totally non-interested in the types, in term of type safety, it is interested in the shape of the types we are passing along.<br />
+<strong>Enter “similarity”</strong><br />
+Since we, as developers, are confortable with type safety in a scenario like the one outlined above we can ask Radical.Design to trust us:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">this</span>.Expose( vm =&gt; vm.Addresses )
+    .<span style="background-color: yellow;">WithSimilarValue</span>( <span class="kwrd">new</span> List&lt;DesignTimeAddressViewModel&gt;()
+    {
+        <span class="kwrd">new</span> DesignTimeAddressViewModel()
+    } );</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+we are telling to the infrastructure: use a list of DesignTimeAddressViewModel and trust me they will be structurally equivalent (from a designer point of view) to a observable collection of AddressViewModel and since we have defined the new design time view model in this way:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> DesignTimeAddressViewModel : DesignTimeHost&lt;AddressViewModel&gt;
+{
+    <span class="kwrd">public</span> DesignTimeAddressViewModel()
+    {            
+        <span class="kwrd">this</span>.Expose( vm =&gt; vm.City )
+            .WithStaticValue( <span class="str">"Milan"</span> );
+
+        <span class="kwrd">this</span>.Expose( vm =&gt; vm.Street )
+            .WithStaticValue( <span class="str">"Piazza Duomo"</span> );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+As soon as we select columns in the ListView designer we get what we expect:<br />
+<a href="http://lh3.ggpht.com/-ksQZK9AfTLQ/UBzcTJDe9XI/AAAAAAAACHU/sA-tVbB6EBg/s1600-h/image%25255B21%25255D.png"><img alt="image" border="0" height="183" src="http://lh4.ggpht.com/-TpR-OEXJAlE/UBzcTxuYZ6I/AAAAAAAACHc/VMrNe7EMAsg/image_thumb%25255B9%25255D.png?imgmax=800" style="background-image: none; border-bottom: 0px; border-left: 0px; border-right: 0px; border-top: 0px; display: inline; margin: 0px; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="244" /></a><br />
+But we want even more, we want to let the UI guys to edit the addresses list directly in the designer.<br />
+.m

@@ -1,0 +1,52 @@
+---
+layout: post
+title: 'Log4PostSharp: note di redazione'
+date: '2009-06-16T05:33:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:39:20.598+01:00'
+thumbnail: https://lh3.googleusercontent.com/-VbsQW4O495w/Tym_Dz-2LOI/AAAAAAAAAfg/JmzSgdj8714/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5296060118830845698
+blogger_orig_url: http://milestone.topics.it/2009/06/log4postsharp-note-di-redazione.html
+---
+
+<span>Ieri ho <a href="http://blogs.ugidotnet.org/topics/archive/2009/06/15/tracinghellip-che-barba-che-noia-ltcit.gt.aspx" target="_blank">parlato</a> di <a href="http://code.google.com/p/postsharp-user-plugins/wiki/Log4PostSharp" target="_blank">Log4PostSharp</a> come ottimo compagno di viaggio per la scrittura del tracing. Un paio di note per districarsi meglio nella giungla.</span><br>  <span><strong>Magagna…</strong></span><br>  <span>Se scaricate Log4PostSharp e cercate di usarlo non va, vi beccate un simpatico errore di compilazione… per qualche strano motivo l’autore ha compilato i suoi assembly utilizzando una reference ad una versione specifica di <a href="http://www.postsharp.org/" target="_blank">PostSharp</a>, la 1.0, mentre tipicamente voi potreste avere la 1.0sp1. Nulla di grave:</span><br>  <ol>   <li>Scaricatevi i sorgenti dal repository svn di Google (io uso <a href="http://rapidsvn.tigris.org/" target="_blank">RapidSVN</a>) </li>    <li>Aprite la solution; </li>    <li>Rimuovete le reference a PostSharp.*.dll; </li>    <li>Rimettetele con quelle che avete voi, di default Visual Studio mette Specific Version “false”; </li>    <li>Ricompilate e va tutto che è un piacere;</li> </ol>  <span><strong>Mania compulsiva da Beta ;-)</strong></span><br>  <span>Non fatevi prendere dalla tentazione di ricompilare il tutto per PostSharp 1.5 RC1 perchè compilare compila ma poi non va un bel nulla… causa cambi radicali nel modello di reflection utilizzato da PostSharp. PostSharp infatti utilizza un suo sistema di Reflection al fine di evitare di caricare l’assembly che sta analizzando.</span><br>  <span><strong>Tip & Tricks</strong></span><br>  <span>Una necessità a cui potreste andare incontro è quella di avere accesso allo stesso “logger” che state usando con Log4PostSharp ad esempio perchè durante l’esecuzione di un metodo avete bisogno di loggare informazioni in più.</span><br>  <span>Nulla di più facile, anche grazie a come funziona <a href="http://logging.apache.org/log4net/index.html" target="_blank">log4net</a>, avete sempre il vostro bel metodo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+{
+    <span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+    p.FirstName = <span style="color: #a31515">"Mauro"</span>;
+    p.LastName = <span style="color: #a31515">"Servienti"</span>;
+
+    <span style="color: blue">var </span>x = p.Echo( p );
+
+    <span style="color: #2b91af">Console</span>.WriteLine( x );
+    <span style="color: #2b91af">Console</span>.Read();
+}</pre>
+</blockquote>
+
+<span>e il prodotto della compilazione è:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-CH28lHeYLYU/Tym_EZXezAI/AAAAAAAAAfk/Br11jOgZjjI/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-VbsQW4O495w/Tym_Dz-2LOI/AAAAAAAAAfg/JmzSgdj8714/image_thumb.png" width="244" height="104"></a> </span><br>
+
+<span>Quello che potete fare è pressochè la stessa cosa che fa Log4PostSharp:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>logger = <span style="color: #2b91af">LogManager</span>.GetLogger( <span style="color: blue">typeof</span>( <span style="color: #2b91af">Program </span>) );
+
+<span style="color: blue">var </span>p = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+p.FirstName = <span style="color: #a31515">"Mauro"</span>;
+p.LastName = <span style="color: #a31515">"Servienti"</span>;
+
+logger.Debug( <span style="color: #a31515">"My message..." </span>);
+
+<span style="color: blue">var </span>x = p.Echo( p );
+
+<span style="color: #2b91af">Console</span>.WriteLine( x );
+<span style="color: #2b91af">Console</span>.Read();</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Recuperate una reference allo stesso logger utilizzato da Log4PostSharp, con il risultato atteso:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-Sr2AwQ3RKig/Tym_F6SeLkI/AAAAAAAAAf0/9nP6tJcq2ks/image_4.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-T0BAPsavWIE/Tym_E0uI2cI/AAAAAAAAAfs/NADjyRzforg/image_thumb_1.png" width="244" height="85"></a> </span><br>
+
+<span>.m</span><br>

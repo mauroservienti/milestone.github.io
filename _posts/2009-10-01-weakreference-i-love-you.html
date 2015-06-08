@@ -1,0 +1,53 @@
+---
+layout: post
+title: WeakReference, I love you!
+date: '2009-10-01T11:46:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T20:21:44.176+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6242762352963266156
+blogger_orig_url: http://milestone.topics.it/2009/10/weakreference-i-love-you.html
+---
+
+<span><a href="http://ayende.com/Blog/archive/2009/10/01/sometimes-it-looks-like-select-is-broken-a-wpf-memory.aspx">Ayende ne ha parlato proprio in questi giorni</a>, ed io è qualche settimana che giro intorno… anche se lo scenario è diverso.</span><br>  <span>Un<strike>o</strike>a <strike>dei problemi</strike> delle differenze tra Wpf e Windows Forms è che <u>per il mondo</u> Wpf i concetti di IDisposable e di IComponent sono del tutto irrilevanti, del resto non ci sono risorse, aka handle ad esempio, da rilasciare.</span><br>  <span>In Windows Forms sfruttavo il fatto di poter realizzare un IComponent e avere gratis la chiamata a Dispose nel momento in cui veniva fatta la Dispose del componente contenitore, ad esempio la Form. In molti casi deviavo leggermente dal <a href="http://www.google.it/search?hl=it&q=Dispose+Pattern&meta=">Dispose Pattern</a> sfruttandolo per liberare anche risorse <em>managed</em> come ad esempio event handler.</span><br>  <span>Questo giochetto non funziona più! Osservate questo esempio:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>memento = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();
+
+<span style="color: blue">var </span>command = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .OnCanExecute( o => memento.IsChanged )
+    .OnExecute( o => { <span style="color: green">/* save pending changes */ </span>} )
+    .TriggerUsing( <span style="color: #2b91af">MementoObserver</span>.Monitor( memento ) );</pre>
+  <a href="http://11011.net/software/vspaste"></a><a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span><strong>Il “<em>.net memory leak</em>” è servito :-)</strong></span><br>
+
+<span>Un monitor altro non è che un <a href="http://it.wikipedia.org/wiki/Observer_pattern">Observer</a> che è capace di osservare uno specifico comportamento, nell’esempio un MementoObserver è un observer che è in grado di tenere d’occhio lo stato di un <a href="http://it.wikipedia.org/wiki/Memento_pattern">memento</a>, <em>more to come</em>, e di triggherare la valutazione di un ICommand (CanExecuteChanged) al variare dello stato del memento, uno schiavetto con le mani in pasta da entrambe le parti :-)</span><br>
+
+<span>Il problema sono proprio <em>le mani in pasta da entrambe le parti</em>… ampliamo un attimo lo scenario:</span><br>
+
+<ul>
+  <li>Il memento sta <em>mementando</em> :-) una collection; </li>
+
+  <li>La collection è una lista di <em>qualcosa</em> in binding con una ItemsControl di Wpf; </li>
+
+  <li>La collection, per motivi storici e di compatibilità con Windows Forms, implementa IComponent; </li>
+
+  <li>Sulla UI c’è un Button il cui Command è in binding con il <em>command</em> nel ViewModel; </li>
+
+  <li>Il memento ha un trattamento speciale per gli IComponent; </li>
+
+  <li>Il memento notifica le variazioni di stato con un evento TrackingStateChanged; </li>
+
+  <li>Il MementoObserver ascolta l’evento di cui sopra, e trigghera il <em>command</em>; </li>
+
+  <li>Quando un IComponent notifica di essere <em>Disposed</em> il Memento smette di tenerne traccia e notifica la sua variazione di stato, <em>TrackingStateChanged</em>, l’observer se ne accorge e trigghera il <em>command</em>; </li>
+</ul>
+
+<span>ok, adesso piazzate il tutto nella coda di finalizzazione del GC che giustamente gira in un thread diverso… <em>patatrack</em> :-) il tutto in maniera casuale perchè, a seconda dell’ordine in vengono finalizzate le varie reference, l’ultimo punto della lista di cui sopra potrebbe cercare di accedere alla UI dal Thread del Finalizer –> aka CrossThread Exception.</span><br>
+
+<span><a href="http://msdn.microsoft.com/en-us/library/system.weakreference(VS.95).aspx"><strong>WeakReference</strong></a></span><br>
+
+<span>la salvezza è usare una WeakReference per tutti quegli scenari in cui sia necessario avere una reference a qualcosa su cui non si ha un controllo diretto. In questo caso infatti il MementoObserver deriva da una classe astratta che incapsula il concetto di WeakReference all’elemento monitored e si preoccupa di gestirne il lifetime garantendo la consistenza.</span><br>
+
+<span>.m</span><br>
+

@@ -1,0 +1,72 @@
+---
+layout: post
+title: Crystal perchè sei tu Crystal
+date: '2004-11-30T22:29:00.011+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-24T10:11:06.340+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1950266018884335327
+blogger_orig_url: http://milestone.topics.it/2004/11/crystal-perche-sei-tu-crystal_4646.html
+---
+
+<span style="FONT-SIZE: 10pt; COLOR: #333333; FONT-FAMILY: tahoma">
+<span>Ho trovato qualcosa da dire :-) e forse dovrò anche 
+trattenermi.<br>Partirei con le "buone" notizie, sempre sull'onda di un <a href="http://blogs.ugidotnet.org/lbarbieri/archive/2004/11/30/6347.aspx">post</a> di Lorenzo Barbieri, che purtroppo non 
+conosco, 
+potrei decidere di aprire anche io un Club, provate un 
+po' ad immaginare chi sarebbe il tanto odiato... non Lorenzo questo è certo 
+:D</span><br>
+<span>Giustamente le motivazioni sono di rito, comincio con il riportare due dei 
+problemini, ormai "risolti", avuti tempo addietro:</span><br>
+<ol>
+  <li>Utilizzando la versione di Crystla Report inclusa 
+  in VS.NET 2003 non vi è alcuna possibilità di accedere a Stored Procedure, 
+  deduco anche tabelle anche se non ho provato, che ritornino un resultset contenente una o più colonne il cui tipo sia uniqueidentifier 
+  (Guid per chi non lo sappia)... siccolo l'ho comperato VS scrivo 
+  al supporto tecnico Crystal che rapidissimanmente, devo essere sincero mi ha stupito la 
+  rapidità, mi risponde:
+<blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+  <blockquote dir="ltr" style="MARGIN-RIGHT: 0px">
+    <span><font face="Courier New">"To use unique identifiers, you would need to 
+    modify the stored procedure<br>so that it accepts a string (varchar) and 
+    cast it to uid. If the stored<br>procedure also returns uids, you would 
+    again need to cast it to a string<br>to avoid an error with Crystal 
+    Reports"</font></span><br></blockquote>
+  <span>nonostante la risposta mi lasci alquanto perplesso, del resto si 
+  definiscono "<em>I Leader mondiali della reportistica</em>", dico vabbè sarà 
+  così e almeno per il momento abbandono l'idea dell'uso di CR.NET, del resto 
+  mica modifico io le mie SP... come se GUID sia un tipo di dato 
+  rarissimamente utilizzato... :-(</span><br>
+  <span>Mi metto mestamente alla ricerca di un tool di reporting e approdo 
+  al meraviglioso ma purtroppo costoso ActiveReports.NET.. nel frattempo mi 
+  scarico anche la demo di CR10 Developer la installo su una macchina di test e 
+  sorpresa delle sorprese delle sorprese qui i GUID vanno che è un piacere, il 
+  cast da GUID verso varchar e viceversa se lo fa dal solo. A questo punto non 
+  so più che dire, se è una mossa commerciale, peraltro assolutamente non 
+  documentata (vista anche la risposta del supporto tecnico) direi che è una 
+  grandissima <strong>porcata</strong>.</span><br></blockquote>
+  <li> Il secondo riguarda sempre il burrascoso rapporto di CR 
+  (tutte le versioni) con le SP soprattutto se sono coinvolti dei "Subreport". 
+  Qualora il subreport contenga dei riferimenti ad una SP uguale a quella 
+  del report contenitore non c'è verso di passare parametri diversi alle 
+  2 stored procedure da codice (il problema è documentato sulla KB 
+  Crystal e noto sin dalla 8.5, Crystal stessa non da 
+  soluzione).<br>Quello che succede è che settando i parametri da codice, 
+  per evitare l'oscena maschera di richiesta, se uno o più parametri tra il 
+  report e uno dei sottoreport hanno lo stesso nome i valori vengono 
+  sovrascritti tutti dall'ultimo valore settato nonostante si espliciti che si 
+  vuole settare il valore ad esempio su di un sottoreport: 
+  <blockquote dir="ltr" style="MARGIN-RIGHT: 0px">          
+               
+               
+             
+         
+  <div><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">//Queso dovrebbe impostrare il valore nel solo sottoreport<br></span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">MyReport.SetParameterValue( paramFieldDef.Name, </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">value</span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">, paramFieldDef.ReportName );<br><br></span><span style="FONT-SIZE: 10pt; COLOR: #008000; FONT-FAMILY: Courier New">//Queso dovrebbe impostrare il valore nel solo report<br></span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">MyReport.SetParameterValue( paramFieldDef.Name, </span><span style="FONT-SIZE: 10pt; COLOR: #0000ff; FONT-FAMILY: Courier New">value </span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New">);</span></div></blockquote></li></li></ol>
+<span><span style="FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Courier New"><font face="Tahoma" color="#333333">Bene direi che vi ho tediato a sufficienza ;-) la saga 
+continuerà...?</font></span></span><br>
+<div style="FONT-STYLE: italic">
+have a nice day,<br>m.<br></div>
+<div style="FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">whynot [ at ] topics [ dot ] it</div>
+<span><a href="http://sourceforge.net/projects/imho10"><font face="Verdana" size="1">powered by IMHO</font></a></span><br>
+</span><!-- Powered by IMHO Instant Blogger Copyright (c) 2004 A.Boschin - http://www.elite.boschin.it -->

@@ -1,0 +1,45 @@
+---
+layout: post
+title: Testare i test :-)
+date: '2009-10-18T07:14:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-03T13:02:32.668+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9038722500420628176
+blogger_orig_url: http://milestone.topics.it/2009/10/testare-i-test.html
+---
+
+<span>è un <em>problema</em> :-)</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>ExceptionTestWrapper_Try_using_non_buggy_code_should_not_fail()
+{
+    <span style="color: #2b91af">Tester</span>.Expecting<<span style="color: #2b91af">ArgumentNullException</span>>( <span style="color: #a31515">"expectedParamName" </span>).Try( () =>
+    {
+        <span style="color: blue">new </span><span style="color: #2b91af">ClassUnderTest</span>( <span style="color: blue">null </span>);
+    } );
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+[<span style="color: #2b91af">ExpectedException</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">AssertFailedException </span>) )]
+<span style="color: blue">public void </span>ExceptionTestWrapper_Try_using_non_buggy_code_but_with_wrong_expected_paramName_should_fail()
+{
+    <span style="color: #2b91af">Tester</span>.Expecting<<span style="color: #2b91af">ArgumentNullException</span>>( <span style="color: #a31515">"invalidParamName" </span>).Try( () =>
+    {
+        <span style="color: blue">new </span><span style="color: #2b91af">ClassUnderTest</span>( <span style="color: blue">null </span>);
+    } );
+}
+
+[<span style="color: #2b91af">TestMethod</span>]
+[<span style="color: #2b91af">ExpectedException</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">AssertFailedException </span>) )]
+<span style="color: blue">public void </span>ExceptionTestWrapper_Try_using_buggy_code_should_fail()
+{
+    <span style="color: #2b91af">Tester</span>.Expecting<<span style="color: #2b91af">ArgumentNullException</span>>( <span style="color: #a31515">"expectedParamName" </span>).Try( () =>
+    {
+        <span style="color: blue">new </span><span style="color: #2b91af">ClassUnderTest</span>( <span style="color: #a31515">"this is a valid value for the target." </span>);
+    } );
+}</pre>
+</blockquote>
+
+<span>questi sono 3 test di un micro framework di test che uso, non è stato semplice scriverli perchè i test devono fallire quando il codice si comporta come ci si aspetta… insomma l’esatto opposto di quello che ci aspetteremmo da un test :-)</span><br>
+
+<span>.m</span><br>

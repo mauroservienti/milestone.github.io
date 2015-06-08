@@ -1,0 +1,49 @@
+---
+layout: post
+title: AOP, PostSharp e M-V-VM
+date: '2009-05-14T07:49:00.000+02:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Why not...
+- AOP
+modified_time: '2012-01-31T14:04:45.281+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9001230632470153984
+blogger_orig_url: http://milestone.topics.it/2009/05/aop-postsharp-e-m-v-vm.html
+---
+
+<span>per ora è solo un’idea che mi frulla per la testa ma… una cosa che si fa con M-V-VM è la necessità di triggerare la rivalutazione dell’eseguibilità di un ICommand a fronte del fatto che una certa cosa è successa, tipicamente un’altra proprietà del VM è cambiata; un esempio:</span><br>  <blockquote>   <span>Il comando “Browse” non è attivo se la casella di testo “Criteri di Ricerca” (in binding con la proprietà QueryText del VM) è vuota, quando la proprietà QueryText cambia dobbiamo triggerare la rivalutazione dell’eseguibilità dell’ICommand.</span><br> </blockquote>  <span>Questo in termini di codice spesso si traduce in qualcose del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>QueryProperty = <span style="color: #2b91af">DependencyProperty</span>.Register(
+    <span style="color: #a31515">"Query"</span>,
+    <span style="color: blue">typeof</span>( <span style="color: #2b91af">String </span>),
+    <span style="color: blue">typeof</span>( <span style="color: #2b91af">SubjectBrowserViewModel </span>),
+    <span style="color: blue">new </span><span style="color: #2b91af">PropertyMetadata</span>( <span style="color: #2b91af">String</span>.Empty, ( s, e ) =>
+    {
+        s.CastTo<<span style="color: #2b91af">SubjectBrowserViewModel</span>>()
+            .Browse.CastTo<<span style="color: #2b91af">DelegateCommand</span>>()
+            .ReevaluateCanExecute();
+    } ) );
+
+<span style="color: blue">public </span><span style="color: #2b91af">String </span>Query
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return </span>( <span style="color: #2b91af">String </span>)<span style="color: blue">this</span>.GetValue( QueryProperty ); }
+    <span style="color: blue">set </span>{ <span style="color: blue">this</span>.SetValue( QueryProperty, <span style="color: blue">value </span>); }
+}</pre>
+</blockquote>
+
+<span>Che non è nulla di trascendentale, ma è una gran rottura e tutte le volte va a finire che me lo dimentico; me lo dimentico perchè devo scriverlo li, o comunque lontano dal ICommand, non sarebbe molto meglio scrivere:</span><br>
+
+<blockquote>
+  <pre class="code">[<span style="color: #2b91af">ReevaluateOnChange</span>( <span style="color: #a31515">"Query" </span>)]
+<span style="color: blue">public </span><span style="color: #2b91af">IBindableCommand </span>Browse
+{
+    <span style="color: blue">get</span>;
+    <span style="color: blue">private set</span>;
+}</pre>
+</blockquote>
+
+<span>e processare in fase di build, quindi niente reflection a runtime, quell’attributo per gestire in maniera implicita la sincronia tra i 2 signori?</span><br>
+
+<span>Che ne pensate?</span><br>
+
+<span>.m</span><br>
+

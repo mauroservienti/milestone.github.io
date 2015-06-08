@@ -1,0 +1,61 @@
+---
+layout: post
+title: 'Fluently.Design().Me: quanto è facile prenderlo per i fondelli :-)'
+date: '2010-01-27T12:14:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Fluent Interfaces
+modified_time: '2012-08-04T17:51:07.487+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-791404741474718746
+blogger_orig_url: http://milestone.topics.it/2010/01/fluentlydesignme-quanto-e-facile.html
+---
+
+<span>…l’intellisense :-)</span><br>  <span>Questo test è meraviglioso, generics e anonymous types alla massima potenza:</span><br>  <blockquote>   <pre class="code">[<span style="color: #2b91af">TestMethod</span>]
+<span style="color: blue">public void </span>asyncWorker_expecting_anonymous_type_as_result_should_correctly_set_result()
+{
+    <span style="color: blue">var </span>wa = <span style="color: blue">new </span><span style="color: #2b91af">ManualResetEvent</span>( <span style="color: blue">false </span>);
+
+    <span style="color: blue">var </span>expected = <span style="color: #a31515">"result"</span>;
+    <span style="color: blue">var </span>actual = <span style="color: #a31515">""</span>;
+
+    <span style="color: blue">var </span>worker = <span style="color: #2b91af">AsyncWorker</span>.Using( expected )
+        .AndExpecting( <span style="color: blue">new </span>{ Sample = <span style="color: #a31515">"" </span>} )
+        .Configure( cfg =>
+        {
+            cfg.After = e => actual = e.Result.Sample;
+        } )
+        .Execute( e => e.Result = <span style="color: blue">new </span>{ Sample = e.Argument } );
+
+    worker.Completed += ( s, e ) => wa.Set();
+    wa.WaitOne();
+
+    actual.ShouldBeEqualTo( expected );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>con “AndExpecting()” definito così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IInputWorker</span><T>
+{
+    <span style="color: #2b91af">IConfiguredInputWorker</span><T> Configure( <span style="color: #2b91af">Action</span><<span style="color: #2b91af">IInputWorkerConfiguration</span><T>> cfg );
+    <span style="color: #2b91af">IWorker </span>Execute( <span style="color: #2b91af">Action</span><<span style="color: #2b91af">IAsyncArgs</span><T>> async );
+
+    <span style="color: #2b91af">IInputOutputWorker</span><T, TResult> AndExpecting<TResult>();
+    <span style="color: #2b91af">IInputOutputWorker</span><T, TResult> AndExpecting<TResult>( TResult sample ); 
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Sempre perchè anche la coding experience vuole la sua parte… un po’ come l’occhio :-)</span><br>
+
+<span><strong>A che scopo?</strong></span><br>
+
+<span>Semplicemente evitare la creazione di una tupla/dto in molti contesti in cui gli anonymous type(s) sono una soluzione ottimale.</span><br>
+
+<span>L’inghippo è che con i generics siete obbligati a specificare il tipo T (in questo caso TResult) ma non è possibile specificare come tipo T un anonymous type; è però possibile, come evidenziato dal test, ingannare l’intellisense sfruttando la “<em>Type Inference</em>”: in questo caso passiamo al metodo AndExpecting<TResult>() un tipo anonimo al solo fine di <em>stimolare</em> la Type Inference e far si che il tipo della proprietà “Result” abbia la stessa firma del tipo che abbiamo usato come esempio…</span><br>
+
+<span>figo :-)</span><br>
+
+<span>.m</span><br>
+

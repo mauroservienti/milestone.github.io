@@ -1,0 +1,222 @@
+---
+layout: post
+title: 'RavenDB: results transformers'
+date: '2013-11-25T11:05:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2013-11-25T11:05:00.445+01:00'
+thumbnail: http://lh6.ggpht.com/-y90Cd4iyxTw/UozA8GZNTnI/AAAAAAAACbY/bVuXABb0CyY/s72-c/image_thumb.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1886355862322795935
+blogger_orig_url: http://milestone.topics.it/2013/11/ravendb-results-transformers.html
+---
+
+<p><a href="http://ravendb.net/" target="_blank">RavenDB</a> has an amazing feature called result transformer that is an hook in the <strong>server side</strong> document processing pipeline that let us intercept documents before they leave the server and allows us to change the shape of these documents.</p> <p>Look at the following diagram that <strong>summarize</strong> what happens at query time:</p> <p><a href="http://lh4.ggpht.com/-Tb8iL2WxNYE/UozA7rINcuI/AAAAAAAACbU/FQsW9wJTbmQ/s1600-h/image%25255B2%25255D.png"><img title="image" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; padding-top: 0px; padding-left: 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="image" src="http://lh6.ggpht.com/-y90Cd4iyxTw/UozA8GZNTnI/AAAAAAAACbY/bVuXABb0CyY/image_thumb.png?imgmax=800" width="350" height="198"></a></p> <p>We can define results transformers that have the opportunity to intercept, transform or simply enrich our data.</p> <p>First of all: what is a result transformer?</p> <p>We can define result transformers by inheriting from AbstractTransformerCreationTask class, or from the much more convenient generic version:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> MyDocument_Transformer : AbstractTransformerCreationTask&lt;MyDocument&gt;
+{
+    <span class="kwrd">public</span> MyDocument_Transformer()
+    {
+        <span class="kwrd">this</span>.TransformResults = results =&gt; from result <span class="kwrd">in</span> results
+                                           select <span class="kwrd">new</span>
+                                           {
+                                               Id = result.Id,
+                                               FullName = result.FirstName + <span class="str">" "</span> + result.LastName,
+                                           };
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>In the above sample we are taking in input a list of documents, of type <em>MyDocument</em>, and we are emitting a new type of document, we have the opportunity to manipulate the shape of the document before it leaves the server.</p>
+<blockquote>
+<p>We can do much more such as load “referenced” documents in order to build complex results on the fly.</p></blockquote>
+<p>We can use a transformer both in queries and in load operations as in the following sample:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">using</span>( var session = store.OpenSession() )
+{
+    var doc = session.Load&lt;MyDocument_Transformer, MyNewShape&gt;( <span class="str">"your/document/id"</span> );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>The API expects that the <em>MyNewShape</em> class matches the shape of the returned json object.</p>
+<p>One really interesting usage of result transformers is, for example in a CQRS based application, to use them to customize “views” on the fly to satisfy things like globalization requirement of the client. Imagine a scenario where you have documents such as the following:</p>
+<blockquote><pre class="csharpcode">{
+    <span class="str">"CreateOn"</span>: <span class="rem">/* a date that is stored as DateTimeOffset */</span>,
+    <span class="str">"FirstName"</span>: <span class="str">"Mario"</span>,
+    <span class="str">"LastName"</span>: <span class="str">"Rossi"</span>
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Since the transformer can execute arbitrary .net code, quite everything that can be executed inside a linq query, we can imagine to write a transformer such as the following:</p>
+<blockquote><pre class="csharpcode">from result <span class="kwrd">in</span> results
+let tzi = TimeZoneInfo.FindSystemTimeZoneById( <span class="str">"time-zone-id"</span> )
+let clientCreatedOn = TimeZoneInfo.ConvertTime( result.CreatedOn, tzi )
+select <span class="kwrd">new</span>
+{
+    ClientCreatedOn = ( ( DateTimeOffset )clientCreatedOn ).DateTime,
+    FullName = result.FirstName + <span class="str">" "</span> + result.LastName
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We are asking the server to pre-convert for us the returned document(s) doing some computation, since the document is explicitly thought for the UI we can expect to have it back already formatted, localized and globalized.</p>
+<p>One more thing we can do is to pass parameters to the transformer, so we can decide at query time which we’ll be the time zone to convert to:</p>
+<blockquote><pre class="csharpcode">from result <span class="kwrd">in</span> results
+let tzi = TimeZoneInfo.FindSystemTimeZoneById( <font style="background-color: #ffff00"><strong><span class="kwrd">this</span>.Query( <span class="str">"tzi"</span> ).Value&lt;String&gt;()</strong></font> )
+let clientCreatedOn = TimeZoneInfo.ConvertTime( result.CreatedOn, tzi )
+select <span class="kwrd">new</span>
+{
+    ClientCreatedOn = ( ( DateTimeOffset )clientCreatedOn ).DateTime,
+    FullName = result.FirstName + <span class="str">" "</span> + result.LastName
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>And pass parameters “down” at query time using the following syntax:</p>
+<blockquote><pre class="csharpcode">var query = session.Query&lt;MyDocument, MyDocument_Index&gt;()
+                    .TransformWith&lt;MyDocument_ClientAdapter, MyClientDocument&gt;()
+                    .AddQueryInput( <span class="str">"tzi"</span>, user.TimeZoneId );</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Where the <em>MyDocument_ClientAdapter</em> is the C# class that represents the transformer and <em>MyClientDocument</em> is the class that matches the shape projected by the transformer itself and the TimeZoneId property of the “user” class is where we are currently storing user settings.</p>
+<p>Thanks to <a href="http://t.co/Rp4UaJh9F6" target="_blank">Matt Johnson</a> for some suggestions regarding the TimeZoneInfo and DateTimeOffset usage.</p>.m  

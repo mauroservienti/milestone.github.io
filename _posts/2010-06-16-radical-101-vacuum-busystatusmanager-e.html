@@ -1,0 +1,135 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): BusyStatusManager e AsyncWorker'
+date: '2010-06-16T09:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Windows Phone 7
+- Silverlight
+modified_time: '2012-02-20T12:09:25.596+01:00'
+thumbnail: https://lh6.googleusercontent.com/-F4oy8274QlI/T0Ip1dWqjpI/AAAAAAAABaA/CxpmMVVig28/s72-c/550c155d-0b15-42f4-8a58-167e7084925c.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6314603868965529326
+blogger_orig_url: http://milestone.topics.it/2010/06/radical-101-vacuum-busystatusmanager-e.html
+---
+
+<a href="https://lh6.googleusercontent.com/-6_HDCwcocWQ/T0Ip1pD1pqI/AAAAAAAABaE/-c7u8CP9Gp4/ca76bb81-c964-4a30-8f1e-51b1884d66fc.png" rel="shadowbox"><img style="border-right-width: 0px; margin: 0px 10px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Radical" border="0" alt="Radical" align="left" src="https://lh6.googleusercontent.com/-F4oy8274QlI/T0Ip1dWqjpI/AAAAAAAABaA/CxpmMVVig28/550c155d-0b15-42f4-8a58-167e7084925c.png" width="37" height="64"></a>CodePlex Release: <a title="http://radical.codeplex.com/releases/view/46757" href="http://radical.codeplex.com/releases/view/46757">http://radical.codeplex.com/releases/view/46757</a>   <span>Anche per Windows Phone e Silverlight sono disponibli alcuni dei behavior che ci sono nella versione “desktop”, alcuni e non tutti (in realtà al momento solo uno) solo per una questione temporale dovuta agli adattamenti necessari per far si che il tutto funzioni anche su una piattaforma diversa da Wpf.</span><br>  <blockquote>   <span>Una piccola lamentela che so essere condivisa da molti: *****… ma non c’è una mazza su Silverlight… :-)</span><br> </blockquote>  <span><strong>AsyncWorker</strong></span><br>  <span>Anche su Silverlight e Windows Phone è possibile fare questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MainPageViewModel </span>: <span style="color: #2b91af">AbstractViewModel
+</span>{
+    <span style="color: blue">public </span>MainPageViewModel()
+    {
+        <span style="color: blue">this</span>.SampleCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnExecute( o =>
+            {
+                <span style="color: #2b91af">AsyncWorker</span>.Using( <span style="color: blue">new
+                </span>{
+                    Now = <span style="color: #2b91af">DateTime</span>.Now,
+                    Parameter = o,
+                    Dispatcher = <span style="color: #2b91af">Deployment</span>.Current.Dispatcher
+                } )
+                .Configure( cfg => 
+                {
+                    cfg.Before = e => <span style="color: blue">this</span>.IsBusy = <span style="color: blue">true</span>;
+                    cfg.After = e => <span style="color: blue">this</span>.IsBusy = <span style="color: blue">false</span>;
+                } )
+                .Execute( e =>
+                {
+                    <span style="color: #2b91af">Thread</span>.Sleep( 1000 );
+                    e.Argument.Dispatcher.BeginInvoke( () =>
+                    {
+                        <span style="color: blue">this</span>.SampleText = <span style="color: #2b91af">String</span>.Format( <span style="color: #a31515">"{0} - {1}"</span>, e.Argument.Parameter, e.Argument.Now.ToLongTimeString() );
+                    } );
+                } );
+            } );
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ICommand </span>SampleCommand { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">String </span>_sampleText = <span style="color: blue">null</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>SampleText
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._sampleText; }
+        <span style="color: blue">set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.SampleText )
+            {
+                <span style="color: blue">this</span>._sampleText = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.SampleText );
+            }
+        }
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">Boolean </span>_isBusy = <span style="color: blue">false</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">Boolean </span>IsBusy
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._isBusy; }
+        <span style="color: blue">private set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.IsBusy )
+            {
+                <span style="color: blue">this</span>._isBusy = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.IsBusy );
+            }
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Che grazie ai behavior e agli adorner ci consente di iniettare uno “Wait Screen” per dare feedback all’utente.</span><br>
+
+<span><strong>BusyStatusManager</strong></span><br>
+
+<span>Uno “Wait Screen” altro non è che un Adorner totalmente gestito altrove il cui ciclo di vita è tipicamente controllato da una proprietà “IsBusy”. La cosa decisamente comoda del BusyStatusManager è che espone un semplicissimo meccanismo, basato su composition, che consente al <em>designer</em> di decidere quale sia il layout dello “Wait Screen”:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage
+    </span><span style="color: red">xmlns</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">x</span><span style="color: blue">="http://schemas.microsoft.com/winfx/2006/xaml"
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">phoneNavigation</span><span style="color: blue">="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Navigation"
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">behaviors</span><span style="color: blue">="clr-namespace:Topics.Radical.Windows.Behaviors;assembly=Radical.Windows" 
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">converters</span><span style="color: blue">="clr-namespace:Topics.Radical.Windows.Converters;assembly=Radical.Windows" 
+    </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Class</span><span style="color: blue">="Vacuum.Sample.MainPage"
+    </span><span style="color: red">xmlns</span><span style="color: blue">:</span><span style="color: red">controls</span><span style="color: blue">="clr-namespace:Topics.Radical.Windows.Controls;assembly=Radical.Windows"</span><span style="color: blue">>
+
+    <</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage.Resources</span><span style="color: blue">>
+        </span><span style="color: blue"><</span><span style="color: #a31515">converters</span><span style="color: blue">:</span><span style="color: #a31515">BooleanBusyStatusConverter </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="bbs" />
+    </</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage.Resources</span><span style="color: blue">>
+    
+    <</span><span style="color: #a31515">controls</span><span style="color: blue">:</span><span style="color: #a31515">AdornerLayer</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Grid </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Name</span><span style="color: blue">="LayoutRoot" 
+              </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">BusyStatusManager.Status</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=IsBusy, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">bbs</span><span style="color: blue">}}"
+              </span><span style="color: red">Background</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">PhoneBackgroundBrush</span><span style="color: blue">}">
+            <</span><span style="color: #a31515">behaviors</span><span style="color: blue">:</span><span style="color: #a31515">BusyStatusManager.Content</span><span style="color: blue">>
+                <</span><span style="color: #a31515">Border </span><span style="color: red">Background</span><span style="color: blue">="Red">
+                    <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="Please wait...:-)"
+                               </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Center"
+                               </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Center" />
+                </</span><span style="color: #a31515">Border</span><span style="color: blue">>
+            </</span><span style="color: #a31515">behaviors</span><span style="color: blue">:</span><span style="color: #a31515">BusyStatusManager.Content</span><span style="color: blue">>
+</span><span style="color: green">            
+        </span><span style="color: blue"></</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+    </</span><span style="color: #a31515">controls</span><span style="color: blue">:</span><span style="color: #a31515">AdornerLayer</span><span style="color: blue">>
+</</span><span style="color: #a31515">phoneNavigation</span><span style="color: blue">:</span><span style="color: #a31515">PhoneApplicationPage</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Il BusyStatusManager è “appiccicabile” su qualsiasi controllo e visualizzerà lo “Wait Screen” esattamente sovrapposto allo UIElement su cui è applicato:</span><br>
+
+<span> <a href="https://lh3.googleusercontent.com/---2rGVuHe-Q/T0Ip23jZU8I/AAAAAAAABaY/jkDcYYJOH_4/b5d51b86-c06d-4def-a91a-a2bea1b1c580.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-JHTMY9X4Lfg/T0Ip2J5Br0I/AAAAAAAABaQ/4Ewl8591qw0/31cc5af5-f6ca-4401-b23b-42ab33fe295f.png" width="223" height="204"></a> <a href="https://lh3.googleusercontent.com/-3-10pLd_yok/T0Ip4b2bu-I/AAAAAAAABao/-5Hw4FrzUsI/d45bb642-bf12-48bf-ae64-3d6f9da4e2a9.png" rel="shadowbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-R2q3fMy3Z5I/T0Ip31pUfOI/AAAAAAAABac/13qkIt59APE/9acdd487-4391-4ba3-974b-04f7d1e19c32.png" width="235" height="204"></a> </span><br>
+
+<span><strong>ICommandSource</strong></span><br>
+
+<span>Windows Phone 7 a oggi è basato su Silverlight 3 e quindi non c’è supporto da parte dei controlli per <a href="http://msdn.microsoft.com/en-us/library/system.windows.input.icommandsource.aspx" target="_blank">ICommandSource</a>. <a href="http://radical.codeplex.com/" target="_blank">Radical</a> offre, per la sola parte Windows Phone, un behavior per aggiungere questo supporto:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Button </span><span style="color: red">behaviors</span><span style="color: blue">:</span><span style="color: red">ButtonBase.Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=SampleCommand}"
+        </span><span style="color: red">Content</span><span style="color: blue">="My Sample Button"</span><span style="color: blue"> />
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ovviamente c’è anche CommandParameter :-)</span><br>
+
+<span>Happy <em>SilverPhoning :-)</em></span><br>
+
+<span>.m</span><br>
+

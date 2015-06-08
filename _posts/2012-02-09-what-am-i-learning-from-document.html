@@ -1,0 +1,47 @@
+---
+layout: post
+title: What am I learning from the document database experience?
+date: '2012-02-09T14:37:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- RavenDB
+modified_time: '2012-02-09T21:17:40.300+01:00'
+thumbnail: http://lh6.ggpht.com/-yfCrTf5V1Kw/TzKg3-bEdkI/AAAAAAAABJ4/g5t_gSTs-WM/s72-c/wlEmoticon-smile2.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-98855777310928513
+blogger_orig_url: http://milestone.topics.it/2012/02/what-am-i-learning-from-document.html
+---
+
+I’ve recently worked on a really interesting project based on <a href="http://ravendb.net/" target="_blank">RavenDB</a> and <a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a>, there <a href="http://www.guisa.org/" target="_blank">will be a lot of time</a> to deeply speak about it.<br />
+<blockquote>
+This argument should be treated at least in a 1h talk or far better in an open panel discussion…if someone is interested ping me, we can do that!</blockquote>
+Document databases perfectly suites some DDD principles, such as the concept of aggregate; <em>be aware</em> that I’m not saying that relational databases does not suite, <strong>this post is not about relational versus document</strong> (I dislike the “no-sql” name).<br />
+<br />
+<strong>Read on…questions</strong><br />
+<br />
+After the “document-db” experience I asked myself one single question: why do I need an <a href="http://it.wikipedia.org/wiki/Object-relational_mapping" target="_blank">ORM</a>?<br />
+The short answer is: <em>we tend to introduce an ORM to solve a problem that we have introduced</em>.<br />
+So…if we do not introduce the first problem do we need an ORM anymore? basically yes, but now the question “moves” to: what an ORM should do for us?<br />
+The short answer is in the name: ORM –&gt; map relational data to objects (period).<br />
+<strong><br /></strong><br />
+<strong>Abuse</strong><br />
+<br />
+ORM(s) per se are a wonderful thing, as with everything, problems come with the abuse of the wonders <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh6.ggpht.com/-yfCrTf5V1Kw/TzKg3-bEdkI/AAAAAAAABJ4/g5t_gSTs-WM/wlEmoticon-smile2.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />…typically what I hear from the field is something like: “I want to get rid of all that SQL strings that pollute my code”…<br />
+…and? they end up using hql strings with NHibernate…what is the difference? why the hell you want to hide SQL code from your program and then you want to view the generated SQL using a profiler?<br />
+I suppose, well at least it is what generally happens to me, that when we face the design of the database we tend to forget which will be, at the application level, the usage of the data we are designing…we tend to follow design guidelines and design rules instead of saying “I need the data in that shape, period”…and then we <em>masturbate</em> that data with an ORM to shape the perfectly normalized data in the form we really want them…<br />
+<br />
+<strong>Astute…isn’t it?</strong><br />
+<br />
+Listen to me: give it up! try once to go back to the origin, use SQL, use Stored Procedures, design your data as you need them not as the book told you to design them…once you re-learned the “story” do you own choice, there are ton of tools out there that follows the “keep it simple, Luke” pattern:<br />
+<ul>
+<li><a href="http://code.google.com/p/dapper-dot-net/" target="_blank">Dapper</a>;</li>
+<li><a href="http://www.toptensoftware.com/petapoco/" target="_blank">PetaPoco</a>;</li>
+<li><a href="https://github.com/markrendle/Simple.Data" target="_blank">Simple.Data</a>;</li>
+<li><a href="https://github.com/robconery/massive" target="_blank">Massive</a>;</li>
+</ul>
+<strong>Conclusion(s)</strong><br />
+<br />
+I suppose that the human kind is basically <em>stupid</em> and tends to forget too easily the past…”they” gave us SQL, then someone invented the ORM (I’ll repeat myself: a wonder, really) and we forgot that the ORM is basically a way to get rid of the SQL it is not a “replacement”, then ORM guys start to over-engineer giving us lot’s of features on top of ORM(s)…features that, if you use an Object Model, can be really lifesavers such as Identity Map or Unit of Work but gave us also the vacuum cleaner that let us hide under the carpet bad data design decisions…and obviously we start to use all that cool features…producing tons of joins or select n+1 and looking at SQL, yeah old hated SLQ hidden under the carpet, in a profiler to understand what is going on…why the hell our application is so slow…<br />
+Give a try to document databases, not because they are better than relational ones (they are not, both have pros and cons) but because they force your mind to go back to the basics, they force you to understand some DDD principles (such as Aggregates and Bounded Contexts) and they let us see the light at the and of the tunnel giving us the opportunity to completely re-think our approach to the relational model.<br />
+<br />
+.m

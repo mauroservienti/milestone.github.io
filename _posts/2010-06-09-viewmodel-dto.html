@@ -1,0 +1,57 @@
+---
+layout: post
+title: ViewModel != DTO
+date: '2010-06-09T00:03:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Model View ViewModel
+modified_time: '2012-08-04T19:39:15.463+02:00'
+thumbnail: https://lh4.googleusercontent.com/-jQRBdHGi334/Tzyfu2Dc4qI/AAAAAAAABYs/CPTgt91R5xk/s72-c/bc01ba24-d08c-4884-b614-1fa10ddf2e4d.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-404900253620148098
+blogger_orig_url: http://milestone.topics.it/2010/06/viewmodel-dto.html
+---
+
+<span>
+	nei commenti <a href="http://mauroservienti.blogspot.com/2010/06/m-v-vm-master-details.html" target="_blank">all’ultimo post</a> mi sembra sia emerso un dettaglio importante, ho la sensazione che ci sia la convinzione, a <u>mio modo di vedere</u> errata, che un ViewModel sia (o debba essere) un DTO.</span><br>
+<span>
+	Ho anche la sensazione che questo errore, o presunto tale, derivi dalla migrazione che molti sviluppatori stanno facendo, o pensano di fare, da altri pattern di presentazione dei dati, come ad esempio MVC portandosi dietro l’esperienza acquisita con questo modello.</span><br>
+<span>
+	In MVC, in particolare se calato nel mondo web, c’è una forte disconnessione tra la View e il Controller, disconnessione derivante dalla natura di http; è quindi molto sensato che in MVC, in particolare in contesti web-based, i dati che viaggiano dal Controller verso la View e viceversa siano sottoforma di DTO.</span><br>
+<span>
+	<a href="https://lh5.googleusercontent.com/-M_2ojRgpVmc/Tzyfvuf2vFI/AAAAAAAABY4/l-obVcOCask/25310236-9b8c-4871-b85f-fbaf11ebe1d9.png" rel="shadowbox"><img alt="image" border="0" height="137" src="https://lh4.googleusercontent.com/-jQRBdHGi334/Tzyfu2Dc4qI/AAAAAAAABYs/CPTgt91R5xk/bc01ba24-d08c-4884-b614-1fa10ddf2e4d.png" style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" width="244"></a></span><br>
+<span>
+	Se notate anche per MVC il modello è completamente mediato dal Controller, non per questo il Controller è un DTO.</span><br>
+<span>
+	<strong>ViewModel == Orchestrator</strong></span><br>
+<span>
+	Un ViewModel ha lo stesso ruolo di mediatore nel rapporto tra il modello e la view la differenza fondamentale è che in M-V-VM non c’è forte disconnessione ma, al contrario, c’è forte connessione e quindi viene sfruttato il potentissimo motre di Data Binding di Wpf.</span><br>
+<span>
+	<em>Perchè quindi un ViewModel non è un DTO?</em></span><br>
+<span>
+	Perchè un ViewModel ha un ruolo con ben più responsabilità e comportamenti (behavior) oltre a quelle del mero DTO, tipicamente anemico, il cui scopo è quello di trasportare i dati in forma “leggera”.</span><br>
+<span>
+	Facciamo un paio di esempi di responsabilità che io assegno molto volentiari al ViewModel e che non vedo in che modo possano essere assegnate al modello:</span><br>
+<ul>
+	<li>
+		<em>Validazione contestuale al caso d’uso</em>: ci sono regole di validazione che sono valide up-front a priori e che quindi possono essere verificate direttamente, anche, sul modello:</li>
+</ul>
+<ul>
+	<li>
+		e.g.: Person.FiscalCode: il codice fiscale, <u>se c’è</u>, ha un formato ben preciso quindi, se c’è, lo possiamo validare a fronte di un set di regole staticamente note… ma cosa stabilisce che ci deve essere? probabilmente il caso d’uso. In un sistema di commercio elettronico il codice fiscale è obbligatorio solo ed esclusivamente in fase d’acquisto se stai richiedendo fattura come privato… quanti se :-); questa cosa è, e io sono convinto che così debba essere, totalmente ignara al modello mentre è molto nota al ViewModel che rappresenta quello specifico caso d’uso;</li>
+	<li>
+		<em>Change Tracking</em>: la gestione del tracking delle modifiche durante l’editing, il classico undo/redo, ha molto senso che sia gestita direttamente dal ViewModel e non dal modello;</li>
+	<li>
+		<em>INotifyPropertyChanged</em>: credo che nessuno pensi di implementare il motore di notifica direttamente sul modello o di avere un modello che espone delle ObservableCollection<t> al posto di <em>mere</em> IList<t>;</t></t></li>
+</ul>
+<span>
+	<t><t>
+	<p>
+		Ci sono molti altri esempi che si potrebbero portare a favore di questa tesi, dall’altra parte qualcuno potrebbe obiettare che rischiate di passare la vita a scrivere ViewModel… Certo ma non è un problema perchè in realtà non sono dei DTO ma si portano dietro un sacco di logica che altrimenti non troverebbe posto, questa logica è la vostra logica di business o meglio ancora la logica che orchestra la logica di business.</p>
+	<p>
+		In questo scenario è possibile avere dei <em>Wrapper</em> automatici per velocizzare la scrittura di molta parte dei ViewModel, ci ho provato e <em>in parte</em> ci sono anche riuscito, ad oggi C# 4.0 con <em>dynamic</em> probabilmente offre anche qualche possibilità in più… resta il fatto che AutoMapper, ad esempio, non è minimamente applicabile in questo scenario perchè i DTO non vi servono proprio, avete un’interazione decisamente più ricca tra ViewModel e View.</p>
+	<p>
+		.m</p>
+	</t></t></span><br>
+<span>
+	 </span><br>

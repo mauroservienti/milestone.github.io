@@ -1,0 +1,101 @@
+---
+layout: post
+title: 'AngularJS: modules 2 phase startup'
+date: '2013-12-17T10:25:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+modified_time: '2013-12-17T10:25:00.169+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1600016789232787002
+blogger_orig_url: http://milestone.topics.it/2013/12/angularjs-modules-2-phase-startup.html
+---
+
+<p>Index:</p> <ul> <li><a href="{{ site.baseurl }}{% post_url 2013-12-10-a-gentle-introduction-to-angularjs %}">A gentle introduction to AngularJS</a></li> <li><a href="{{ site.baseurl }}{% post_url 2013-12-12-angularjs-app-and-modules %}">App and modules</a></li></ul> <p>Now that we have modules it is time to try to understand what we can do with modules and why we need them in the end.</p> <p>Let us start by saying that if we define something this something must be registered in a module, we’ll see soon what is the meaning of “define”. Going on with our comparison with the .net world, if we define a class this class must be defined in a namespace, or at least in an assembly.</p> <p>At startup <a href="http://angularjs.org/" target="_blank">AngularJS</a> iterates over all the referenced modules, declared and dependent, and performs its 2 phase startup:</p> <ul> <li><strong>Configuration Phase</strong>: each module has the option to execute a “config” phase, during this phase a module cannot rely on any other module since nothing is guaranteed to be configured or running at this time;  <li><strong>Run Phase</strong>: each module has the option to execute a “run” phase; at this time each module is guaranteed to be at least configured, so we can rely on other modules during this phase;</li></ul> <p>In order to hook in these phases we can write the following code:</p> <blockquote><pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>My First Sample<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span> 
+            <span class="attr">src</span><span class="kwrd">="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"</span><span class="kwrd">&gt;&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"<span class="kwrd">&gt;</span></span>
+    (<span class="kwrd">function</span> () {
+      <span class="str">'use strict'</span>;
+      
+      <span class="kwrd">var</span> app = angular.module(<span class="str">'my-app'</span>, []);
+      app.config(<span class="kwrd">function</span>(){
+        console.log(<span class="str">'App config phase'</span>);
+      });
+      
+      app.run(<span class="kwrd">function</span>(){
+        console.log(<span class="str">'App run phase'</span>);
+      });
+      
+    }());
+    <span class="kwrd">&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span> <span class="attr">data-ng-app</span><span class="kwrd">="my-app"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+    {{ "{{" }}name}}
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Obviously we are not required to hook both phases.</p>
+<p>We said that during the run phase, for example, we can rely on other modules. What does this means and how can we do that?</p>
+<blockquote><pre class="csharpcode">app.run([<span class="str">'$log'</span>, <span class="kwrd">function</span>($log){
+        $log.debug(<span class="str">'App run phase'</span>);
+ }]);
+</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>We can replace a part of the above code with the sample just provided and see what happens looking at the browser console.<br>As you can imagine we are injecting dependencies into the run phase of the module: Dependency Injection will be our next topic.</p>
+<p>Stay tuned.<br>.m</p>  

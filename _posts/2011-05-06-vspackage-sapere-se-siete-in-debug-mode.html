@@ -1,0 +1,124 @@
+---
+layout: post
+title: 'VSPackage: sapere se siete in “debug mode” o “design mode”'
+date: '2011-05-06T08:07:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- VSIX
+- Visual Studio
+- Extensibility
+modified_time: '2012-08-04T19:44:33.531+02:00'
+thumbnail: https://lh4.googleusercontent.com/-VwVJU7K35Mo/T0SlblUVEoI/AAAAAAAAB2A/QfV5Uu4Wjdg/s72-c/wlEmoticon-smile_2_27.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2944454260296533310
+blogger_orig_url: http://milestone.topics.it/2011/05/vspackage-sapere-se-siete-in-debug-mode.html
+---
+
+<span>
+	State scrivendo un’estensione per Visual Studio e avete bisogno di intervenire nel momento in cui si passa da design a debug e viceversa. Spulciando la scarnissima documentazione trovata la soluzione, o presunta tale, abbastanza rapidamente, anzi trovate più di una di strada per arrivare al risultato desiderato:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">this</font></font></span>.dte.Events.DTEEvents.ModeChanged += ....
+<span><font color="#0000ff">this</font></span>.dte.Events.DebuggerEvents.OnEnterDesignMode += ...
+<span><font color="#0000ff">this</font></span>.dte.Events.DebuggerEvents.OnEnterRunMode += ...</pre></blockquote>
+<span>
+	funziona a singhiozzo… <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh4.googleusercontent.com/-VwVJU7K35Mo/T0SlblUVEoI/AAAAAAAAB2A/QfV5Uu4Wjdg/wlEmoticon-smile_2_27.png">, l’inghippo principale è che VS è un gigantesco <em>oggettone</em> COM con un po’ di .Net intorno quindi scrivendo così succede che il vostro event handler viene collectato dal Garbage Collector al primo giro perché nessuno si rende conto che avete una reference, ad esempio, a DTEEvents… aggirare il problema è comunque abbastanza facile:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">var</font></font></span> events = <span><font color="#0000ff">this</font></span>.dte.Events;
+<span><font color="#0000ff">if</font></span>( events != <span><font color="#0000ff">null</font></span> )
+{
+     <span><font color="#0000ff">this</font></span>.dteEvents = events.DTEEvents;
+     <span><font color="#0000ff">if</font></span>( <span><font color="#0000ff">this</font></span>.dteEvents != <span><font color="#0000ff">null</font></span> )
+     {
+         <span><font color="#0000ff">this</font></span>.dteEvents.ModeChanged += <span><font color="#0000ff">new</font></span> <span><font color="#2b91af">_dispDTEEvents_ModeChangedEventHandler</font></span>( OnDTEModeChanged );
+     }
+}</pre></blockquote>
+<span>
+	Funziona, ma è comunque la strada sbagliata. La <a href="http://msdn.microsoft.com/en-US/library/envdte._dispdteevents_event(v=VS.100).aspx" target="_blank">documentazione</a> dice chiaro e tondo che tutti quegli eventi sono ad uso interno (punto).</span><br>
+<span>
+	<strong>Quindi?</strong></span><br>
+<span>
+	Non è proprio così immediato seguire la strada ufficiale ma si può fare, in primis recuperiamo una reference a un servizio che si chiama IVsMonitorSelection:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">var </font></font></span>monitorSelectionService = <span><font color="#0000ff">this</font></span>.GetService( <span><font color="#0000ff">typeof</font></span>( <span><font color="#2b91af">IVsMonitorSelection</font></span> ) ) <span><font color="#0000ff">as</font></span> <span><font color="#2b91af">IVsMonitorSelection</font></span>;
+</pre></blockquote>
+<span>
+	Fatto questo possiamo chiedere al servizio di essere notificati quando succede qualcosa all’interno dell’IDE, nello specifico ci interessa sapere quando cambia lo UI Context, purtroppo non è così semplice come agganciare un event handler; la prima cosa che dobbiamo fare è implementare da qualche parte (tipicamente dove abbiamo bisogno di ricevere la notifica) l'interfaccia IVsSelectionEvents:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">public</font></font></span> <span><font color="#0000ff">class</font></span> <span><font color="#2b91af">MyToolWindowViewModel</font></span> : <span><font color="#2b91af">...</font></span>, <span><font color="#2b91af">IVsSelectionEvents</font></span>
+{
+}</pre></blockquote>
+<span>
+	L’interfaccia prevede che vengano implementati 3 metodi:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">int</font></font></span> <span><font color="#2b91af">IVsSelectionEvents</font></span>.OnCmdUIContextChanged( <span><font color="#0000ff">uint</font></span> dwCmdUICookie, <span><font color="#0000ff">int</font></span> fActive )
+{
+     <span><font color="#0000ff">return</font></span> <span><font color="#2b91af">VSConstants</font></span>.S_OK;
+}
+ 
+<span><font color="#0000ff">int</font></span> <span><font color="#2b91af">IVsSelectionEvents</font></span>.OnElementValueChanged( <span><font color="#0000ff">uint</font></span> elementid, <span><font color="#0000ff">object</font></span> varValueOld, <span><font color="#0000ff">object</font></span> varValueNew )
+{
+     <span><font color="#0000ff">return</font></span> <span><font color="#2b91af">VSConstants</font></span>.S_OK;
+}
+ 
+<span><font color="#0000ff">int</font></span> <span><font color="#2b91af">IVsSelectionEvents</font></span>.OnSelectionChanged( <span><font color="#2b91af">IVsHierarchy</font></span> pHierOld, <span><font color="#0000ff">uint</font></span> itemidOld, <span><font color="#2b91af">IVsMultiItemSelect</font></span> pMISOld, <span><font color="#2b91af">ISelectionContainer</font></span> pSCOld, <span><font color="#2b91af">IVsHierarchy</font></span> pHierNew, <span><font color="#0000ff">uint</font></span> itemidNew, <span><font color="#2b91af">IVsMultiItemSelect</font></span> pMISNew, <span><font color="#2b91af">ISelectionContainer</font></span> pSCNew )
+{
+     <span><font color="#0000ff">return</font></span> <span><font color="#2b91af">VSConstants</font></span>.S_OK;
+}</pre></blockquote>
+<span>
+	A noi interessa solo il primo, quindi gli altri due li lasciamo con la semplice “return OK”.</span><br>
+<span>
+	OnCmdUIContextChanged viene chiamato una quantità spaventosa di volte praticamente per ogni minima variazione di contesto all’interno dell’IDE, è potentissimo perché vi permette di sapere pressoché tutto quello che succede, è altrettanto scomodissimo sapere che cosa succede:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">uint</font></font></span> debuggerCookie;
+<span><font color="#0000ff">var</font></span> debugging_guid = <span><font color="#2b91af">VSConstants</font></span>.<span><font color="#2b91af">UICONTEXT</font></span>.Debugging_guid;
+<span><font color="#2b91af">ErrorHandler</font></span>.ThrowOnFailure( <span><font color="#0000ff">this</font></span>.monitorSelectionService.GetCmdUIContextCookie( <span><font color="#0000ff">ref</font></span> debugging_guid, <span><font color="#0000ff">out</font></span> debuggerCookie ) );
+<span><font color="#0000ff">if</font></span>( debuggerCookie == dwCmdUICookie )
+{
+     <span><font color="#0000ff">this</font></span>.OnDTEModeChanged();
+}</pre></blockquote>
+<span>
+	Brutto… <img alt="Smile with tongue out" class="wlEmoticon wlEmoticon-smilewithtongueout" src="https://lh3.googleusercontent.com/-f4u1iLGsEzk/T0SlcYh9KnI/AAAAAAAAB2I/XBgrjxfGs0M/wlEmoticon-smilewithtongueout_2_18.png"> ma che cosa succede:</span><br>
+<ol>
+	<li>
+		per ogni variazione di stato l’IDE ci chiama passandoci:</li>
+</ol>
+<ol>
+	<li>
+		un “cookie” che possiamo considerare come un “token” che identifica la cosa che è cambiata;</li>
+	<li>
+		il nuovo stato: attivo (1), disattivo (0);</li>
+</ol>
+<span>
+	A questo punto abbiamo bisogno di sapere se il cookie è quello che fa per noi:</span><br>
+<ol>
+	<li>
+		Recuperiamo un riferimento al GUID che rappresenta lo “UI Context” che interessa a noi, nel nostro caso Debugging;</li>
+	<li>
+		Passiamo il GUID in questione a GetCmdUIContextCookie e otteniamo in cambio il cookie/token che rappresenta quel contesto;</li>
+	<li>
+		Se il cookie coincide con quello che ci viene passato significa che il contesto che è cambiato è quello che interessa a noi;</li>
+</ol>
+<span>
+	Possiamo quindi intervenire di conseguenza: OnDTEModeChanged() è un metodo della mia estensione che si limita a prendere una decisione sulla base del nuovo stato:</span><br>
+<blockquote>
+	<pre style="background: white; font-family: ;"><span><font color="#0000ff"><font style="font-size: 11.3pt;">void</font></font></span> OnDTEModeChanged()
+{
+     <span><font color="#0000ff">switch</font></span>( <span><font color="#0000ff">this</font></span>.dte.Mode )
+     {
+         <span><font color="#0000ff">case</font></span> <span><font color="#2b91af">vsIDEMode</font></span>.vsIDEModeDebug:
+             {
+                 <span><font color="#008000">//Siamo in debug mode
+</font></span>             }
+             <span><font color="#0000ff">break</font></span>;
+
+         <span><font color="#0000ff">case</font></span> <span><font color="#2b91af">vsIDEMode</font></span>.vsIDEModeDesign:
+             {
+                 <span><font color="#008000">//Siamo in design mode
+</font></span>             }
+             <span><font color="#0000ff">break</font></span>;
+     }
+}</pre></blockquote>
+<span>
+	Semplice no? <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="ce8b0b01-1872-470d-a493-c1f5286de497"></span><br>
+<span>
+	.m</span><br>

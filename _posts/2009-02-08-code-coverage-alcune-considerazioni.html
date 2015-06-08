@@ -1,0 +1,22 @@
+---
+layout: post
+title: Code Coverage, alcune considerazioni
+date: '2009-02-08T15:43:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-01-31T14:02:39.310+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8469867160078475391
+blogger_orig_url: http://milestone.topics.it/2009/02/code-coverage-alcune-considerazioni.html
+---
+
+<span>All’ultimo agile day ho sentito più volte l’affermazione che il Code Coverage, che è la percentuale di codice coperta dagli Unit Test, non è necessariamente un’indicazione che i test siano dei buoni test. In linea di massima questa affermazione mi trova complessivamente d’accordo. Essendo il Code Coverage il risultato di un’analisi statica non ha necessariamente significato qualitativo.</span><br>
+<span>Ritengo però che il Code Coverage dia comunque informazioni utilissime, non è tanto la percentuale di copertura che ritengo importante, annche se mi piace tendere al 100%, quanto il fatto che ad esempio a volte il Code Coverage di Visual Studio si comporta in maniera <u>apparentemente</u> bizzarra, in alcuni casi infatti:</span><br>
+<ul>
+    <li>se guardiamo i risultati “tabellari” abbiamo una copertura del 97% di un determinato metodo xyz; </li>
+    <li>mentre se guardiamo la “colorazione” del codice è tutto completamente azzurro, indicando una copertura del 100% per lo stesso metodo xyz; </li>
+</ul>
+<span>Tutte le volte che mi è capitato era dovuto ad una <em>sovra preoccupazione/codice fondamentalmente inutile</em> ad esempio nella validazione dei parametri in ingresso, nelle condizioni che determinavano una if/else o nella mancanza di alcune sottigliezze come il “default” di uno switch/case…</span><br>
+<span>Tutto questo per dire che non sempre è importante la percentuale ma è interessante analizzare tutti i risultati e confrontandoli scoprire che stiamo scrivendoo codice che non ci serve… che nessuno ci ha chiesto.</span><br>
+<span>In questa direzione approcci come il TDD, ove applicabili, aiutano a minimizzare questi “sprechi” ;-)</span><br>
+<span>.m</span><br>

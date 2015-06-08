@@ -1,0 +1,131 @@
+---
+layout: post
+title: WPF hosting an Adorner in a template
+date: '2012-11-21T07:46:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-11-21T07:46:00.694+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5383061524193600743
+blogger_orig_url: http://milestone.topics.it/2012/11/wpf-hosting-adorner-in-template.html
+---
+
+<p>take a look at this Xaml:</p> <blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">Grid</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">TextBlock</span> <span class="attr">Text</span><span class="kwrd">="Logon failed, please check your username and password."</span>
+                   <span class="attr">Foreground</span><span class="kwrd">="Red"</span> <span class="attr">FontWeight</span><span class="kwrd">="Bold"</span> <span class="attr">FontSize</span><span class="kwrd">="30"</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">Grid</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>it utilizes a feature built-in in <a href="http://radical.codeplex.com/" target="_blank">Radical</a>: overlay adorners, that under the hood utilize a WPF Adorner and AdornerLayer to host the given content on top, as a layer, of the adorned element, in this sample a Grid.</p>
+<p>Now, everything works fine and you can use all the WPF features inside an adorner, such as data binding:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">Grid</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">TextBlock</span> <span class="attr">Text</span><span class="kwrd">="{Binding Path=ErrorMessage}"</span>
+                   <span class="attr">Visibility</span><span class="kwrd">="{Binding Path=IsErrorMessageVisible, Converter={StaticResource boolToVisibilityConverter}}"</span>
+                   <span class="attr">Foreground</span><span class="kwrd">="Red"</span> <span class="attr">FontWeight</span><span class="kwrd">="Bold"</span> <span class="attr">FontSize</span><span class="kwrd">="30"</span> <span class="kwrd">/&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">Grid</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>but the fanny thing is that if everything (in this case the Grid element) is hosted inside template (e.g. a DataTemplate)&nbsp; bindings <strong>tend</strong> to fail at runtime…</p>
+<p>Take a look at this more detailed sample Xaml:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">Window</span> <span class="attr">DataContext</span><span class="kwrd">="{Binding Path=Source}"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">Grid</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">ContentControl</span> <span class="attr">Content</span><span class="kwrd">="{Binding Path=ChildOfSource}"</span><span class="kwrd">&gt;</span>
+            <span class="kwrd">&lt;</span><span class="html">ContentControl.ContentTemplate</span><span class="kwrd">&gt;</span>
+                <span class="kwrd">&lt;</span><span class="html">DataTemplate</span><span class="kwrd">&gt;</span>
+                    <span class="kwrd">&lt;</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+                        <span class="kwrd">&lt;</span><span class="html">TextBlock</span> <span class="attr">Text</span><span class="kwrd">="{Binding Path=ErrorMessage}"</span>
+                                   <span class="attr">Visibility</span><span class="kwrd">="{Binding Path=IsErrorMessageVisible, Converter={StaticResource boolToVisibilityConverter}}"</span>
+                                   <span class="attr">Foreground</span><span class="kwrd">="Red"</span> <span class="attr">FontWeight</span><span class="kwrd">="Bold"</span> <span class="attr">FontSize</span><span class="kwrd">="30"</span> <span class="kwrd">/&gt;</span>
+                    <span class="kwrd">&lt;/</span><span class="html">behaviors:Overlay.Content</span><span class="kwrd">&gt;</span>
+                <span class="kwrd">&lt;/</span><span class="html">DataTemplate</span><span class="kwrd">&gt;</span>
+            <span class="kwrd">&lt;/</span><span class="html">ContentControl.ContentTemplate</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;/</span><span class="html">ContentControl</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;/</span><span class="html">Grid</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">Window</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>in this case the expected behavior is that ErrorMessage and IsErrorMessageVisible properties can be found on the object identified by the ChildOfSource property exposed, and bound as the Content of the ContentControl, by the Source element bound as the DataContext of the root Window.</p>
+<p>It does not work, <em>period</em>. The data binding engine looks for the 2 bound properties on the object identified by the Source property bound on the Window element…why?</p>
+<p>The problem is that the adorner content, the TextBlock in this sample, is a child (in term of visual tree) of the Adorner element but the adorner element is not child of the adorned element but is child of the first AdornerLayer found in the logical tree…and in the sample above the first AdornerLayer that can be found is the implicit one, always created by WPF, child of the root Window, thus our TextBlock is a visual child of the Window and not of the Grid and this explains why the data binding engine looks for properties in a place we think is the wrong place.</p>
+<p>The solution is fairly simple:</p>
+<ol>
+<li>directly bind the DataContext of the elements in the template using the element name of the outer control;</li>
+<li>explicitly wraps the content of the DataTemplate within an AdornerLayer;</li></ol>
+<p>.m</p>  

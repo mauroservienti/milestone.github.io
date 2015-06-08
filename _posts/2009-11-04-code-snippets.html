@@ -1,0 +1,143 @@
+---
+layout: post
+title: Code Snippets
+date: '2009-11-04T08:30:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Visual Studio
+modified_time: '2012-08-04T19:44:53.347+02:00'
+thumbnail: https://lh4.googleusercontent.com/-dXlj1OHPIbg/TzEvUoJ4OKI/AAAAAAAAA-I/V5cfg0TXu_I/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6744675628138607944
+blogger_orig_url: http://milestone.topics.it/2009/11/code-snippets.html
+---
+
+<span>Parliamo un po’ di produttività… ma non tanto in termini di linee di codice scritte in una unità di tempo quanto piuttosto di come e quanto cali la nostra, la mia sicuramente, resa a causa della noia che scrivere codice sempre uguale produce…</span><br>  <span>Se usate Wpf (o in generale sviluppo di applicazione rich client) questo è un esempio di noia mortale:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">private </span><span style="color: #2b91af">String </span>_myValue = <span style="color: blue">null</span>;
+<span style="color: blue">public </span><span style="color: #2b91af">String </span>MyValue
+{
+    <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._myValue; }
+    <span style="color: blue">set
+    </span>{
+        <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.MyValue )
+        {
+            <span style="color: blue">this</span>._myValue = <span style="color: blue">value</span>;
+            <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.MyValue );
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>il supporto per INotifyPropertyChanged è veramente tedioso da scrivere e ad esempio in un’applicazione Wpf basata su M-V-VM lo scrivere <em>decinaia e decinaia</em> di volte :-)</span><br>
+
+<span><strong>Code Snippets</strong></span><br>
+
+<span>Perchè quindi non farsi un Code Snippet? che scritta una cosa del genere:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-_b2WpRjSa_s/TzEvVGPX2gI/AAAAAAAAA-M/or__KuFi0Gs/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-dXlj1OHPIbg/TzEvUoJ4OKI/AAAAAAAAA-I/V5cfg0TXu_I/image_thumb.png" width="404" height="54"></a> </span><br>
+
+<span>esploda in questo?:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-X48KRWrs-jg/TzEvWng7NXI/AAAAAAAAA-c/6nzWwY-eJDE/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-ajUW_HivcUI/TzEvVoIhwJI/AAAAAAAAA-Y/N9znvU8ygjM/image_thumb_1.png" width="244" height="110"></a> </span><br>
+
+<span>permettendoci di ridurre all’osso quello che dobbiamo scrivere.</span><br>
+
+<span><strong>How to…</strong></span><br>
+
+<span>Un Code Snippet è semplicemente un file xml con estensione “.snippet” che opportunamente piazzato viene egregiamente digerito da Visual Studio e dall’intellisense:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-ruCWInJu-5k/TzEvXl7CUdI/AAAAAAAAA-s/cZm5BswwKB4/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-WiXl-Gdn9yA/TzEvXOuGtDI/AAAAAAAAA-k/6KAOP5u3tGA/image_thumb_2.png" width="244" height="203"></a> </span><br>
+
+<span>Il Code Snippet che produce quella proprietà è questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><?</span><span style="color: #a31515">xml </span><span style="color: red">version</span><span style="color: blue">=</span>"<span style="color: blue">1.0</span>" <span style="color: red">encoding</span><span style="color: blue">=</span>"<span style="color: blue">UTF-8</span>"<span style="color: blue">?>
+<</span><span style="color: #a31515">CodeSnippets </span><span style="color: red">xmlns</span><span style="color: blue">=</span>"<span style="color: blue">http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet</span>"<span style="color: blue">>
+  <</span><span style="color: #a31515">CodeSnippet </span><span style="color: red">Format</span><span style="color: blue">=</span>"<span style="color: blue">1.0.0</span>"<span style="color: blue">>
+    <</span><span style="color: #a31515">Header</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Title</span><span style="color: blue">></span>Creates a Property with PropertyChanged Support using lambda expressions.<span style="color: blue"></</span><span style="color: #a31515">Title</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Author</span><span style="color: blue">></span>topics.it<span style="color: blue"></</span><span style="color: #a31515">Author</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Description</span><span style="color: blue">></</span><span style="color: #a31515">Description</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Shortcut</span><span style="color: blue">></span>ppcl<span style="color: blue"></</span><span style="color: #a31515">Shortcut</span><span style="color: blue">>
+      <</span><span style="color: #a31515">SnippetTypes</span><span style="color: blue">>
+        <</span><span style="color: #a31515">SnippetType</span><span style="color: blue">></span>Expansion<span style="color: blue"></</span><span style="color: #a31515">SnippetType</span><span style="color: blue">>
+      </</span><span style="color: #a31515">SnippetTypes</span><span style="color: blue">>
+    </</span><span style="color: #a31515">Header</span><span style="color: blue">>
+    <</span><span style="color: #a31515">Snippet</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Declarations</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Literal </span><span style="color: red">Editable</span><span style="color: blue">=</span>"<span style="color: blue">true</span>"<span style="color: blue">>
+          <</span><span style="color: #a31515">ID</span><span style="color: blue">></span>PropertyName<span style="color: blue"></</span><span style="color: #a31515">ID</span><span style="color: blue">>
+          <</span><span style="color: #a31515">Default</span><span style="color: blue">></span>PropertyName<span style="color: blue"></</span><span style="color: #a31515">Default</span><span style="color: blue">>
+        </</span><span style="color: #a31515">Literal</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Literal </span><span style="color: red">Editable</span><span style="color: blue">=</span>"<span style="color: blue">true</span>"<span style="color: blue">>
+          <</span><span style="color: #a31515">ID</span><span style="color: blue">></span>PropertyField<span style="color: blue"></</span><span style="color: #a31515">ID</span><span style="color: blue">>
+          <</span><span style="color: #a31515">Default</span><span style="color: blue">></span>propertyField<span style="color: blue"></</span><span style="color: #a31515">Default</span><span style="color: blue">>
+        </</span><span style="color: #a31515">Literal</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Literal </span><span style="color: red">Editable</span><span style="color: blue">=</span>"<span style="color: blue">true</span>"<span style="color: blue">>
+          <</span><span style="color: #a31515">ID</span><span style="color: blue">></span>PropertySystemType<span style="color: blue"></</span><span style="color: #a31515">ID</span><span style="color: blue">>
+          <</span><span style="color: #a31515">Default</span><span style="color: blue">></span>System.Object<span style="color: blue"></</span><span style="color: #a31515">Default</span><span style="color: blue">>
+        </</span><span style="color: #a31515">Literal</span><span style="color: blue">>
+        <</span><span style="color: #a31515">Literal </span><span style="color: red">Editable</span><span style="color: blue">=</span>"<span style="color: blue">true</span>"<span style="color: blue">>
+          <</span><span style="color: #a31515">ID</span><span style="color: blue">></span>PropertyDefaultValue<span style="color: blue"></</span><span style="color: #a31515">ID</span><span style="color: blue">>
+          <</span><span style="color: #a31515">Default</span><span style="color: blue">></span>null<span style="color: blue"></</span><span style="color: #a31515">Default</span><span style="color: blue">>
+        </</span><span style="color: #a31515">Literal</span><span style="color: blue">>
+      </</span><span style="color: #a31515">Declarations</span><span style="color: blue">>
+      <</span><span style="color: #a31515">Code </span><span style="color: red">Language</span><span style="color: blue">=</span>"<span style="color: blue">csharp</span>"<span style="color: blue">>
+        <![CDATA[</span><span style="color: gray">private $PropertySystemType$ _$PropertyField$ = $PropertyDefaultValue$;
+public $PropertySystemType$ $PropertyName$
+{
+    get { return this._$PropertyField$; }
+    set 
+    {
+        if( value != this.$PropertyName$ )
+        {
+            this._$PropertyField$ = value;
+            this.OnPropertyChanged( () => this.$PropertyName$ );
+        }
+    }
+}$end$</span><span style="color: blue">]]>
+      </</span><span style="color: #a31515">Code</span><span style="color: blue">>
+    </</span><span style="color: #a31515">Snippet</span><span style="color: blue">>
+  </</span><span style="color: #a31515">CodeSnippet</span><span style="color: blue">>
+</</span><span style="color: #a31515">CodeSnippets</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Le 2 cose degne di nota sono la sezione “Declarations”:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Declarations</span><span style="color: blue">>
+  <</span><span style="color: #a31515">Literal </span><span style="color: red">Editable</span><span style="color: blue">=</span>"<span style="color: blue">true</span>"<span style="color: blue">>
+    <</span><span style="color: #a31515">ID</span><span style="color: blue">></span>PropertyName<span style="color: blue"></</span><span style="color: #a31515">ID</span><span style="color: blue">>
+    <</span><span style="color: #a31515">Default</span><span style="color: blue">></span>PropertyName<span style="color: blue"></</span><span style="color: #a31515">Default</span><span style="color: blue">>
+  </</span><span style="color: #a31515">Literal</span><span style="color: blue">>
+</span><span style="color: blue"></</span><span style="color: #a31515">Declarations</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che serve per aggiungere elementi editabili durante la fase di editing, appunto :-), dello snippet, usando il tabulatore sarà possibile “navigare” tra i vari elementi all’interno dell’editor, e la sezione “Code”:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Code </span><span style="color: red">Language</span><span style="color: blue">=</span>"<span style="color: blue">csharp</span>"<span style="color: blue">>
+  <![CDATA[</span><span style="color: gray">private $PropertySystemType$ _$PropertyField$ = $PropertyDefaultValue$;
+public $PropertySystemType$ $PropertyName$
+{
+    get { return this._$PropertyField$; }
+    set 
+    {
+        if( value != this.$PropertyName$ )
+        {
+            this._$PropertyField$ = value;
+            this.OnPropertyChanged( () => this.$PropertyName$ );
+        }
+    }
+}$end$</span><span style="color: blue">]]>
+</</span><span style="color: #a31515">Code</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>In cui inserire il blocco di codice che vogliamo snippettare :-)</span><br>
+
+<span>Ci sono svariati tool per la gestione degli snippet ma secondo me l’unico che merita, oltre naturalmente ad un decente editor per file xml (ad esempio Visual Studio :-) ) è <a href="http://exportascodesnippet.codeplex.com/">questo add-in</a> del “compare” <a href="http://community.visual-basic.it/Alessandro">Alessandro</a>… che è un bravo ragazzo nonstante il set di che ha sul blog sembri dire tutto il contrario :-P</span><br>
+
+<span><em>Happy snippetting…</em> ok, ok, scusate :-)</span><br>
+
+<span>.m</span><br>

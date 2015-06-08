@@ -1,0 +1,117 @@
+---
+layout: post
+title: Wpf => Wpf.BringUx2TheMax()
+date: '2009-05-29T14:44:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T23:37:31.314+01:00'
+thumbnail: https://lh3.googleusercontent.com/-GDrNhwSClEA/Tym-oJtViDI/AAAAAAAAAcY/gQD6PU4quIQ/s72-c/image_thumb_2.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2157768607721746167
+blogger_orig_url: http://milestone.topics.it/2009/05/wpf-wpfbringux2themax.html
+---
+
+<span>Nulla di tecnico stavolta solo un esempio di quello che si può fare, non tanto graficamente perchè sono una mezza-ciofeca, quanto in termini di UX; abbiamo parlato di <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/15/loadinghellip-adorner-2.aspx" target="_blank">Loading Adorner</a>, con lo scopo di migliorare l’esperienza dell’utente durante l’uso della nostra applicazione.</span><br>  <span>Naturalmente non basta, uffa…, l’utente si aspetta anche altre cose (sempre in termini di operazioni asincrone):</span><br>  <ul>   <li>La possibilità di annullare l’operazione in corso; </li>    <li>Feedback sullo stato d’esecuzione/avanzamento dell’operazione; </li> </ul>  <span>Entrambe le cose non è detto che siano di facile soluzione, analizziamole una alla volta:</span><br>  <span><strong>Annullamento dell’operazione asincrona</strong></span><br>  <span>Perchè un’operazione asincrona sia effettivamente annullabile non è di certo sufficiente piazzare un bel pulsantio “Annulla” sulla nostra UI… è invece un requisito fondamentale che tutta la “catena” dei componenti coinvolti nell’operazione asincrona abbia ben noto il concetto di annullamento.</span><br>  <span>Ad esempio il codice seguente è solo apparentemente conscio del concetto di annullamento:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>worker = <span style="color: #2b91af">Worker</span>.UsingAsArgument( query )
+    .AndExpectingAsResult<<span style="color: #2b91af">IEnumerable</span><TEntity>>()
+    .WhenExecutedDo( arg =>
+    {
+        arg.Result = <span style="color: blue">this</span>.Repository.GetByQuery( arg.Argument );
+<span style="color: blue">    </span>} )
+    .ButBeforeDo( arg =>
+    {
+        <span style="color: blue">this</span>.Items.DataSource.Clear();
+        <span style="color: blue">this</span>.Selection.DataSource.Clear();
+
+        <span style="color: blue">this</span>.IsBusy = <span style="color: blue">true</span>;
+    } )
+    .AndAfterDo( arg =>
+    {
+        <span style="color: blue">this</span>.Items.DataSource
+            .CastTo<<span style="color: #2b91af">IEntityCollection</span><TEntity>>()
+            .BulkLoad( arg.Result );
+
+        <span style="color: blue">this</span>.IsBusy = <span style="color: blue">false</span>;
+    } )
+    .Execute();
+
+worker.Cancel();</pre>
+</blockquote>
+
+<span>ed infatti non annulla proprio un bel niente ;-) o meglio la richiesta di annullamento viene correttamente iniettata ma il “repository” non sa proprio nulla di richieste di annullamento e quindi… non c’è trippa per gatti :-)</span><br>
+
+<span>La soluzione, dietro le quinte abbastanza complessa, forse anche troppo, è:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>repo = <span style="color: blue">this</span>.Repository.AsAsync( arg.CancellationToken );
+arg.Result = repo.GetByQuery( arg.Argument );</pre>
+</blockquote>
+
+<span>Che comporta rendere conscia del concetto di “asincronia” l’intera pipeline, a questo punto il repository, che potete immaginare non è più lo stesso, è in grado di digerire quel <em>CancellationToken</em> e di conseguenza reagire alla richiesta di annullamento.</span><br>
+
+<span><strong>Feedback</strong></span><br>
+
+<span>Facciamo un classico esempio: una “form” di ricerca in cui l’utente immette dei criteri, in questo caso una lista di keyword separate dal ‘;’, il sistema per impostazione predefinita, se la singola keyword non contiene caratteri jolly, implicitamente la racchiude tra caratteri jolly (i mie utenti non è che ne capiscano molto di ‘*’ e ‘?’). Quindi ricapitolando:</span><br>
+
+<blockquote>
+  <span>mauro –> *mauro* 
+    <br>mau* –> mau*</span><br>
+</blockquote>
+
+<span>Da questo ne consegue che se l’utente inserisce qualcosa di molto corto senza caratteri jolly la ricerca potrebbe produrre molti risultati e impiegare di conseguenza molto tempo.</span><br>
+
+<span>Come per il supporto per la cancellazione, se vogliamo dare un vero feedback all’utente, dove per vero intendiamo una progress bar reale e non farlocca con IsIndeterminate=”True”, dobbiamo rendere conscia l’intera pipeline e in questo caso direi che è un lavoro pressochè inutile; possiamo però fare comunque una cosa decisamente interessante.</span><br>
+
+<span>L’utente cerca “<em>se</em>”, questo comporta che la ricerca (una sorta di Full Text) viene fatta per “<em>*se*</em>”, quando l’utente pigia “Cerca” il nostro bel <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/15/loadinghellip-adorner-2.aspx" target="_blank">Busy Adorner</a> prende vita:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-cakTJp3h7gA/Tym-o6N0zMI/AAAAAAAAAcg/BZF7yve5nAk/image_6.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-GDrNhwSClEA/Tym-oJtViDI/AAAAAAAAAcY/gQD6PU4quIQ/image_thumb_2.png" width="244" height="173"></a> </span><br>
+
+<span>dopo 2” di attesa però qualcosa cambia:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-GXJaBJKMNds/Tym-qEvnYcI/AAAAAAAAAcw/TB4Rb-QVXkY/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-Ql4Db13gi4E/Tym-pvPdWSI/AAAAAAAAAck/avsBrKj6lkg/image_thumb.png" width="244" height="172"></a> </span><br>
+
+<span>Nella mia infrastruttura asincrona, e dal punto di vista dell’utilizzatore, la cosa è molto semplice:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">Worker</span>.UsingAsArgument( query )<br>    .AndExpectingAsResult<<span style="color: #2b91af">IEnumerable</span><TEntity>>()<br>    ...<br>    .OnWarningThresholdReached( <span style="color: #2b91af">TimeSpan</span>.FromMilliseconds( 2000 ), () =>
+    {
+        <span style="color: blue">this</span>.Dispatch( () => <span style="color: blue">this</span>.WarningThresholdReached = <span style="color: blue">true </span>);
+    } )<br><br>    ...<br>    .Execute();</pre>
+</blockquote>
+
+<span>L’AsyncWorker espone un metodo ad hoc per farlo: OnWarningThresholdReached() che prende come primo parametro un TimeSpan che indica il tempo massimo dopo il quale vogliamo che il sistema generi un warning, e, come secondo parametro, un delagato (Action) che il sistema invocherà nel momento in cui l’operazione asincrona eccede il tempo limite impostato.</span><br>
+
+<span>Dietro le quinte all’atto della Execute viene istanziato un Timer che tiene traccia di quello che sta succedendo, se il Timer scatta, prima della fine dell’operazione asincrona, viene invocato il delegato che, nell’esempio, altro non fa che <em>triggherare</em> la “comparsa” della scritta “L’operazione sta impiegando più tempo del previsto.” Il ViewModel che gestisce la cosa potrebbe anche decidere di cambiare, solo a questo punto, l’eseguibilità del comando annulla.</span><br>
+
+<span>Tutto ciò mi ha anche portato a scoprire che la mia <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/allergia-da-manuale-delle-istruzioni-e-conseguenzehellip.aspx" target="_blank">allergia da manuale delle istruzioni</a> è particolarmente grave :-D, di primo acchito la comparsa del testo aggiuntivo non ne voleva sapere di funzionare, ergo questo banalissimo xaml non sortiva il suo effetto:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBlock </span><span style="color: red">Margin</span><span style="color: blue">="3,0,3,0"
+           </span><span style="color: red">Visibility</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=WarningThresholdReached, </span><span style="color: red">Converter</span><span style="color: blue">={</span><span style="color: #a31515">StaticResource </span><span style="color: red">booleanToHiddenConverter</span><span style="color: blue">}}"
+           </span><span style="color: red">FontStyle</span><span style="color: blue">="Italic"
+           </span><span style="color: red">Text</span><span style="color: blue">="L'Operazione sta impegando più tempo del previsto."/></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Dopo lunghe indagini, perchè neanche il manuale delle istruzioni aiutava, scopro che:</span><br>
+
+<ul>
+  <li>Il motore di binding di Wpf prende in considerazione solo ed esclusivamente i Visual che stanno nel Visual Tree;</li>
+
+  <li>Un Visual (Child) che sta dentro un Adorner <u>non</u> è parte del Visual Tree a meno di non aggiungerlo <u>esplicitamente</u>:</li>
+</ul>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span>BusyAdorner( <span style="color: #2b91af">UIElement </span>adornedElement, <span style="color: #2b91af">Object </span>userContent )
+    : <span style="color: blue">base</span>( adornedElement )
+{
+    <span style="color: blue">this</span>.userContent = <span style="color: blue">new </span><span style="color: #2b91af">ContentPresenter</span>() { Content = userContent };
+    <u><strong><span style="color: blue">this</span>.AddVisualChild( <span style="color: blue">this</span>.userContent );</strong></u>
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Dimenticavo, quel booleanToHiddenConverter è un converter in tutto e per tutto identico al BooleanToVisibilityConverter builtin solo che mi permettere di specificare come interpretare il valore false, il converter builtin parte dal presupposto che false corrisponda a Visibility.Collapsed, mentre siccome esiste anche Hidden (che ha un comportamento ben diverso) il mio converter può essere dichiarato così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">BooleanToVisibilityConverter </span><span style="color: red">FalseValue</span><span style="color: blue">="Hidden" </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="elementKey" /></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>.m</span><br>

@@ -1,0 +1,197 @@
+---
+layout: post
+title: 'AngularJS: Controllers'
+date: '2014-01-08T10:43:00.000+01:00'
+author: Mauro Servienti
+tags:
+- AngularJS
+- Software Mason
+- SPA
+modified_time: '2013-12-19T15:13:57.052+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4557100398507027458
+---
+
+Index:<br />
+<ul>
+<li><a href="http://milestone.topics.it/2013/12/a-gentle-introduction-to-angularjs.html">A gentle introduction to AngularJS</a>  </li>
+<li><a href="http://milestone.topics.it/2013/12/angularjs-app-and-modules.html">App and modules</a>  </li>
+<li><a href="http://milestone.topics.it/2013/12/angularjs-modules-2-phase-startup.html">Modules 2 phase startup</a>  </li>
+<li><a href="http://milestone.topics.it/2013/12/angularjs-dependency-injection-primer.html">Dependency Injection primer</a></li>
+</ul>
+Given that <a href="http://angularjs.org/" target="_blank">AngularJS</a> is also a presentation framework we expect it to be capable of dealing with presentation concerns. Since I’m a desktop guy coming from the MVVM pattern I tend to compare everything, related to UI, with MVVM and since AngularJS supports 2-way data binding to me it seems pretty reasonable to compare it with MVVM.<br />
+<strong>Model View ViewModel vs. Model View Controller w/ 2-way data binding</strong><br />
+The model is the model, wherever it comes from, and is the same concept on both sides. Even the View is practically the same thing. In MVVM the ViewModel is the glue that keeps together the View and the Model via 2-way data binding, in AngularJS, mainly due to the nature and lack of possibilities of JavaScript, the ViewModel is represented by a fourth actor called the “$scope”, the scope is something really similar to the ASP.net MVC ViewBag and is the scope that acts as the ViewModel, the role of the controller is to populate the scope with the data coming from the model and to sync them back whenever the user, or the system, requires them to be saved.<br />
+The scope is totally managed by AngularJS and allows us to have 2-way data binding without using any particular notation in our json objects, they are just, and will remain, plain old json objects.<br />
+<strong>Controllers</strong><br />
+Given that we have told that in order to achieve control over the data binding process we need a controller let’s see how to create our first controller:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">&lt;!</span><span class="html">DOCTYPE</span> <span class="attr">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">html</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">head</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">title</span><span class="kwrd">&gt;</span>My First Sample<span class="kwrd">&lt;/</span><span class="html">title</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">script</span> <span class="attr">type</span><span class="kwrd">="text/javascript"</span> 
+            <span class="attr">src</span><span class="kwrd">="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.3/angular.min.js"</span><span class="kwrd">&gt;&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+    &lt;script type=<span class="str">"text/javascript"</span>&gt;
+    (<span class="kwrd">function</span> () {
+      <span class="str">'use strict'</span>;
+      
+      angular.module(<span class="str">'my-controllers'</span>, []);
+      <span class="kwrd">var</span> app = angular.module(<span class="str">'my-app'</span>, [<span class="str">'my-controllers'</span>]);
+      
+      <span class="kwrd">var</span> ctrl = <span class="kwrd">function</span>(scope){
+        scope.model = {
+          name: <span class="str">''</span>
+        };
+      };
+      ctrl.$inject=[<span class="str">'$scope'</span>];
+      
+      angular.module(<span class="str">'my-controllers'</span>).controller(<span class="str">'myFirstController'</span>, ctrl);
+      
+    }());
+    <span class="kwrd">&lt;/</span><span class="html">script</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">head</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;</span><span class="html">body</span> <span class="attr">data-ng-app</span><span class="kwrd">="my-app"</span><span class="kwrd">&gt;</span>
+<span class="kwrd">    &lt;</span><span class="html">div</span> <span class="attr">data-ng-controller</span><span class="kwrd">="myFirstController"</span><span class="kwrd">&gt;</span>
+        <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="model.name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+        {{ "{{" }}model.name}}
+    <span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">body</span><span class="kwrd">&gt;</span>
+<span class="kwrd">&lt;/</span><span class="html">html</span><span class="kwrd">&gt;</span></pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+We are still using the same single file sample that we create the first time.<br />
+<strong>Dissection</strong><br />
+<blockquote>
+<pre class="csharpcode">angular.module(<span class="str">'my-controllers'</span>, []);
+<span class="kwrd">var</span> app = angular.module(<span class="str">'my-app'</span>, [<span class="str">'my-controllers'</span>]);</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+the first thing is to create a module to host our controllers, remember that it is not required it is just a matter of having code well organized. After creating an ad-hoc module we make our application module depends on the newly create controllers module.<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">var</span> ctrl = <span class="kwrd">function</span>(scope){
+    scope.model = {
+        name: <span class="str">''</span>
+    };
+};
+ctrl.$inject=[<span class="str">'$scope'</span>];
+</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+The second step is to create our first controller. A controller is just a class, well a JavaScript class so a simple function, that, as all the other pieces that lives in an AngularJS application, can have dependencies.<br />
+In this case the controller will depend on the “magic” AngularJS scope. Take a look at the syntax ($inject) we used in this case to “annotate” dependencies so that even our controller can survive to the minification process.<br />
+In the controller function we attached a new json object to the scope provided by AngularJS. The json object can have the shape we need and can be named as we need without any restriction.<br />
+The last step is to register our controller into the AngularJS dependency injection engine:<br />
+<blockquote>
+<pre class="csharpcode">angular.module(<span class="str">'my-controllers'</span>).controller(<span class="str">'myFirstController'</span>, ctrl);</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+We ask AngularJS to retrieve a reference the controllers module and we call the “controller” method on the module, the controller method registers the controller function as transient in the dependency injection engine, thus each time that specific controller is requested a new instance is created.<br />
+Now that the code dissection is completed let’s see what we changed in the HTML markup, the view:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">&lt;</span><span class="html">div</span> <span class="attr">data-ng-controller</span><span class="kwrd">="myFirstController"</span><span class="kwrd">&gt;</span>
+    <span class="kwrd">&lt;</span><span class="html">input</span> <span class="attr">type</span><span class="kwrd">="text"</span> <span class="attr">data-ng-model</span><span class="kwrd">="model.name"</span> <span class="attr">placeholder</span><span class="kwrd">="Write something here..."</span> <span class="kwrd">/&gt;</span>
+    {{ "{{" }}model.name}}
+<span class="kwrd">&lt;/</span><span class="html">div</span><span class="kwrd">&gt;</span>
+</pre>
+</blockquote>
+Nothing special in the end, we wrapped our original markup in a DIV element and applied the ng-controller attribute to that element in order to tell AngularJS that we want that the view identified by the DIV is managed by the controller named “myFirstController” that is exactly the same name we used to register the controller before.<br />
+At runtime the markup fragment and the controller shares the same $scope instance thus the data binding engine can “glue” things together for us, notice also that we changed the data binding expressions so to adhere to the new shape of the json object attached to the scope.<br />
+Next time: $scope, $rootScope, scope inheritance…oh my…<br />
+.m 
+  

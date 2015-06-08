@@ -1,0 +1,206 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): Memento'
+date: '2010-06-19T13:09:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Windows Phone 7
+- Silverlight
+modified_time: '2012-02-20T12:11:18.735+01:00'
+thumbnail: https://lh6.googleusercontent.com/-ywYe_sSyzZQ/T0IqEg4xIeI/AAAAAAAABbw/zaKpUr_o8ck/s72-c/ee5f8ab7-4ead-4687-8a5d-c14cffc02766.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1841007848154976973
+blogger_orig_url: http://milestone.topics.it/2010/06/radical-101-vacuum-memento.html
+---
+
+<span><a href="https://lh5.googleusercontent.com/-5WRQfMt9jdg/T0IqFHLuK_I/AAAAAAAABb4/pe8dEKyJRFQ/4ec8f2fa-b185-4212-9ba8-f4d6024ae08f.png" rel="shadowbox"><img style="border-right-width: 0px; margin: 0px 10px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Radical" border="0" alt="Radical" align="left" src="https://lh6.googleusercontent.com/-ywYe_sSyzZQ/T0IqEg4xIeI/AAAAAAAABbw/zaKpUr_o8ck/ee5f8ab7-4ead-4687-8a5d-c14cffc02766.png" width="37" height="64"></a>CodePlex Release: <a title="http://radical.codeplex.com/releases/view/46757" href="http://radical.codeplex.com/releases/view/46757">http://radical.codeplex.com/releases/view/46757</a></span><br>  <span>Ne <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/510977580112069157" target="_blank">avevo già parlato</a> tempo addietro e mi ero pure ripromesso di fare una lunga serie post sull’argomento, poi come al solito il lavoro, l’accumularsi delle cose e le novità impellenti mi hanno fatto deviare… speriamo che sia l’occasione buona per riprendere quella serie.</span><br>  <span><a href="http://radical.codeplex.com/" target="_blank">Radical</a> offre out-of-the-box un sistema di change tracking che vi consente di tenere traccia dello stato di un intero grafo con un costo di implementazione decisamente basso. Ora questo motore è disponibile anche per Silverlight e Windows Phone 7.</span><br>  <span>Vediamo un esempio utilizzando come base un’applicazione Silverlight, banalissima, basata su Model View ViewModel; come da tradizione avremo un bel modello:</span><br>  <span><a href="https://lh5.googleusercontent.com/-B41l8h_4kaI/T0IqHSIZHgI/AAAAAAAABcI/anob6QARNUY/6925e93d-7103-4c44-88f4-4f3f0554b8e0.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-2o5cEF6WePA/T0IqGNO-PVI/AAAAAAAABb8/g7BYPZhLfqA/2ef37946-e4bf-4d70-bc39-9d849705014d.png" width="165" height="144"></a> </span><br>  <span>Che mega sforzo direte voi… :-) Teniamo basso il profilo che già in questo post di carne al fuoco ne mettiamo in quantità industriale :-P</span><br>  <span>Parallelamente abbiamo anche una prima parte del ViewModel per il nostro <em>amato</em> trittico:</span><br>  <span><a href="https://lh4.googleusercontent.com/-fDOzEGudGLg/T0IqI-vefXI/AAAAAAAABcY/ReF3FreFHC4/83c11a5f-ad2c-482d-831c-8626c5d2c79b.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/--Il1F9_ah40/T0IqH8Aq7UI/AAAAAAAABcQ/M2okdOLgkEI/87c3497d-f9ff-4308-8995-89be6ca24914.png" width="177" height="240"></a> </span><br>  <span>ViewModel che sarà esposto alla View dal ViewModel dell’applicazione:</span><br>  <span><a href="https://lh6.googleusercontent.com/-nJ7-KOhh79g/T0IqKKlTLzI/AAAAAAAABco/Xz4kQBuY6Ew/011fdbc6-8252-438b-9ea1-add98caddf05.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-7lj11Im0mkQ/T0IqJpD73KI/AAAAAAAABcc/xwqdDt8YINc/79da43bb-3111-45a6-ba11-ce8f4541bc8b.png" width="244" height="158"></a> </span><br>  <span>La View infine è altrettanto banale:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+    <</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23"
+             </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Entity.FirstName, </span><span style="color: red">Mode</span><span style="color: blue">=TwoWay}" 
+             </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Left" </span><span style="color: blue">
+             </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+             </span><span style="color: red">Width</span><span style="color: blue">="156" />
+    <</span><span style="color: #a31515">TextBox </span><span style="color: red">Height</span><span style="color: blue">="23" 
+             </span><span style="color: red">Text</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Entity.LastName, </span><span style="color: red">Mode</span><span style="color: blue">=TwoWay}"
+             </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Left" </span><span style="color: blue">
+             </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+             </span><span style="color: red">Width</span><span style="color: blue">="156" />
+    <</span><span style="color: #a31515">Button </span><span style="color: red">Content</span><span style="color: blue">="Undo"
+            </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=UndoCommand}"
+            </span><span style="color: red">Height</span><span style="color: blue">="23" 
+            </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Left" </span><span style="color: blue"> 
+            </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top" 
+            </span><span style="color: red">Width</span><span style="color: blue">="75" />
+    <</span><span style="color: #a31515">Button </span><span style="color: red">Content</span><span style="color: blue">="Redo" 
+            </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=RedoCommand}"
+            </span><span style="color: red">Height</span><span style="color: blue">="23" 
+            </span><span style="color: red">HorizontalAlignment</span><span style="color: blue">="Left"</span><span style="color: blue">
+            </span><span style="color: red">VerticalAlignment</span><span style="color: blue">="Top"<br>            </span><span style="color: red">Width</span><span style="color: blue">="75" />
+</</span><span style="color: #a31515">Grid</span><span style="color: blue">>
+</span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Si limita a visualizzare le informazioni e ad esporre 2 dei comandi, tra quelli disponibili, per la gestione del Memento: Undo e Redo. 
+  <br>Una volta mandato in esecuzione il tutto quello che otteniamo è una sequenza di questo tipo:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-ZVDL2q_zJo0/T0IqMkU4CTI/AAAAAAAABc4/Vn3-nEtVgco/5001eb08-77ee-488b-bb40-de8d733da262.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-dJIA00RGO2Y/T0IqL1CCjZI/AAAAAAAABcw/Rnm8awpcGDA/ebdc60bb-e5ea-4433-9eb6-858e7fa85f13.png" width="169" height="104"></a> <a href="https://lh4.googleusercontent.com/-7LtLekDoMW0/T0IqOiW351I/AAAAAAAABdI/tgkw-zPwo9U/2819b75c-3b58-4ce1-a62d-640161666d07.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-Z-cf-c4X_do/T0IqOGi1HzI/AAAAAAAABc8/-dVScGJgpYY/51d14498-0953-4929-b635-7d2839531d7b.png" width="173" height="104"></a> <a href="https://lh6.googleusercontent.com/---c8TOGB_Xw/T0IqQCbDiNI/AAAAAAAABdU/Fe9HXd0_Rv4/371e8f7d-7c5d-42c6-af0e-ee0a2469dad5.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-Va2jdJJzPB0/T0IqPn4coDI/AAAAAAAABdM/Dz0_2LHCTDw/2f4a33d2-f48f-4620-bf85-6563553ce813.png" width="171" height="104"></a> <a href="https://lh3.googleusercontent.com/-H7_0_ab8y-o/T0IqRvIOtyI/AAAAAAAABdo/36xj8j2C7CI/5d982401-9680-48b9-890a-fcb642eae51b.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-r34PAzuNleE/T0IqQ9ygGLI/AAAAAAAABdc/MNJkUD-nrl4/62e3ac89-97cd-4a74-b89f-879028131322.png" width="171" height="104"></a></span><br>
+
+<ol>
+  <li>All’avvio non ci sono modifiche pendenti quindi Undo e Redo non sono disponibili; </li>
+
+  <li>modificando sia il cognome che il nome, basta anche una sola modifica, il tasto Undo diventa attivo; </li>
+
+  <li>premendo Undo l’ultima modifica effettuata, la modifica del nome, viene <em>rollbeccata</em>; </li>
+
+  <li>a questo punto si ativa anche il tasto Redo; </li>
+
+  <li>Premendo Redo viene ripristinato lo stato precedente e quindi il nome è nuovamente modificato; </li>
+</ol>
+
+<span>Ok, ma dove sta il barbatrucco?</span><br>
+
+<span><strong>MainPageViewModel</strong></span><br>
+
+<span>L’applicazione è fatta così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MainPageViewModel </span>: <span style="color: #2b91af">AbstractViewModel
+</span>{
+    <span style="color: blue">readonly </span><span style="color: #2b91af">IChangeTrackingService </span>service = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();
+
+    <span style="color: blue">public </span>MainPageViewModel()
+    {
+        <span style="color: blue">var </span>observer = <span style="color: #2b91af">MementoObserver</span>.Monitor( <span style="color: blue">this</span>.service );
+
+        <span style="color: blue">this</span>.UndoCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnCanExecute( o => <span style="color: blue">this</span>.service.CanUndo )
+            .OnExecute( o => <span style="color: blue">this</span>.service.Undo() )
+            .AddMonitor( observer );
+
+        <span style="color: blue">this</span>.RedoCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnCanExecute( o => <span style="color: blue">this</span>.service.CanRedo )
+            .OnExecute( o => <span style="color: blue">this</span>.service.Redo() )
+            .AddMonitor( observer );
+
+        <span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>()
+        {
+            FirstName = <span style="color: #a31515">"Mauro"</span>,
+            LastName = <span style="color: #a31515">"Servienti"
+        </span>};
+
+        <span style="color: blue">var </span>entity = <span style="color: blue">new </span><span style="color: #2b91af">PersonViewModel</span>();
+
+        <span style="color: blue">this</span>.service.Attach( entity );
+
+        entity.Initialize( person, <span style="color: blue">false </span>);
+
+        <span style="color: blue">this</span>.Entity = entity;
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">PersonViewModel </span>_entity = <span style="color: blue">null</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">PersonViewModel </span>Entity
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._entity; }
+        <span style="color: blue">private set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.Entity )
+            {
+                <span style="color: blue">this</span>._entity = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.Entity );
+            }
+        }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ICommand </span>UndoCommand { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ICommand </span>RedoCommand { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Nulla di trascendentale:</span><br>
+
+<ul>
+  <li>abbiamo dichiarato e inizializzato il motore di change tracking, ci sono <em>n</em> pattern possibili per gestire questa cosa, diciamo che tipicamente il ciclo di vita di un sistema di change tracking è molto vicino al ciclo di vita di un DataContext; </li>
+
+  <li>Nel costruttore inizializziamo i due comandi Undo e Redo agganciando un trigger che ne forzi la rivalutazione ogni quavolta il motore di change tracking notifica che ci sono state delle variazioni di stato; </li>
+
+  <li>Creiamo un’istanza di Person, che ad esempio potrebbe arrivare da un repository; </li>
+
+  <li>Creiamo un’istanza del PersonViewModel, anche qui ci sono n modi per ottenerla; </li>
+
+  <li>Chiediamo al motore di change tracking di prendersene cura :-) </li>
+
+  <li>infine inizializziamo e esponiamo la nostra istanza; </li>
+</ul>
+
+<span>Cosa succede in fase di inizializzazione?</span><br>
+
+<span><strong>PersonViewModel</strong></span><br>
+
+<span>Anche qui in apparenza nulla di particolare se non per la sintassi un po’ esoterica :-):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">PersonViewModel </span>: <span style="color: #2b91af">MementoEntity
+</span>{
+    <span style="color: blue">public void </span>Initialize( <span style="color: #2b91af">Person </span>person, <span style="color: #2b91af">Boolean </span>registerAsTransient )
+    {
+        <span style="color: blue">if</span>( registerAsTransient )
+        {
+            <span style="color: blue">this</span>.RegisterTransient();
+        }
+
+        <span style="color: blue">this</span>.SetInitialPropertyValue( () => <span style="color: blue">this</span>.FirstName, person.FirstName );
+        <span style="color: blue">this</span>.SetInitialPropertyValue( () => <span style="color: blue">this</span>.LastName, person.LastName );
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.GetPropertyValue( () => <span style="color: blue">this</span>.FirstName ); }
+        <span style="color: blue">set </span>{ <span style="color: blue">this</span>.SetPropertyValue( () => <span style="color: blue">this</span>.FirstName, <span style="color: blue">value </span>); }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>LastName
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>.GetPropertyValue( () => <span style="color: blue">this</span>.LastName ); }
+        <span style="color: blue">set </span>{ <span style="color: blue">this</span>.SetPropertyValue( () => <span style="color: blue">this</span>.LastName, <span style="color: blue">value </span>); }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+<a href="http://11011.net/software/vspaste"></a>
+
+<span>MementoEntity funziona in maniera <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/3498002777709688094" target="_blank">molto simile ad un DependencyObject</a> offre quindi un sistema di storage basato su un <em>Distionary<String, PropertyValue></em> che la stessa MementoEntity, in realtà Entity da cui MementoEntity eredita, utilizza per capire lo stato dell’entità e gestire le variazioni di stato.</span><br>
+
+<span><strong>Sintassi e internals</strong></span><br>
+
+<ul>
+  <li><em>SetInitialPropertyValue</em>: imposta il valore iniziale di una proprietà e serve, internamente, da punto di riferimento per capire quando il valore di una proprietà cambia o ritorna allo stadio di valore iniziale; </li>
+
+  <li><em>SetPropertyValue</em> e <em>GetPropertyValue</em>: sono rispettivamente il set e il get accessor specializzati per accedere al sistema di storage interno di Entity/MementoEntity; </li>
+
+  <li><em>RegisterTransient</em>: ha lo scopo di informare il motore di change tracking che l’entità che sta gestendo è transiente; </li>
+</ul>
+
+<blockquote>
+  <span>Internamente lo storage è un dictionary la cui chiave è il nome della proprietà e il cui valore è un’istanza di PropertyValue, perchè PropertyValue e non Object? per evitare le operazioni di boxing e unboxing dato che tipicamente le proprietà esposte da un entity sono dei value type:</span><br>
+
+  <span><a href="https://lh5.googleusercontent.com/-FOVbrvjvBy0/T0IqSw3rVPI/AAAAAAAABd4/zyuZz2-Ts7A/eb9de04c-5497-4d99-b7c5-f41a7a549d2e.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-Agqat0is4DI/T0IqSKI-y9I/AAAAAAAABdw/dXXoHALSayc/25409522-8092-4750-bc5d-084625fbbe5a.png" width="166" height="240"></a> </span><br>
+
+  <span>Le “entity proprerty” sono infine corredate da metadati che descrivono alcuni possibili comportamenti:</span><br>
+
+  <span><a href="https://lh3.googleusercontent.com/-v3g7hc_IBGY/T0IqVB5cNLI/AAAAAAAABeE/s844jYzdnqM/c3a139c0-fe14-4a6c-b9a8-46bc96ce43f6.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-h6k9Utnzs1o/T0IqTjorl_I/AAAAAAAABeA/e2fLWzM3jJ8/ff64c89b-bd80-4617-8dc6-e90c85cd9824.png" width="240" height="94"></a> </span><br>
+</blockquote>
+
+<span><strong>IChangeTrackingService</strong></span><br>
+
+<span>Ma se tutto fosse “<em>così semplice</em>” non saremmo in grado di tenere traccia dello stato di un grafo, probabilmente avrete già notato la chiamata ad IChangeTrackingService.Attach( <em>IMemento</em> ) che ci fa intuire che il sistema di change tracking sia in grado di tracciare <em>n</em> oggetti contemporaneamente (collection comprese) gestendo correttamente lo stack delle modifiche e la loro sequenzialità.</span><br>
+
+<span><strong>Quindi?</strong></span><br>
+
+<span>Quindi succede che il <em>property system</em> esposto da Entity serve per avere un sistema interrogabile che contiene tutti i valori <u>attuali</u> delle proprietà senza bisogno di conoscere lo schema della classe concreta (PersonViewModel nel nostro esempio) mentre la gestione dello stack delle modifiche viene demandata sempre e comunque al change tracking service a cui l’entità è <em>attached</em>, in questo modo lo storage delle modifiche (IChange) è centralizzato e facilmente gestibile in qualsivoglia punto si abbia accesso al change tracking service corrente.</span><br>
+
+<span>A questo punto è ovvio, ovvio de che direte voi… :-), che la gestione dello stato di un grafo si può ridurre a 2 banali chiamate ad IChangeTrackingService.Undo() e/o IChangeTrackingService.Redo(), ma anche a AcceptChanges() o RejectChanges() per fare altre cose abbastanza ovvie… oppure, decisamente meno ovvio a IChangeTrackingService.GetAdivisory()… di cui parleremo prossimamente.</span><br>
+
+<span><em>Stay tuned & happy change tracking :-)</em></span><br>
+
+<span>.m</span><br>
+

@@ -1,0 +1,66 @@
+---
+layout: post
+title: 'Silverlight navigation: get rid of the view-model-locator'
+date: '2012-03-12T12:14:00.000+01:00'
+author: Mauro Servienti
+tags:
+- PostSharp
+- Silverlight
+- AOP
+modified_time: '2012-03-12T12:14:00.342+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1360597256252097288
+blogger_orig_url: http://milestone.topics.it/2012/03/silverlight-navigation-get-rid-of-view.html
+---
+
+<a href="http://www.sharpcrafters.com/" target="_blank">PostSharp</a> is a must have (period).<br />
+<strong>Let’s start from the beginning</strong><br />
+I’m building a sample application for a friend in order to see if it is possible to have a completely OOB and offline Silverlight application running on a Mac using a document database (<a href="http://ravendb.net/" target="_blank">RavenDB</a> in this case, a special version) as backend.<br />
+On the other side I’m using the same spike to start the <a href="http://radical.codeplex.com/" target="_blank">Radical</a> Presentation Silverlight 5 implementation, if you recall the first time we spoke about it we state that the main pillar should be <strong>simplicity</strong>.<br />
+Simplicity, IMHO, means also friction-less and friction-less in a Silverlight application, for example, can be translated to “navigation application” that uses all the out-of-the-box services provided by the Silverlight infrastructure such as the navigation framework.<br />
+<strong>Why?</strong><br />
+Easy peasy…fast startup is the answer, startup Visual Studio…create a new project and you expect to be up and running just adding a bunch of references.<br />
+Well…all the samples I’ve found out there, the majority of them, does 2 main things:<br />
+<ul>
+<li>some of them get rid of the default navigation framework and start building their own…  </li>
+<li>some of them use the built-in services and introduce that piece of crap called “view-model-locator”…  </li>
+<li>some of them does both of the above… :-/ </li>
+</ul>
+<strong>view-model-locator: why I hate you?</strong><br />
+Basically the main reason is that <em>view-model-locator</em> sounds too much like <em>service-locator</em> that for me is pure evil…view-model-locator is everything other then friction-less, you introduce a class, with pure stupid properties, for the only purpose of linking the view and the view model in a view first scenario where you do not have any control on the view creation (the navigation infrastructure has it).<br />
+<strong>So?</strong><br />
+If you remember some time ago we spoke about the ability, using PostSharp, to <a href="{{ site.baseurl }}{% post_url 2011-09-20-c-typeloaderinterceptor %}" target="_blank">intercept the instantiation</a> of a class. Why not using that really simple type load interceptor to do something like:<br />
+<blockquote>
+<pre style="background: white;"><span style="font-family: Consolas;"><span style="color: #2b91af;"><span style="font-size: 11.3pt;">TypeLoader</span></span><span style="font-size: 11.3pt;">.Engine.AddInterceptor( <span style="color: blue;">new</span>&nbsp;<span style="color: #2b91af;">DelegateTypeLoadInterceptor</span>()
+{
+ IsInterestedInHandler = ( o, m ) =&gt;
+ {
+  <span style="color: blue;">return</span> m == <span style="color: #2b91af;">TypeLoadMomentum</span>.AtConstructorExit &amp;&amp; o <span style="color: blue;">is</span>&nbsp;<span style="color: #2b91af;">Page</span> &amp;&amp; o.GetType().Name.IsLike( <span style="color: #a31515;">"*View"</span> );
+ },
+ 
+ InterceptHandler = ( o, m ) =&gt;
+ {
+  <span style="color: blue;">var</span> viewType = o.GetType();
+  <span style="color: blue;">var</span> aName = <span style="color: blue;">new</span>&nbsp;<span style="color: #2b91af;">AssemblyName</span>( viewType.Assembly.FullName );
+  <span style="color: blue;">var</span> vmTypeName = <span style="color: #2b91af;">String</span>.Format( <span style="color: #a31515;">"{0}.{1}Model, {2}"</span>, viewType.Namespace, viewType.Name, aName.FullName );
+  <span style="color: blue;">var</span> vmType = <span style="color: #2b91af;">Type</span>.GetType( vmTypeName, <span style="color: blue;">true</span> );
+ 
+  <span style="color: blue;">var</span> p = ( <span style="color: #2b91af;">Page</span> )o;
+  p.DataContext = container.Resolve( vmType );
+ }
+} );</span></span></pre>
+</blockquote>
+we basically say:<br />
+<ol>
+<li>every time a view, that is a Page, and whose name ends with “View” is instantiated we are interested in intercept the constructor at the end of the instantiation process; 
+</li>
+<li>we use a convention to determine the view model type name given the view type name; 
+</li>
+<li>we resolve the view model using our favorite IoC container; </li>
+</ol>
+Finally we wire up everything using this single line of code:<br />
+<blockquote>
+<pre style="background: white;"><span style="font-family: Consolas;"><span style="font-size: 11.3pt;">[<span style="color: blue;">assembly</span>: <span style="color: #2b91af;">InterceptTypeLoad</span>( AttributeTargetTypes = <span style="color: #a31515;">"*.Presentation.*View"</span> )]</span></span></pre>
+</blockquote>
+Now we can leverage the Silverlight built-in navigation services without any pain and much more important without any friction.<br />
+If you want to give it a try you can simply use <a href="http://nuget.org/" target="_blank">nuget</a> to grab a reference to <a href="http://nuget.org/packages/Radical.Extensions.Aspects" target="_blank">Radical.Extensions.Aspects</a> that now supports also Silverlight 5.<br />
+.m

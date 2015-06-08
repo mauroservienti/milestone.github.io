@@ -1,0 +1,108 @@
+---
+layout: post
+title: 'Radical 1.0.1 (Vacuum): Model-View-ViewModel'
+date: '2010-06-15T14:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Radical
+- Windows Phone 7
+- Silverlight
+modified_time: '2012-02-20T12:09:03.742+01:00'
+thumbnail: https://lh4.googleusercontent.com/-0d1vjtDwS24/T0IpypPznnI/AAAAAAAABZw/pFkGNMiZ5_Q/s72-c/b9d77e9f-f0ac-4661-9a6f-376ff2d9f37b.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8096995752444922264
+blogger_orig_url: http://milestone.topics.it/2010/06/radical-101-vacuum-model-view-viewmodel.html
+---
+
+<span><a href="https://lh4.googleusercontent.com/-dBJESTknxqI/T0IpzYLoJzI/AAAAAAAABZ0/T2zIs1s3Dvw/2f99e2a2-b406-49e0-b998-3a0d0fdab518.png" rel="shadowbox"><img style="border-right-width: 0px; margin: 0px 10px 0px 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="Radical" border="0" alt="Radical" align="left" src="https://lh4.googleusercontent.com/-0d1vjtDwS24/T0IpypPznnI/AAAAAAAABZw/pFkGNMiZ5_Q/b9d77e9f-f0ac-4661-9a6f-376ff2d9f37b.png" width="37" height="64"></a>Come ho <a href="http://mauroservienti.blogspot.com/2010/06/radical-101-vacuum-ensure-adorner-e-non.html" target="_blank">già detto</a> è live la prima alpha di <a href="http://radical.codeplex.com/" target="_blank">Radical</a> con il supporto per Silverlight 4 e Windows Phone 7: <a title="http://radical.codeplex.com/releases/view/46757" href="http://radical.codeplex.com/releases/view/46757">http://radical.codeplex.com/releases/view/46757</a></span><br>  <span>Ho già parlato di alcune novità ma ce ne sono molte altre come ad esempio quelle in “<em>the Model View ViewModel space</em>”.</span><br>  <span><strong>DelegateCommand</strong></span><br>  <span>Si è vero un po’ trito e ritrito ma serve sempre :-) e vi permette di fare questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MainPageViewModel </span>: <span style="color: #2b91af">AbstractViewModel
+</span>{
+    <span style="color: blue">public </span>MainPageViewModel()
+    {
+        <span style="color: blue">this</span>.MyCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnCanExecute( o => <span style="color: blue">true </span>) <br>            .OnExecute( o => { <span style="color: green">/* execution logic */ </span>} ) ;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ICommand </span>MyCommand { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+</blockquote>
+
+<span>il mio delegate command ha però una marcia in più…</span><br>
+
+<span><strong>Trigger</strong></span><br>
+
+<span>I trigger, noti anche come <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1069924125365624508" target="_blank">IMonitor</a>, se ben usati vi consentono di facilitare molto la manutenzione e la gestione di scenari che altrimenti sarebbero un groviglio di codice:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">MainPageViewModel </span>: <span style="color: #2b91af">AbstractViewModel
+</span>{
+    <span style="color: blue">public </span>MainPageViewModel()
+    {
+        <span style="color: blue">this</span>.MyCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+            .OnCanExecute( o => <span style="color: blue">true </span>)
+            .OnExecute( o => { <span style="color: green">/* execution logic */ </span>} )
+            .AddMonitor
+            ( 
+                <span style="color: #2b91af">PropertyObserver
+                    </span>.For( <span style="color: blue">this </span>)
+                    .Observe( v => v.FirstName ) 
+            );
+    }
+
+    <span style="color: blue">private </span><span style="color: #2b91af">String </span>_firstName = <span style="color: blue">null</span>;
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._firstName; }
+        <span style="color: blue">set
+        </span>{
+            <span style="color: blue">if</span>( <span style="color: blue">value </span>!= <span style="color: blue">this</span>.FirstName )
+            {
+                <span style="color: blue">this</span>._firstName = <span style="color: blue">value</span>;
+                <span style="color: blue">this</span>.OnPropertyChanged( () => <span style="color: blue">this</span>.FirstName );
+            }
+        }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ICommand </span>MyCommand { <span style="color: blue">get</span>; <span style="color: blue">private set</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>è quindi possibile agganciare direttamente al comando, luogo ideale per farlo, la logica che faccia triggherare la rivalutazione dello stato del comando stesso.</span><br>
+
+<span>Per fare ciò e vivere sonni tranquilli è però importante avere gli <a href="http://msdn.microsoft.com/en-us/library/aa970850.aspx" target="_blank">WeakEvent</a> cosa che in Silverlight non esiste proprio… grrrr… :-)</span><br>
+
+<span><strong>WeakEventManager</strong></span><br>
+
+<span>Radical arriva con una sua implementazione di <a href="http://msdn.microsoft.com/en-us/library/system.windows.weakeventmanager.aspx" target="_blank">WeakEventManager</a> e dell’interfaccia <a href="http://msdn.microsoft.com/en-us/library/system.windows.iweakeventlistener.aspx" target="_blank">IWeakEventListener</a> che vi consentono di fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">IBindableCommand </span>AddMonitor( <span style="color: #2b91af">IMonitor </span>source )
+{
+    <span style="color: #2b91af">Ensure</span>.That( source ).Named( <span style="color: #a31515">"source" </span>).IsNotNull();
+    <span style="color: #2b91af">MonitorChangedWeakEventManager</span>.AddListener( source, <span style="color: blue">this </span>);
+
+    <span style="color: blue">return this</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e anche:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">Boolean IWeakEventListener</span>.ReceiveWeakEvent( <span style="color: #2b91af">Type </span>managerType, <span style="color: blue">object </span>sender, <span style="color: #2b91af">EventArgs </span>e )
+{
+    <span style="color: blue">if</span>( managerType == <span style="color: blue">typeof</span>( <span style="color: #2b91af">MonitorChangedWeakEventManager </span>) )
+    {
+        <span style="color: blue">this</span>.OnTriggerChanged( ( <span style="color: #2b91af">IMonitor </span>)sender );
+    }
+    <span style="color: blue">else
+    </span>{
+        <span style="color: blue">return false</span>;
+    }
+
+    <span style="color: blue">return true</span>;
+}</pre>
+</blockquote>
+
+<span>Con il MonitorChangedWeakEventManager definito come <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/2940093177295818889" target="_blank">abbiamo già avuto modo di vedere</a>. Il tutto finalizzato a gestire correttamente gli eventi senza però rischiare di introdurre il classico “<em>.net memory leak</em>” :-)</span><br>
+
+<span>.m</span><br>
+

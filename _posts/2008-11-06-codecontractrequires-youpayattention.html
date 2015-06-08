@@ -1,0 +1,172 @@
+---
+layout: post
+title: CodeContract.Requires( you.PayAttention() );
+date: '2008-11-06T09:52:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Visual Studio
+modified_time: '2012-08-04T19:45:29.245+02:00'
+thumbnail: https://lh5.googleusercontent.com/-VqBwJl5vqXA/TyaD1otIyDI/AAAAAAAAANI/5pAvZrrFSDw/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3305319924928364256
+blogger_orig_url: http://milestone.topics.it/2008/11/codecontractrequires-youpayattention.html
+---
+
+<span>Il framework 4.0 “<em>is on the way</em>”, c’è ancora molta strada da fare ma se non altro la via è stata imboccata; cominciano a girare un po’ di documenti sulle novità che verranno introdotte con il nuovo runtime e i cominciano anche a sprecarsi i post su “<em>dynamic</em>”, sui valori di default per i parametri etc… evito che è meglio ;-)</span><br>  <span>E’ ovvio che rivoluzioni come Linq si vedono una volta nella vita quindi secondo me non ha senso <em>lamentarsi</em> dell’apparente veste poco rivoluzionaria del nuovo framework, se però scaviamo a fondo, sotto sotto ci sono tante belle cose…</span><br>  <span>Una delle cose che mi attraggono e che verranno incluse nel nuovo runtime sono i <a href="http://research.microsoft.com/contracts" target="_blank">Code Contracts</a>, che sono già “utilizzabili” ora anche con VS2008, utilizzabili tra virgolette perchè l’attuale licenza permette solo sperimentazioni e nulla di più.</span><br>  <span>Vediamo di approfondire un po’ la questione:</span><br>  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">OrderProcessor
+</span>{
+    <span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+    {
+        
+    }
+}</pre>
+
+<span>ipotizziamo una situazione elementare come quella esposta, quello di cui dobbiamo preoccuparci è l’inevitabile e tedioso controllo della validità dei parametri in ingresso, classicamente quello che possiamo fare è:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">OrderProcessor
+</span>{
+    <span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+    {
+        <span style="color: blue">if</span>( order == <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>();
+        }
+    }
+}</pre>
+
+<span>se usiamo un pizzico di <a href="http://blogs.ugidotnet.org/topics/archive/2008/10/25/aop-c-e-postsharp.aspx" target="_blank">AOP</a> possiamo scrivere una cosa decisamente più <em>smart</em>:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">OrderProcessor
+</span>{
+    <span style="color: blue">public void </span>Process( [NotNull]<span style="color: #2b91af">Order </span>order )
+    {
+        
+    }
+}</pre>
+
+<span>e otteniamo lo stesso identico comportamento. Ma non è tutto oro quel che luccica, purtroppo ;-), e quello che ci manca, e che a me piacerebbe molto è la possibilità di avere questo controllo direttamente a compile time, del resto quella non è logica di business ma è un constraint “punto”.</span><br>
+
+<span>Vediamo cosa possiamo fare con i “Code Contracts”, una volta <a href="http://research.microsoft.com/research/downloads/details/4ed7dd5f-490b-489e-8ca8-109324279968/details.aspx" target="_blank">scaricato</a> e installato il tutto quando creiamo un nuovo progetto di Visual Studio ci troviamo qualcosa in più, nella pagina delle proprietà c’è infatti una nuova tab:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-Hz31MQRpRz0/TyaD2NqkK6I/AAAAAAAAANM/JIB7d-fFLWQ/image_2.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="178" alt="image" src="https://lh5.googleusercontent.com/-VqBwJl5vqXA/TyaD1otIyDI/AAAAAAAAANI/5pAvZrrFSDw/image_thumb.png" width="244" border="0"></a> </span><br>
+
+<span>se quindi aggiungiamo una reference all’assembly “Microsoft.Contracts” e riproviamo a compilare il codice del primissimo esempio, quello senza nessun controllo sui parametri, succede questo:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-ZEnzygy4ZbA/TyaD3NiwBTI/AAAAAAAAANc/f7NaiFH85bU/image_4.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="177" alt="image" src="https://lh4.googleusercontent.com/-6-ugtLZHzso/TyaD2Qicq4I/AAAAAAAAANU/GgqadiB-auA/image_thumb_1.png" width="461" border="0"></a> </span><br>
+
+<span>toghissimo!, Visual Studio al termine della compilazione invoca un nuovo tool (cccheck.exe) che fa analisi statica del codice e stabilisce che li c’è un potenziale problema. Già questo, a mio modo di vedere sarebbe, o meglio sarà, una vera manna dal cielo.</span><br>
+
+<span>Ma non è finita, per eliminare il warning è sufficiente fare in modo che il codice sia safe quindi ad esempio rimettere il check sui parametri:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">OrderProcessor
+</span>{
+    <span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+    {
+        <span style="color: blue">if</span>( order == <span style="color: blue">null </span>)
+        {
+            <span style="color: blue">throw new </span><span style="color: #2b91af">ArgumentNullException</span>();
+        }
+    }
+}</pre>
+
+<span>a questo punto Visual Studio compila felice come una pasqua, ma non è detto che questo ci basti, se questo è una condizione sufficiente a proteggerci a runtime rimane sempre la fastidiosa situazione che il tutto avviene a runtime mentre se avvenisse a compile time saremmo molto più felici. 
+  <br>Come fare in modo che Visual Studio si lamenti se trova una situazione come questa:</span><br>
+
+<pre class="code"><span style="color: #2b91af">OrderProcessor </span>op = <span style="color: blue">new </span><span style="color: #2b91af">OrderProcessor</span>();
+op.Process( <span style="color: blue">null </span>);</pre>
+
+<span>Con Code Contracts è decisamente semplice:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+{
+    <span style="color: #2b91af">CodeContract</span>.Requires( <span style="color: blue">null </span>!= order );
+}</pre>
+
+<span>aggiungendo questa dichiarazione e ricompilando quello che otteniamo è:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-oD_hg4RNBHs/TyaD4CtIciI/AAAAAAAAANs/QOK_wvI7qDI/image_6.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="167" alt="image" src="https://lh3.googleusercontent.com/-0hDsh8FqBA0/TyaD3dlvMtI/AAAAAAAAANk/ZNElkLCPOd8/image_thumb_2.png" width="304" border="0"></a> </span><br>
+
+<span>dove il primo warning con un doppio click ci porta al punto nel codice in cui c’è la condizione, mentre il secondo ci porta al punto in cui la condizione viene violata. La cosa fighissima è che funziona anche se il codice che “recupera” l’istanza di Order è decisamente complesso.</span><br>
+
+<span>Faccio notare che Visual Studio genera degli Warning e, secondo me, è giusto così del resto il codice dal punto di vista del compilatore è corretto l’IDE ci informa solo dei potenziali problemi a cui potremmo andare incontro.</span><br>
+
+<span>In questo esempio, quindi, per far si che il controllo statico a compile time passi senza warning è sufficiente soddisfare il contratto:</span><br>
+
+<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">Program
+</span>{
+    <span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+    {
+        <span style="color: #2b91af">Order </span>o = <span style="color: #2b91af">Compless</span>.GetOrder();
+        <span style="color: blue">if</span>( o != <span style="color: blue">null </span>)
+        {
+            <span style="color: #2b91af">OrderProcessor </span>op = <span style="color: blue">new </span><span style="color: #2b91af">OrderProcessor</span>();
+            op.Process( o );
+        }
+    }
+}</pre>
+
+<span>E’ quindi il chiamante che deve assicurarsi di effettuare i controlli di rito. Avendo soddisfatto il contratto succede un’altra cosa molto interessante, se spulciamo con il fido Reflector il codice generato scopriamo che non vi è traccia alcuna:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-1IRVWwptvbs/TyaD6jdr3DI/AAAAAAAAAN8/XbOJNW-L2wc/image_8.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="119" alt="image" src="https://lh5.googleusercontent.com/-ziWpiTxoesQ/TyaD6EB-hrI/AAAAAAAAAN4/-tTzJe0XKQA/image_thumb_3.png" width="237" border="0"></a> </span><br>
+
+<span>Questo porta all’indubbio vantaggio che le performance ne giovano perchè i controlli sulla coerenza dei parametri in ingresso vengono fatti solo ed esclusivamente dove hanno senso, notiamo infatti che un’eventuale chiamata del tipo:</span><br>
+
+<pre class="code">op.Process( <span style="color: blue">new </span><span style="color: #2b91af">Order</span>( 100 ) );</pre>
+
+<span>viene perfettamente digerita.</span><br>
+
+<span>Ci sono però delle casistiche in cui potremmo volere che il controllo venga effettuato anche a runtime, un “classico” esempio potrebbe essere quello della Class Library, noi scriviamo la libreria e altri la usano, tutto ciò è possibilissimo, basta cambiare la dichiarazione:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+{
+    <span style="color: #2b91af">CodeContract</span>.RequiresAlways( <span style="color: blue">null </span>!= order );
+}</pre>
+
+<span>e il fido Reflector conferma:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-wlSfNHNuNVQ/TyaD7ROyC4I/AAAAAAAAAOM/0p12UuMTdQg/image_10.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="134" alt="image" src="https://lh4.googleusercontent.com/-P796INq1XL4/TyaD7PvtplI/AAAAAAAAAOE/dN7PnUtYKy8/image_thumb_4.png" width="309" border="0"></a> </span><br>
+
+<span>Garantendoci un’exception a runtime se il contratto non fosse rispettato.</span><br>
+
+<span>Ma andiamo oltre, è si non è finita :-D…</span><br>
+
+<span>Supponiamo di trovarci nella casistica appena esposta, il nostro ruolo è quello di developer di framework e non conosciamo chi saranno i nostri utilizzatori ma non vogliamo neanche il potenziale impoverimento delle perfromance che il controllo a runtime potrebbe comportare: <em>si può fare </em><cit.></span><br>
+
+<span>Condizione necessaria è abilitare sul/i progetto/i class library la generazione di un assembly per i contratti, quello che succede a questo punto quando compiliamo è che vengono generati 2 assembly/progetto: uno con la class library vera e prorpia e uno con i soli contratti. Sempre dal fido Reflector scopriamo che se il codice che compiliamo è questo:</span><br>
+
+<pre class="code"><span style="color: blue">public void </span>Process( <span style="color: #2b91af">Order </span>order )
+{
+    <span style="color: #2b91af">CodeContract</span>.Requires( <span style="color: blue">null </span>!= order );
+
+    <span style="color: #2b91af">Int32 </span>qty = order.ItemQty;
+}</pre>
+
+<span>il prodotto sarà nella class library:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-PP6kvkDOmMo/TyaD8zwfKVI/AAAAAAAAAOc/DMNcBL1LeiI/image_12.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="136" alt="image" src="https://lh6.googleusercontent.com/-w5mU1fs3V_Q/TyaD8IyjPlI/AAAAAAAAAOU/YwFbiuQX_c0/image_thumb_5.png" width="239" border="0"></a> </span><br>
+
+<span>mentre nell’assembly dei contratti:</span><br>
+
+<span><a href="https://lh3.googleusercontent.com/-X4UKazuCzGo/TyaD-TivpSI/AAAAAAAAAOw/mk3RmD2RTnM/image_14.png" rel="lightbox"><img title="image" style="border-top-width: 0px; border-left-width: 0px; border-bottom-width: 0px; border-right-width: 0px" height="140" alt="image" src="https://lh4.googleusercontent.com/-iCivZjk2o8o/TyaD9YH0wyI/AAAAAAAAAOo/IMTarKHLo7g/image_thumb_6.png" width="244" border="0"></a> </span><br>
+
+<span>sulla macchina dell’utilizzatore il motore di analisi statica del codice sarà nuovamente in grado di fare tutti i suoi ragionamenti e verificare il codice che accede alla class library notificando i potenziali problemi, garantendo anche all’utilizzatore che il contratto sia stao rispettato.</span><br>
+
+<span>Quello che abbiamo visto è solo una <u>piccola</u> parte di quello che si può fare, le varie “a<em>ssert</em>” possibili con Code Contracts sono veramente tante, la documentazione fortunatamente, anche se ridotta ad un semplice pdf, è esaustiva.</span><br>
+
+<span>Una cosa di cui non ho parlato, ma che è decisamente potente, è che c’è anche la possibilità di esprimere contratti sulle interfacce, eccezziuuunale veramente <cit.></span><br>
+
+<span>Attenzione: è una cosa in divenire… e come tale va presa con le pinze. Quello che sappiamo è che:</span><br>
+
+<ul>
+  <li>ci sarà nella RTM del fx 4.0; </li>
+
+  <li>i nomi cambieranno: CodeContract –> Contract; </li>
+
+  <li><strike>molto probabilmente</strike> non sarà più un assembly Microsoft.Contracts e quindi non sarà più necessario aggiungere la reference a mano, con il CLR v4.0 il namespace System.Diagnostics.Contract sarà definito in mscorlib.dll; </li>
+</ul>
+
+<span>Se mettiamo insieme i 3 mondi <em>TDD/UnitTesting</em> + <em>Code Contracts</em> + <em>PEX</em> abbiamo in mano la possibilità di avere controllo quasi totale su quello che sta succedendo per il resto c’è il fidato e inseparabile debugger… come cosa è PEX?!?!?!: <a title="http://research.microsoft.com/pex/" href="http://research.microsoft.com/pex/">http://research.microsoft.com/pex/</a> …prossimo post… abbiate fede :-D</span><br>
+
+<span>Che dire a me piace un sacco… CodeContract.Requires( ( Mauro as IHappyDeveloper ).BeginUsing() );</span><br>
+
+<span>.m</span><br>
+

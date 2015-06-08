@@ -1,0 +1,324 @@
+---
+layout: post
+title: Astrazione di una Primary Key nel Domain Model
+date: '2007-10-15T07:50:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-27T15:42:58.302+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5135632893189501435
+blogger_orig_url: http://milestone.topics.it/2007/10/astrazione-di-una-primary-key-nel.html
+---
+
+<span>Inquadriamo prima lo scenario:</span><br>
+<span>Abbiamo la classica classe <em>Customer</em> che ha una proprietà che rappresenta la sua chiave primaria: nel mio caso tendo sempre a scegliete come tipo, per queste proprietà, un <em>Guid</em> perchè ritengo che i vantaggi surclassino di gran lunga gli eventuali svantaggi (ma non è questo l'oggetto del post <img alt="Tongue out" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/tongue_smile.gif">); questa proprietà, nel 90% o più dei casi, è mappata sulla colonna del db che rappresenta la <em>PK</em>... ed è proprio questo che non mi piace per nulla.</span><br>
+<span>Supponiamo che un giorno la fonte dati della mia applicazione cambi e non supporti i <em>Guid</em> (scenario poco probabile è vero, ma questo è un esempio <img alt="Tongue out" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/tongue_smile.gif">) ci ritroveremmo con una bella magagna perchè il nostro domain model ha una dipendenza dallo strato dati che apparentemente sembra di poco o nessun conto, ma evidentemente non è così...</span><br>
+<span>L'ispirazione viene da un <a target="_blank" href="http://weblogs.asp.net/pgreborio/archive/2004/11/22/267805.aspx">vecchissimo post</a> di Pierre Greborio ex MVP Solution Architect e ora dipendente Microsoft in quel di San Francisco.</span><br>
+<span>Cerchiamo quindi di capire come potremmo risolvere la questione: una <em>Primary Key </em>astratta.</span><br>
+<pre class="code">    [<span style="COLOR: rgb(43,145,175)">Serializable</span>]
+    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">Key</span> : <span style="COLOR: rgb(43,145,175)">IConvertible</span>, <span style="COLOR: rgb(43,145,175)">IComparable
+</span>    {</pre>
+<pre class="code">        <span style="COLOR: rgb(0,128,0)">/*
+         * Riporto solo una parte dell'implementazione
+         * per chiarezza. Tutti i metodi sono definiti
+         * come abstract ed è compito della classe derivata
+         * implementarne le funzionalità
+         */</span>
+<span style="COLOR: rgb(0,0,255)">        #region</span> IConvertible Members
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(43,145,175)">TypeCode</span> GetTypeCode();
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+
+        #region</span> IComparable Members
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(0,0,255)">int</span> CompareTo( <span style="COLOR: rgb(0,0,255)">object</span> obj );
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+</span>    }</pre>
+<span>Cominciamo con il definire una classe che rappresenta una potenziale chiave primaria, essendo un reference type vogliamo che questa classe (o meglio chi deriverà da questa classe) sia obbligato ad implementare i meccanismi di conversione e confronto in modo da poter confrontare due istanze di <em>Key</em> come se facessimo un confronto per valore e quindi non confrontando i "reference".</span><br>
+<pre class="code">    [<span style="COLOR: rgb(43,145,175)">Serializable</span>]
+    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">Key</span><T> : <span style="COLOR: rgb(43,145,175)">Key</span> <span style="COLOR: rgb(0,0,255)">where</span> T : <span style="COLOR: rgb(43,145,175)">IComparable
+</span>    {
+        <span style="COLOR: rgb(0,0,255)">private</span> T value;
+
+        <span style="COLOR: rgb(0,0,255)">public</span> Key() 
+        {
+            value = <span style="COLOR: rgb(0,0,255)">default</span>( T );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> Key( T value )
+        {
+            <span style="COLOR: rgb(0,0,255)">if</span>( value == <span style="COLOR: rgb(0,0,255)">null</span> )
+            {
+                <span style="COLOR: rgb(0,0,255)">this</span>.value = <span style="COLOR: rgb(0,0,255)">default</span>( T );
+            }
+            <span style="COLOR: rgb(0,0,255)">else
+</span>            {
+                <span style="COLOR: rgb(0,0,255)">this</span>.value = value;
+            }
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(0,0,255)">string</span> ToString()
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> ( <span style="COLOR: rgb(0,0,255)">this</span>.value == <span style="COLOR: rgb(0,0,255)">null</span> ) ? <span style="COLOR: rgb(163,21,21)">""</span> : <span style="COLOR: rgb(0,0,255)">this</span>.value.ToString();
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> T Value
+        {
+            <span style="COLOR: rgb(0,0,255)">get</span> { <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>.value; }
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(0,0,255)">implicit</span> <span style="COLOR: rgb(0,0,255)">operator</span> <span style="COLOR: rgb(43,145,175)">Key</span><T>( T value )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">new</span> <span style="COLOR: rgb(43,145,175)">Key</span><T>( value );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(0,0,255)">implicit</span> <span style="COLOR: rgb(0,0,255)">operator</span> T( <span style="COLOR: rgb(43,145,175)">Key</span><T> pk )
+        {
+            <span style="COLOR: rgb(0,0,255)">if</span>( pk == <span style="COLOR: rgb(0,0,255)">null</span> )
+            {
+                <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">default</span>( T );
+            }
+            <span style="COLOR: rgb(0,0,255)">else
+</span>            {
+                <span style="COLOR: rgb(0,0,255)">return</span> pk.value;
+            }
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> ==( <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1, <span style="COLOR: rgb(43,145,175)">Key</span><T> pk2 )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> pk1.Equals( pk2 );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> ==( <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1, T value )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> pk1.Equals( value );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> ==( T value, <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1 )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> pk1.Equals( value );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> !=( <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1, <span style="COLOR: rgb(43,145,175)">Key</span><T> pk2 )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> !pk1.Equals( pk2 );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> !=( <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1, T value )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> !pk1.Equals( value );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">static</span> <span style="COLOR: rgb(43,145,175)">Boolean</span> <span style="COLOR: rgb(0,0,255)">operator</span> !=( T value, <span style="COLOR: rgb(43,145,175)">Key</span><T> pk1 )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> !pk1.Equals( value );
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(0,0,255)">bool</span> Equals( <span style="COLOR: rgb(0,0,255)">object</span> obj )
+        {
+            <span style="COLOR: rgb(0,0,255)">if</span>( obj == <span style="COLOR: rgb(0,0,255)">null</span> )
+            {
+                <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">false</span>;
+            }
+            <span style="COLOR: rgb(0,0,255)">else</span> <span style="COLOR: rgb(0,0,255)">if</span>( obj <span style="COLOR: rgb(0,0,255)">is</span> T )
+            {
+                <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>.value.Equals( ( T )obj );
+            }
+            <span style="COLOR: rgb(0,0,255)">else</span> <span style="COLOR: rgb(0,0,255)">if</span>( obj <span style="COLOR: rgb(0,0,255)">is</span> <span style="COLOR: rgb(43,145,175)">Key</span><T> )
+            {
+                <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>.value.Equals( ( ( <span style="COLOR: rgb(43,145,175)">Key</span><T> )obj ).value );
+            }
+
+            <span style="COLOR: rgb(0,0,255)">throw</span> <span style="COLOR: rgb(0,0,255)">new</span> <span style="COLOR: rgb(43,145,175)">NotSupportedException</span>();
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(0,0,255)">int</span> GetHashCode()
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>.Value.GetHashCode();
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #region</span> IConvertible Members</pre>
+<pre class="code">    <span style="COLOR: rgb(0,128,0)">/*
+     * Tralascio per l'implementazione di IConvertible 
+     * che altro non fa che richiamare i metodi dstatici della
+     * classe System.Convert
+     */</span>
+<span style="COLOR: rgb(0,0,255)">        #endregion
+
+</span>        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(0,0,255)">int</span> CompareTo( <span style="COLOR: rgb(0,0,255)">object</span> obj )
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> ( ( <span style="COLOR: rgb(43,145,175)">IComparable</span> )<span style="COLOR: rgb(0,0,255)">this</span>.Value ).CompareTo( obj );
+        }
+    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Definiamo quindi una classe generica <em>Key<T></em> che deriva da <em>Key</em> e impone che il tipo <em>T</em> sia almeno di tipo <em>IComparable</em>, in questo modo possiamo demandare al tipo <em>T</em> l'onere di gestire la comparazione tra i valori di due istanze.</span><br>
+<span>Abbiamo anche definito l'overload di alcuni operatori e gestiamo le conversioni implicite , quest'ultimo passaggio non è necessario ma è decisamente comodo <img alt="Wink" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/wink_smile.gif"></span><br>
+<span>Siamo a questo punto, grazie agli operatori di conversione impliciti, in grado di fare qualcosa del tipo:</span><br>
+<pre class="code"><span style="COLOR: rgb(43,145,175)">    Key</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> pk1 = 0;
+<span style="COLOR: rgb(43,145,175)"><span style="COLOR: rgb(43,145,175)"></span><span style="COLOR: rgb(43,145,175)"></span>    Key</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> pk2 = 0;
+
+<span style="COLOR: rgb(43,145,175)"><font color="#000000">    </font>Console</span>.WriteLine( pk1 == pk2 );
+</pre>
+<span>Possiamo istanziare 2 oggetti di tipo <em>Key<Int32></em> assegnando lo stesso valore (0) e confrontando le due istanze otteniamo che sono uguali nonostante siano 2 reference diversi, ma cosa più interessante possiamo scrivere qualcosa del tipo:</span><br>
+<pre class="code">    <span style="COLOR: rgb(43,145,175)">Key</span> b_pk1 = pk1;
+    <span style="COLOR: rgb(43,145,175)">Key</span> b_pk2 = pk2;
+
+    <span style="COLOR: rgb(43,145,175)">Console</span>.WriteLine( b_pk1 == b_pk2 );</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>In questo caso eseguiamo lo stesso confronto ma senza avere la più pallida idea di che tipo reale di <em>Key</em> stiamo trattando, dal punto di vista del linguaggio il passaggio è decisamente banale e ovvio ma implica una cosa molto importante dal punto di vista del design: siamo a questo punto in grado di fornire ad un nostro ipotetio oggetto di dominio una chiave primaria senza che l'oggetto stesso abbia reale conoscenza di quale sia l'implementazione concreta di tale chiave.<br>
+Questo implica anche una seconda conseguenza, siamo adesso liberi di "far girare" la chiave primaria all'interno/tra i nostri layer/tier senza che questi siano legati a filo doppio alla sua implementazione.</span><br>
+<span>Vediamo adesso in concreto questo cosa comporta: siccome amiamo renderci la vita facile (è sempre meglio fare due chiacchere con quelle che lanciano gli scatoloni, e chi ha occhio per intendere intenda..., piuttosto che scervellarsi su codice farraginoso) definiamo un'interfaccia che la nostra entità di dominio dovrà implementare per comunicare al mondo che lei possiede una chiave primaria:</span><br>
+<pre class="code"><span style="COLOR: rgb(0,0,255)">    public</span> <span style="COLOR: rgb(0,0,255)">interface</span> <span style="COLOR: rgb(43,145,175)">IKey</span> 
+    {
+        <span style="COLOR: rgb(43,145,175)">Key</span> GetKey();
+    }
+
+    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">interface</span> <span style="COLOR: rgb(43,145,175)">IKey</span><T> : <span style="COLOR: rgb(43,145,175)">IKey</span> <span style="COLOR: rgb(0,0,255)">where</span> T : <span style="COLOR: rgb(43,145,175)">IComparable
+</span>    {
+        <span style="COLOR: rgb(43,145,175)">Key</span><T> Key { <span style="COLOR: rgb(0,0,255)">get</span>; }
+    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Anche in questo caso abbiamo due livelli:</span><br>
+<ol>
+    <li>un livello molto alto/astratto "<em>IKey</em>" che ha a che fare solo ed esclusivamente con la classe base <em>Key</em>; </li>
+    <li>un livello "<em>più</em>" concreto "<em>IKey<T></em>", che deriva da <em>IKey</em>, che determina il tipo concreto che la chiave primaria dovrà incapsulare; </li>
+</ol>
+<span>Facciamo un esempio:</span><br>
+<pre class="code"><span style="COLOR: rgb(0,0,255)">    public</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">Customer</span> : <span style="COLOR: rgb(43,145,175)">IKey</span><<span style="COLOR: rgb(43,145,175)">Int32</span>>
+    {
+        <span style="COLOR: rgb(0,0,255)">public</span> Customer()
+        {
+            <span style="COLOR: rgb(0,0,255)">this</span>._pk = -1;
+        }
+
+        <span style="COLOR: rgb(0,0,255)">public</span> Customer( <span style="COLOR: rgb(43,145,175)">Int32</span> pk )
+        {
+            <span style="COLOR: rgb(0,0,255)">this</span>._pk = pk;
+        }
+
+        <span style="COLOR: rgb(43,145,175)">Key</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> _pk;
+<span style="COLOR: rgb(0,0,255)">        #region</span> IKey<int> Members
+
+        <span style="COLOR: rgb(43,145,175)">Key</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> <span style="COLOR: rgb(43,145,175)">IKey</span><<span style="COLOR: rgb(43,145,175)">Int32</span>>.Key
+        {
+            <span style="COLOR: rgb(0,0,255)">get</span> { <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>._pk; }
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+
+        #region</span> IKey Members
+
+        <span style="COLOR: rgb(43,145,175)">Key</span> <span style="COLOR: rgb(43,145,175)">IKey</span>.GetKey()
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> ( ( <span style="COLOR: rgb(43,145,175)">IKey</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> )<span style="COLOR: rgb(0,0,255)">this</span> ).Key;
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+</span>    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Definiamo una classe Customer che implementa (in questo caso in maniera esplicita, ma poco importa) l'interfaccia <em>IKey<T></em> imponendo che la chiave primaria sia di tipo <em>Int32</em>. Siamo a questo punto in grado di scrivere una cosa del tipo:</span><br>
+<pre class="code"><span style="COLOR: rgb(43,145,175)">    Customer</span> c = <span style="COLOR: rgb(0,0,255)">new</span> <span style="COLOR: rgb(43,145,175)">Customer</span>();
+    <span style="COLOR: rgb(43,145,175)">Key</span> c_pk = ( ( <span style="COLOR: rgb(43,145,175)">IKey</span> )c ).GetKey();</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>L'istanza di <em>Key</em> (c_pk) che abbiamo in mano sarà in realtà di tipo "<em>Key<Int32></em>" ma al codice che la gestisce in questo caso poco importa e non ha nessuna necessità di saperlo, la cosa importante è che sappia che quell'istanza rappresenta in maniera univoca un determinato cliente all'interno del nostro modello ad oggetti.</span><br>
+<span>Il codice sarà quindi in grado di passare quell'istanza ad un ipotetico <em>DAL</em> (implementato tramite <em>abstract factory</em>) e farsi dare tutti gli ordini di quel cliente, anche in questo caso sarà solo il <em>DAL Concreto</em> che <u>sa</u> che la chiave primaria passata è di tipo <em>Key<Int32></em> e saprà quindi come usarla per accedere al Database e fare quello che meglio crede.</span><br>
+<span>A questo punto potrebbe sorgere spontanea un'obiezione: la classe <em>Customer</em> sopra esposta però <u>sa</u> che l'implementazione della <em>PK</em> è fatta con un intero a 32 bit e questo in parte si scontra con il nostro intento iniziale, rendere cioè totalmente agnostico il nostro modello ad oggetti.</span><br>
+<span>Anche in questo caso la soluzione è semplice anche se la spiegazione non è proprio breve, cercherò di essere sintetico... <img alt="Tongue out" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/tongue_smile.gif">, anche qui l'incipit viene da un <a target="_blank" href="http://blogs.ugidotnet.org/markino/archive/2006/01/05/32476.aspx">post</a> del <em>collega</em> M.kino <img alt="Smile" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/regular_smile.gif"></span><br>
+<span>Una soluzione (che uso abitualmente con soddisfazione) è quella di definire il proprio domain model totalmente astratto (cioè definire tutte le classi come <em>abstract</em>) e di inserire l'implementazione concreta dello stesso all'interno (definendola come <em>internal</em>) del <em>DAL Concreto</em>. Vediamo uno "scheletrico" esempio (tralasciando tutta la parte di <em>abstract factory </em>perchè non è oggetto del presente post):</span><br>
+<pre class="code">    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">Customer</span> : <span style="COLOR: rgb(43,145,175)">IKey
+</span>    {
+        <span style="COLOR: rgb(0,0,255)">protected</span> Customer()
+        {
+            <span style="COLOR: rgb(0,0,255)">this</span>._companyName = <span style="COLOR: rgb(163,21,21)">"<Empty>"</span>;
+        }
+
+        <span style="COLOR: rgb(0,0,255)">protected</span> Customer( <span style="COLOR: rgb(43,145,175)">String</span> compannyName )
+        {
+            <span style="COLOR: rgb(0,0,255)">this</span>._companyName = compannyName;
+        }
+
+        <span style="COLOR: rgb(0,0,255)">private</span> <span style="COLOR: rgb(43,145,175)">String</span> _companyName;
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(43,145,175)">String</span> CompanyName
+        {
+            <span style="COLOR: rgb(0,0,255)">get</span> { <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>._companyName; }
+            <span style="COLOR: rgb(0,0,255)">set</span> { <span style="COLOR: rgb(0,0,255)">this</span>._companyName = <span style="COLOR: rgb(0,0,255)">value</span>; }
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #region</span> IKey Members
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(43,145,175)">Key</span> GetKey();
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+</span>    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>iniziamo con il definire un po' meglio la nostra classe <em>Customer</em>, aggiungendo una proprietà <em>CompanyName</em> (per rendere il tutto un po' più credibile) e definendo solo l'implementazione di <em>IKey</em> in maniera astratta in modo da obbligare la classe concreta a determinarne il tipo concreto.<br>
+Introduciamo quindi un semplicissimo <em>DAL astratto</em>:</span><br>
+<pre class="code"><span style="COLOR: rgb(0,0,255)">    public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">CustomersDataProvider
+</span>    {
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(43,145,175)">Customer</span> FindByCompanyName( <span style="COLOR: rgb(43,145,175)">String</span> cn );
+    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Ci rendiamo subito conto che il nostro <em>DAL Concreto </em>non potrà mai istanziare un oggetto di tipo <em>Customer</em> perchè è astratto abbiamo quindi bisogno di una classe concreta da ritornare al chiamante:</span><br>
+<pre class="code">    <span style="COLOR: rgb(0,0,255)">internal</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">InnerCustomer</span> : <span style="COLOR: rgb(43,145,175)">Customer</span>, <span style="COLOR: rgb(43,145,175)">IKey</span><<span style="COLOR: rgb(43,145,175)">Int32</span>>
+    {
+        <span style="COLOR: rgb(0,0,255)">public</span> InnerCustomer(<span style="COLOR: rgb(43,145,175)">Int32</span> pk, <span style="COLOR: rgb(43,145,175)">String</span> companyName )
+            : <span style="COLOR: rgb(0,0,255)">base</span>( companyName )
+        {
+            <span style="COLOR: rgb(0,0,255)">this</span>._pk = pk;
+        }
+
+        <span style="COLOR: rgb(43,145,175)">Key</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> _pk;
+<span style="COLOR: rgb(0,0,255)">        #region</span> IKey<int> Members
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(43,145,175)">IKey</span><<span style="COLOR: rgb(43,145,175)">Int32</span>> Key
+        {
+            <span style="COLOR: rgb(0,0,255)">get</span> { <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>._pk; }
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+
+        #region</span> IKey Members
+
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(43,145,175)">Key</span> GetKey()
+        {
+            <span style="COLOR: rgb(0,0,255)">return</span> <span style="COLOR: rgb(0,0,255)">this</span>.Key;
+        }
+
+<span style="COLOR: rgb(0,0,255)">        #endregion
+</span>    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>Sarà qui che avremo la reale implementazione della chiave primaria (<em>IKey<Int32></em>), a questo punto il <em>DAL Concreto</em> è in grado di trattare con qualcosa di concreto (questi si che sono concreti giochi di parole <img alt="Open-mouthed" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/teeth_smile.gif">):</span><br>
+<pre class="code">    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">SqlCustomersDataProvider</span> : <span style="COLOR: rgb(43,145,175)">CustomersDataProvider
+</span>    {
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">override</span> <span style="COLOR: rgb(43,145,175)">Customer</span> FindByCompanyName( <span style="COLOR: rgb(43,145,175)">String</span> cn )
+        {
+            <span style="COLOR: rgb(0,128,0)">/*
+             * Esegue le operazioni di select
+             * su Sql Server e recupera un DataReader
+             * 
+             * Con i dati dal db istanzia un nuovo
+             * Customer e lo ritorna al chiamante
+             */
+</span>            <span style="COLOR: rgb(43,145,175)">Customer</span> c = <span style="COLOR: rgb(0,0,255)">new</span> <span style="COLOR: rgb(43,145,175)">InnerCustomer</span>( <span style="COLOR: rgb(0,128,0)">/* pk from db */</span>, <span style="COLOR: rgb(0,128,0)">/* companyName from db */</span> );
+            <span style="COLOR: rgb(0,0,255)">return</span> c;
+        }
+    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>...e il cerchio si chiude. Possiamo quindi avere un'ulteriore estensione del tipo:</span><br>
+<pre class="code">    <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(0,0,255)">class</span> <span style="COLOR: rgb(43,145,175)">OrdersDataProvider
+</span>    {
+        <span style="COLOR: rgb(0,0,255)">public</span> <span style="COLOR: rgb(0,0,255)">abstract</span> <span style="COLOR: rgb(43,145,175)">OrderCollection</span> FindByCustomerKey( <span style="COLOR: rgb(43,145,175)">Key</span> pk );
+    }</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>e interfacciarci con questo nuovo <em>DAL Astratto</em> in questo modo:</span><br>
+<pre class="code">     <span style="COLOR: rgb(43,145,175)">CustomersDataProvider</span> cdp = <span style="COLOR: rgb(43,145,175)">CustomersDataProvider</span>.Create();
+     <span style="COLOR: rgb(43,145,175)">Customer</span> c = cdp.FindByCompanyName( <span style="COLOR: rgb(163,21,21)">"name"</span> );
+     <span style="COLOR: rgb(43,145,175)">Key</span> customerKey = c.GetKey();
+
+     <span style="COLOR: rgb(43,145,175)">OrdersDataProvider</span> odp = <span style="COLOR: rgb(43,145,175)">OrdersDataProvider</span>.Create();
+     <span style="COLOR: rgb(43,145,175)">OrderCollection</span> list = odp.FindByCustomerKey( customerKey );</pre>
+<a href="http://11011.net/software/vspaste"></a>
+<span>A questo punto il nostro domain model è agnostico in tutto e per tutto riguardo la chiave primaria che le entity possono dover gestire.</span><br>
+<span>.m</span><br>

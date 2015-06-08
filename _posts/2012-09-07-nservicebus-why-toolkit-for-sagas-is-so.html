@@ -1,0 +1,70 @@
+---
+layout: post
+title: 'NServiceBus: why a toolkit for Saga(s) is so important'
+date: '2012-09-07T09:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Domain Driven Design
+- NServiceBus
+modified_time: '2012-09-07T14:10:03.244+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1209789970774847890
+blogger_orig_url: http://milestone.topics.it/2012/09/nservicebus-why-toolkit-for-sagas-is-so.html
+---
+
+Take a look at this:<br />
+<blockquote>
+<pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> EndpointConfig : 
+    IConfigureThisEndpoint,
+    AsA_Publisher,
+    IWantCustomInitialization
+{  
+    <span class="kwrd">public</span> <span class="kwrd">void</span> Init()
+    {
+        NServiceBus.Configure.With()
+            .Log4Net()
+            .DefaultBuilder()
+            .XmlSerializer()
+            .MsmqSubscriptionStorage()
+            .DisableRavenInstall()
+            .RunTimeoutManager()
+                .UseMongoTimeoutPersister()
+            .Sagas()
+                .WithMongoSagaPersister()
+            .MsmqTransport()
+                .IsTransactional( <span class="kwrd">true</span> )
+                .PurgeOnStartup( <span class="kwrd">false</span> )
+            .UnicastBus()
+            .ImpersonateSender( <span class="kwrd">false</span> );
+    }
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+ font-size: small;
+ color: black;
+ font-family: consolas, "Courier New", courier, monospace;
+ background-color: #ffffff;
+ /*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+ background-color: #f4f4f4;
+ width: 100%;
+ margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+The “*Mongo*” stuff is my own implementation for <a href="http://www.mongodb.org/" target="_blank">MongoDB</a> of the <a href="http://nservicebus.com/" target="_blank">NServiceBus</a> Timeout persister and of the Saga persister.<br />
+Add a reference to <a href="https://nuget.org/packages/nservicebus" target="_blank">NServiceBus</a> and <a href="https://nuget.org/packages/nservicebus.host" target="_blank">NServiceBus.Host</a> via <a href="http://nuget.org/" target="_blank">Nuget</a> add the above class to a class library project and you have a saga hosting server “up &amp; running” in seconds.<br />
+The implementation details are details and thus having a toolkit that takes care of all the implementation details allows us to concentrate on the core, where the ciccia* is as my dear friend <a href="http://blog.codiceplastico.com/melkio/" target="_blank">Alessandro</a> used to say.<br />
+*<em>ciccia</em>: <a href="http://wordreference.com/iten/ciccia" target="_blank">word reference dictionary</a>. Italian idiom to identify the important portion of something.<br />
+.m

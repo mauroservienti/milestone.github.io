@@ -1,0 +1,209 @@
+---
+layout: post
+title: 'Puzzle: IoC container for WinRT'
+date: '2012-07-23T10:45:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Metro
+- WinRT
+- Radical
+modified_time: '2012-07-23T10:45:00.824+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-555663486822085126
+blogger_orig_url: http://milestone.topics.it/2012/07/puzzle-ioc-container-for-winrt.html
+---
+
+<p>I’ve just finished reading a <a href="http://www.qmatteoq.com/blog/post/windows-8-applicazioni-metro-style-navigazione-e-mvvm" target="_blank">post</a> (in Italian) from my friend, and former and <a href="https://twitter.com/mauroservienti/status/226594866774282240" target="_blank">new</a> colleague, <a href="http://www.qmatteoq.com/blog/" target="_blank">Matteo</a> where, speaking about navigation in Metro applications, he introduces an inversion of control container called <a href="http://metroioc.codeplex.com/" target="_blank">Metroioc</a>.</p> <p>I would like to let my readers know that <a href="http://radical.codeplex.com/" target="_blank">Radical</a> provides its own inversion of control container, and it’s called <a href="http://radical.codeplex.com/SourceControl/changeset/view/80483#1579663" target="_blank">Puzzle</a>. We have decided to give its API a shape really similar to the one provided by Castle Windsor, so you have entries, facilities and installers.</p> <p>You can find a <a href="http://nuget.org/packages/Radical.Metro/0.1.0.0-beta" target="_blank">pre release version</a> on <a href="http://nuget.org/" target="_blank">NuGet</a>:</p> <p><strong>How to</strong></p> <p>Setting up the container is really easy:</p> <blockquote><pre class="csharpcode">[TestMethod]
+<span class="kwrd">public</span> <span class="kwrd">void</span> puzzleContainer_register_entry_using_valid_entry_should_not_fail()
+{
+    var container = <span class="kwrd">new</span> PuzzleContainer();
+    container.Register( EntryBuilder.For&lt;String&gt;() );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Or:</p>
+<blockquote><pre class="csharpcode">[TestMethod]
+<span class="kwrd">public</span> <span class="kwrd">void</span> puzzleContainer_register_entry_using_instance_should_resolve_the_given_instance()
+{
+    var expected = <span class="kwrd">new</span> Object();
+
+    var container = <span class="kwrd">new</span> PuzzleContainer();
+
+    container.Register( EntryBuilder.For&lt;Object&gt;().UsingInstance( expected ) );
+    var actual = container.Resolve&lt;Object&gt;();
+
+    Assert.AreEqual( expected, actual );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>There are all the typical expected option on the entry builder, such as ImplementedBy&lt;T&gt; or the lifestyle management API:</p>
+<blockquote><pre class="csharpcode">[TestMethod]
+<span class="kwrd">public</span> <span class="kwrd">void</span> puzzleContainer_register_entry_as_transient_should_resolve_instances_as_transient()
+{
+    var container = <span class="kwrd">new</span> PuzzleContainer();
+
+    container.Register( EntryBuilder.For&lt;Object&gt;().WithLifestyle( Lifestyle.Transient ) );
+    var i1 = container.Resolve&lt;Object&gt;();
+    var i2 = container.Resolve&lt;Object&gt;();
+
+    Assert.AreNotEqual( i1, i2 );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>And obviously the ability to use a factory to build type instances:</p>
+<blockquote><pre class="csharpcode">[TestMethod]
+<span class="kwrd">public</span> <span class="kwrd">void</span> puzzleContainer_register_entry_with_factory_as_transient_should_resolve_instances_as_transient()
+{
+    var expected = 2;
+    var actual = 0;
+    var container = <span class="kwrd">new</span> PuzzleContainer();
+
+    container.Register
+    (
+        EntryBuilder.For&lt;Object&gt;()
+            .UsingFactory( () =&gt;
+            {
+                actual++;
+                <span class="kwrd">return</span> <span class="kwrd">new</span> Object();
+            } )
+            .WithLifestyle( Lifestyle.Transient )
+    );
+
+    container.Resolve&lt;Object&gt;();
+    container.Resolve&lt;Object&gt;();
+
+    Assert.AreEqual( expected, actual );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>Obviously you can even benefit of the “installer” concept: <a href="http://radical.codeplex.com/SourceControl/changeset/view/80483#1591416" target="_blank">IPuzzleSetupDescriptor</a>:</p>
+<blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">interface</span> IPuzzleSetupDescriptor
+{
+    Task Setup( IPuzzleContainer container, Func&lt;IEnumerable&lt;TypeInfo&gt;&gt; knownTypesProvider );
+}</pre>
+<style type="text/css">.csharpcode, .csharpcode pre
+{
+	font-size: small;
+	color: black;
+	font-family: consolas, "Courier New", courier, monospace;
+	background-color: #ffffff;
+	/*white-space: pre;*/
+}
+.csharpcode pre { margin: 0em; }
+.csharpcode .rem { color: #008000; }
+.csharpcode .kwrd { color: #0000ff; }
+.csharpcode .str { color: #006080; }
+.csharpcode .op { color: #0000c0; }
+.csharpcode .preproc { color: #cc6633; }
+.csharpcode .asp { background-color: #ffff00; }
+.csharpcode .html { color: #800000; }
+.csharpcode .attr { color: #ff0000; }
+.csharpcode .alt 
+{
+	background-color: #f4f4f4;
+	width: 100%;
+	margin: 0em;
+}
+.csharpcode .lnum { color: #606060; }
+</style>
+</blockquote>
+<p>it is just a simple way to wire up stuff at boot time, just provide a set classes that implements the interface and call the:</p>
+<blockquote><pre class="csharpcode">async Task SetupWith( Func&lt;IEnumerable&lt;TypeInfo&gt;&gt; knownTypesProvider, <span class="kwrd">params</span> IPuzzleSetupDescriptor[] descriptors )</pre></blockquote>
+<p>method of the container, as you can see everything is defined to work with the async/await new keywords.</p>
+<p>We’ll speak about the knownTypesProvider when we introduce the Metro application bootstrapper.</p>
+<p>.m</p>  

@@ -1,0 +1,138 @@
+---
+layout: post
+title: 'CommandBinding: MarkupExtension'
+date: '2010-01-30T12:39:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T20:11:24.061+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4994231036738999946
+blogger_orig_url: http://milestone.topics.it/2010/01/commandbinding-markupextension.html
+---
+
+<span>Estendere il motore di DataBinding, a oggi, è impossibile perchè è tutto <em>internal</em> e/o <em>sealed</em>… immagino abbiano avuto i loro buoni motivi e posso immaginare anche quali siano, sta di fatto che è una gran menata…</span><br>  <span>Possiamo però partire da <a href="http://www.hardcodet.net/2008/04/wpf-custom-binding-class" target="_blank">questo post</a>, come suggerito da <a href="http://blogs.ugidotnet.org/spaccabit" target="_blank">Giuseppe</a>, e wrappare la classe Binding in una nostra classe Binding esponendo le stesse identitche proprietà che saranno dei meri proxy verso la classe Binding reale; facendo infine semplicemente questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public override object </span>ProvideValue( <span style="color: #2b91af">IServiceProvider </span>provider )
+{
+    <span style="color: blue">return </span>binding.ProvideValue( provider );
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Nel momento in cui la nostra markup extension viene effettivamente invocata l’unica cosa che possiamo fare è passare la palla alla vera markup extension con cui Wpf è in grado di interagire.</span><br>
+
+<span>Ma non è ancora tutto perso… se usiamo M-V-VM siamo probabilmente molto avvezzi al concetto di DelegateCommand/RelayCommand e alla possibilità di scrivere una cosa di questo genere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>command = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .AddKeyGesture(
+            System.Windows.Input.<span style="color: #2b91af">Key</span>.S,
+            System.Windows.Input.<span style="color: #2b91af">ModifierKeys</span>.Control )
+    .OnExecute( o => { <span style="color: green">/* execution logic */ </span>} );</pre>
+</blockquote>
+
+<span>con lo scopo di creare un ICommand a cui sia implicitamente associata la combinazione Ctrl+S peccato che quella cosa non funzioni perchè nessuno (aka la classe Binding) si preoccupa di eseguire la registrazione degli Input Bindings…</span><br>
+
+<span>Sfruttando quindi la nostra bella markup extension perchè non realizzare qualcosa del genere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">CommandBinding </span>: <span style="color: #2b91af">BindingDecoratorBase
+</span>{
+    <span style="color: blue">public override object </span>ProvideValue( <span style="color: #2b91af">IServiceProvider </span>provider )
+    {
+        <span style="color: blue">var </span>b = <span style="color: blue">base</span>.ProvideValue( provider );
+        <span style="color: blue">this</span>.OnProvideValue( provider, b );
+        <span style="color: blue">return </span>b;
+    }
+
+    <span style="color: blue">protected virtual void </span>OnProvideValue( <span style="color: #2b91af">IServiceProvider </span>provider, <span style="color: #2b91af">Object </span>value )
+    {
+        <span style="color: #2b91af">FrameworkElement </span>fe;
+        <span style="color: #2b91af">DependencyProperty </span>dp;
+
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.TryGetTargetItems<<span style="color: #2b91af">FrameworkElement</span>>( provider, <span style="color: blue">out </span>fe, <span style="color: blue">out </span>dp ) )
+        {
+            <span style="color: #2b91af">RoutedEventHandler </span>reh = <span style="color: blue">null</span>;
+            reh = ( s, e ) =>
+            {
+                fe.Loaded -= reh;
+                <span style="color: blue">this</span>.OnTargetLoaded( fe, dp );
+            };
+            fe.Loaded += reh;
+        }
+        <span style="color: blue">else
+        </span>{
+            <span style="color: #2b91af">FrameworkContentElement </span>fce;
+            <span style="color: blue">if</span>( <span style="color: blue">this</span>.TryGetTargetItems<<span style="color: #2b91af">FrameworkContentElement</span>>( provider, <span style="color: blue">out </span>fce, <span style="color: blue">out </span>dp ) )
+            {
+                <span style="color: #2b91af">RoutedEventHandler </span>reh = <span style="color: blue">null</span>;
+                reh = ( s, e ) =>
+                {
+                    fce.Loaded -= reh;
+                    <span style="color: blue">this</span>.OnTargetLoaded( fce, dp );
+                };
+                fce.Loaded += reh;
+            }
+        }
+    }</pre>
+</blockquote>
+
+<span>Con <em>TryGetTargetItems</em> definita così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected virtual bool </span>TryGetTargetItems<T>( <span style="color: #2b91af">IServiceProvider </span>provider, <span style="color: blue">out </span>T target, <span style="color: blue">out </span><span style="color: #2b91af">DependencyProperty </span>dp )
+    <span style="color: blue">where </span>T : <span style="color: #2b91af">DependencyObject
+</span>{
+    target = <span style="color: blue">null</span>;
+    dp = <span style="color: blue">null</span>;
+    <span style="color: blue">if</span>( provider == <span style="color: blue">null </span>) <span style="color: blue">return false</span>;
+
+    <span style="color: blue">var </span>service = provider.GetService( <span style="color: blue">typeof</span>( <span style="color: #2b91af">IProvideValueTarget </span>) ) <span style="color: blue">as </span><span style="color: #2b91af">IProvideValueTarget</span>;
+    <span style="color: blue">if</span>( service == <span style="color: blue">null </span>) <span style="color: blue">return false</span>;
+
+    target = service.TargetObject <span style="color: blue">as </span>T;
+    dp = service.TargetProperty <span style="color: blue">as </span><span style="color: #2b91af">DependencyProperty</span>;
+    <span style="color: blue">return </span>target != <span style="color: blue">null </span>&& dp != <span style="color: blue">null</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Abbiamo la necessità di sapere quando il target del Binding è “Loaded”, tracciamo sia FrameworkElement (eg Button) che FrameworkContentElement (eg Hyperlink) perchè purtroppo (<grrr…>) non hanno lo stesso ancestor e quindi hanno 2 eventi Loaded diversi… poco male, basta saperlo.</span><br>
+
+<pre class="code">    <span style="color: blue">protected virtual void </span>OnTargetLoaded( <span style="color: #2b91af">DependencyObject </span>target, <span style="color: #2b91af">DependencyProperty </span>targetProperty )
+    {
+        <span style="color: blue">var </span>source = target <span style="color: blue">as </span><span style="color: #2b91af">ICommandSource</span>;
+        <span style="color: blue">var </span>command = <span style="color: blue">this</span>.GetCommand( target, targetProperty );
+        <span style="color: blue">this</span>.SetInputBindings( target, source, command );
+    }</pre>
+
+<span>A questo punto quando il target è Loaded ci limitiamo ad estrarre dalla DepenedencyProperty (omesso per brevità) il valore dell’ICommand e non facciamo altro che impostare gli imput bindings sul root element, anche qui la funzione ricorsiva che va alla ricerca del root element è omessa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected virtual void </span>SetInputBindings( <span style="color: #2b91af">DependencyObject </span>target, <span style="color: #2b91af">ICommandSource </span>source, <span style="color: #2b91af">IBindableCommand </span>command)
+{
+    <span style="color: blue">if</span>( source != <span style="color: blue">null </span>&& command != <span style="color: blue">null </span>&& command.InputBindings != <span style="color: blue">null </span>)
+    {
+        <span style="color: blue">var </span>rootElement = <span style="color: blue">this</span>.GetRootElement( target <span style="color: blue">as </span><span style="color: #2b91af">FrameworkElement </span>);
+        <span style="color: blue">foreach</span>( <span style="color: #2b91af">InputBinding </span>ib <span style="color: blue">in </span>command.InputBindings )
+        {
+            <span style="color: blue">if</span>( ib.CommandParameter != source.CommandParameter )
+            {
+                ib.CommandParameter = source.CommandParameter;
+            }
+
+            rootElement.InputBindings.Add( ib );
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>Togo, adesso lo possiamo usare così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Button </span><span style="color: red">Height</span><span style="color: blue">="23" </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">cmd</span><span style="color: blue">:</span><span style="color: #a31515">CommandBinding </span><span style="color: red">Path</span><span style="color: blue">=ExecuteSampleCommand}" /></span></pre>
+</blockquote>
+
+<span>Ottenendo gratis la registrazione degli input bindings.</span><br>
+
+<span><em>Ma non è finita… Stay tuned!</em></span><br>
+
+<span>.m</span><br>
+

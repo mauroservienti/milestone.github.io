@@ -1,0 +1,15 @@
+---
+layout: post
+title: Prism, Silverlight e i moduli OnDemand
+date: '2010-03-10T16:13:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Inversion of Control
+- Silverlight
+modified_time: '2012-08-04T20:11:36.164+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8214157834788756368
+blogger_orig_url: http://milestone.topics.it/2010/03/prism-silverlight-e-i-moduli-ondemand.html
+---
+
+<span>Nel mio “approccio” a Silverlight sono <em>cascato</em> anche su <a href="http://www.codeplex.com/CompositeWPF" target="_blank">Prism</a> per una serie di buoni motivi tra cui:</span><br>  <ul>   <li>il <em>brand</em> ha il suo peso :-);</li>    <li>il mio toolkit per UI Composition non è <u>ancora</u> <em>Silverlight-enabled</em>;</li>    <li>Scoprire cose nuove è sempre divertente;</li> </ul>  <span>Una cosa che mi è piacuta subito di Prism è la possibilità di caricare i plugin/moduli on-demand solo ed esclusivamente nel momento in cui serve, questo per Silverlight aggiunge il vantaggio che lo xap del modulo viene scaricato solo ed esclusivamente se necessario.</span><br>  <span>Il sistema è decisamente interessante anche se vi scontrate subito con un “paio” di problemi di design.</span><br>  <span>Avendo la possibilità di caricare moduli on-demand è sensato pensare che la UI debba dare feedback all’utente su quello che sta succedendo e sul perchè sta aspettando… ecco… questa cosa non è da farsi :-)</span><br>  <span>L’inghippo è che l’attore con cui avete a che fare, IModuleManager, non vi espone nessun evento relativo a quello che sta succedendo… la cosa bruttina, dal punto di vista del design, è che il primo tentativo che fate (che io ho fatto) è quello di ereditare dal ModuleManager di Prism e fare l’override di un paio di metodi per aggiungere gli eventi del caso… ciccia :-) tutto clamorosamente “private”, ma peccchèèè :-S</span><br>  <span>Alla fine l’unica opzione valida è quella di riscriversi complementamente il ModuleManager esponendo quello che vi serve e poi registrarlo dentro Unity al posto di quello di default.</span><br>  <span><em>Dimenticavo</em></span><br>  <span><a href="http://wildermuth.com/2009/07/20/Prism_s_Plugin_Architecture" target="_blank">rimpiazzare il FileDownloader</a> non è una soluzione, perchè gli eventi che avete a disposizione sono <em>troppo lontani</em> da quello che serve a voi ;-)</span><br>  <span><em>Dimenticavo 2 :-)</em></span><br>  <span>ma… il “type forwarding”, cosa vitale a mio modo di vedere in un framework per IoC, in Unity?</span><br>  <span><em>Dimenticavo 3 :-P</em></span><br>  <span>la roba del load-on-demand me la scopiazzo alla grande :-P</span><br>  <span>.m</span><br>  

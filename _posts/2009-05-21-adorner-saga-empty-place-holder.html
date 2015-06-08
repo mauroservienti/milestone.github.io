@@ -1,0 +1,209 @@
+---
+layout: post
+title: 'Adorner Saga: “Empty Place Holder” & TextBox.Command'
+date: '2009-05-21T07:05:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Attached Properties
+modified_time: '2012-08-04T19:52:17.565+02:00'
+thumbnail: https://lh3.googleusercontent.com/-E5QPswIO5wg/Tym-TU-obNI/AAAAAAAAAaY/tzMIq5wCtI0/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-617866832384858524
+blogger_orig_url: http://milestone.topics.it/2009/05/adorner-saga-empty-place-holder.html
+---
+
+<span>Il nuovo e fiammante Visual Studio 2010 Beta 1 ha partorito il primo progettino… e non poteva che essere un behavior per WPF.</span><br>  <span>Ci sono ancora 2 cose, e probabilmente molte altre ;-), che l’utente è abituato ad avere in campi diversi ma per certi versi complementari:</span><br>  <span><u>Interazione con l’(eco)sistema attraverso la tastiera</u>: l’utente quando ad esempio esegue una ricerca è <em>decisamente</em> abituato a:</span><br>  <ul>   <li>inserire i criteri di ricerca, come ad esempio un elenco di keyword, all’interno di una TextBox; </li>    <li>premere invio; </li> </ul>  <span>e non a prendere il mouse e “pigiare” il bottone “cerca” o a spostare il focus, <em>tabbando</em>, sul pulsante “cerca” e qui premere invio.</span><br>  <span><u>Feedback visuali</u>: sempre parlando di ricerche avere feedback sui risultati di una ricerca;</span><br>  <span>Come al solito la mia musa ispiratrice è Outlook 2007, che avrà una montagna di magagne, ma in termini di UX è semplicemente fenomenale:</span><br>  <span><a href="https://lh5.googleusercontent.com/-zlC5pR16bWw/Tym-TwP0HGI/AAAAAAAAAac/yLn-h7DYAb4/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-E5QPswIO5wg/Tym-TU-obNI/AAAAAAAAAaY/tzMIq5wCtI0/image_thumb.png" width="244" height="117"></a> </span><br>  <span>Il primo “problema” sembra di facile soluzione ma utilizzando WPF in coppia con il nostro fido Model-View-ViewModel la cosa non è fattibile per il semplice motivo che, ad esempio, TextBox non espone una proprietà “Command” non ci resta quindi alternativa che farlo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">TextBox </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">TextBoxManager.Command</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Browse}" <span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">TextBoxManager.CommandParameter</span><span style="color: blue">="Foo</span><span style="color: blue">"</span></span><span style="color: blue"> ... /></span></pre>
+</blockquote>
+
+<span>Tralascio tutta la solita “tiritera” sulla dichiarazione delle attached properties, della classe statica etc. etc… e mi concentro sull’unica parte interessante: quello che ci interessa fare è monitorare i tasti che vengono premuti (PreviewKeyDown) e se corrispondono ad una determinata sequenza (InputGesture) eseguire il command associato, per impostazione predefinita se il command non ha associato nessuna InputGesture viene intercettata la pressione del tasto “Invio”:</span><br>
+
+<blockquote>
+  <pre class="code">onPreviewKeyDown = ( s, e ) =>
+{
+    <span style="color: blue">var </span>d = ( <span style="color: #2b91af">DependencyObject </span>)s;
+    
+    <span style="color: blue">var </span>cmd = GetCommand( d );
+    <span style="color: blue">var </span>prm = GetCommandParameter( d );
+    
+    <span style="color: blue">if</span>( cmd.CanExecute( prm ) )
+    {
+        <span style="color: blue">var </span>gestures = GetGestures( cmd );
+        <span style="color: blue">if</span>( ( ( gestures.None() && e.Key == <span style="color: #2b91af">Key</span>.Enter ) || gestures.Where( gesture => gesture.Matches( d, e ) ).Any() ) )
+        {
+            cmd.Execute( prm );
+            e.Handled = <span style="color: blue">true</span>;
+        }
+    }
+};</pre>
+</blockquote>
+
+<span>Recuperiamo un riferimento al comando e all’eventuale parametro, se il comando può essere eseguito, verifichiamo le gesture e in caso affermativo eseguiamo; “gestures” è una collection di input gesture che viene estratta così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static </span><span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">InputGesture</span>> GetGestures( <span style="color: #2b91af">ICommand </span>source )
+{
+    <span style="color: #2b91af">Ensure</span>.That( source ).Named( <span style="color: #a31515">"source" </span>).IsNotNull();
+
+    <span style="color: #2b91af">IEnumerable</span><<span style="color: #2b91af">InputGesture</span>> gestures = <span style="color: blue">null</span>;
+
+    <span style="color: blue">if</span>( source <span style="color: blue">is </span><span style="color: #2b91af">DelegateCommand </span>)
+    {
+        <span style="color: blue">var </span>cmd = ( <span style="color: #2b91af">DelegateCommand </span>)source;
+        <span style="color: blue">if</span>( cmd.InputBindings != <span style="color: blue">null </span>&& cmd.InputBindings.Count > 0 )
+        {
+            gestures = cmd.InputBindings.OfType<<span style="color: #2b91af">InputBinding</span>>().Select( ib => ib.Gesture );
+        }
+    }
+    <span style="color: blue">else if</span>( source <span style="color: blue">is </span><span style="color: #2b91af">RoutedCommand </span>)
+    {
+        <span style="color: blue">var </span>cmd = ( <span style="color: #2b91af">RoutedCommand </span>)source;
+        <span style="color: blue">if</span>( cmd.InputGestures != <span style="color: blue">null </span>&& cmd.InputGestures.Count > 0 )
+        {
+            gestures = cmd.InputGestures.OfType<<span style="color: #2b91af">InputGesture</span>>();
+        }
+    }
+    <span style="color: blue">else
+    </span>{
+        <span style="color: blue">throw new </span><span style="color: #2b91af">NotSupportedException</span>( <span style="color: #2b91af">String</span>.Format( <span style="color: #a31515">"Unsupported command type: {0}"</span>, source ) );
+    }
+
+    <span style="color: blue">return </span>gestures ?? <span style="color: blue">new </span><span style="color: #2b91af">InputGesture</span>[ 0 ];
+}</pre>
+</blockquote>
+
+<span>Viene fatta così perchè abbiamo, o meglio io ho, la necessità di distinguere se il command è di tipo RoutedCommand (nativo di Wpf), che è la base di tutti i Command che hanno InputGesture, o se è di tipo DelegateCommand (nativo di <a href="http://blogs.ugidotnet.org/Corrado" target="_blank">San Corrado</a>) che è la base di tutti i miei command ed espone le gesture in maniera leggermente diversa.</span><br>
+
+<span>Venendo invece al “problema” feedback visuale Wpf dimostra un’altra volta tutta la sua potenza:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-E3cPo2aDOAE/Tym-VLhgtAI/AAAAAAAAAaw/zwLRTDZ_LCE/image_4.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-PtTOA1wkvtA/Tym-UT_xXYI/AAAAAAAAAak/yKQZ4wmOl5A/image_thumb_1.png" width="244" height="174"></a> </span><br>
+
+<span>Il risultato “Nessun elemento…” è ottenibile con un semplicissimo xaml del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView</span><span style="color: blue">>
+    <</span><span style="color: #a31515">ListView.View</span><span style="color: blue">>
+        <</span><span style="color: #a31515">GridView</span><span style="color: blue">>
+            <</span><span style="color: #a31515">GridViewColumn </span><span style="color: red">Header</span><span style="color: blue">="Nome" />
+        </</span><span style="color: #a31515">GridView</span><span style="color: blue">>
+    </</span><span style="color: #a31515">ListView.View</span><span style="color: blue">>
+    <</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">EmptyPlaceHolderService.Content</span><span style="color: blue">>
+        <</span><span style="color: #a31515">TextBlock </span><span style="color: red">Text</span><span style="color: blue">="Nessun elemento..." />
+    </</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">EmptyPlaceHolderService.Content</span><span style="color: blue">>
+</</span><span style="color: #a31515">ListView</span><span style="color: blue">></span></pre>
+</blockquote>
+
+<span>Naturalmente quando ci sono elementi, o quando compaiono dinamicamente degli elementi, il “place holder” scompare automaticamente. Anche in questo caso le cose essenziali, anche se è un filino più complesso:</span><br>
+
+<ul>
+  <li>vogliamo poter gestire non solo la ListView, ma in generale gli ItemsControl; </li>
+
+  <li>dobbiamo trovare un sistema per generalizzare il sistema in modo che funzioni sia se manipoliamo manualmente la collection Items sia se siamo in binding: ItemContainerGenerator; </li>
+</ul>
+
+<span>Per prima cosa quindi quando la attached property Content cambia ci agganciamo all’evento Loaded del controllo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>OnContentChanged( <span style="color: #2b91af">DependencyObject </span>d, <span style="color: #2b91af">DependencyPropertyChangedEventArgs </span>e )
+{
+    <span style="color: #2b91af">Ensure</span>.That( d.GetType() ).Is<<span style="color: #2b91af">ItemsControl</span>>();
+
+    d.CastTo<<span style="color: #2b91af">ItemsControl</span>>().Loaded += onLoaded;
+}</pre>
+</blockquote>
+
+<span>Quando il controllo è definitivamente caricato:</span><br>
+
+<blockquote>
+  <pre class="code">onLoaded = ( s, e ) =>
+{
+    <span style="color: blue">var </span>control = ( <span style="color: #2b91af">ItemsControl </span>)s;
+    
+    <span style="color: blue">var </span>key = control.ItemContainerGenerator;
+    <span style="color: blue">if</span>( !managedItemsControls.ContainsKey( key ) )
+    {
+        managedItemsControls.Add( key, control );
+
+        key.ItemsChanged += onItemsChanged;
+        control.Unloaded += onUnloaded;
+
+        <span style="color: blue">if</span>( control.Items.None() )
+        {
+            ShowEmptyContent( control );
+        }
+    }
+};</pre>
+</blockquote>
+
+<span>ci mettiamo all’opera, le cose degne di nota sono:</span><br>
+
+<ul>
+  <li>L’uso di ItemContainerGenerator che l’oggetto responsabile della creazione degli item in un ItemsControl, è lui che “sa”, a prescindere da come interagiamo con il controllo; </li>
+
+  <li>Utilizziamo un dictionary (managedItemsControl) per tenere un legame tra l’ItemContainerGenerator e il controllo, ci servirà dopo, siamo obbligati a questo perchè non c’è mezzo di risalire da un ItemContainerGenerator al controllo che lo sta usando; </li>
+
+  <li>Infine se il controllo non contiene nessun elemento visualizziamo il nostro adorner; </li>
+</ul>
+
+<span>L’altro passaggio degno di nota è la gestione dell’evento ItemsChanged:</span><br>
+
+<blockquote>
+  <pre class="code">onItemsChanged = ( s, e ) =>
+{
+    <span style="color: blue">var </span>key = ( <span style="color: #2b91af">ItemContainerGenerator </span>)s;
+    <span style="color: #2b91af">ItemsControl </span>control;
+    <span style="color: blue">if</span>( managedItemsControls.TryGetValue( key, <span style="color: blue">out </span>control ) )
+    {
+        <span style="color: blue">if</span>( control.Items.Any() )
+        {
+            RemoveEmptyContent( control );
+        }
+        <span style="color: blue">else
+        </span>{
+            ShowEmptyContent( control );
+        }
+    }
+};</pre>
+</blockquote>
+
+<span>Recuperiamo dal nostro dictionary, sulla base dell’ItemContainerGenerator che ha scatenato l’evento, il controllo e facciamo quello che dobbiamo fare. Remove e Show EmptyContent altro non fanno che visualizzare o nascondere l’adorner:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>RemoveEmptyContent( <span style="color: #2b91af">UIElement </span>control )
+{
+    <span style="color: #2b91af">AdornerLayer </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( control );
+    <span style="color: #2b91af">Debug</span>.WriteLineIf( layer == <span style="color: blue">null</span>, <span style="color: #a31515">"EmptyPlaceHolderService: cannot find any AdornerLayer" </span>);
+
+    <span style="color: blue">if</span>( layer != <span style="color: blue">null </span>)
+    {
+        <span style="color: #2b91af">Adorner</span>[] adorners = layer.GetAdorners( control );
+        <span style="color: blue">if</span>( adorners != <span style="color: blue">null </span>)
+        {
+            adorners.OfType<<span style="color: #2b91af">EmptyContentAdorner</span>>()
+                .ForEach( adorner =>
+                {
+                    adorner.Visibility = <span style="color: #2b91af">Visibility</span>.Hidden;
+                    layer.Remove( adorner );
+                } );
+        }
+    }
+}
+
+<span style="color: blue">static void </span>ShowEmptyContent( <span style="color: #2b91af">Control </span>control )
+{
+    <span style="color: #2b91af">AdornerLayer </span>layer = <span style="color: #2b91af">AdornerLayer</span>.GetAdornerLayer( control );
+    <span style="color: #2b91af">Debug</span>.WriteLineIf( layer == <span style="color: blue">null</span>, <span style="color: #a31515">"EmptyPlaceHolderService: cannot find any AdornerLayer" </span>);
+
+    <span style="color: blue">if</span>( layer != <span style="color: blue">null </span>)
+    {
+        <span style="color: #2b91af">Adorner</span>[] adorners = layer.GetAdorners( control );
+        <span style="color: blue">if</span>( !( adorners != <span style="color: blue">null </span>&& adorners.OfType<<span style="color: #2b91af">EmptyContentAdorner</span>>().Any() ) )
+        {
+            layer.Add( <span style="color: blue">new </span><span style="color: #2b91af">EmptyContentAdorner</span>( control, control.GetValue( ContentProperty ) ) );
+        }
+    }
+}</pre>
+</blockquote>
+
+<span>.m</span><br>
+

@@ -1,0 +1,57 @@
+---
+layout: post
+title: 'Jason: MVC WebAPI Hosting'
+date: '2012-11-19T14:15:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- WebAPI
+- CQRS
+modified_time: '2012-11-19T14:15:00.952+01:00'
+thumbnail: http://lh3.ggpht.com/-nXUWj8PaXgU/UIqK3QED1oI/AAAAAAAACQI/9elkKHSO-Fo/s72-c/jason_thumb20.png?imgmax=800
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-371582063147785985
+blogger_orig_url: http://milestone.topics.it/2012/11/jason-mvc-webapi-hosting.html
+---
+
+<p><a href="http://lh3.ggpht.com/-97-g15beSC0/UIqK2cKL8DI/AAAAAAAACQA/nkVoGf7_RGA/s1600-h/jason22.png"><img title="jason" style="border-left-width: 0px; border-right-width: 0px; background-image: none; border-bottom-width: 0px; float: left; padding-top: 0px; padding-left: 0px; margin: 0px 10px 5px 0px; display: inline; padding-right: 0px; border-top-width: 0px" border="0" alt="jason" align="left" src="http://lh3.ggpht.com/-nXUWj8PaXgU/UIqK3QED1oI/AAAAAAAACQI/9elkKHSO-Fo/jason_thumb20.png?imgmax=800" width="86" height="60"></a></p> <p><a href="{{ site.baseurl }}{% post_url 2012-11-05-jason-way-to-handle-c-of-cqrs %}" target="_blank">Last time we have seen</a> what <a href="http://jason.codeplex.com/" target="_blank">Jason</a> is, the big picture, but we still miss a lot of details and as you may have noticed even the samples of the introduction post miss some important details.</p> <p>The important things we discovered can be summarized as follows:</p> <ul> <li>we have understood the commanding pattern exposed by Jason;  <li>we have understood how Jason behaves from the client perspective;  <li>we have understood that we can host Jason in a WebAPI controller or using a WCF service; </li></ul> <p><strong>Jason setup in MVC WebAPI</strong></p> <p>Let us start from the newest stuff but much simpler WebAPI implementation, first of all create a new MVC WebAPI project and grab a reference to the <a href="https://www.nuget.org/packages/Jason.WebAPI" target="_blank">Jason.WebAPI</a> package from <a href="http://nuget.org" target="_blank">nuget</a>.</p> <p>What do you get in the package?</p> <ul> <li>A built-in JasonController WebAPI controller;</li> <li>The default configuration implementation;</li> <li>The default command handler provider;</li> <li>1 built-in command (EchoCommand) for testing purpose and its related command handler;</li></ul> <p><strong>2, 3, go… (cit.)</strong></p> <p>One you have added the nuget package all we have to do is to configure Jason, I’d like to improve the configuration so if you have nay idea let me know.</p> <p>Open up the Global.asax file of your project and:</p> <ul> <li>Jason relies on a Inversion of Control framework to work but has no explicit dependency on any specific IoC container, since the requirements are really basic I preferred to expose a simple API to let the user wire Jason with his favorite tool:</li></ul> <blockquote> <div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4">var windsor = new WindsorContainer();<br><br>windsor.Register( Component.For<span style="color: #0000ff">&lt;</span><span style="color: #800000">IServiceProvider</span><span style="color: #0000ff">&gt;</span>().Instance( new ServiceProviderWrapper( windsor ) ) );<br>windsor.Register( Component.For<span style="color: #0000ff">&lt;</span><span style="color: #800000">ICommandHandlersProvider</span><span style="color: #0000ff">&gt;</span>().ImplementedBy<span style="color: #0000ff">&lt;</span><span style="color: #800000">DefaultCommandHandlersProvider</span><span style="color: #0000ff">&gt;</span>() );<br>windsor.Register( Component.For<span style="color: #0000ff">&lt;</span><span style="color: #800000">JasonController</span><span style="color: #0000ff">&gt;</span>().LifeStyle.Is( LifestyleType.Transient ) );</pre><br></div></blockquote>
+<blockquote>
+<p>Right after the MVC initialization code we are creating a new instance of Castle Windsor adding a bunch of components.</p></blockquote>
+<ul>
+<li>After setting up the IoC container we can setup the Jason configuration:</li></ul>
+<blockquote>
+<div><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4">var jasonConfig = new JasonWebAPIConfiguration<br>(<br>    pathToScanForAssemblies: Path.Combine( AppDomain.CurrentDomain.BaseDirectory, "bin" ),<br>    jsonTypeNameHandling: TypeNameHandling.Objects<br>)<br>{<br>    RegisterAsTransient = ( c, i ) =<span style="color: #0000ff">&gt;</span><br>    {<br>        windsor.Register<br>        (<br>            Component.For( c )<br>                .ImplementedBy( i )<br>                .LifeStyle.Is( Castle.Core.LifestyleType.Transient )<br>        );<br>    }<br>};<br><br>jasonConfig.Initialize();</pre></div>
+<div><br></div></blockquote>
+<blockquote>
+<p>The configuration needs 3 different things:</p>
+<ol>
+<li>a path that the internal type scan engine utilizes to find all the commands and all the handlers;</li>
+<li>A type name handling behavior to handle json commands deserialization (only used if incoming content-type is application/json);</li>
+<li>A Func&lt;Object, Object&gt; used to ask to the external IoC container to register something in a transient manner;</li></ol>
+<p>The call to Initialize wires up everything and prepares Jason for the first run.</p></blockquote>
+<ul>
+<li>The last thing to do is to instruct the WebAPI framework to use our IoC implementation to resolve dependencies:</li></ul>
+<blockquote>
+<div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4">GlobalConfiguration.Configuration.DependencyResolver = new DelegateDependencyResolver()<br>{<br>    OnGetService = t =<span style="color: #0000ff">&gt;</span><br>    {<br>        if ( windsor.Kernel.HasComponent( t ) )<br>        {<br>            return windsor.Resolve( t );<br>        }<br><br>        return null;<br>    },<br>    OnGetServices = t =<span style="color: #0000ff">&gt;</span><br>    {<br>        if ( windsor.Kernel.HasComponent( t ) )<br>        {<br>            return windsor.ResolveAll( t ).OfType<span style="color: #0000ff">&lt;</span><span style="color: #800000">Object</span><span style="color: #0000ff">&gt;</span>();<br>        }<br><br>        return new List<span style="color: #0000ff">&lt;</span><span style="color: #800000">Object</span><span style="color: #0000ff">&gt;</span>();<br>    }<br>};</pre><br></div></blockquote>
+<blockquote>
+<p>here I am using a really trivial IDependencyResolver implementation to delegate to the user code the dependency resolve process and let the resolver only handle the wiring between the WebAPI infrastructure and our favorite IoC container.</p></blockquote>
+<p>Now that everything is set up we can test our brand new Jason infrastructure:</p>
+<ul>
+<li>Startup the newly created WebAPI application pressing F5 in Visual Studio;</li>
+<li>fire up a new instance of Fiddler and go to the “composer”:</li></ul>
+<p><a href="http://lh3.ggpht.com/-nxdj_vIXMwU/UIqK44I9qyI/AAAAAAAACQQ/f5vTqwZ-7IU/s1600-h/image%25255B8%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh6.ggpht.com/-HroOJreslQ0/UIqK6BYvDFI/AAAAAAAACQU/mSViYFhx-Fo/image_thumb%25255B3%25255D.png?imgmax=800" width="358" height="84"></a></p>
+<p>Add a call to Jason controller and remember to set the post content type, in our sample json but also xml is fully supported.</p>
+<p>Finally add a boy to the posted http request:</p>
+<p><a href="http://lh4.ggpht.com/-xS_7lLCprX4/UIqK70G2qmI/AAAAAAAACQg/bTw7QVetV8E/s1600-h/image%25255B12%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh3.ggpht.com/-EPirE3ELJXQ/UIqK9gJKD2I/AAAAAAAACQk/E6IH52UifKs/image_thumb%25255B5%25255D.png?imgmax=800" width="400" height="121"></a></p>
+<p><strong>Execute</strong></p>
+<p>As soon as you press the execute button the Jason infrastructure is invoked from the WebAPI application and you get the expected response:</p>
+<p><a href="http://lh5.ggpht.com/-rfK0ouLEX9s/UIqK-8JLjWI/AAAAAAAACQw/xjtsJRzj3Vw/s1600-h/image%25255B16%25255D.png"><img title="image" style="border-top: 0px; border-right: 0px; background-image: none; border-bottom: 0px; padding-top: 0px; padding-left: 0px; border-left: 0px; display: inline; padding-right: 0px" border="0" alt="image" src="http://lh4.ggpht.com/-N8GKBQDjZHA/UIqLAFnJu4I/AAAAAAAACQ4/FZPkggbCGqc/image_thumb%25255B7%25255D.png?imgmax=800" width="414" height="74"></a></p>
+<p>Server side what is happening is that the specialized command handler for the EchoCommand is invoked by the Jason infrastructure, and has the opportunity to do some work and provide a response:</p>
+<blockquote>
+<div id="codeSnippetWrapper"><pre id="codeSnippet" style="border-top-style: none; overflow: visible; font-size: 8pt; border-left-style: none; font-family: 'Courier New', courier, monospace; border-bottom-style: none; color: black; padding-bottom: 0px; direction: ltr; text-align: left; padding-top: 0px; border-right-style: none; padding-left: 0px; margin: 0em; line-height: 12pt; padding-right: 0px; width: 100%; background-color: #f4f4f4">public class EchoCommandHandler : AbstractCommandHandler<span style="color: #0000ff">&lt;</span><span style="color: #800000">EchoCommand</span><span style="color: #0000ff">&gt;</span><br>{<br>    protected override object OnExecute( EchoCommand command )<br>    {<br>        return new EchoCommandResponse()<br>        {<br>            Message = String.Format( "Echo: {0}", command.Message )<br>        };<br>    }<br>}</pre><br></div></blockquote>
+<p>The cool thing is that the whole wiring is done by the infrastructure, thus we can:</p>
+<ul>
+<li>Create a bunch of commands in your assemblies;</li>
+<li>Create the dedicated command handler for each command;</li>
+<li>drop all the stuff in the bin folder of the WebAPI application and restart the application;</li></ul>
+<p>We can now use the newly created commands directly from our really cool JavaScript application using WebAPI as a backhand to host command handlers.</p>
+<p>.m</p>  

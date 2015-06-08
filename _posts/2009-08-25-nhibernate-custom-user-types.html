@@ -1,0 +1,103 @@
+---
+layout: post
+title: 'NHibernate: custom user type(s)'
+date: '2009-08-25T14:04:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- NHibernate
+modified_time: '2012-08-04T20:06:41.248+02:00'
+thumbnail: https://lh5.googleusercontent.com/-CyaY5Ac5Cs4/TypwwFQqXYI/AAAAAAAAAmg/ttf6WS1iFzg/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2540682898943275482
+blogger_orig_url: http://milestone.topics.it/2009/08/nhibernate-custom-user-types.html
+---
+
+<span>Disclaimer(s) :-)</span><br>  <ul>   <li>Sto studiando quindi prendete tutto molto con le pinze; </li>    <li>Sono decisamente allergico al <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/allergia-da-manuale-delle-istruzioni-e-conseguenzehellip.aspx" target="_blank">manuale delle istruzioni</a> quindi usate delle pinze belle grosse :-); </li> </ul>  <span>Detto questo, immaginate di avere il vostro bel dominio siffatto:</span><br>  <span><a href="https://lh6.googleusercontent.com/-A3ekSL26O_U/Typww1VU8kI/AAAAAAAAAmk/kwDsTwehc8g/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-CyaY5Ac5Cs4/TypwwFQqXYI/AAAAAAAAAmg/ttf6WS1iFzg/image_thumb.png" width="203" height="244"></a> </span><br>  <span>Il resto per ora è poco importante, il <a href="http://blogs.ugidotnet.org/pape" target="_blank">capo</a> dice che in DDD non è buona cosa esporre la Primary Key perchè non è cosa pertinente al dominio ma è un problema dello storage, sono pienamente d’accordo ma è altrettanto vero che è pur sempre un gran comodo averla li perchè un bel DataContext.GetById(…) non si nega a nessuno :-)</span><br>  <span>Detto questo è pur vero che potrebbe essere un gran comodo “mascherarla” del resto al dominio e all’applicazione non frega un bel nulla se è un Guid o un Int32:</span><br>  <span><strong>IUniqueEntity</strong></span><br>  <blockquote>   <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IUniqueEntity 
+</span>{
+    <span style="color: #2b91af">IKey </span>Key { <span style="color: blue">get</span>; }
+}</pre>
+</blockquote>
+
+<span>dove <strong>IKey</strong> è definita così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IKey </span>: <span style="color: #2b91af">IEquatable</span><<span style="color: #2b91af">IKey</span>>, <span style="color: #2b91af">IComparable</span><span style="color: green">
+</span>{
+<span style="color: #2b91af">    Boolean </span>IsEmpty { <span style="color: blue">get</span>; }
+}</pre>
+</blockquote>
+
+<span>L’implementazione è del tutto irrilevante per il post quindi passo oltre, quello che però è importante capire è che alla fine della fiera possiamo fare “da qualche parte” qualcosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>guid = <span style="color: #2b91af">Guid</span>.NewGuid();
+<span style="color: #2b91af">IKey </span>key = <span style="color: blue">new </span><span style="color: #2b91af">Key</span><<span style="color: #2b91af">Guid</span>>( guid );</pre>
+</blockquote>
+
+<span>e avere in mano la nostra bella chiave generica, adesso immaginiamo di dover mappare quel dominio al fine di utilizzarlo con <a href="https://www.hibernate.org/343.html" target="_blank">NHibernate</a>; utilizzando il fidissimo <a href="http://fluentnhibernate.org/" target="_blank">Fluent Mapping</a> potete scrivere una cosa del genere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">SubjectMapping </span>: <span style="color: #2b91af">ClassMap</span><<span style="color: #2b91af">Subject</span>>
+{
+    <span style="color: blue">public </span>SubjectMapping()
+    {
+        <span style="color: blue">this</span>.WithTable( <span style="color: #a31515">"Subjects" </span>);
+
+        <span style="color: blue">this</span>.Id( s => s.Key )
+            .ColumnName( <span style="color: #a31515">"Id" </span>)
+            .WithUnsavedValue( <font color="#ff0000"><strong>???</strong></font> )
+            .GeneratedBy. <font color="#ff0000"><strong>???</strong></font></pre>
+</blockquote>
+
+<span>ok, ma che ci metttete al posto dei fatidici “Question Marks”?</span><br>
+
+<span><strong>IUserType</strong></span><br>
+
+<span>la soluzione, decisamente semplice è definire una classe, che tralascio perchè su google ne trovate a centinaia di esempi (uno su tutto <a href="http://stackoverflow.com/questions/1063933/nhibernate-mapping-to-system-drawing-color" target="_blank">questo</a>) che sappia fare il mapping tra il tipo che NHibernate troverà a runtime nel db e il vostro tipo; fatto questo potete finalmente scrivere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.Id( s => s.Key )
+    .ColumnName( <span style="color: #a31515">"Id" </span>)
+    .WithUnsavedValue( <span style="color: blue">null</span> )
+    .SetAttribute( <span style="color: #a31515">"type"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">GuidKeyUserType </span>).AssemblyQualifiedName );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Utilizzando SetAttribute impostate il tipo custom, che deve implementare IUserType. Siccome la IKey è un reference type potete utilizzare come UnsavedValue null, bruttissimo :-) ma siate pazienti; è evidente che l’uso di null per gestire il concetto di non salvato è bruttino e che sarebbe molto meglio scrivere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.Id( s => s.Key )
+    .ColumnName( <span style="color: #a31515">"Id" </span>)
+    .WithUnsavedValue( <span style="color: blue">new</span> <span style="color: #2b91af">Key</span><<span style="color: #2b91af">Guid</span>>( <span style="color: #2b91af">Guid</span>.Empty ) )
+    .SetAttribute( <span style="color: #a31515">"type"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">GuidKeyUserType </span>).AssemblyQualifiedName );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ma in fase di configurazione va tutto in bomba :-) fortunatamente la soluzione ce la fornisce l’Exception stessa: NHibernate cerca di castare il vostro tipo custom da IUserType a IExtendedUserType ed evidentemente fallisce, anche per IExtendedUserType l’implementazione è banale quindi passo.</span><br>
+
+<span><strong>Generator</strong></span><br>
+
+<span>Quello che ci manca però è un passaggio fondamentale: dato che stiamo mappando una chiave primaria abbiamo bisogno anche di fornire ad NHibernate un generatore che lo soddisfi, questa è la parte più difficile di tutte :-):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public class </span><span style="color: #2b91af">GuidKeyGenerator </span>: <span style="color: #2b91af">IIdentifierGenerator
+</span>{
+    <span style="color: blue">public object </span>Generate( <span style="color: #2b91af">ISessionImplementor </span>session, <span style="color: blue">object </span>obj )
+    {<br>        <span style="color: blue">var </span>guid = <span style="color: #2b91af">Guid</span>.NewGuid(); <br>        <span style="color: #2b91af">IKey </span>key = <span style="color: blue">new </span><span style="color: #2b91af">Key</span><<span style="color: #2b91af">Guid</span>>( guid );
+        <br>        <span style="color: blue">return </span>key;    
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>ed ecco il mapping definitivo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">this</span>.Id( s => s.Key )
+    .ColumnName( <span style="color: #a31515">"Id" </span>)
+    .SetGeneratorClass( <span style="color: blue">typeof</span>( <span style="color: #2b91af">GuidKeyGenerator </span>).AssemblyQualifiedName )
+    .WithUnsavedValue( <span style="color: #2b91af">Guid</span>.Empty.AsKey() )
+    .SetAttribute( <span style="color: #a31515">"type"</span>, <span style="color: blue">typeof</span>( <span style="color: #2b91af">GuidKeyUserType </span>).AssemblyQualifiedName );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>e funziona pure :-) quindi direi che potete tornare a delle pinze di dimensione normale.</span><br>
+
+<span>.m</span><br>
+

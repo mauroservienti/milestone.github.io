@@ -1,0 +1,90 @@
+---
+layout: post
+title: Container delle mie brame… perchè sei da configurare…
+date: '2009-05-12T14:58:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Inversion of Control
+modified_time: '2012-08-04T19:46:17.650+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5052377913447852680
+blogger_orig_url: http://milestone.topics.it/2009/05/container-delle-mie-brame-perche-sei-da.html
+---
+
+<span>Credo che alla lunga tutti ci siamo scontrati con la <em>noisitàcomplessitàindigeribilità</em> della gestione della configurazione del container per IoC. In una soluzione corposa, okkio non necessariamente complessa, basta e avanza corposa, è una vera menata.</span><br>  <span>Si ci sono le <em>fluent interfaces</em> che ci fanno risparmare un sacco di “<em>giornate di inferno</em>”, che altrimenti ci guadagneremmo gestendo la configurazione su file xml, permettendoci di scrivere cose del tipo:</span><br>  <blockquote>   <pre class="code">container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">IWindsorContainer</span>, <span style="color: #2b91af">IServiceProvider</span>>()
+    .Instance( container ) );
+
+container.Register( <span style="color: #2b91af">Component</span>.For<<span style="color: #2b91af">ModulesConfigurationSectionHandler</span>>()
+    .FactoryMethod( <span style="color: blue">this</span>.container.Kernel, () =>
+    {
+        <span style="color: blue">var </span>configHandler = ( <span style="color: #2b91af">ModulesConfigurationSectionHandler </span>)<span style="color: #2b91af">ConfigurationManager</span>.GetSection( <span style="color: #a31515">"modulesConfiguration/installedModules" </span>);
+        <span style="color: blue">return </span>configHandler;
+    } )
+    .LifeStyle.Is( <span style="color: #2b91af">LifestyleType</span>.Singleton ) );</pre>
+</blockquote>
+
+<span>nonostante tutto alla lunga diventano una vera menata, anche perchè la famosa “AllTypes” non è che sia poi così flessibile:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">AllTypes</span>.FromAssemblyContaining<<span style="color: #2b91af">Object</span>>()...</pre>
+</blockquote>
+
+<span>Si può fare poco per personalizzare/controllare a fondo quello che succede e se i componenti sono tanti e molto diversificati tra loro resta sempre un piccolo delirio.</span><br>
+
+<span>Quindi… perchè non pensare di fare una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code">container.RegisterAllTypesIn( <span style="color: #2b91af">GetAssembly</span>.ThatContains<<span style="color: #2b91af">SampleType</span>>() );</pre>
+</blockquote>
+
+<span>e limitarsi a definire sul tipo che vogliamo venga registrato una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code">[Ktulu.<span style="color: #2b91af">Component</span>( <span style="color: blue">typeof</span>( <span style="color: #2b91af">ISampleType </span>) )]
+<span style="color: blue">sealed class </span><span style="color: #2b91af">SampleType </span>: <span style="color: #2b91af">ISampleType</span></pre>
+</blockquote>
+
+<span>Ora… </span><br>
+
+<ul>
+  <li>funziona, che è la cosa più importante; </li>
+
+  <li>è veloce e non è che mi faccia poi così schifo che lo sia ;-) </li>
+
+  <li>le mie orecchie non si lamentano per un nuovo brusio di sottofondo… aka <em>smell</em>, almeno per ora ;-) </li>
+
+  <li>permette di “tenere insieme” il componente concreto e le informazioni di base sulla sua registrazione, ed anche questo è molto importante perchè quando la solution ne contiene centinaia rischiate di passare la giornata a cercare i pezzi in giro per il solution explorer…; </li>
+
+  <li>è flessibile quel tanto che basta per gestire le informazioni di base della registrazione di un componente: 
+    <ul>
+      <li>Contratti; </li>
+
+      <li>Implementazione concreta; </li>
+
+      <li>Eventuale Factory; </li>
+    </ul>
+  </li>
+
+  <li>per tutto il resto non c’è Master Card ma un altro extension method che ci permette di personalizzare la configurazione prima che venga definitivamente registrata: 
+    <br>
+
+    <br>
+
+    <pre class="code"><span style="color: blue">var </span>componentsToRegister = <span style="color: #2b91af">GetAssembly</span>.ThatContains<<span style="color: #2b91af">ShellViewModel</span>>()<br>                                      .ExtractComponentRegistrationsFor( container );<br> <br>componentsToRegister.Where( c => c.ServiceType <span style="color: blue">is </span><span style="color: #2b91af">IMyServiceType </span>)
+    .ForEach( c =>
+    {
+        c.ServiceOverrides( <span style="color: #2b91af">ServiceOverride</span>.ForKey( <span style="color: #2b91af">GetKey</span>.For<<span style="color: #2b91af">ServiceTypeImplementation</span>> ) );
+    } );<br> <br>container.Register( componentsToRegister.ToArray() );<br> </pre>
+Minimizzando però la quantità di codice boilerplate da scrivere e riducendo quindi la complessità di manutenzione. </li>
+</ul>
+
+<span>…poi:</span><br>
+
+<ul>
+  <li>mancano probabilmente un sacco di cose ma si possono fare/aggiungere all’uopo; </li>
+
+  <li>Per i puristi c’è da notare che l’unica dipendenza è da un assembly che contiene solo ed esclusivamente la definizione di quell’attributo; </li>
+</ul>
+
+<span>.m</span><br>
+

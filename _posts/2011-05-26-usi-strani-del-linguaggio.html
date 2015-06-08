@@ -1,0 +1,31 @@
+---
+layout: post
+title: Usi “strani” del linguaggio
+date: '2011-05-26T14:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T17:48:48.624+02:00'
+thumbnail: https://lh5.googleusercontent.com/-GgEP1IQjkyI/T0Slp7SFCxI/AAAAAAAAB34/_2Hd7xqVLDM/s72-c/wlEmoticon-smile_2_33.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1498780726481057973
+blogger_orig_url: http://milestone.topics.it/2011/05/usi-strani-del-linguaggio.html
+---
+
+<span>A cosa mai potrebbe servire?:</span><br>  <blockquote></blockquote>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt">IList<T> Create<T>( T obj ) <br>{<br>	<span style="color: "><font color="#0000ff">return</font></span> <span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">List</font></span><T>();<br>}</font></font></pre>
+</blockquote>
+
+<span>A prima vista a nulla, soprattutto il parametro “obj” che viene completamente ignorato… <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh5.googleusercontent.com/-GgEP1IQjkyI/T0Slp7SFCxI/AAAAAAAAB34/_2Hd7xqVLDM/wlEmoticon-smile_2_33.png">, ma se saltiamo di palo in frasca e facciamo una cosa curiosa del genere:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">static</font></font></span><font style="font-size: 11.3pt"> <span style="color: "><font color="#0000ff">void</font></span> Main( <span style="color: "><font color="#0000ff">string</font></span>[] args )<br>{<br>	<span style="color: "><font color="#0000ff">var</font></span> a = <span style="color: "><font color="#0000ff">new</font></span> { SampleProperty = <span style="color: "><font color="#a31515">"mauro"</font></span> };<br>	<span style="color: "><font color="#0000ff">var</font></span> b = <span style="color: "><font color="#0000ff">new</font></span> { SampleProperty = <span style="color: "><font color="#a31515">"mauro"</font></span> };<br> <br>	<span style="color: "><font color="#2b91af">Console</font></span>.WriteLine( a.GetType() == b.GetType() ); <span style="color: "><font color="#008000">//true...</font></span><br>	<span style="color: "><font color="#2b91af">Console</font></span>.WriteLine( a.GetType().IsAssignableFrom( b.GetType() ) ); <span style="color: "><font color="#008000">//true...</font></span><br>	<span style="color: "><font color="#2b91af">Console</font></span>.WriteLine( b.GetType().IsAssignableFrom( a.GetType() ) ); <span style="color: "><font color="#008000">//true...</font></span><br> <br>	<span style="color: "><font color="#2b91af">Console</font></span>.Read();<br>}</font></font></pre>
+</blockquote>
+
+<span>Allora potremmo dire che anche questo funziona:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">static</font></font></span><font style="font-size: 11.3pt"> <span style="color: "><font color="#0000ff">void</font></span> Main( <span style="color: "><font color="#0000ff">string</font></span>[] args )<br>{<br>	<span style="color: "><font color="#0000ff">var</font></span> list = Create( <span style="color: "><font color="#0000ff">new</font></span> { SampleProperty = <span style="color: "><font color="#a31515">""</font></span> } );<br>	list.Add( <span style="color: "><font color="#0000ff">new</font></span> { SampleProperty = <span style="color: "><font color="#a31515">"mauro"</font></span> } );<br> <br>	<span style="color: "><font color="#0000ff">var</font></span> item = list.First();<br>	<span style="color: "><font color="#2b91af">Console</font></span>.WriteLine( item.SampleProperty );<br> <br>	<span style="color: "><font color="#2b91af">Console</font></span>.Read();<br>}</font></font></pre>
+</blockquote>
+
+<span>Figo <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smilewithtongueout" alt="Smile with tongue out" src="https://lh5.googleusercontent.com/-ppOVn3vwVpw/T0SlqSQPl4I/AAAAAAAAB38/-gCsXGHbuu4/wlEmoticon-smilewithtongueout_2_22.png"> stiamo usando il primo “<em>anonymous type</em>” come template per il tipo T del metodo “<em>Create</em>” creando a tutti gli effetti una lista di “<em>anonymous types</em>” fortemente tipizzata.</span><br>
+
+<span>.m</span><br>

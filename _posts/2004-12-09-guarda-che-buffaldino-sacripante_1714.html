@@ -1,0 +1,38 @@
+---
+layout: post
+title: Guarda che buffaldino sacripante....
+date: '2004-12-09T11:33:00.004+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-24T10:11:16.080+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5791491885766931723
+blogger_orig_url: http://milestone.topics.it/2004/12/guarda-che-buffaldino-sacripante_1714.html
+---
+
+<span style="FONT-SIZE: 10pt; COLOR: #333333; FONT-FAMILY: tahoma">
+<span>Oggi ho personalmente vissuto uno degli assiomi della programmazione:</span><br>
+<span>"<u>Il programmatore dovrebbere scrive codice tenendo in considerazione che 
+l'utente potrebbe anche prendere la tastiera a martellate</u>"</span><br>
+<span>Bene 2 giorni di "lotte" con una procedura multithreading per la produzione 
+di "Estratti Conto" che inspiegabilmente estratto contava ( licenza poetica 
+;-) ) quello che voleva lei.. mi ha fatto impazzire.</span><br>
+<span>Alla fine ho scoperto che la colpa era tutta mia ( come sempre del resto ) ma 
+non nel codice ma nel semplice giocherellare con il mouse con il contenuto di 
+una ComboBox durante la procedura multithreading.<br>Praticamente aprendo la 
+Combo e semplicemente scorrendo con il mouse gli items ( i quali si evidenziano 
+) il SelectedValue cambia causando, nel mio caso comportamenti assurdi, il tutto 
+senza mai chiudere la Cambo e quindi senza invocare 
+"SelectedIndexChangeCommitted".</span><br>
+<span>Il bello del ns lavoro :D</span><br>
+<div style="FONT-STYLE: italic">
+have a nice day,<br>m.<br></div>
+<div style="FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">whynot [ at ] topics [ dot ] it
+</div>
+<div style="MARGIN-TOP: 5px; FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">
+These postings are provided "AS IS" with no warranties, and confer no 
+rights.<br>The views expressed on this weblog are mine alone.</div>
+<div style="MARGIN-TOP: 5px; FONT-SIZE: 7pt">
+[ <a href="http://sourceforge.net/projects/imho10">powered by IMHO</a> ]
+</div>
+</span><!-- Powered by IMHO Instant Blogger Copyright (c) 2004 A.Boschin - http://www.elite.boschin.it -->

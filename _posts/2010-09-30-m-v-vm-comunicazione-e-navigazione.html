@@ -1,0 +1,128 @@
+---
+layout: post
+title: 'M-V-VM: comunicazione e navigazione'
+date: '2010-09-30T10:29:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Presentation Pattern
+- Model View ViewModel
+modified_time: '2012-12-26T15:30:55.161+01:00'
+thumbnail: https://lh4.googleusercontent.com/-JdGBUq6rhek/T0SkpjXdzNI/AAAAAAAABwA/Tzu9peo7yxY/s72-c/wlEmoticon-smile_2_14.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-86087446676624399
+blogger_orig_url: http://milestone.topics.it/2010/09/m-v-vm-comunicazione-e-navigazione.html
+---
+
+Eccoci di nuovo a parlare di Model View ViewModel, finalmente <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="https://lh4.googleusercontent.com/-JdGBUq6rhek/T0SkpjXdzNI/AAAAAAAABwA/Tzu9peo7yxY/wlEmoticon-smile_2_14.png" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />. Per ora ci siamo limitati ad una serie di post introduttivi all’argomento:<br />
+<ul>
+<li>     <h4>
+<a href="{{ site.baseurl }}{% post_url 2010-04-23-m-v-vm-beginning %}">M-V-VM: The beginning </a></h4>
+</li>
+<li>     <h4>
+<a href="http://mauroservienti.blogspot.com/2010/06/m-v-vm-master-details.html">M-V-VM: master-details</a></h4>
+</li>
+<li>     <h4>
+<a href="http://mauroservienti.blogspot.com/2010/06/viewmodel-dto.html">ViewModel != DTO </a></h4>
+</li>
+<li>     <h4>
+<a href="http://mauroservienti.blogspot.com/2010/06/m-v-vm-master-details-2-lets-move-on.html">M-V-VM: master-details (2): let’s move on… </a></h4>
+</li>
+<li>     <h4>
+<a href="http://mauroservienti.blogspot.com/2010/09/m-v-vm-commanding.html">M-V-VM: Commanding </a></h4>
+</li>
+</ul>
+Vi consiglio anche di dare un’occhiata a <a href="http://community.visual-basic.it/alessandro/archive/2010/08/13/31848.aspx" target="_blank">tutti i post</a> dell’amico <a href="http://community.visual-basic.it/alessandro" target="_blank">Alessandro</a> che sta facendo un ottimo lavoro in versione VB.Net.<br />
+Con questo post direi che possiamo cominciare ad introdurre una sorta di “Adavnced-M-V-VM”, quello che vorrei fare è, sempre sfruttando l’applicazione di esempio che abbiamo portato avanti sino ad ora, introdurre tutti quei concetti che sono fondamentali in un’applicazione degna del suo nome, concetti che se calati in un mondo basato su M-V-VM tendono a risultare più ostici del dovuto.<br />
+<strong>Navigazione</strong><br />
+Uno degli argomenti forse più ostici è come gestire la navigazione con M-V-VM, la domanda tipica è:<br />
+<blockquote>
+Come faccio dal ViewModel ad aprire una nuova finestra?</blockquote>
+La risposta è complessa e articolata e come al solito non c’è una verità assoluta, quindi quello che vediamo in questo post è una possibile soluzione al problema.<br />
+Prima di affrontare però il problema della navigazione dobbiamo affrontarne uno più a “basso livello”.<br />
+<strong>Comunicazione</strong><br />
+Diciamo che abbiamo due ViewModel ospitati in due Window (aka View) diverse, ViewModel che non si conoscono ma che hanno bisogno di scambiare informazioni tra loro. Non conoscendosi non possiamo applicare il classico pattern basato su eventi ma dobbiamo trovare un’alternativa.<br />
+<a href="https://lh6.googleusercontent.com/--vwKXsa_4jg/T0SkrYvsUnI/AAAAAAAABwM/BtYJEpV5h2Q/image_2_8.png"><img alt="image" border="0" height="115" src="https://lh6.googleusercontent.com/-9QhqwbqS4gM/T0SkqIr1B1I/AAAAAAAABwI/WLttb6tPOcI/image_thumb_9.png" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="244" /></a><br />
+quello che vogliamo ottenere è che le due finestre, dell’esempio qui sopra, possano comunicare: è una banale “chat” in-process, totalmente inutile se non al fine di spiegare il concetto di brokering <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="b8224172-c5f3-4f7c-bca6-125d3e153741" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />:<br />
+<a href="https://lh3.googleusercontent.com/-aZzfDUMZkcM/T0Sks4ZL-lI/AAAAAAAABwg/y_RvycLYmX4/image_4_7.png"><img alt="image" border="0" height="118" src="https://lh3.googleusercontent.com/-FnM-B9O55Vw/T0Skrwp_yBI/AAAAAAAABwY/v37uq-CrLAw/image_thumb_1_7.png" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="244" /></a><br />
+gli attori fondamentali in questo scambio di messaggi sono:<br />
+<ul>
+<li>i messaggi, ovviamente <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="deaf203f-44e8-4eb9-9b2a-a7a83100dd46" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />: un messaggio non è altro che una semplice classe il cui scopo è trasportare informazioni, nel nostro esempio il “messaggio di testo”; </li>
+<li>il message broker: il postino, il cui scopo è quello di trasportare e consegnare il messaggio; </li>
+</ul>
+in questo gioco le due View/ViewModel non si conoscono tra loro ma conoscono il messaggio (la lingua con cui parlare tra loro) e il postino. Ovviamente il postino dovrà essere uno ed uno solo <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="224e87f4-8837-43c5-888b-719df7c0a682" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" />, un Singleton.<br />
+<blockquote>
+<pre style="margin-bottom: auto; margin-top: auto;"><span style="font-family: Consolas;"><span style="color: blue; font-size: 12pt;">public</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: blue; font-size: 12pt;">partial</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: blue; font-size: 12pt;">class</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">App</span><span style="font-size: 12pt;"> : </span><span style="color: #2b91af; font-size: 12pt;">Application</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">{</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span><span style="color: blue; font-size: 12pt;">protected</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: blue; font-size: 12pt;">override</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: blue; font-size: 12pt;">void</span><span style="font-size: 12pt;"> OnStartup( </span><span style="color: #2b91af; font-size: 12pt;">StartupEventArgs</span><span style="font-size: 12pt;"> e )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">base</span><span style="font-size: 12pt;">.OnStartup( e );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.ShutdownMode = System.Windows.</span><span style="color: #2b91af; font-size: 12pt;">ShutdownMode</span><span style="font-size: 12pt;">.OnLastWindowClose;</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">var</span><span style="font-size: 12pt;"> broker = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">MessageBroker</span><span style="font-size: 12pt;">( </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">WpfDispatcher</span><span style="font-size: 12pt;">( </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Dispatcher ) );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">var</span><span style="font-size: 12pt;"> w1 = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">ChatWindow</span><span style="font-size: 12pt;">()</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">   DataContext = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">ChatViewModel</span><span style="font-size: 12pt;">( broker )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  };</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">var</span><span style="font-size: 12pt;"> w2 = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">ChatWindow</span><span style="font-size: 12pt;">()</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">   DataContext = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">ChatViewModel</span><span style="font-size: 12pt;">( broker )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  };</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  w1.Show();</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  w2.Show();</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> }</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">}</span></span></pre>
+</blockquote>
+Nell’esempio, che <a href="http://cid-e5479799f933c3ed.office.live.com/self.aspx/Public/PostsAttachments/Broker.Spike.zip" target="_blank">potete scaricare</a>, altro non facciamo che, all’avvio dell’applicazione:<br />
+<ol>
+<li>creare un nuovo postino, usando l’implementazione presente in <a href="http://radical.codeplex.com/" target="_blank">Radical</a>; </li>
+<li>creare due istanze delle View, con i relativi ViewModel, che simulano la nostra “local chat”; </li>
+</ol>
+In un’implementazione reale il tutto sarebbe delegato ad un motore di Invertion of Control ma non è oggetto di questo post quindi niente “castelli” inutili.<br />
+Come si può notare i ViewModel dipendono dal MessageBroker, il postino, e lo sfruttano per la comunicazione:<br />
+<blockquote>
+<pre style="margin-bottom: auto; margin-top: auto;"><span style="font-family: Consolas;"><span style="color: blue; font-size: 12pt;">readonly</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">IMessageBroker</span><span style="font-size: 12pt;"> broker;</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="color: blue; font-size: 12pt;">public</span><span style="font-size: 12pt;"> ChatViewModel( </span><span style="color: #2b91af; font-size: 12pt;">IMessageBroker</span><span style="font-size: 12pt;"> broker )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">{</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.broker = broker;</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Messages = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">ObservableCollection</span><span style="font-size: 12pt;">&lt;</span><span style="color: #2b91af; font-size: 12pt;">String</span><span style="font-size: 12pt;">&gt;();</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Speak = </span><span style="color: #2b91af; font-size: 12pt;">DelegateCommand</span><span style="font-size: 12pt;">.Create()</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  .OnCanExecute( o =&gt; ...</span></span><span style="font-family: Consolas;"><span style="font-size: 12pt;"> )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  .AddMonitor</span></span><span style="font-family: Consolas;"><span style="font-size: 12pt;">( ... </span></span><span style="font-family: Consolas;"><span style="font-size: 12pt;">)</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  .OnExecute( o =&gt;</span></span> ...<span style="font-family: Consolas;"><span style="font-size: 12pt;"> );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.broker.Subscribe&lt;</span><span style="color: #2b91af; font-size: 12pt;">TextMessage</span><span style="font-size: 12pt;">&gt;( </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">, msg =&gt;</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">if</span><span style="font-size: 12pt;">( msg.Sender != </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;"> )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">   </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Messages.Insert( 0, msg.Text );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  }</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> } );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">}</span></span></pre>
+</blockquote>
+Ogni ViewModel, in questo caso nel costruttore ma poco importa dove, chiede al postino (Subscribe) di essere avvisato se qualcuno spedisce (Dispatch) un determinato messaggio e aggancia, via lambda, un handler per il messaggio, con l’accortezza di evitare di reagire ai messaggi mandati eventualmente da se stesso;<br />
+Inviare un messaggio è altrettanto banale:<br />
+<blockquote>
+<pre style="margin-bottom: auto; margin-top: auto;"><span style="font-family: Consolas;"><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Speak = </span><span style="color: #2b91af; font-size: 12pt;">DelegateCommand</span><span style="font-size: 12pt;">.Create()</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> .OnCanExecute( o =&gt;</span></span> ...<span style="font-family: Consolas;"><span style="font-size: 12pt;"> )</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> .AddMonitor</span></span><span style="font-family: Consolas;"><span style="font-size: 12pt;">( ... </span></span><span style="font-family: Consolas;"><span style="font-size: 12pt;">)</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> .OnExecute( o =&gt;</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> {</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">var</span><span style="font-size: 12pt;"> msg = </span><span style="color: blue; font-size: 12pt;">new</span><span style="font-size: 12pt;">&nbsp;</span><span style="color: #2b91af; font-size: 12pt;">TextMessage</span><span style="font-size: 12pt;">( </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;"> ) { Text = </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.Text };</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;">  </span><span style="color: blue; font-size: 12pt;">this</span><span style="font-size: 12pt;">.broker.Dispatch( msg );</span></span>
+<span style="font-family: Consolas;"><span style="font-size: 12pt;"> } );</span></span></pre>
+</blockquote>
+ci limitaimo a creare un’ìstanza del messaggio che vogliamo spedire e la passiamo al broker, sarà onere del broker sapere se ci sono subscriber per quello specifico messaggio e nel caso notificarli.<br />
+<strong>Navigazione, reload.</strong><br />
+Torniamo al nostro problema iniziale, vista l’implementazione del sistema di comunicazione cosa ci vieta di realizzare questo set di messaggi?:<br />
+<ul>
+<li>DiplayXxxxViewModel: ad esempio “DisplayChatSettings” delgando all’handler, che nel nostro esempio triviale potrebbe essere nel file App.cs, l’onere di risolvere il problema; </li>
+<li>ViewModelLoading<tviewmodel>, ViewModelLoaded<tviewmodel>, ViewModelUnloaded<tviewmodel>: “spediti” da ogni ViewModel al fine di notificare al mondo il loro ciclo di vita e permettere ad altri viewmodel di reagire ove necessario: nel nostro esempio all’avvio dei “ChatSettings” potremmo desiderare che le View della chat si disabilitino <img alt="Winking smile" class="wlEmoticon wlEmoticon-winkingsmile" src="https://lh3.googleusercontent.com/-inLAaie-ImQ/T0SkuL26iaI/AAAAAAAABwk/HeLfSyzkVw4/wlEmoticon-winkingsmile_2_5.png" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> </tviewmodel></tviewmodel></tviewmodel></li>
+</ul>
+.m

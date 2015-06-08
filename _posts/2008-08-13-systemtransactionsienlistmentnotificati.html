@@ -1,0 +1,163 @@
+---
+layout: post
+title: 'System.Transactions.IEnlistmentNotification: interessante… decisamente!'
+date: '2008-08-13T06:15:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-01-30T12:48:09.478+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5298915471114181377
+blogger_orig_url: http://milestone.topics.it/2008/08/systemtransactionsienlistmentnotificati.html
+---
+
+<span>Dunque, supponiamo di avere il seguente stralcio di codice:</span><br>
+<blockquote>
+<span>IChangeTrackingServiceContainer container = ChangeTrackingServiceContainer.GetProvider(); <br>
+IChangeTrackingService tracking = container.CreateTrackingService(); </span><br>
+<span>DataContextProcess dataContext = new DataContextProcess(); <br>
+IEntityCollection<IPerson> allPersons = dataContext.GetAll<IPerson>(); </span><br>
+<span>IPerson first = allPersons.Where( p => p.LastName == "Servienti" ).First(); <br>
+first.FirstName = "Mauro"; </span><br>
+<span>if( tracking.IsChanged ) <br>
+{ <br>
+    IEnumerable<IAdvisedAction> advisory = tracking.GetAdvisory(); <br>
+    dataContext.Commit( advisory ); <br>
+    tracking.AcceptChanges(); <br>
+}</span><br>
+</blockquote>
+<span>Nulla di trascendentale… ma come molti di voi sapranno, se avete mai dato un occhio a <a target="_blank" href="http://www.codeplex.com/NSK">NSK</a> o vi siete mai cimentati nella realizzazione di una <a target="_blank" href="http://martinfowler.com/eaaCatalog/unitOfWork.html">Unit of Work</a>, quello che ci si aspetta è che il lavoro fatto dal metodo Commit() del data context sia come minimo <u>transazionale</u>.</span><br>
+<span>In questo caso c’è però il rischio di incappare in un interessante problema, supponiamo che abbiate anche la seguente situazione:</span><br>
+<blockquote>
+<span>VersioningEngineProcess<IPerson> vep = new VersioningEngineProcess<IPerson>(); <br>
+Int32 revision = vep.GetRevision( first );</span><br>
+</blockquote>
+<span>avete cioè un sistema che vi da una <em>banale</em> informazione di quante volte sia stata “salvata” una determinata entity, nella realtà dei fatti la cosa è molto più ostica ma qui ci basta il concetto, questa informazione è sia sul db e viene mantenuta in fase di Update/Insert ma è anche tracciata all’interno della entity stessa (nel proxy per essere precisi) in modo da evitare noiosi roundtrip sul db che non è detto che servano.</span><br>
+<span>Quel versioning engine quindi si rivolge alla entity (al proxy) e le chiede la revision. Quello in cui rischiate di incappare è questo:</span><br>
+<ul>
+    <li>Apertura della transazione per il commit; </li>
+    <li>Verifica che la commit sia possibile e non generi conflitti (Concorrenza Ottimistica, Versioning del Dato etc.. etc..); </li>
+    <li>Update fisico sul db; </li>
+    <li>Aggiornamento del valore di Revision; </li>
+    <li>Commit della transazione; </li>
+</ul>
+<span>Se tutto va bene nessun problema…ma siccome siamo in un mondo difficile <cit.> non è tutto oro quel che luccica e… potreste avere una condizione un filino più complessa:</span><br>
+<blockquote>
+<span>IPerson first = allPersons.Where( p => p.LastName == "Servienti" ).First(); <br>
+first.FirstName = "Mauro"; </span><br>
+<span>first.Addresses[ 0 ].City = “Treviglio”;</span><br>
+</blockquote>
+<span>In questo caso quello che succede è:</span><br>
+<ul>
+    <li>Apertura della transazione per il commit; </li>
+    <li>Verifica che la commit di <u>IPerson</u> sia possibile e non generi conflitti (Concorrenza Ottimistica, Versioning del Dato etc.. etc..); </li>
+    <li>Update fisico sul db di <u>IPerson</u>; </li>
+    <li>Aggiornamento del valore di Revision di <u>IPerson</u>; </li>
+    <li>Verifica che la commit di <u>IAddress</u> sia possibile e non generi conflitti (Concorrenza Ottimistica, Versioning del Dato etc.. etc..); </li>
+    <li>Update fisico sul db di <u>IAddress</u>; </li>
+    <li>Aggiornamento del valore di Revision di <u>IAddress</u>; </li>
+    <li>Commit della transazione; </li>
+</ul>
+<span>Se una delle operazioni fatte su IAddress fallisce otterremmo, giustamente un Rollback della transazione, ma incapperemmo nello spiacevole fatto che il valore di Revision memorizzatro nel proxy di IPerson non verrebbe “<em>rolled back</em>” e, in un’architettura articolata non è affatto operazione banale andare a farne il Rollback correttamente.</span><br>
+<span>La soluzione c’è, è elegante, interessante e decisamente produttiva oltre ad incastrarsi perfettamente in un’architettura articolata: <em>System.Transaction.IEnlistmentNotification</em>, su cui ho scritto anche un <a target="_blank" href="http://msdn.microsoft.com/it-it/library/cc185103.aspx">articolo</a> l’anno scorso per MSDN.</span><br>
+<span>Una volta capito come funziona il modello transazionale/di enlistment di System.Transactions e in generale di una transazione il giochetto è abbastanza semplice, se poi abbiamo una architettura a servizi lo è ancora di più.</span><br>
+<span>Nell’esempio di prima quello che succede, sulla Commit del DataContext, è più o meno questo:</span><br>
+<blockquote>
+<span>using( TransactionScope tx = new TransactionScope( TransactionScopeOption.RequiresNew, options ) ) <br>
+{ <br>
+    actions.ForEach( action => action.Execute() ); <br>
+    tx.Complete(); <br>
+}</span><br>
+</blockquote>
+<span>abbiamo una lista di azioni che devono essere eseguite, una di queste, quella per l’update di IPerson (idem quella di IAddress), fa una cosa del tipo:</span><br>
+<blockquote>
+<span>ConflictDetectionEngineProcess<T> cdep = new ConflictDetectionEngineProcess<T>(); <br>
+cdep.EnsureSafeUpdate( target, options ); </span><br>
+<span>PersistenceServiceProcess<T> svc = new PersistenceServiceProcess<T>(); <br>
+svc.Update( target ); </span><br>
+<span>VersioningServiceProcess<T> vsp = new VersioningServiceProcess<T>(); <br>
+vsp.MarkRevisioned( target );</span><br>
+</blockquote>
+<span>Siccome siamo in una transazione è lecitissimo aspettarsi un rollback corretto, la prima operazione non scrive nulla fa solo alcuni test ed eventualmente scatena una exception, la seconda scrive fisicamente i dati su Sql Server, la terza aggiorna una “variabile” e qui casca l’asino perchè se dopo questa operazione abbiamo una exception non ne facciamo rollback.</span><br>
+<span>Per fare in modo che il tutto sia implicito, automatico e trasparente è più che sufficiente implementare IEnlistmentNotification sul componente che si occupa di fare l’ultimo step:</span><br>
+<blockquote>
+<span>sealed class ConcretePersonVersioningService : Service, IVersioningService<IPerson>, <u><em>IEnlistmentNotification</em></u> <br>
+{ <br>
+    TransactionEnlistmentHelper transactionHelper = null; <br>
+    Boolean markRevisionedCalledInTransaction = false; <br>
+    PersonProxy entityCalledInTransaction; </span><br>
+<span>    public void MarkRevisioned( IPerson entity ) <br>
+    { <br>
+        this.CheckIsDisposed(); </span><br>
+<span>        /* <br>
+         * Passando true come parametro ensureTransaction non ci interessa più <br>
+         * verificare che siamo 'enlisted' perchè se non c'è una transazione <br>
+         * non arriveremmo mai qui ma otterremmo una eccezione. <br>
+         */ <br>
+        transactionHelper = new TransactionEnlistmentHelper(); <br>
+        transactionHelper.EnlistInTransaction( true, this, EnlistmentOptions.None ); </span><br>
+<span>        /*  <br>
+          * A questo punto siamo perfettamente consci del fatto che sappiamo <br>
+          * fare l'operazione e che non ci sarebbero exception, del resto è la set <br>
+          * di un field. ma siccome siamo in una Transazione ci limitiamo a tener <br>
+          * traccia del fatto che dobbiamo farla in fase di commit. <br>
+          *  <br>
+          * Se qualcosa non va è qui che dobbiamo notificarlo con una Exception <br>
+          * per fare in modo che ci sia un Rollback "gracefull". <br>
+          */         <br>
+        this.markRevisionedCalledInTransaction = true; <br>
+        this.entityCalledInTransaction = ( PersonProxy )entity; <br>
+    } </span><br>
+<span>    void IEnlistmentNotification.Commit( Enlistment enlistment ) <br>
+    { <br>
+        this.CheckIsDisposed(); </span><br>
+<span>        /* <br>
+         * Facciamo l'effetiva operazione, in questo modo <br>
+         * rispettiamo in pieno il principio ACID <br>
+         */ <br>
+        if( this.markRevisionedCalledInTransaction && this.entityCalledInTransaction != null ) <br>
+        { <br>
+            this.entityCalledInTransaction.Revision++; <br>
+            enlistment.Done(); <br>
+        } <br>
+        else <br>
+        { <br>
+            throw new InvalidOperationException(); <br>
+        } <br>
+    } </span><br>
+<span>    void IEnlistmentNotification.InDoubt( Enlistment enlistment ) <br>
+    { <br>
+        this.CheckIsDisposed(); <br>
+        enlistment.Done(); <br>
+    } </span><br>
+<span>    void IEnlistmentNotification.Prepare( PreparingEnlistment preparingEnlistment ) <br>
+    { <br>
+        this.CheckIsDisposed(); </span><br>
+<span>        if( this.markRevisionedCalledInTransaction && this.entityCalledInTransaction == null ) <br>
+        { <br>
+            /* <br>
+             * Se per assurdo qualcosa fosse andato storto <br>
+             * siamo in grado di bloccare l'operazione <br>
+             */ <br>
+            preparingEnlistment.ForceRollback(); <br>
+        } <br>
+        else <br>
+        { <br>
+            preparingEnlistment.Prepared(); <br>
+        } <br>
+    } </span><br>
+<span>    void IEnlistmentNotification.Rollback( Enlistment enlistment ) <br>
+    { <br>
+        this.CheckIsDisposed(); </span><br>
+<span>        /* <br>
+         * Rimettiamo a posto le cose come se <br>
+         * nulla fosse mai accaduto <br>
+         */ <br>
+        this.markRevisionedCalledInTransaction = false; <br>
+        this.entityCalledInTransaction = null; <br>
+    } </span><br>
+<span>    #endregion <br>
+}</span><br>
+</blockquote>
+<span>Il tutto è abbastanza semplice: quando viene chiamato il metodo MarkRevisioned() ci rivolgiamo ad un TransactionEnlistmentHelper, che altro non è che un semplice warpper per facilitare la gestione delle transazioni, e chiediamo l’enlistment nella transazione corrente e poi aspettiamo che il tutto avvenga: Prepare() –> Commit() oppure Rollback().</span><br>
+<span>Semplice, efficiace e decisamente bello da veder funzionare ;-)</span><br>
+<span>.m</span><br>

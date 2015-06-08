@@ -1,0 +1,196 @@
+---
+layout: post
+title: 'Fluently.Design().Me: inganniamo l’intellisense :-)'
+date: '2010-01-20T18:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Fluent Interfaces
+modified_time: '2012-08-04T17:51:07.489+02:00'
+thumbnail: https://lh4.googleusercontent.com/-h5rDeLv1FD8/TzJyUEgZvCI/AAAAAAAABG4/8ZNbM7PAI_c/s72-c/03b2c6db-e678-48b4-8ea8-931e1686d511.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3511359177506965381
+blogger_orig_url: http://milestone.topics.it/2010/01/fluentlydesignme-inganniamo.html
+---
+
+<span>
+	<em>Per la felicità di <a href="http://blog.raffaeu.com/Default.aspx" target="_blank">Raffaeu</a> ;-)</em></span><br>
+<span>
+	Eravamo rimasti qua:</span><br>
+<span>
+	<a href="https://lh5.googleusercontent.com/-AYfULW6OGSA/TzJyUriAbXI/AAAAAAAABG8/WQdHT42-J8w/93c98f75-0ae8-49ee-b03e-92921a3080f2.png" rel="shadowbox"><img alt="image_thumb[2]" border="0" height="159" src="https://lh4.googleusercontent.com/-h5rDeLv1FD8/TzJyUEgZvCI/AAAAAAAABG4/8ZNbM7PAI_c/03b2c6db-e678-48b4-8ea8-931e1686d511.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image_thumb[2]" width="229"></a><a href="https://lh3.googleusercontent.com/-ivYp-gInQm0/TzJyVypxNUI/AAAAAAAABHM/7UM0kjUKmnc/81535458-a66f-4a0f-a441-54a08d3f8329.png" rel="shadowbox"><img alt="image_thumb[1]" border="0" height="159" src="https://lh6.googleusercontent.com/-5ynlJpppWZ4/TzJyVDy_yGI/AAAAAAAABHE/bSz09dHGsKM/4c1142bf-f6b7-4837-aaba-62a23096d9cf.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image_thumb[1]" width="244"></a></span><br>
+<span>
+	Il giochetto è più semplice del previsto, avete quasi sempre due attori:</span><br>
+<ul>
+	<li>
+		Un entry point che tipicamente è una classe statica non generica che espone dei metodi generici;</li>
+	<li>
+		Una classe che viene istanziata e ritornata dall’entry point;</li>
+</ul>
+<span>
+	Una cosa del tipo:</span><br>
+<blockquote>
+	<pre class="code"><span style="color: blue">static class </span><span style="color: #2b91af">MyFluentEntryPoint
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">FluentEngine</span><t> Having<t>( T value )
+    {
+        <span style="color: blue">return new </span><span style="color: #2b91af">FluentEngine</span><t>( value );
+    }
+}</t></t></t></pre></blockquote>
+<span>
+	<t><t><t>
+	<p>
+		e un engine così definito:</p>
+	<blockquote>
+		<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">FluentEngine</span><t>
+{
+    <span style="color: blue">readonly </span>T value;
+
+    <span style="color: blue">public </span>FluentEngine( T value )
+    {
+        <span style="color: blue">this</span>.value = value;
+    }
+}</t></pre></blockquote>
+	<t>
+	<p>
+		Adesso per semplicità immaginiamo di voler essere in grado di fare 2 operazioni:</p>
+	<ul>
+		<li>
+			configurare l’engine appena creato;</li>
+		<li>
+			mandare in esecuzione l’engine;</li>
+	</ul>
+	<blockquote>
+		<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">FluentEngine</span><t>
+{
+    <span style="color: blue">readonly </span>T value;
+
+    <span style="color: blue">public </span>FluentEngine( T value )
+    {
+        <span style="color: blue">this</span>.value = value;
+    }
+
+    <span style="color: #2b91af">FluentEngine</span><t> Configure()
+    {
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: #2b91af">FluentEngine</span><t> Execute()
+    {
+        <span style="color: blue">return this</span>;
+    }
+}</t></t></t></pre></blockquote>
+	<t><t><t>
+	<p>
+		Funzionare funziona ma incappate nel solito problema della “coding experience”:</p>
+	<p>
+		<a href="https://lh3.googleusercontent.com/-28cMyT_9S8Q/TzJyW_OBbQI/AAAAAAAABHY/Rr-hdB-CGgA/64648756-8877-4a29-8676-b3d81d1552b3.png" rel="shadowbox"><img alt="image" border="0" height="151" src="https://lh6.googleusercontent.com/-LkooWJCN488/TzJyWb8GFiI/AAAAAAAABHU/wnZCWVN50ts/36fe6d84-64bf-4c93-bff3-f95010c22570.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a></p>
+	<p>
+		Allora fate un secondo tentativo… fallimentare :-), almeno io ci sono incappato:</p>
+	<ul>
+		<li>
+			togliete il metodo Execute da FluentEngine;</li>
+		<li>
+			create un ConfiguredFluentEngine:</li>
+	</ul>
+	<blockquote>
+		<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">ConfiguredFluentEngine</span><t>
+{
+    <span style="color: blue">readonly </span>T value;
+
+    <span style="color: blue">public </span>ConfiguredFluentEngine( T value )
+    {
+        <span style="color: blue">this</span>.value = value;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">ConfiguredFluentEngine</span><t> Execute()
+    {
+        <span style="color: blue">return this</span>;
+    }
+}</t></t></pre></blockquote>
+	<t><t>
+	<p>
+		e cambiate la firma di Configure():</p>
+	<blockquote>
+		<pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">ConfiguredFluentEngine</span><t> Configure()
+{
+    <span style="color: blue">return new </span><span style="color: #2b91af">ConfiguredFluentEngine</span><t>( <span style="color: blue">this</span>.value );
+}</t></t></pre></blockquote>
+	<t><t>
+	<p>
+		funzionare funziona… avete risolto un problema e ve ne siete creati altri 2, figo:</p>
+	<ul>
+		<li>
+			se l’engine deve poter essere mandato in esecuzione anche senza la configurazione il metodo Excute lo dovete lasciare anche su FluentEngine pagando lo scotto di dover:
+			<ul>
+				<li>
+					o duplicare l’implementazione di Execute;</li>
+				<li>
+					o introdurre una terza classe per gestire l’esecuzione;</li>
+			</ul>
+		</li>
+		<li>
+			dovete preoccuparvi del mantenimento dello stato nel passaggio da una classe all’altra, e il nostro esempio è triviale in questo senso ma complicarsi la vita è <em>moltissimo facilissimo</em>;</li>
+	</ul>
+	<p>
+		Possiamo quindi asserire che non va bene :-) In realtà la soluzione è molto ma molto più semplice e l’abbiamo sotto gli occhi tutte le volte che usiamo una Fluent Interface fatta come si deve: <em>interface…</em> appunto :-)</p>
+	<p>
+		<strong>Desiderata</strong></p>
+	<p>
+		Definiamo quello di cui abbiamo bisogno:</p>
+	<blockquote>
+		<pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">IConfiguredFluentEngine</span><t>
+{
+    <span style="color: #2b91af">IFluentEngine</span><t> Execute();
+}
+
+<span style="color: blue">interface </span><span style="color: #2b91af">IFluentEngine</span><t><span style="color: #2b91af">
+</span>{
+    <span style="color: #2b91af">IFluentEngine</span><t> Execute();
+    <span style="color: #2b91af">IConfiguredFluentEngine</span><t> Configure();
+}</t></t></t></t></t></pre></blockquote>
+	<t><t><t><t><t>
+	<p>
+		e modifichiamo l’entry point di conseguenza:</p>
+	<blockquote>
+		<pre class="code"><span style="color: blue">static class </span><span style="color: #2b91af">MyFluentEntryPoint
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">IFluentEngine</span><t> Having<t>( T value )
+    {
+        <span style="color: blue">return new </span><span style="color: #2b91af">FluentEngine</span><t>( value );
+    }
+}</t></t></t></pre></blockquote>
+	<t><t><t>
+	<p>
+		A questo punto non ci resta che fare la cosa più banale di tutte: implementare tutte i contratti sulla stessa classe:</p>
+	<blockquote>
+		<pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">FluentEngine</span><t> : <span style="color: #2b91af">IFluentEngine</span><t>, <span style="color: #2b91af">IConfiguredFluentEngine</span><t>
+{
+    <span style="color: blue">readonly </span>T value;
+
+    <span style="color: blue">public </span>FluentEngine( T value )
+    {
+        <span style="color: blue">this</span>.value = value;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IConfiguredFluentEngine</span><t> Configure()
+    {
+        <span style="color: blue">return this</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IFluentEngine</span><t> Execute()
+    {
+        <span style="color: blue">return this</span>;
+    }
+}</t></t></t></t></t></pre></blockquote>
+	<t><t><t><t><t>
+	<p>
+		garantendoci questo:</p>
+	<p>
+		<a href="https://lh6.googleusercontent.com/-U3-B4plZIcM/TzJyYSmOkkI/AAAAAAAABHs/UVgKJzVMfbs/d5459732-5914-4787-bf12-6c65351a4f7e.png" rel="shadowbox"><img alt="image" border="0" height="154" src="https://lh5.googleusercontent.com/-7gRDtFP-bMw/TzJyXZ2ZTrI/AAAAAAAABHo/TOZlPbtFjXg/c67a4429-afed-4cb3-ac4f-c80ca267f70b.png" style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" width="244"></a></p>
+	<p>
+		è ovvio che se complichiamo/estendiamo/necessitiamo di dare al developer una experience più corposa le cose si complicano e non di poco, ma il concetto resta sempre lo stesso: una singola classe che implementa contratti diversi, del resto la vostra necessità in questo caso è “semplicemente” ingannare l’intellisense :-)</p>
+	<p>
+		<em>Non è tutto… stay tuned.</em></p>
+	<p>
+		.m</p>
+	</t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></t></span><br>

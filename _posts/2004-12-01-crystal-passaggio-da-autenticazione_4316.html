@@ -1,0 +1,57 @@
+---
+layout: post
+title: Crystal.. Passaggio da Autenticazione SSPI a SQL Authentication
+date: '2004-11-30T23:07:00.009+01:00'
+author: Mauro Servienti
+tags:
+- Why not...
+modified_time: '2012-01-24T10:11:10.073+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7991553696638602945
+blogger_orig_url: http://milestone.topics.it/2004/11/crystal-passaggio-da-autenticazione_4316.html
+---
+
+<span style="FONT-SIZE: 10pt; COLOR: #333333; FONT-FAMILY: tahoma">
+<span>...(cha barba direte voi).. pensate un po' il 
+sottoscritto che ci litiga tutti i giorni :D</span><br>
+<span>Cominciamo con le buone notizie: <strong>NON SI PUO'</strong></span><br>
+<span>Dopo aver spulciato per giorni la KB di Crystal e svariati articoli su 
+internet sono giunto alla conclusione che il cambio di metodologia di 
+autenticazione a Run-Time non è possibile.</span><br>
+<span>La degna conclusione è:</span><br>
+<ul>
+  <li>L'applicazione utilizza Integrated Security per accedere ai dati, quindi 
+  il report deve utilizzare Integrated Security: ne consegue che il report deve 
+  essere "disegnato" direttamente utilizzando Integrated Security;</li>
+  <li>L'applicazione utilizza la sicurezza integrata di SQL, perchè ad esempio 
+  siete in workgroup, il report deve utilizzare la sicurezza integrate si SQL: 
+  il report deve essere disegnato connettendosi alla base dati utilizzando la 
+  sicurezza integrata di SQL.</li></ul>
+<span>Ho smanettato per ore con le classi <em>TableLogonInfo</em> e 
+<em>ConnectionInfo</em>, con i <u>vari</u>, <u>svariati</u> e <u>sparsi un po' 
+ovunque</u> metodi <em>SetDatabaseLogon(...)</em>, ma nessuno a sortito gli 
+effetti desiderati.</span><br>
+<span>Spulciando con il debugger si scopre che, dopo aver passato 
+le presunte credenziali con ConnectionInfo, aver ciclato su tutte le 
+tabelle e tutti i sottoreport e aver applicato TableLogonInfo e ConnectionInfo, 
+il ReportDocument resta infarcito di classi NameValuePair2 con 
+Name="Integrated Security" e Value="True"... e uno comicia a chiedersi ma 
+come può funzionare... infatti se durante l'iterazione sulle tabelle si 
+prova ad utilizzare il Table.<font size="2">TestConnectivity() questo ritorna 
+sempre e solo false. :-(<p>
+<p></font>Alla fine preso dalla disperazione ho cominciato a sostituire questi 
+NemeValuePair2, ove possibile direttamente e altrove tramite reflection, ma 
+comunque nulla è cambiato.</span><br>
+<span>Quindi come risolvere l'inghippo... in perfetto stile OOP, implementando i 
+Pattern più famosi ho deciso di disegnare 2 report distinti :-) e a 
+run-time decidere di aprirne uno piuttosto che un'altro.</span><br>
+<div style="FONT-STYLE: italic">
+have a nice day,<br>m.<br></div>
+<div style="FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">whynot [ at ] topics [ dot ] it
+</div>
+<div style="MARGIN-TOP: 5px; FONT-SIZE: 7pt; COLOR: gray; FONT-STYLE: italic">
+These postings are provided "AS IS" with no warranties, and confer no 
+rights.<br>The views expressed on this weblog are mine alone.</div>
+<div style="MARGIN-TOP: 5px; FONT-SIZE: 7pt">
+[ <a href="http://sourceforge.net/projects/imho10">powered by IMHO</a> ]
+</div>
+</span><!-- Powered by IMHO Instant Blogger Copyright (c) 2004 A.Boschin - http://www.elite.boschin.it -->

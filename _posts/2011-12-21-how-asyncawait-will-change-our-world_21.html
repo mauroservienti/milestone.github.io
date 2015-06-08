@@ -1,0 +1,30 @@
+---
+layout: post
+title: How async/await will change our world.
+date: '2011-12-21T12:02:00.001+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- async/await
+modified_time: '2012-08-04T17:42:41.534+02:00'
+thumbnail: https://lh4.googleusercontent.com/-yARdB-7eCWs/T0jBOza48qI/AAAAAAAAB80/An_hAeunOWE/s72-c/wlEmoticon-smile_2_47.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-30005126439116155
+blogger_orig_url: http://milestone.topics.it/2011/12/how-asyncawait-will-change-our-world_21.html
+---
+
+<span>well…using <a href="http://radical.codeplex.com/" target="_blank">Radical</a> AsyncWorker we can write something like:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt"> <span style="color: "><font color="#0000ff">void</font></span> Do()<br>{<br>	<span style="color: "><font color="#2b91af">AsyncWorker</font></span>.Using( <span style="color: "><font color="#0000ff">this</font></span>.Id )<br>		.Configure( cfg =><br>		{<br>			cfg.Before = e =><br>			{<br><br>				<span style="color: "><font color="#0000ff">this</font></span>.Status = <span style="color: "><font color="#a31515">"Running: "</font></span> + e.Argument;<br>			};<br> <br>			cfg.After = e =><br>			{<br>				<span style="color: "><font color="#0000ff">this</font></span>.Status = <span style="color: "><font color="#a31515">"Completed: " </font></span>+ e.Argument;<br>			};<br>		} )<br>		.Execute( e =><br>		{<br>			<span style="color: "><font color="#008000">//something long running...</font></span><br>			<span style="color: "><font color="#2b91af">Thread</font></span>.Sleep( 2000 );<br>		} );<br>}</font></font></pre>
+</blockquote>
+
+<span>Cool, interesting, quite easy to read and a really interesting experiment, <a href="/search/label/fluent+interfaces" target="_blank">for me</a>, in writing a complex and intellisense driven fluent interface…</span><br>
+
+<span><strong>But…</strong></span><br>
+
+<span>…in a few months everything will drastically change:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">public</font></font></span><font style="font-size: 11.3pt"> <span style="color: "><font color="#0000ff">async</font></span> <span style="color: "><font color="#0000ff">void</font></span> Do()<br>{<br>	<span style="color: "><font color="#0000ff">this</font></span>.Status = <span style="color: "><font color="#a31515">"Running: "</font></span> + <span style="color: "><font color="#0000ff">this</font></span>.Id;<br> <br>	<span style="color: "><font color="#0000ff">await</font></span> <span style="color: "><font color="#2b91af">Task</font></span>.Factory.StartNew( () =><br>	{<br>		<span style="color: "><font color="#008000">//something long running...</font></span><br>		<span style="color: "><font color="#2b91af">Thread</font></span>.Sleep( 2000 );<br>	} );<br> <br>	<span style="color: "><font color="#0000ff">this</font></span>.Status = <span style="color: "><font color="#a31515">"Completed: "</font></span> + <span style="color: "><font color="#0000ff">this</font></span>.Id;<br>}</font></font></pre>
+</blockquote>
+
+<span>Amazing <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh4.googleusercontent.com/-yARdB-7eCWs/T0jBOza48qI/AAAAAAAAB80/An_hAeunOWE/wlEmoticon-smile_2_47.png"></span><br>
+
+<span>.m</span><br>

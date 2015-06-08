@@ -1,0 +1,26 @@
+---
+layout: post
+title: 'EmitMapper: eliminiamo le stringhe dalla configurazione'
+date: '2011-05-30T15:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- EmitMapper
+modified_time: '2012-02-22T09:22:16.676+01:00'
+thumbnail: https://lh6.googleusercontent.com/-oIf2PBtobxI/T0Slrwt-nfI/AAAAAAAAB4I/4BjnBwom3e0/s72-c/image_thumb_13.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7324046524351841153
+blogger_orig_url: http://milestone.topics.it/2011/05/emitmapper-eliminiamo-le-stringhe-dalla.html
+---
+
+<span>Una delle cose fantastiche di un linguaggio fortemente tipizzato e compilato sono gli errori del compilatore, EmitMapper fa di tutto per complicarvi la vita e rendervi facile fare errori banali che scoprite solo a runtime:</span><br>  <span><a href="https://lh5.googleusercontent.com/-AFWuENLc_ko/T0Slswd19aI/AAAAAAAAB4Q/pBvcgBjJF94/image_2_12.png"><img style="background-image: none; border-bottom: 0px; border-left: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top: 0px; border-right: 0px; padding-top: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-oIf2PBtobxI/T0Slrwt-nfI/AAAAAAAAB4I/4BjnBwom3e0/image_thumb_13.png" width="330" height="131"></a></span><br>  <span>supponendo di voler mappare un modello come quello esposto avete bisogno di spiegare al mapper che la proprietà “Name” deve essere mappata su “FullName” del tipo di destinazione. EmitMapper offre questa funzionalità attraverso il metodo MatchMembers esposto dal motore di configurazione:</span><br>  <blockquote>   <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">var</font></font></span><font style="font-size: 11.3pt"> mapper = <span style="color: "><font color="#2b91af">ObjectMapperManager</font></span>.DefaultInstance.GetMapper<<span style="color: "><font color="#2b91af">SourceClass</font></span>, <span style="color: "><font color="#2b91af">DestinationClass</font></span>><br>(<br>	<span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">MappingConfiguration</font></span>()<br>		.MatchMembers( ( s, d ) =><br>		{<br>			<span style="color: "><font color="#0000ff">if</font></span>( s == <span style="color: "><font color="#a31515">"Name"</font></span> && d == <span style="color: "><font color="#a31515">"FullName"</font></span> ) <br>			{<br>				<span style="color: "><font color="#0000ff">return</font></span> <span style="color: "><font color="#0000ff">true</font></span>;<br>			}<br> <br>			<span style="color: "><font color="#0000ff">return</font></span> s == d;<br>		})<br>);</font></font></pre>
+</blockquote>
+
+<span>metodo decisamente prolisso e prono ad errori perché usa le stringhe per identificare le proprietà, ergo non siete molto refactoring-friendly. Perché quindi non esprimere la stessa cosa così:</span><br>
+
+<blockquote>
+  <pre style="font-family: ; background: white; color: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 11.3pt">var</font></font></span><font style="font-size: 11.3pt"> mapper = <span style="color: "><font color="#2b91af">ObjectMapperManager</font></span>.DefaultInstance.GetMapper<<span style="color: "><font color="#2b91af">SourceClass</font></span>, <span style="color: "><font color="#2b91af">DestinationClass</font></span>><br>(<br>	<span style="color: "><font color="#0000ff">new</font></span> <span style="color: "><font color="#2b91af">MappingConfiguration</font></span>()<br>		.MatchMembers<<span style="color: "><font color="#2b91af">SourceClass</font></span>, <span style="color: "><font color="#2b91af">DestinationClass</font></span>>( m  =><br>		{<br>			m.Match( s => s.Name, d => d.FullName );<br>		} )<br>);</font></font></pre>
+</blockquote>
+
+<span>Sfruttiamo l’espressività delle Lambda Expression per definire il match tra le proprietà, internamente poi non facciamo altro che rimappare il tutto sul metodo esposto da EmitMapper, semplice, potente, intuitivo, refactoring-friendly e con il supporto per l’intellisense il che non fa schifo proprio a nessuno credo… <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="https://lh4.googleusercontent.com/-1tCgLFGdd_c/T0SltxjYCtI/AAAAAAAAB4U/tX_gsMJxTXc/wlEmoticon-smile_2_34.png"></span><br>
+
+<span>.m</span><br>

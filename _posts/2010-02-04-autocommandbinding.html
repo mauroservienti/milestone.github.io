@@ -1,0 +1,160 @@
+---
+layout: post
+title: AutoCommandBinding :-)
+date: '2010-02-04T07:41:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T19:52:37.014+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3708353310049118243
+blogger_orig_url: http://milestone.topics.it/2010/02/autocommandbinding.html
+---
+
+<span><a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/8469237633209319455" target="_blank">Più lo uso e più mi piace</a>. Adesso che abbiamo un’infrastruttura che in qualche modo ci consente di intercettare il processo di Data Binding possiamo pensare di avere un ViewModel che non contiene più i command ma piuttosto una cosa del genere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">Fact </span>CanExecuteSample
+{
+    <span style="color: blue">get
+    </span>{
+        <span style="color: blue">var </span>fact = <span style="color: #2b91af">Fact</span>.Create( o => !<span style="color: #2b91af">String</span>.IsNullOrEmpty( <span style="color: blue">this</span>.SampleText ) );<br>        <span style="color: blue">return </span>fact;<br>    }
+}
+
+[<span style="color: #2b91af">KeyBinding</span>( <span style="color: #2b91af">Key</span>.Enter, Modifiers = <span style="color: #2b91af">ModifierKeys</span>.Control )]
+<span style="color: blue">public void </span>ExecuteSample()
+{
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.CanExecuteSample )
+    {
+        <span style="color: green">//Command execution logic
+</span>    }
+}</pre>
+</blockquote>
+
+<span>mumble… mumble… se il tutto funziona come ci aspettiamo cosa ci vieta di fare ora così?:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected override </span><span style="color: #2b91af">IBindableCommand </span>GetCommand( <span style="color: #2b91af">DependencyObject </span>target, <span style="color: #2b91af">DependencyProperty </span>targetProperty )
+{
+    <span style="color: blue">if</span>( <span style="color: blue">this</span>.CanCreateCommand( target ) )
+    {
+        <span style="color: blue">var </span>dataContext = <span style="color: blue">this</span>.GetDataContext( target );
+        <span style="color: blue">var </span>path = <span style="color: blue">this</span>.Path.Path;
+        <span style="color: blue">var </span>methodName = path.EndsWith( <span style="color: #a31515">"Command" </span>) ? path.Remove( path.IndexOf( <span style="color: #a31515">"Command" </span>) ) : path;
+        <span style="color: blue">var </span>factName = <span style="color: #2b91af">String</span>.Concat( <span style="color: #a31515">"Can"</span>, methodName );
+        <span style="color: blue">var </span>method = dataContext.GetType().GetMethod( methodName );
+
+        <span style="color: blue">var </span>definition = dataContext.GetType()
+            .GetMethods()
+            .Where( mi => mi.Name.Equals( methodName ) )
+            .Select( mi =>
+            {
+                <span style="color: blue">var </span>prms = mi.GetParameters();
+
+                <span style="color: blue">return new
+                </span>{
+                    DataContext = dataContext,
+                    FastDelegate = mi.CreateVoidDelegate(),
+                    Fact = dataContext.GetType()
+                                .GetProperties()
+                                .Where( pi =>
+                                {
+                                    <span style="color: blue">return </span>pi.PropertyType == <span style="color: blue">typeof</span>( <span style="color: #2b91af">Fact </span>) && pi.Name.Equals( factName );
+                                } )
+                                .Select( pi =>
+                                {
+                                    <span style="color: blue">var </span>fact = ( <span style="color: #2b91af">Fact </span>)pi.GetValue( dataContext, <span style="color: blue">null </span>);
+                                    <span style="color: blue">return </span>fact;
+                                } )
+                                .SingleOrDefault(),
+                    HasParameter = prms.Length == 1,
+                    ParameterType = prms.Length != 1 ? <span style="color: blue">null </span>: prms[ 0 ].ParameterType,
+                    KeyBindings = mi.GetAttributes<<span style="color: #2b91af">KeyBindingAttribute</span>>(),
+                    Description = method.GetAttribute<<span style="color: #2b91af">CommandDescriptionAttribute</span>>()
+                };
+            } )
+            .SingleOrDefault();
+
+        <span style="color: blue">var </span>text = ( definition.Description == <span style="color: blue">null </span>) ? <span style="color: #2b91af">String</span>.Empty : definition.Description.DisplayText;
+        <span style="color: blue">var </span>cmd = <span style="color: #2b91af">DelegateCommand</span>.Create( text )
+            .OnCanExecute( o =>
+            {
+                <span style="color: blue">return </span>definition.Fact != <span style="color: blue">null </span>?
+                    definition.Fact.Eval( o ) :
+                    <span style="color: blue">true</span>;
+            } )
+            .OnExecute( o =>
+            {
+                <span style="color: blue">if</span>( definition.HasParameter )
+                {
+                    <span style="color: blue">var </span>prm = <span style="color: #2b91af">Convert</span>.ChangeType( o, definition.ParameterType );
+                    definition.FastDelegate( definition.DataContext, <span style="color: blue">new</span>[] { prm } );
+                }
+                <span style="color: blue">else
+                </span>{
+                    definition.FastDelegate( definition.DataContext, <span style="color: blue">null </span>);
+                }
+            } );
+
+        <span style="color: blue">if</span>( definition.KeyBindings != <span style="color: blue">null </span>)
+        {
+            definition.KeyBindings
+                .ForEach( kb => cmd.AddKeyGesture( kb.Key, kb.Modifiers ) );
+        }
+
+        <span style="color: blue">if</span>( definition.Fact != <span style="color: blue">null </span>)
+        {
+            cmd.AddMonitor( definition.Fact );
+        }
+
+        target.SetValue( targetProperty, cmd );
+
+        <span style="color: blue">return </span>cmd;
+    }
+
+    <span style="color: blue">return null</span>;
+}</pre>
+</blockquote>
+
+<span>La classe base, per estrarre il command, si limitava a recuperare il valore della Dependency Property… che però ora non c’è più… cosa facciamo? un sacco di roba, proprio un sacco:</span><br>
+
+<ul>
+  <li>facciamo una prima valutazione per capire se possiamo creare/siamo interessati a ceare un comando: </li>
+</ul>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">protected virtual </span><span style="color: #2b91af">Boolean </span>CanCreateCommand( <span style="color: #2b91af">DependencyObject </span>target )
+{
+    <span style="color: blue">if</span>( <span style="color: #2b91af">DesignTimeHelper</span>.GetIsInDesignMode() )
+    {
+        <span style="color: blue">return false</span>;
+    }
+    <span style="color: blue">return this</span>.Path != <span style="color: blue">null </span>&& ( target <span style="color: blue">is </span><span style="color: #2b91af">FrameworkElement </span>|| target <span style="color: blue">is </span><span style="color: #2b91af">FrameworkContentElement </span>);
+}</pre>
+</blockquote>
+
+<ul>
+  <li>
+    <span>estraiamo poi un po’ di dati e creiamo un tipo anonimo che faccia da dto per tutti i dati che abbiamo estratto;</span><br>
+  </li>
+
+  <li>
+    <span>la parte relativa al CreateVoidDelegate() è una delle tante implementazioni di “fast delegate” via Lambda Expression;</span><br>
+  </li>
+
+  <li>
+    <span>infine creiamo il vero e proprio DelegateCommand da settare sul target del Binding;</span><br>
+  </li>
+</ul>
+
+<span>Questo in ultimo ci permette di scrivere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Button </span><span style="color: red">Height</span><span style="color: blue">="23" </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">cmd</span><span style="color: blue">:</span><span style="color: #a31515">AutoCommandBinding </span><span style="color: red">Path</span><span style="color: blue">=ExecuteSample}"</span></pre>
+</blockquote>
+
+<span>Adesso direi che la domanda più interessante di tutte è: ma perchè tutto questo sbattimento? ha senso dannarsi semplicemente per evitare di creare un command?</span><br>
+
+<span>In realtà la risposta ad entrambe le domande è no… ma c’è un problema di fondo che è legato a come funzinona il motore di data binding internamente e tutto questo rumore è finalizzato a capire come il <em>signorino</em> ragiona ogni volta che deve risolvere un binding… e vi garantisco che in base allo scenario il suo ragionamento interno cambia radicalmente.</span><br>
+
+<span><em>Stay tuned :-)</em></span><br>
+
+<span>.m</span><br>
+

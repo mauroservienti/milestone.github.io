@@ -1,0 +1,15 @@
+---
+layout: post
+title: Multi-targeting hell..Windows Identity Foundation
+date: '2012-09-13T07:48:00.001+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+- Visual Studio
+- Identity
+modified_time: '2012-09-13T07:48:57.029+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-659511924870359035
+blogger_orig_url: http://milestone.topics.it/2012/09/multi-targeting-hellwindows-identity.html
+---
+
+<p><a href="{{ site.baseurl }}{% post_url 2012-09-12-blend-sdk-version-mismatchhell %}" target="_blank">Funny period</a> :-)</p> <p>I know that someone will laugh up his sleeve after reading this post :-)</p> <p><strong>The story</strong></p> <p>You have a perfectly running solution (a web solution) that utilizes Windows Identity Foundation (WS-Federation) to authenticate users, everything runs fine until you install Visual Studio 2012…</p> <p><strong>The symptoms</strong></p> <p>As soon as you install Visual Studio 2012 the perfectly running solution stops working with an interesting error:</p> <blockquote> <p>Unable to cast type ClaimsIdentity to type ClaimsIdentity.</p></blockquote> <p>This is not the real error but the concept is clear…what the hell is going on?</p> <p><strong>What has happened?</strong></p> <p>Well…it is a bit subtle…let’s see it in the details:</p> <ol> <li>The solution targets the <strong>.Net Framework 4.0</strong>;</li> <li>The solution depends on the <strong>Windows Identity Foundation SDK</strong>;</li> <li><strong>Visual Studio 2012 installs the .Net Framework 4.5</strong> that is an <strong>in place upgrade</strong> of the .Net Framework 4.0;</li> <li>The <strong>.Net Framework 4.5</strong> has <strong>its own implementation of the Windows Identity Foundation</strong> (e.g. solutions based on 4.5 does not need the WIF SDK anymore);</li> <li>When the application runs the <strong>identity token</strong> received from the Identity Provider is <strong>handled by the .Net Framework 4.5</strong> even if the application targets the 4.0…thus the application receives an instance of ClaimsIdentity (and ClaimsPrincipal) from the System.Security.Claim namespace that lives in the mscorlib.dll of the .Net Framework 4.5 and not the expected Microsoft.IdentityModel.Claims counterpart…</li></ol> <p>If you deploy the solution to a machine running .Net Framework 4.0 everything works fine, on a machine running .Net Framework 4.5 it fails…but the most painful problem is that installing Visual Studio 2012 breaks the application in a way that is really hard to fix.</p> <p>A pain in the ass… :-/</p> <p>.m</p>  

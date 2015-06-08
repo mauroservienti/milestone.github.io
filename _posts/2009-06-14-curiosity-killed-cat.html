@@ -1,0 +1,293 @@
+---
+layout: post
+title: Curiosity killed the cat. <cit.>
+date: '2009-06-14T13:35:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T19:51:10.749+02:00'
+thumbnail: https://lh4.googleusercontent.com/-BggP-2bnlY4/Tym-6VLJ4hI/AAAAAAAAAeY/378wklU6nIQ/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-505261298389291105
+blogger_orig_url: http://milestone.topics.it/2009/06/curiosity-killed-cat.html
+---
+
+<span>Io sinceramente ogni tanto mi pento di essere così “goloso” di conoscenza… perchè già il nostro lavoro è, se vogliamo, una fonte infinita di possibilità se poi ci mettiamo ad ascoltare le pulci nell’orecchio allora siamo proprio rovinati.</span><br>  <span>In viaggio verso <a href="http://blogs.ugidotnet.org/topics/archive/2009/06/09/ugi-predappio-the-day-after.aspx" target="_blank">Predappio</a> per il <a href="http://www.ugidotnet.org/events/35edOltre.aspx" target="_blank">workshop</a> <a href="http://www.ugidotnet.org/" target="_blank">UGIdotNet</a> il <a href="http://blogs.ugidotnet.org/pape" target="_blank">capo</a> butta li una frase del tipo: <em>Mi chiedo come mai i database ad oggetti non prendano piede</em>. (citazione molto vaga ma la memoria alla mia età ormai fa acqua…).</span><br>  <span>Quindi… è domenica mattina presto, <a href="http://blogs.ugidotnet.org/topics/archive/2009/05/25/ot-thatrsquos-lifehellip.aspx" target="_blank">l’ufficio</a> è aperto, c’è una giornata meravigliosa e la dolce metà è ancora a pelle d’orso nel letto… quindi quale momento migliore per soddisfare un po’ di sana curiosità?</span><br>  <span><strong>db4o</strong></span><br>  <span>E’ da anni che questo nome mi gira in testa, direi sin dall’epoca in cui per la prima volta ho sentito parlare di <a href="http://en.wikipedia.org/wiki/Tamino" target="_blank">Tamino</a>…</span><br>  <span>Che cosa è: <a href="http://www.db4o.com/" target="_blank">db4o</a> è un database ad oggetti, dove il paradigma relazionale scompare per essere completamente sostituito dal concetto di domain model anche nel “db”; La definizione è certamente molto casareccia e su Wikipedia ne trovate una <a href="http://en.wikipedia.org/wiki/Db4o_(object_database)" target="_blank">molto più seria</a> ;-)</span><br>  <span>Prima di dare uno sguardo a che cosa fa e come lo fa ci sono le domande, come ogni cosa che vuole rivoluzionare il modello a cui siamo fortemente abituati. In questo caso le prime cose che mi sono chiesto sono:</span><br>  <ul>   <li>Prestazioni? </li>    <li>Scalabilità orizzontale? </li>    <li>Replica? </li>    <li>Variazioni dello schema? </li>    <li>Indicizzazione e ricerca? </li>    <li>Constraint sui dati? </li>    <li>Gestione della concorrenza? </li>    <li>Transazioni? </li>    <li>Amministrazione? </li> </ul>  <span>Cose a cui siamo abituati con i database tradizionali e a cui giustamente non avrebbe senso rinunciare.</span><br>  <span><em>n.d.r.</em>: Direi non da poco… pienamente supportato sul Compact Framework 3.5.</span><br>  <span>Quindi… essenziale per partire è la sola <a href="http://developer.db4o.com/files/default.aspx" target="_blank">class library di db4o</a>; db4o è OpenSource e rilasciato con licenza GPL, c’è anche una versione commerciale con supporto etc, etc.. ci sono poi i tool di amministrazione in 2 versioni:</span><br>  <ul>   <li>commerciale con integrazione nell’ambiente di sviluppo; </li>    <li>free e stand alone, completamente scritto in java. Una chiavica… le cose che non vanno al primo colpo a me personalmente fanno roteare i ma*oni al volo :-) </li> </ul>  <span>Tralasciando per ora il “ObjectManager” sui cui tornerò per capire quali sono i problemi vediamo di affrontare i concetti base per familiarizzare con db4o. A prima vista è di una semplicità disarmante, aggiungete una reference a:</span><br>  <ul>   <li>Db4objects.Db4o.dll; </li>    <li>Db4objects.Db4o.Linq.dll (e qui slurp…); </li> </ul>  <blockquote>   <pre class="code"><span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+person.FirstName = <span style="color: #a31515">"Mauro"</span>;
+person.LastName = <span style="color: #a31515">"Servienti"</span>;
+person.BornDate = <span style="color: blue">new </span><span style="color: #2b91af">DateTime</span>( 1973, 1, 10 );
+
+<span style="color: #2b91af">Console</span>.WriteLine( person );
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    db.Store( person );
+
+    <span style="color: blue">var </span>query = db.Cast<<span style="color: #2b91af">Person</span>>()
+        .Where( p => p.FirstName.StartsWith( <span style="color: #a31515">"M" </span>) );</pre>
+
+  <pre class="code"><span style="color: blue">    foreach</span>( <span style="color: blue">var </span>p <span style="color: blue">in </span>query )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( p );
+    }<br>}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>“Person” è una classe tradizionalissima, completamente <a href="http://en.wikipedia.org/wiki/Plain_Old_CLR_Object" target="_blank">POCO</a>, senza nessun requisito di sorta, proprio nessuno. Per uso avanzato e per sfruttare tutte le caratteristiche di db4o in realtà POCO si perde un po’ per strada, ma non lo vedo come un problema. Db4oFactory è l’entry point per accedere ad un database di db4o, nello specifico OpenFile se non trova il file lo crea. Le modalità di accesso sono essenzialmente 2:</span><br>
+
+<ul>
+  <li>Single User, quella dell’esempio, che non è realmente single user ma va poco oltre; </li>
+
+  <li>Client-Server: simile al tradizionale accesso che siamo abituati a fare ad un rdbms in rete; </li>
+</ul>
+
+<span>Lo snippet di codice di poco fa offre molti spunti di riflessione:</span><br>
+
+<ul>
+  <li>Il più evidente: pieno supporto per Linq e per gli Expression tree: quell’extension method Cast<T> (pessima scelta di naming) infatti non è il Cast<T> di IEnumerable<T> ma bensì l’entry point per dire al motore di costruzione delle query quale è la “tabella master” su cui volete operare, nei miei esempi mi sono già fatto un extension method decisamente più parlante: </li>
+</ul>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static class </span><span style="color: #2b91af">ObjectContainerExtensions
+</span>{
+    <span style="color: blue">public static </span><span style="color: #2b91af">IDb4oLinqQuery</span><T> From<T>( <span style="color: blue">this </span><span style="color: #2b91af">IObjectContainer </span>db )
+    {
+        <span style="color: blue">return </span>db.Cast<T>();
+    }
+}</pre>
+
+  <span>Possiamo quindi fare un paragone molto spannometrico e dire che l’istanza di IObjectContainer ritornata dalla OpenFile() è paragonabile al concetto di DataContext di Linq2Sql/EF ed in effetti ogni IObjectContainer rappresenta in tutto e per tutto una Unit of Work con, secondo concetto importante:</span><br>
+</blockquote>
+
+<ul>
+  <li>Identity Map: un IObjectContainer implementa quindi i pattern <a href="http://www.martinfowler.com/eaaCatalog/unitOfWork.html" target="_blank">UnitOfWork</a> e <a href="http://www.martinfowler.com/eaaCatalog/identityMap.html" target="_blank">Identity Map</a>; </li>
+</ul>
+
+<span>Ok, ma dietro le quinte cosa succede? Abbiamo creato un’istanza della classe Person, abbiamo aperto una connessione al nostro database e chiamando il metodo Store( Object ) chiediamo all’engine di db4o di salvare l’oggetto, in realtà vedremo che chiediamo di salvare il grafo… quindi molto ma molto di più ;-) dopo di che facciamo una query con linq alla ricerca di tutti gli oggetti Person il cui FirstName inizi con la lettera “M”.</span><br>
+
+<span>Questo ci porta a introdurre le modalità di query supportate da db4o:</span><br>
+
+<span><em>QBE: QueryByExample</em></span><br>
+
+<span>Una primissima, e direi per la nostra mentalità inusuale, modalità di query è la QueryByExample:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    <span style="color: #2b91af">IObjectSet </span>result = db.QueryByExample( <span style="color: blue">new </span><span style="color: #2b91af">Person</span>() { FirstName = <span style="color: #a31515">"Mauro" </span>} );
+    <span style="color: blue">foreach</span>( <span style="color: #2b91af">Object </span>obj <span style="color: blue">in </span>result )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( obj );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>In soldoni db4o ci permette di passargli un “template” dell’oggetto che stiamo cercando e se valorizziamo alcune proprietà dell’oggetto questi valori verranno usati come filtro per la ricerca, se la proprietà non sono valorizzare, o sono valorizzate al valore di default per il tipo della proprietà, allora db4o le considererà come “wild card”.</span><br>
+
+<span><em>Native Query (NQ)</em></span><br>
+
+<span>Un’altra modalità di query è la Native Query, quella nativa da quel che ho capito… Il concetto di Native Query per noi dotnettinani è di una semplicità disarmante:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    <span style="color: blue">var </span>result = db.Query<<span style="color: #2b91af">Person</span>>( p => p.FirstName == <span style="color: #a31515">"Mauro" </span>);
+    <span style="color: blue">foreach</span>( <span style="color: #2b91af">Object </span>obj <span style="color: blue">in </span>result )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( obj );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>altro non facciamo che passare un Predicate<T>, Predicate non Expression, al metodo generico Query<T> specificando con T quale è il tipo che stiamo interrogando.</span><br>
+
+<span><em>SODA: Simple Object Database Access</em></span><br>
+
+<span>Tutto diventa gasato… :-) la documentazione dice che SODA è l’API interna del motore di query di db4o, è presente per 2 motivi:</span><br>
+
+<ul>
+  <li>Retrocompatibilità; </li>
+
+  <li>Costruzione dinamica delle query: problema direi superato con gli ExpressionTree, per i linguaggi che li supportano;</li>
+</ul>
+
+<span>Comunque quello che possiamo fare è:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    <span style="color: blue">var </span>query = db.Query();
+    query.Constrain( <span style="color: blue">typeof</span>( <span style="color: #2b91af">Person </span>) );
+    query.Descend( <span style="color: #a31515">"<FirstName>k__BackingField" </span>)
+        .Constrain( <span style="color: #a31515">"Mauro" </span>);
+
+    <span style="color: blue">var </span>result = query.Execute();
+
+    <span style="color: blue">foreach</span>( <span style="color: #2b91af">Object </span>obj <span style="color: blue">in </span>result )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( obj );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Chiediamo all’engine di creare una nuova query, impostiamo un Constrain sul tipo che stiamo cercando, quindi gli diciamo cosa stiamo cercando e con quale valore, infine eseguiamo la query. La nota interessante qui è la sintassi usata per riferirsi alla proprietà FirstName: quella strana sintassi è dovuta al fatto che nella mia classe Person sto utilizzando le <a href="http://msdn.microsoft.com/en-us/library/bb384054.aspx" target="_blank">Auto Implemented Property</a> di C# 3.0, se avessi avuto una proprietà “tradizionale” implementata quindi con il backing field li avrei dovuto specificare il nome del backing field. Questo ci fa scoprire un interessante internal su come db4o memorizzi gli oggetti.</span><br>
+
+<span>Complichiamoci un attimo la vita, altrimenti che gusto c’è ;-) questa è la classe Person nel suo insieme:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">Person
+</span>{
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>FirstName
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">String </span>LastName
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">DateTime </span>BornDate
+    {
+        <span style="color: blue">get</span>;
+        <span style="color: blue">set</span>;
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">Int32 </span>Age
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return </span>( ( <span style="color: #2b91af">Int32 </span>)( <span style="color: #2b91af">DateTime</span>.Now.Date - <span style="color: blue">this</span>.BornDate ).TotalDays / 365 ); }
+    }
+
+    <span style="color: blue">public override string </span>ToString()
+    {
+        <span style="color: blue">return </span><span style="color: #2b91af">String</span>.Format( <span style="color: #a31515">"{0} {1}, {2}"</span>, <span style="color: blue">this</span>.FirstName, <span style="color: blue">this</span>.LastName, <span style="color: blue">this</span>.Age );
+    }
+}</pre>
+</blockquote>
+
+<span>Ci sono alcune cose interessanti:</span><br>
+
+<ul>
+  <li>è “sealed”; </li>
+
+  <li>Non ha nessun membro virtual, e non potrebbe è sealed ;-); </li>
+
+  <li>Non è pubblica; </li>
+
+  <li>E’ effettivamente POCO, non c’è proprio nulla che ci faccia pensare che abbia qualcosa a che fare con un db;</li>
+</ul>
+
+<span>Osservate adesso questo snippet:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>person = <span style="color: blue">new </span><span style="color: #2b91af">Person</span>();
+person.FirstName = <span style="color: #a31515">"Mauro"</span>;
+person.LastName = <span style="color: #a31515">"Servienti"</span>;
+person.BornDate = <span style="color: blue">new </span><span style="color: #2b91af">DateTime</span>( 1973, 1, 10 );
+<span style="color: green">
+</span><span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    db.Store( person );
+    db.Store( person );<br>    <br>    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Double Store, Count: {0}"</span>, db.From<<span style="color: #2b91af">Person</span>>().Count() );
+}
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    db.Store( person );<br>    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Single Store, Count: {0}"</span>, db.From<<span style="color: #2b91af">Person</span>>().Count() );
+}
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Count: {0}"</span>, db.From<<span style="color: #2b91af">Person</span>>().Count() );
+
+    <span style="color: blue">var </span>query = db.From<<span style="color: #2b91af">Person</span>>()
+        .Where( p => p.FirstName.StartsWith( <span style="color: #a31515">"M" </span>) );
+
+    <span style="color: blue">foreach</span>( <span style="color: blue">var </span>p <span style="color: blue">in </span>query )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine( p );
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Notate le chiamate un po’ barbine al metodo Store()? L’output di questo snippet è curioso, in realtà se ci pensiamo è più che giusto, ma al primo colpo lascia un po’ così:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-IlSVhWJZF4I/Tym-69lrjII/AAAAAAAAAec/ieh53wvAjp4/image_5.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh4.googleusercontent.com/-BggP-2bnlY4/Tym-6VLJ4hI/AAAAAAAAAeY/378wklU6nIQ/image_thumb.png" width="244" height="101"></a> </span><br>
+
+<span>L’oggetto/istanza Person viene infatti salvata 2 volte… male direte voi, ma è evidente che non è possibile che non ci abbiano pensato… :-)</span><br>
+
+<span>Cosa succede? stiamo semplicemente simulando il concetto di “disconnesso”, che nota di redazione non è pienamente supportato da db4o, nello snippet di cui sopra facciamo alcune cose interessanti:</span><br>
+
+<ul>
+  <li>Creiamo una singola istanza della classe Person;</li>
+
+  <li>Apriamo un “data context” e salviamo la stessa istanza 2 volte: questo porta, giustamente ad una singola “insert”, la doppia Store viene semplicemente ignorata in questo esempio perchè l’istanza di Person è “known” ergo il data context si rendo conto che la doppia store è un “non sense”</li>
+
+  <li>Chiudiamo il data context e ne apriamo un altro rifacciamo la store e “boom” a questo punto abbiamo 2 “record” nel nostro database… siamo in modalità disconnessa a questo punto e giustamente l’engine non ha la più pallida idea che Person sia la stessa di prima; cosa possiamo fare?</li>
+</ul>
+
+<span>db4o offre un supporto parziale, e vedremo che non ci si può fare molto, per gli scenari disconnessi: ogni oggetto (record) in db4o ha un id univoco, quello che possiamo fare è semplicemente questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">long </span>id;
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( config, <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    db.Store( person );
+    db.Store( person );
+
+    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Double Store, Count: {0}"</span>, db.From<<span style="color: #2b91af">Person</span>>().Count() );
+
+    <strong><em>id = db.Ext().GetID( person );</em></strong>
+
+    db.Close();
+}
+
+<span style="color: blue">using</span>( <span style="color: blue">var </span>db = <span style="color: #2b91af">Db4oFactory</span>.OpenFile( config, <span style="color: #a31515">@"c:\temp\db4o_Sample.db4o" </span>) )
+{
+    <strong><em>db.Ext().Bind( person, id );</em></strong>
+    db.Store( person );
+
+    <span style="color: #2b91af">Console</span>.WriteLine( <span style="color: #a31515">"Single Store, Count: {0}"</span>, db.From<<span style="color: #2b91af">Person</span>>().Count() );
+
+    db.Close();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>All’interno del primo data context recuperiamo un l’id univoco che db4o genera per ogni “record” quando apriamo il secondo data context chiamiamo il metodo Bind() passando la “nuova” reference e l’id, internamente l’engine “carica” l’istanza presente nel db e la rimpiazza in memoria (nell’Identity Map) con quello che gli stiamo dando noi.</span><br>
+
+<span>Ok, funziona… ma è pericoloso, ecco perchè non è consigliato. Immaginiamo uno scenario disconnesso un po’ più complesso:</span><br>
+
+<ul>
+  <li>Servizio WCF che maschera lo storage;</li>
+
+  <li>Applicazione client;</li>
+
+  <li>Il client recupera un grafo complesso di oggetti;</li>
+
+  <li>Vengono modificati solo alcuni oggetti;</li>
+
+  <li>Siccome il client è intelligente rimanda al servizio solo la parte modificata;</li>
+
+  <li>Il servizio chiama Bind() e… solo una parte viene rimpiazzata in memoria con la “fastidiosa” conseguenza che quando chiamate Store() all’engine arriva un grafo parziale, con un id esistente e il buon db4o, giustamente, cancella dal db quello che non gli arriva… ooops…</li>
+</ul>
+
+<span>Il consiglio è quello quindi di fare l’operazione in maniera manuale, quindi caricare l’oggetto fare la copia delle modifiche e risalvarlo. Ci sono svariati thread a riguardo sui forum di db4o con svariate soluzioni, più o meno funanboliche, molto usano caratteristiche di java a me sconosciute, molto simili ad un uso massiccio di Reflection, quindi non ho idea se siano applicabili al mondo .net o se ci siano alternative.</span><br>
+
+<span>E’ comunque un problema aperto e vi invito a non fidarvi assolutamente delle conclusioni che ho tratto io perchè sono  frutto di una mezz’ora di esperimenti e tentativi, nulla di più.</span><br>
+
+<span>Direi che per ora vi ho tediato fin troppo, credo di non aver risposto a nessuna delle domande iniziali, ma credo anche che sarebbe stato impossibile farlo in solo 4 ore di prove dal primo download.</span><br>
+
+<span>Giusto un hint… questo funziona perfettamente:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">var </span>query = db.From<<span style="color: #2b91af">Person</span>>()
+    .Where( p => p.FirstName.StartsWith( <span style="color: #a31515">"M" </span>) && p.Addresses.Count > 2 );</pre>
+</blockquote>
+
+<span>dimostrando che anche query complesse su grafi complessi funzionano, naturalmente okkio che la query (l’ExpressionTree) deve essere trasformabile dall’engine pena non una exception ma piuttosto il caricamento di tutto il grafo e l’analisi dello stesso in memoria per risolvere la query.</span><br>
+
+<span>L’intenziona adesso sarebbe quella di provarlo sul campo in un piccolo progetto personale che è partito (è lontano ancora dall’essere un embrione) con Sql Compact e che ha anche la necessità di girare su un device Windows Mobile, quindi necessita della replica… vedremo.</span><br>
+
+<span>.m</span><br>
+

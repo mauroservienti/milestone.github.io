@@ -1,0 +1,149 @@
+---
+layout: post
+title: 'In medio stat virtus: Blend 3 e i design time data'
+date: '2009-07-16T17:35:00.000+02:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Design Time Data
+modified_time: '2012-08-04T17:46:40.265+02:00'
+thumbnail: https://lh6.googleusercontent.com/-p9lxYE5FGA4/TypwauWVPZI/AAAAAAAAAjw/6xrTZ5qcloA/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5614549171943176097
+blogger_orig_url: http://milestone.topics.it/2009/07/in-medio-stat-virtus-blend-3-e-i-design.html
+---
+
+<span>Poco tempo fa <a href="http://blogs.ugidotnet.org/topics/archive/2009/07/09/wpf-blend-3.0-sampledatasource-molto-bello.aspx" target="_blank">ho parlato</a> della funzionalità di Blend 3 che permette di avere dei dati di esempio a design time al fine di ottimizare proprio la design experience, subito dopo <a href="http://blogs.ugidotnet.org/corrado" target="_blank">Corrado</a> <a href="http://blogs.ugidotnet.org/corrado/archive/2009/07/10/blend3-design-time-data.aspx" target="_blank">ha parlato</a> di qualcosa di ancora più figoso.</span><br>  <span>Purtroppo siamo alle solite: <em>non è tutto oro quel che luccica</em>.</span><br>  <span>Se avete un ViewModel, o più in generale un DataContext, un po’ complesso la soluzione di Corrado purtroppo non funziona. Per un po’ complesso intendo che basta banalmente esporre dalla classe, che verrà utilizzata come DataContext, un tipo generico e siete “fritti” perchè lo xaml non ha supporto per i generics: IDictionary<T, K> come esempio triviale.</span><br>  <span>Ma non tutto è perso, siccome è una cosa di cui ho veramente bisogno oggi mi sono dedicato a capire se c’era una soluzione e credo di avere trovato un compromesso accettabile, sicuramente funziona e risolve il problema, anche se non è elegantissimo.</span><br>  <span><strong>Background</strong></span><br>  <span>Nel toolkit che ormai mi sono costruito per utilizzare Model-View-ViewModel in applicazioni composite ci sono un bel set di ViewModel di base per le più svariate esigenze, uno ad esempio è così definito:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IItemsListViewModel</span><TView, TEntity> : <br>    <span style="color: #2b91af">IViewModel</span><TView>, <br>    <span style="color: #2b91af">ICanHandleAsyncOperationViewModel
+        </span><span style="color: blue">where </span>TView : <span style="color: blue">class</span>, <span style="color: #2b91af">IItemsListView
+        </span><span style="color: blue">where </span>TEntity : <span style="color: blue">class</span>, <span style="color: #2b91af">IEntity
+</span>{
+    <span style="color: #2b91af">IBindableCommand </span>Select { <span style="color: blue">get</span>; }</pre>
+
+  <pre class="code">    <span style="color: #2b91af">IEntityView</span><TEntity> Items { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">IEntityView</span><TEntity> Selection { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+<span style="color: gray">    </span><span style="color: #2b91af">IEntityItemView</span><TEntity> Current { <span style="color: blue">get</span>; }
+    <span style="color: #2b91af">SelectionType </span>SupportedSelectionType { <span style="color: blue">get</span>; }
+<span style="color: gray">    </span></pre>
+
+  <pre class="code"><span style="color: gray">    </span><span style="color: blue">void </span>LoadItemsByQuery( <span style="color: #2b91af">IQuery </span>query );
+    <span style="color: blue">void </span>RefreshQueryResults();</pre>
+
+  <pre class="code">    <span style="color: blue">event </span><span style="color: #2b91af">EventHandler</span><<span style="color: #2b91af">ItemsByQueryLoadedEventArgs</span>> ItemsByQueryLoaded; 
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Non dettaglio, mi limito semplicemente a dire che se volete visualizzare una lista di elementi con molte funzionalità preimplementate vi basta deinfire una cosa del tipo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">class </span><span style="color: #2b91af">EstimatesListViewModel </span>:
+    <span style="color: #2b91af">ItemsListViewModel</span><<span style="color: #2b91af">IEstimatesListView</span>, <span style="color: #2b91af">IEstimate</span>><span style="color: #2b91af">
+</span>{
+    <span style="color: blue">public </span>EstimatesListViewModel( <span style="color: #2b91af">IDispatcher </span>dispatcher, <span style="color: #2b91af">IEstimatesListView </span>view, <span style="color: #2b91af">IMessageBroker </span>broker, <span style="color: #2b91af">IDataContextFactory </span>dataContextFactory )
+        : <span style="color: blue">base</span>( dispatcher, view, broker, <span style="color: #2b91af">SelectionType</span>.Extended, dataContextFactory )
+    {
+                
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Fine, e il tutto funziona a patto che nel costruttore arrivino le cose giuste ;-) ma se usate un tool per IoC il problema se lo smazza lui.</span><br>
+
+<span>Quello che ci resta da fare è solo ed esclusivamente disegnare la nostra bella view e sbizzarrirci con la potenza di Wpf.</span><br>
+
+<span><strong>Il problema</strong></span><br>
+
+<span>è sempre il solito: per domare la potenza di Wpf avete bisogno di avere un designer che vi faccia vedere dei dati a design-time altrimenti non c’è trippa per gatti siete persi nei meandri dello xaml, dei DataTemplate, degli Styles e dei ControlTemplate.. per non parlare delle “litigate” con TemplateBinding e TemplatedParent :-)</span><br>
+
+<span>In questo esempio sia la mia soluzione che quella di Corrado non funzionano e Blend tende inesorabilmente a crashare con allegria… io un po’ meno ;-)</span><br>
+
+<span>Alla fine la soluzione che ho trovato è stata definire in tutta la gerarchia una gerarchia, …, di DesignTime<em>Xxxx</em>ViewModel portando a questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">sealed class </span><span style="color: #2b91af">DesignTimeEngagementManagerViewModel </span>:
+    <span style="color: #2b91af"><u><strong>DesignTime</strong></u>ItemsListViewModel</span><<span style="color: #2b91af">IEngagementManagerView</span>, <span style="color: #2b91af">IAdvertisementReservationViewModel</span>>,
+    <span style="color: #2b91af">IEngagementManagerViewModel
+</span>{
+    <span style="color: blue">public </span><strong><u>DesignTime</u></strong>EngagementManagerViewModel()
+    {
+        <span style="color: blue">if</span>( <span style="color: blue">this</span>.GetIsInDesignMode() )
+        {
+            <span style="color: blue">var </span>dataSource = <span style="color: blue">new </span><span style="color: #2b91af">List</span><<span style="color: #2b91af"><u><strong>DesignTime</strong></u>AdvertisementReservationViewModel</span>>() 
+            {
+                <span style="color: blue">new </span><span style="color: #2b91af"><u><strong>DesignTime</strong></u>AdvertisementReservationViewModel</span>( ViewModel.<span style="color: #2b91af">UndefinedReservationStatus</span>.Undefined, <span style="color: blue">null</span>),
+                <span style="color: blue">new </span><span style="color: #2b91af"><u><strong>DesignTime</strong></u>AdvertisementReservationViewModel</span>( ViewModel.<span style="color: #2b91af">UndefinedReservationStatus</span>.Undefined, <span style="color: blue">null</span>),
+                <span style="color: blue">new </span><span style="color: #2b91af"><u><strong>DesignTime</strong></u>AdvertisementReservationViewModel</span>( <span style="color: blue">new </span>ViewModel.<span style="color: #2b91af">PublishedReservationStatus</span>(), <span style="color: blue">null</span>)
+            };
+
+            <span style="color: blue">this</span>._items = <span style="color: blue">new </span><span style="color: #2b91af">EntityView</span><<span style="color: #2b91af">IAdvertisementReservationViewModel</span>>( dataSource.ToArray() );
+        }
+    }
+
+    <span style="color: #2b91af">IEntityView</span><<span style="color: #2b91af">IAdvertisementReservationViewModel</span>> _items;
+    <span style="color: blue">public override </span><span style="color: #2b91af">IEntityView</span><<span style="color: #2b91af">IAdvertisementReservationViewModel</span>> Items
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return this</span>._items; }
+    }
+
+    <span style="color: blue">public </span><span style="color: #2b91af">IPublication </span>CurrentPublication
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return null</span>; }
+    }
+
+    <span style="color: blue">public string </span>ToolTip
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return </span><span style="color: #a31515">"Design time tooltip..."</span>; }
+    }
+
+    <span style="color: blue">public string </span>Title
+    {
+        <span style="color: blue">get </span>{ <span style="color: blue">return </span><span style="color: #a31515">"Design time title."</span>; }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>che ha una differenza sostanziale con quello “vero”… circa 400 righe di codice (sommando quello di tutte le classi derivate), ma non solo, ha un costruttore pubblico senza parametri permettendo di definire nello xaml questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">UserControl.Resources</span><span style="color: blue">>
+    <</span><span style="color: #a31515">dd</span><span style="color: blue">:</span><span style="color: #a31515">DesignTimeEngagementManagerViewModel </span><span style="color: red">x</span><span style="color: blue">:</span><span style="color: red">Key</span><span style="color: blue">="designViewModel" />
+</</span><span style="color: #a31515">UserControl.Resources</span><span style="color: blue">>
+
+<</span><span style="color: #a31515">local</span><span style="color: blue">:</span><span style="color: #a31515">EngagementManagerDocument </span><span style="color: red">TabText</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Title</span><span style="color: blue">}" 
+                                 </span><span style="color: red">d</span><span style="color: blue">:</span><span style="color: red">DataContext</span><span style="color: blue">="{</span><span style="color: #a31515">StaticResource </span><span style="color: red">designViewModel</span><span style="color: blue">}"
+                                 </span><span style="color: red">TabToolTip</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">ToolTip</span><span style="color: blue">}"></span></pre>
+</blockquote>
+
+<span>e ottenendo al volo dentro Blend questo:</span><br>
+
+<span><a href="https://lh6.googleusercontent.com/-JvMjkYlrw10/TypwbXpWUII/AAAAAAAAAj0/MgWWIx0k1uY/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-p9lxYE5FGA4/TypwauWVPZI/AAAAAAAAAjw/6xrTZ5qcloA/image_thumb.png" width="244" height="131"></a> </span><br>
+
+<span>che adesso è finalmente disegnabile in maniera accettabile e smetterà di essere quella ciofeca che si vede nell’esempio.</span><br>
+
+<span>La cosa da notare è che Blend applica correttamente stili e template anche a design-time, si nota infatti che l’ultima “riga” è diversa dalle altre.</span><br>
+
+<span>Se poi consideriamo che quel sample prima dell’intervento producevano in Blend questo:</span><br>
+
+<span><a href="https://lh5.googleusercontent.com/-jC4Y0kkC89k/TypwcJPOHmI/AAAAAAAAAkA/CVfEAFIAaQI/image_4.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-3ncd5dqKwZc/TypwbvUSe_I/AAAAAAAAAj8/ztJ3jdQH824/image_thumb_1.png" width="244" height="147"></a> </span><br>
+
+<span>ergo il nulla più assoluto…</span><br>
+
+<span>E’ un compromesso perchè definisco una gerarchia di classi in più anche se è:</span><br>
+
+<ul>
+  <li>mostruosamente semplice;</li>
+
+  <li>in totale assenza di logica;</li>
+
+  <li>con dati completamente statici; </li>
+</ul>
+
+<span>Alla fine anche nell’esempio di Corrado qualcosa dovete scrivere, li era xaml qui è C# ma poco cambia.</span><br>
+
+<span>Un’altra soluzione sarebbe quella di usare un tool di mocking ma mi piace poco il requisito di avere una reference alla libreria di mock, inoltre di codice se ne deve scrivere lo stesso quindi non è che ci sia poi sto gran risparmio.</span><br>
+
+<span>Un piccolo vantaggio è che quei <em>design-time-data</em> possono essere anche usati come “fake” per le suite di test.</span><br>
+
+<span>Adesso aspetto che Corrado mi smentisca con un’altra soluzione degna delle sue capacità :-)</span><br>
+
+<span>.m</span><br>
+

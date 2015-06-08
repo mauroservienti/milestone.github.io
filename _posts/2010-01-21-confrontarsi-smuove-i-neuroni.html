@@ -1,0 +1,75 @@
+---
+layout: post
+title: Confrontarsi “smuove” i neuroni
+date: '2010-01-21T12:15:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-08T14:02:43.892+01:00'
+thumbnail: https://lh3.googleusercontent.com/-lhn5_GQ6-9w/TzJyb33N4VI/AAAAAAAABII/-hUo37cCDvo/s72-c/c4604a47-9230-4194-b958-585c5ef25274.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1987895078580154007
+blogger_orig_url: http://milestone.topics.it/2010/01/confrontarsi-smuove-i-neuroni.html
+---
+
+<span>Questo è un fatto, comodo, <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/697151370555572637">da tempo</a>:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">readonly </span><span style="color: #2b91af">IEntityViewModelFactory </span>viewModelFactory;
+
+<span style="color: blue">public </span>PaymentMethodEditorViewModel( <span style="color: #2b91af">IEntityViewModelFactory </span>viewModelFactory )
+{
+    <span style="color: #2b91af">Ensure</span>.That( viewModelFactory ).Named( <span style="color: #a31515">"viewModelFactory" </span>).IsNotNull();
+
+    <span style="color: blue">this</span>.viewModelFactory = viewModelFactory;
+}</pre>
+</blockquote>
+
+<span>se la validazione fallisce a runtime vi beccate un sana ArgumentNullException. Ci sono una notevole quantità di metodi e di extension methods che servono per validare gli scenari più disparati:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">void </span>MyMethod( <span style="color: #2b91af">String </span>argument )
+{
+    <span style="color: #2b91af">Ensure</span>.That( argument )
+        .Named( <span style="color: #a31515">"argument" </span>)
+        .WithMessage( <span style="color: #a31515">"...ti sei dimenticato il parametro :-)" </span>)
+        .IsNotNullNorEmpty();
+}</pre>
+</blockquote>
+
+<span>Fino a ieri aveva un solo difetto: era complessivamente complesso capire dove fosse realmente fallita la validazione perchè l’exception viene sollevata dalla libreria di validazione e non dal codice chiamante quindi l’unica possibilità era armarsi di pazienza e spulciare lo StackTrace… con l’inghippo che se il tutto è in un <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1247491366421390124">mondo</a> multi-threading lo StackTrace è tutto tranne che developer friendly :-)</span><br>
+
+<span>Una paio di giorni fa durante una <em>ciaccolata</em> con <a href="http://cradle.aspitalia.com/">Marco De Sanctis</a> salta fuori l’inghippo di cui sopra e stuzzicato dalla possbilità di risolverlo mi armo di curiosità e, grazie anche a uno scambio di mail con un paio di MVP d’oltreoceano (mirate a capire se c’era modo di ingannare il debugger), scopro che:</span><br>
+
+<ul>
+  <li>La proprietà StackTrace della classe Exception è virtual… :-) </li>
+
+  <li>c’è quindi la possibilità di manipolare a runtime lo StackTrace e rimuovere le informazioni che non servono…; </li>
+
+  <li>…ma questo probabilmente è poco bello oltre al fatto che comporterebbe una gerarchia custom di Exception; </li>
+</ul>
+
+<span>perchè quindi non limitarsi ad utilizzare lo StackTrace per recuparare le informazioni necessarie a dettagliare meglio l’errore? facendo si che questo snippet:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">static void </span>Main( <span style="color: blue">string</span>[] args )
+{
+    <span style="color: blue">try
+    </span>{
+        <span style="color: #2b91af">Ensure</span>.That( args )
+            .Named( <span style="color: #a31515">"args" </span>)
+            .WithMessage( <span style="color: #a31515">"Missing console arguments." </span>)
+            .IsFalse( v => v.Length == 0 );
+    }
+    <span style="color: blue">catch</span>( <span style="color: #2b91af">ArgumentException </span>e )
+    {
+        <span style="color: #2b91af">Console</span>.WriteLine(e);
+    }
+
+    <span style="color: #2b91af">Console</span>.Read();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>produca questo:</span><br>
+
+<span><a href="https://lh4.googleusercontent.com/-ibyAg-DM3Mk/TzJycbHcEHI/AAAAAAAABIM/JzLnrGSrjwA/e9938ad1-c70d-453c-b47b-699e02150745.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-lhn5_GQ6-9w/TzJyb33N4VI/AAAAAAAABII/-hUo37cCDvo/c4604a47-9230-4194-b958-585c5ef25274.png" width="244" height="97"></a> </span><br>
+
+<span>Sempre perchè anche il developer vuole la sua parte :-)</span><br>
+
+<span>.m</span><br>

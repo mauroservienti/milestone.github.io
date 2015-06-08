@@ -1,0 +1,14 @@
+---
+layout: post
+title: Un piccolo tool
+date: '2008-04-30T19:10:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Why not...
+- Software Mason
+modified_time: '2012-08-04T19:46:01.047+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3785238409350415081
+blogger_orig_url: http://milestone.topics.it/2008/04/un-piccolo-tool.html
+---
+
+<span>Oggi mi sono messo di buona lena e mi sono costruito un piccolo tool, che tempo permettendo potrebbe diventare un add-in per Visual Studio, che genera file di configurazione che fino ad oggi nel nostro team manutenevamo a manina.</span><br>  <span>Quindi:</span><br>  <ul>   <li>se siete appassionati di IoC, ad esempio con Castle Windsor; </li>    <li>se ne state facendo uso massiccio; </li>    <li>se avete una solution, che nonstante il lavoro attuale si avvicini forse al 20% del totale,  contiene già 35 progetti; </li>    <li>se i componenti gestiti dal framework di IoC sono già un centinaio; </li>    <li>se vi siete, come me, rotti di scrivere i file di configurazione di Castle a manina; </li> </ul>  <span>Allora questo tool fa per voi :-D, in questo momento non siamo neanche ad una alfa, il che significa che è messo insieme con la cicca americana ma fa il suo sporco lavoro e lo fa bene. Come?</span><br>  <span>Cosi:</span><br>  <span>immaginiamo di avere un componente del tipo:</span><br>  <span>class MyComponent : IMyComponent<MyCustomClass, MyCustomContext>    <br>{</span><br>  <span>}</span><br>  <span>possiamo marcarlo con un attributo del tipo</span><br>  <span>[Component( typeof( IMyComponent<MyCustomClass, MyCustomContext> ) )]    <br>class MyComponent : IMyComponent<MyCustomClass, MyCustomContext>     <br>{</span><br>  <span>}</span><br>  <span>e lanciando il tool da command line otteniamo un bel file xml del tipo</span><br>  <span><components>    <br>    <component     <br>        id="MyComponent"     <br>        service="IMyComponent`2[[MyCustomClass, Assembly], [MyCustomContext, Assembly]], Assembly"     <br>        type="MyComponent, Assembly"     <br>        lifestyle="Singleton" />     <br></components></span><br>  <span>il tutto è poi ampiamente customizzabile con una serie di parametri esposti dall'attributo.</span><br>  <span>Se volete fare un po' di <em>alfa</em> testing... fatevi sotto ;-)</span><br>  <span>.m</span><br>  

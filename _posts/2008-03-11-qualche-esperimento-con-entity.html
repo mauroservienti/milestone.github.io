@@ -1,0 +1,36 @@
+---
+layout: post
+title: Qualche esperimento con Entity Framework...
+date: '2008-03-11T15:35:00.000+01:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-08-04T19:42:04.244+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6492045104884190669
+blogger_orig_url: http://milestone.topics.it/2008/03/qualche-esperimento-con-entity.html
+---
+
+ <span>Sto cercando di comprendere Entity Framework in particolare per capire se ha senso pensare di svilupparci sopra e farci affidamento (anche se adesso è ancora in Beta3) per una applicazione "<em>corposetta</em>". </span><br><span>Sto partendo dall'ABC, quindi siate pazienti. la prima cosa che ho fatto è stata mettere in piedi una VM con Windows Server 2008, Visual Studio 2008 e un piccolo Sql Express 2005; ho poi installato EF beta3 e un update per VS2008 che mi ha permesso di installare i tool, ancora in CTP, per manipolare EF direttamente da VS2008. </span><br><span>Mi sono quindi creato un bel progettino console e da bravo bimbo stavolta ho letto le istruzioni, non è vero... sono partito con un esempio semplice senza cioè cercare di fare i tripli carpiati subito. </span><br><span>Ho quindi aggiunto un bel "Modello" a cui ho fatto generare le entity sulla base della struttura del buon Northwind, si lo so non si fa, ma io devo imparare quindi va bene così. </span><br><span>Alla fine ho scritto questo:</span><br><pre class="code">        <span style="color: rgb(0,0,255)">using</span>( MyModel.<span style="color: rgb(43,145,175)">ModelContainer</span> container = <span style="color: rgb(0,0,255)">new</span> MyModel.<span style="color: rgb(43,145,175)">ModelContainer</span>() )
+        {
+            <span style="color: rgb(0,0,255)">var</span> q = <span style="color: rgb(0,0,255)">from</span> customer <span style="color: rgb(0,0,255)">in</span> container.Customers
+                    <span style="color: rgb(0,0,255)">where</span> customer.Orders.Count > 10
+                    <span style="color: rgb(0,0,255)">select</span> customer;
+
+            <span style="color: rgb(0,0,255)">foreach</span>( <span style="color: rgb(0,0,255)">var</span> c <span style="color: rgb(0,0,255)">in</span> q )
+            {
+                <span style="color: rgb(43,145,175)">Console</span>.WriteLine( c.CompanyName );
+
+                <span style="color: rgb(0,0,255)">if</span>( !c.Orders.IsLoaded )
+                {
+                    c.Orders.Load();
+                }
+
+                <span style="color: rgb(43,145,175)">Console</span>.WriteLine( <span style="color: rgb(163,21,21)">"    Orders: {0}"</span>, c.Orders.Count );
+            }
+
+            <span style="color: rgb(43,145,175)">Console</span>.Read();
+        }</pre><a href="http://11011.net/software/vspaste"></a>
+<span>Ok non male anche se la necessità di verificare che Orders sia Loaded mi fa veramente schifo inoltre mi preme far notare che l'SQL generato è tutto tranne "intelligente":
+</span><br><span>SELECT <br>[Project2].[CustomerID] AS [CustomerID], <br>[Project2].[CompanyName] AS [CompanyName], <br>[Project2].[ContactName] AS [ContactName], <br>[Project2].[ContactTitle] AS [ContactTitle], <br>[Project2].[Address] AS [Address], <br>[Project2].[City] AS [City], <br>[Project2].[Region] AS [Region], <br>[Project2].[PostalCode] AS [PostalCode], <br>[Project2].[Country] AS [Country], <br>[Project2].[Phone] AS [Phone], <br>[Project2].[Fax] AS [Fax]<br>FROM ( SELECT <br>    [Extent1].[CustomerID] AS [CustomerID], <br>    [Extent1].[CompanyName] AS [CompanyName], <br>    [Extent1].[ContactName] AS [ContactName], <br>    [Extent1].[ContactTitle] AS [ContactTitle], <br>    [Extent1].[Address] AS [Address], <br>    [Extent1].[City] AS [City], <br>    [Extent1].[Region] AS [Region], <br>    [Extent1].[PostalCode] AS [PostalCode], <br>    [Extent1].[Country] AS [Country], <br>    [Extent1].[Phone] AS [Phone], <br>    [Extent1].[Fax] AS [Fax], <br>    (SELECT <br>        COUNT([Project1].[C1]) AS [A1]<br>        FROM ( SELECT <br>            cast(1 as bit) AS [C1]<br>            FROM [dbo].[Orders] AS [Extent2]<br>            WHERE [Extent1].[CustomerID] = [Extent2].[CustomerID]<br>        )  AS [Project1]) AS [C1]<br>    FROM [dbo].[Customers] AS [Extent1]<br>)  AS [Project2]<br>WHERE [Project2].[C1] > 10
+</span><br><span>Staremo a vedere, nel frattempo proseguo, tempo tiranno permettendo, con gli esperimenti.
+</span><br><span>.m</span><br>

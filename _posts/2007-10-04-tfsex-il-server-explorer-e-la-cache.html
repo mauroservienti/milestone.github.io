@@ -1,0 +1,13 @@
+---
+layout: post
+title: '[TFS.eX] il Server Explorer e la Cache'
+date: '2007-10-04T17:25:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Team Foundation Server
+modified_time: '2012-01-26T11:54:28.200+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-667460128621247287
+blogger_orig_url: http://milestone.topics.it/2007/10/tfsex-il-server-explorer-e-la-cache.html
+---
+
+<span>In questi giorni dopo le <a href="http://blogs.ugidotnet.org/topics/archive/2007/09/24/tfs.ex-spostare-workitem.aspx" target="_blank">pulizie di primavera</a> e lo <a href="http://blogs.ugidotnet.org/topics/archive/2007/10/03/quando-i-backup-servono.aspx" target="_blank">schianto delle macchine virtuali</a> il mio Team Foundation Server Explorer faceva un po' le bizze, praticamente nella creazione di WorkItem quando cercavo di assegnare Aree o Iterazioni nella combo mi ritrovavo elementi che non avrebbero dovuto esserci perchè cancellati o perchè assegnati a TeamProject diversi...</span><br> <span>Dopo un po' di elucubrazioni sono giunto alla conclusione che la "<em>colpa</em>" era della cache lato client (quindi sul mio portatile) del Server Explorer.</span><br> <span>Una volta cancellata la cache (che trovate in "<AppData>\Microsoft\Team Foundation\1.0\Cache") e riavviato Visual Studio il problema è magicamente scomparso <img alt="Tongue out" src="http://messenger.msn.com/MMM2006-04-19_17.00/Resource/emoticons/tongue_smile.gif"></span><br> <span>.m</span><br>

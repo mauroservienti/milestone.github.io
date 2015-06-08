@@ -1,0 +1,15 @@
+---
+layout: post
+title: 'Windows 8 app: application bootstrap'
+date: '2012-11-30T10:34:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WinRT
+- RavenDB
+- Windows 8
+modified_time: '2012-11-30T10:34:00.924+01:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1088636340889145993
+blogger_orig_url: http://milestone.topics.it/2012/11/windows-8-app-application-bootstrap.html
+---
+
+<p>First of all it is important to understand the <strike>Metro</strike> Windows Store app lifecycle and <a href="http://csharperimage.jeremylikness.com/" target="_blank">Jeremy Likeness</a> has <a href="http://csharperimage.jeremylikness.com/2012/06/process-lifetime-management-plm-and.html" target="_blank">perfectly covered the topic</a>, go and read it.</p> <p>As you can see there are a lot of details that should be taken into account:</p> <ul> <li>is it a resume or a cold start?</li> <li>the application state should be restored?</li> <ul> <li>at which point?</li></ul> <li>is it a “charm” request?</li> <li>is it a custom tile request?</li> <li>is it a toast notification request?</li></ul> <p>So the question should be: is my role, as app developer, to handle all those possibilities? or my role should be to handle the application business logic?</p> <p>Using <a href="http://radical.codeplex.com/" target="_blank">Radical</a> you can forget the most part of the question above and concentrate on the cool part of your application:</p> <ul> <li>The boot process: <a title="http://radical.codeplex.com/wikipage?title=The%20boot%20process%20demystified" href="http://radical.codeplex.com/wikipage?title=The%20boot%20process%20demystified">http://radical.codeplex.com/wikipage?title=The%20boot%20process%20demystified</a></li> <li>WinRT peculiarities: <a title="http://radical.codeplex.com/wikipage?title=WinRT%20boot%20process%20peculiarities" href="http://radical.codeplex.com/wikipage?title=WinRT%20boot%20process%20peculiarities">http://radical.codeplex.com/wikipage?title=WinRT%20boot%20process%20peculiarities</a></li></ul> <p>Any feedback is really appreciated.</p> <p>.m</p>  

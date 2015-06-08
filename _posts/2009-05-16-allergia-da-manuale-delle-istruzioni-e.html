@@ -1,0 +1,14 @@
+---
+layout: post
+title: Allergia da manuale delle istruzioni e conseguenze…
+date: '2009-05-16T11:00:00.000+02:00'
+author: Mauro Servienti
+tags:
+- Software Mason
+modified_time: '2012-02-01T12:01:34.590+01:00'
+thumbnail: https://lh5.googleusercontent.com/-aPw6Y49OhOo/TykbijN9Q-I/AAAAAAAAAZI/aoTOIqyQA3k/s72-c/image_thumb.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2117843371061428745
+blogger_orig_url: http://milestone.topics.it/2009/05/allergia-da-manuale-delle-istruzioni-e.html
+---
+
+<span><a href="http://blogs.ugidotnet.org/topics/archive/2009/05/14/wpf-ldquoadornersrdquo-rulez-1.aspx" target="_blank">Costruendo il mio CueBanner</a> per WPF mi ero imbattuto in uno strano comportamento, mi auto quoto:</span><br>  <blockquote>   <span>Un adorner per poter essere visibile ha bisogno di un AdornerLayer in cui essere “ospitato”, ogni Window (non proprio…, ho un caso che sto cercando di debuggare in cui questo non succede…) ha implicitamente un AdornerLayer anche se non lo inseriamo noi nello xaml.</span><br> </blockquote>  <span>Quel “caso” è la classica sindrome da “allergia al manuale delle istruzioni”, lo scenario era questo, era perchè adesso funziona:</span><br>  <span><a href="https://lh3.googleusercontent.com/-mDuyjHLb4Ys/Tykbjbc4xJI/AAAAAAAAAZM/pCc_MsRAhuM/image_2.png" rel="lightbox"><img style="border-bottom: 0px; border-left: 0px; display: inline; border-top: 0px; border-right: 0px" title="image" border="0" alt="image" src="https://lh5.googleusercontent.com/-aPw6Y49OhOo/TykbijN9Q-I/AAAAAAAAAZI/aoTOIqyQA3k/image_thumb.png" width="244" height="68"></a> </span><br>  <span>Controllo Ribbon, <a href="http://www.divelements.com/net" target="_blank">figosissimo</a>, con in una Ribbontab la casella di testo in figura, peccato che la RibbonTab non fosse quella visualizzata allo startup e la conseguenza era che si schiantava tutto… oggi l’illuminazione… o meglio mi è caduto il manuale delle istruzioni sulla testa :-D.</span><br>  <span>L’inghippo era che la RibbonTab viene si caricata e inizializzata, e come conseguenza tutti i controlli figli, ma non fa parte del VisualTree fintanto che non viene visualizzata, mentre fa parte del LogicalTree, per un’introduzione a LogicalTree e VisualTree: <a title="http://www.codeproject.com/KB/WPF/WpfElementTrees.aspx" href="http://www.codeproject.com/KB/WPF/WpfElementTrees.aspx">http://www.codeproject.com/KB/WPF/WpfElementTrees.aspx</a></span><br>  <span>.m</span><br>

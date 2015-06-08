@@ -1,0 +1,167 @@
+---
+layout: post
+title: 'Wpf: WeakEventManager'
+date: '2010-01-21T06:39:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+modified_time: '2012-08-04T20:21:44.175+02:00'
+thumbnail: https://lh6.googleusercontent.com/-xi6g6k8pFtw/TzJyZ7-kcjI/AAAAAAAABH4/SeBbarYjrW4/s72-c/dfbdac9d-eeba-4377-8a36-eb6663cc91ec.png
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2940093177295818889
+blogger_orig_url: http://milestone.topics.it/2010/01/wpf-weakeventmanager.html
+---
+
+<span>Ci siamo da poco scontrati con il concetto di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/4317899770139266210" target="_blank">Logical e Visual Tree</a> e con l’evidente necessità di tenere in ordine la memoria per consentire al GC di fare il suo lavoro quando serve, risulta però evidente, sempre più al crescere della soluzione, che lasciare per strada qualcosa potrebbe essere molto facile.</span><br>  <span><strong>Weak*</strong></span><br>  <span>Abbiamo già visto <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/6242762352963266156">come una WeakReference</a> possa essere un’ottima soluzione ad alcune problematiche, ribaltiamo adesso lo scenario e mettiamoci nel panni di una classe che aggancia un handler ad un evento: se la classe (target) che ha agganciato l’evento non ha modo di sapere quando e se il sender va <em>out-of-scope</em> è evidente che questo può portare ad un <em>.net-memory-leak</em> perchè il nostro target sta impedendo che il GC possa liberare la memoria occupata dal sender.</span><br>  <span>Wpf introduce il supporto a questo scenario estendendo il concetto di WeakReference e introducendo quello di <a href="http://msdn.microsoft.com/en-us/library/system.windows.weakeventmanager.aspx">WeakEventManager</a>: un weak event manager è qualcuno che si mette in mezzo tra il sender e il target facendo da ponte tra i due e gestendo internamente una <em>sorta</em> di weak reference in modo che se il sender esce dallo scope possa venir correttamente gestito dal GC.</span><br>  <span><strong>Si, ok… ma come si fa?</strong></span><br>  <span>Inquadriamo prima il potenziale problema con un esempio:</span><br>  <span><a href="https://lh4.googleusercontent.com/-rAXdVplFEzs/TzJyaRUEzRI/AAAAAAAABIA/hWzGYpJP2dQ/5f97a86f-6f74-49ba-a1a6-fce35d1b9eda.png" rel="shadowbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh6.googleusercontent.com/-xi6g6k8pFtw/TzJyZ7-kcjI/AAAAAAAABH4/SeBbarYjrW4/dfbdac9d-eeba-4377-8a36-eb6663cc91ec.png" width="244" height="135"></a> </span><br>  <span>In una UI come quella qui sopra succedono generalmente un po’ di cose, tra cui:</span><br>  <ul>   <li>I bottoncini “impegnato” e “stampa” si attivano disattivano in base alla selezione nel documento sottostante… a patto che:      <ul>       <li>Un documento sottostamte esista…; </li>        <li>Un documento sottostante sia il documento attivo; </li>        <li>etc… </li>     </ul>   </li>    <li>Il ribbon reagisce al cambio di documento corrente “seguendo” come un segugio, sulla base di un set di regole il documento attivo: ad esempio se selezionate il documento “Home” automaticamente la tab “Home” del ribbon diventa quella attiva e se tornate ai risultati della ricerca la tab “Pubblicazioni” diventa quella attiva; ma se vi spostate su Home e poi manualmente riportate il ribbon su “Pubblicazioni” allora i pulsanti (di cui sopra) reagiscono di conseguenza disattivandosi perchè il documento attivo non è quello giusto; </li> </ul>  <span>Come potete immaginare in tutto questo giro di handling di eventi ce ne sono una vera montagna, non solo…, la cosa è complicata dal fatto che alcune parti di quella UI sono iniettate a runtime e sanno poco o nulla di chi le sta ospitando e chi le ospita proprio non sa nulla di loro.</span><br>  <span>Grazie al supporto dei command di Wpf diventa comunque abbastanza facile far funzionare il tutto:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">this</span>.PrintCommand = <span style="color: #2b91af">DelegateCommand</span>.Create()
+    .TriggerUsing( <span style="color: blue">this</span>.regionMonitor )
+    .TriggerUsing( <span style="color: blue">this</span>.listChangedMonitor )
+    .OnCanExecute( o =>
+    {
+        <span style="color: blue">var </span>canExecute = <span style="color: blue">false</span>;
+        <span style="color: blue">this</span>.regionMonitor.TryGetViewModel<<span style="color: #2b91af">IPublicationListViewModel</span>>( <span style="color: blue">this</span>.regionMonitor.ActiveContent, vm =>
+        {
+            canExecute = vm.SelectedItems.Count() == 1;
+        } );
+
+        <span style="color: blue">return </span>canExecute;
+    } )
+    .OnExecute( o =>
+    {
+<span style="color: green">        </span><span style="color: blue">this</span>.PrintSelection( <span style="color: blue">this</span>.actualPrinterSettings );
+    } );</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Ho già parlato sia di <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/1069924125365624508">DelegateCommand che di trigger</a> quindi vado al sodo… TriggerUsing() <u>faceva</u> una cosa del genere:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">IBindableCommand </span>TriggerUsing( <span style="color: #2b91af">IMonitor </span>source )
+{
+    source.Changed += onSourceChanged;
+    <span style="color: blue">return this</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>adesso si è posto il problema che in quello scenario complesso questa <em>dipendenza</em> diretta porta, in alcuni casi, il GC a mordersi la coda.</span><br>
+
+<span><strong>Please welcome the “WeakEventManager”</strong></span><br>
+
+<span>La linee guida dicono di:</span><br>
+
+<ul>
+  <li>Creare una classe ad hoc, che eredita da WeakEventManager, ed è specilizzata per la gestione di un particolare evento: MonitorChangedWeakEventManager; </li>
+
+  <li>Implementare sul “gestore” dell’evento, in questo caso quindi il DelegateCommand, l’interfaccia <a href="http://msdn.microsoft.com/en-us/library/system.windows.iweakeventlistener.aspx">IWeakEventListener</a>; </li>
+
+  <li>Modificare il codice di “aggancio” dell’evento e passare la responsabilità al WeakEventManager di turno; </li>
+</ul>
+
+<span>Partiamo quindi dal fondo, TriggerUsing() diventa:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public </span><span style="color: #2b91af">IBindableCommand </span>TriggerUsing( <span style="color: #2b91af">IMonitor </span>source )
+{
+    <span style="color: #2b91af">MonitorChangedWeakEventManager</span>.AddListener( source, <span style="color: blue">this </span>);
+
+    <span style="color: blue">return this</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Non agganciamo più direttamente l’evento ma deleghiamo; per far si che comunque la notifica dell’evento arrivi da noi implementiamo l’interfaccia:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: #2b91af">Boolean IWeakEventListener</span>.ReceiveWeakEvent( <span style="color: #2b91af">Type </span>managerType, <span style="color: blue">object </span>sender, <span style="color: #2b91af">EventArgs </span>e )
+{
+    <span style="color: blue">if</span>( managerType == <span style="color: blue">typeof</span>( <span style="color: #2b91af">MonitorChangedWeakEventManager </span>) )
+    {
+        <span style="color: blue">this</span>.OnTriggerChanged( ( <span style="color: #2b91af">IMonitor </span>)sender );
+    }
+    <span style="color: blue">else
+    </span>{
+<span style="color: green">        </span><span style="color: blue">return false</span>;
+    }
+
+    <span style="color: blue">return true</span>;
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Questo è quanto: quando il WeakEventManager deve notificarci chiama ReceiveWeakEvent passandoci il tipo di manager, in modo da consentirci di prendere decisioni sulla base di chi sia il gestore, e passandoci i classici “sender” e “args”. Nostro compito è ritonare un Boolean che confermi o meno se l’evento ci è <em>piaciuto</em>… :-)</span><br>
+
+<span><strong>Il cuore del giochetto</strong></span><br>
+
+<span>Il tutto è gestito in maniera abbastanza semplice dal nostro manager specializzato:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">MonitorChangedWeakEventManager </span>: <span style="color: #2b91af">WeakEventManager
+</span>{
+    <span style="color: blue">static </span><span style="color: #2b91af">MonitorChangedWeakEventManager </span>GetCurrentManager()
+    {
+        <span style="color: blue">var </span>mt = <span style="color: blue">typeof</span>( <span style="color: #2b91af">MonitorChangedWeakEventManager </span>);
+
+        <span style="color: blue">var </span>manager = ( <span style="color: #2b91af">MonitorChangedWeakEventManager </span>)<span style="color: #2b91af">WeakEventManager</span>.GetCurrentManager( mt );
+        <span style="color: blue">if</span>( manager == <span style="color: blue">null </span>)
+        {
+            manager = <span style="color: blue">new </span><span style="color: #2b91af">MonitorChangedWeakEventManager</span>();
+            <span style="color: #2b91af">WeakEventManager</span>.SetCurrentManager( mt, manager );
+        }
+
+        <span style="color: blue">return </span>manager;
+    }
+
+    <span style="color: blue">public static void </span>AddListener( <span style="color: #2b91af">IMonitor </span>source, <span style="color: #2b91af">IWeakEventListener </span>listener )
+    {
+        <span style="color: #2b91af">MonitorChangedWeakEventManager
+            </span>.GetCurrentManager()
+            .ProtectedAddListener( source, listener );
+    }
+
+    <span style="color: blue">public static void </span>RemoveListener( <span style="color: #2b91af">IMonitor </span>source, <span style="color: #2b91af">IWeakEventListener </span>listener )
+    {
+        <span style="color: #2b91af">MonitorChangedWeakEventManager
+            </span>.GetCurrentManager()
+            .ProtectedRemoveListener( source, listener );
+    }
+
+    <span style="color: blue">private </span>MonitorChangedWeakEventManager()
+    {
+
+    }
+
+    <span style="color: blue">void </span>OnChanged( <span style="color: blue">object </span>sender, <span style="color: #2b91af">EventArgs </span>args )
+    {
+        <span style="color: blue">base</span>.DeliverEvent( sender, args );
+    }
+
+    <span style="color: blue">protected override void </span>StartListening( <span style="color: blue">object </span>source )
+    {
+        <span style="color: blue">var </span>trigger = source <span style="color: blue">as </span><span style="color: #2b91af">IMonitor</span>;
+        <span style="color: blue">if</span>( trigger != <span style="color: blue">null </span>)
+        {
+            trigger.Changed += OnChanged;
+        }
+    }
+
+    <span style="color: blue">protected override void </span>StopListening( <span style="color: blue">object </span>source )
+    {
+        <span style="color: blue">var </span>trigger = source <span style="color: blue">as </span><span style="color: #2b91af">IMonitor</span>;
+        <span style="color: blue">if</span>( trigger != <span style="color: blue">null </span>)
+        {
+            trigger.Changed -= OnChanged;
+        }
+    }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<ul>
+  <li>GetCurrentManager() sostanzialmente è un singleton e si appoggia a WeakEventManager per persistere la reference; </li>
+
+  <li>AddListener e RemoveListener sono i <u>nostri</u> entry point che delegano alla classe base l’operatività; </li>
+
+  <li>StartListening e StopListening vengono invocati dalla classe base per gestire il vero e proprio aggiancio/sgancio dell’handler; </li>
+
+  <li>Infine OnChanged, il nostro handler, utilizza il metodo DeliverEvent della classe base per <em>dispatchare</em> in maniera sicura l’evento; </li>
+</ul>
+
+<span>Nulla di trascendentale, anzi alla lunga un po’ noiosetto da scrivere, ma per molte situazioni ottimo e risolutivo.</span><br>
+
+<span>.m</span><br>
+

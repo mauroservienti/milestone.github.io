@@ -1,0 +1,76 @@
+---
+layout: post
+title: 'M-V-VM e la verbosità: che barba… che noia… :-)'
+date: '2010-01-19T15:00:00.000+01:00'
+author: Mauro Servienti
+tags:
+- WPF
+- Software Mason
+- Model View ViewModel
+modified_time: '2012-08-04T19:52:17.564+02:00'
+blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-8469237633209319455
+blogger_orig_url: http://milestone.topics.it/2010/01/m-v-vm-e-la-verbosita-che-barba-che.html
+---
+
+<span>M-V-VM è un gran bello sia chiaro ma come ogni cosa va <a href="https://www.blogger.com/feeds/6511237790974218081/posts/default/4317899770139266210" target="_blank">addomesticata</a>. Il ViewModel, come il Controller per MVC e il Presenter per MVP, è un accentratore/mediatore ergo da li si deve passare.</span><br>  <span><strong>Traffico e rumore</strong></span><br>  <span>Il problema è che in una applicazione desktop si ha il rischio che una singola View esponga molte funzionalità all’utente e si ha il rischio che queste funzionalità girino intorno allo stesso contesto e quindi vengano tutte implementate/esposte dallo stesso ViewModel.</span><br>  <span>Un esempio, triviale:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">ISampleViewModel
+</span>{
+    <span style="color: #2b91af">String </span>Text { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+    <span style="color: #2b91af">Int64 </span>Result { <span style="color: blue">get</span>; }
+
+    <span style="color: #2b91af">ICommand </span>SaveCommand { <span style="color: blue">get</span>; }
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Un banalissimo ViewModel che espone un command, spesso però succede che i ViewModel devono essere <em>trattati</em> anche direttamente da codice e non solo via Wpf Binding, ergo si evolve verso questo:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">ISampleViewModel
+</span>{
+    <span style="color: #2b91af">String </span>Text { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+    <span style="color: #2b91af">Int64 </span>Result { <span style="color: blue">get</span>; }
+
+    <span style="color: #2b91af">ICommand </span>SaveCommand { <span style="color: blue">get</span>; }
+
+    <span style="color: #2b91af">Boolean </span>CanSave { <span style="color: blue">get</span>; }
+    <span style="color: blue">void </span>Save();
+}</pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>Perchè “fa brutto” accedere direttamente al Command, aggiungendo però un po’ troppo rumore per i miei gusti.</span><br>
+
+<span><strong>Cosa serve?</strong></span><br>
+
+<span>A questo punto la domanda giusta è: ma cosa serve e a chi? 
+  <br>Una risposta possibile è che il Command a noi proprio non serve, serve solo ed esclusivamente a Wpf e al suo fantastico mondo.</span><br>
+
+<span><strong>Possiamo farne a meno?</strong></span><br>
+
+<span>Perchè no :-). Pensiamo ad un ViewModel fatto così:</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue">interface </span><span style="color: #2b91af">ISampleViewModel
+</span>{
+    <span style="color: #2b91af">String </span>Text { <span style="color: blue">get</span>; <span style="color: blue">set</span>; }
+    <span style="color: #2b91af">Int64 </span>Result { <span style="color: blue">get</span>; }
+
+    <span style="color: #2b91af">Fact </span>CanSave { <span style="color: blue">get</span>; }
+    <span style="color: blue">void </span>Save();
+}</pre>
+</blockquote>
+
+<span>e ad una View cosà :-):</span><br>
+
+<blockquote>
+  <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">Button </span><span style="color: red">Command</span><span style="color: blue">="{</span><span style="color: #a31515">cmd</span><span style="color: blue">:</span><span style="color: #a31515">AutoCommandBinding </span><span style="color: red">Path</span><span style="color: blue">=SaveCommand}"</span><span style="color: blue">></span><span style="color: #a31515">My Save Button</span><span style="color: blue"></</span><span style="color: #a31515">Button</span><span style="color: blue">></span></pre>
+  <a href="http://11011.net/software/vspaste"></a></blockquote>
+
+<span>A parte quel <em>Fact</em> quale è la differenza sostanziale? Non c’è più il command che, IMHO, a noi non serve ad una cippa :-)</span><br>
+
+<blockquote>
+  <span><em>ndr: il nome Fact è ereditato da un vecchio post da Ayende ma l’unica cosa che eredita è il nome :-)</em></span><br>
+</blockquote>
+
+<span><em>To be continued…</em></span><br>
+
+<span>.m</span><br>
+
