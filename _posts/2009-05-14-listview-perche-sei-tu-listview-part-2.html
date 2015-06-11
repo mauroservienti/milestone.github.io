@@ -10,6 +10,7 @@ tags:
 modified_time: '2012-08-04T19:59:32.962+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-2130826350794334591
 blogger_orig_url: http://milestone.topics.it/2009/05/listview-perche-sei-tu-listview-part-2.html
+permalink: /2009/05/listview-perche-sei-tu-listview-part-2.html
 ---
 
 <span><a href="http://blogs.ugidotnet.org/topics/archive/2009/05/13/listview-perchegrave-sei-tu-listviewhellip-part-1.aspx" target="_blank">Abbiamo parlato</a> della possibilità di mettere in binding i SelectedItems della ListView di WPF con una nostra collection, altra cosa a cui abbiamo accennato è la mancanza, sulla ListView, di un ICommand per gestire il doppio click su un elemento della lista.</span><br>  <span>Siccome abbiamo scoperto, almeno io ;-), la potenza delle attached properties facciamocelo.</span><br>  <span><strong>ItemDoubleClickCommand</strong></span><br>  <span>Partiamo come al solito dal risultato che vogliamo ottenere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">ListView </span><span style="color: red">local</span><span style="color: blue">:</span><span style="color: red">ListViewManager.ItemDoubleClickCommand</span><span style="color: blue">="{</span><span style="color: #a31515">Binding </span><span style="color: red">Path</span><span style="color: blue">=Select}" /></span></pre>

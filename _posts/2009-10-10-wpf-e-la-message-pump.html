@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-02-03T13:01:52.401+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1520308725076833502
 blogger_orig_url: http://milestone.topics.it/2009/10/wpf-e-la-message-pump.html
+permalink: /2009/10/wpf-e-la-message-pump.html
 ---
 
 <span>La necessità è quella di intercettare il plug/unplug di un qualsiasi device USB. Il problema è che il sistema operativo <em>sparapacchia</em> la notifica nella massage pump e il subclassing in Wpf è concetto inesistente… </span><br>  <span><strong>Quindi?</strong></span><br>  <span>E’ un po’ contorto ma alla fine con una manciata di righe di codice ci si arriva:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">Public Interface </span>IHardwareMonitor

@@ -9,6 +9,7 @@ tags:
 modified_time: '2013-04-12T10:53:00.442+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3626823813204300680
 blogger_orig_url: http://milestone.topics.it/2013/04/ravendb-integrated-windows.html
+permalink: /2013/04/ravendb-integrated-windows.html
 ---
 
 <p>A couple of days ago I was at a customer and one of the raised issues, when dealing with RavenDB Windows authentication, was how to use a real “Integrated Windows Authentication” in order to have the credentials of the user currently running the client process flow to the server through the HTTP protocol.</p> <p>After a bit of digging in the .net documentation the solution is trivial:</p> <blockquote><pre class="csharpcode">Uri uri = <span class="kwrd">new</span> Uri( <span class="str">"http://localhost:8080/"</span> );

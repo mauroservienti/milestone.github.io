@@ -11,6 +11,7 @@ modified_time: '2012-08-04T17:48:12.460+02:00'
 thumbnail: https://lh4.googleusercontent.com/-uzE-tcrVszQ/TzJygJjRygI/AAAAAAAABIo/QPQwneXK9pM/s72-c/9b70f997-30b0-4669-9668-f39d75157bf9.png
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-312756305616436846
 blogger_orig_url: http://milestone.topics.it/2010/01/wpf-ogni-tanto-penso-che-si-siano.html
+permalink: /2010/01/wpf-ogni-tanto-penso-che-si-siano.html
 ---
 
 <span>Si si avete capito bene, quelli che hanno disegnato l’api di Wpf :-S</span><br>  <span>Provate a fare una Window ridimensionabile con il mouse (con il ResizeGrip per intenderci) ma ne massimizzabile ne minimizzabile… con Windows Forms era una banalità, con Wpf non si può :-o</span><br>  <span><strong>WindowControlBoxBehavior</strong></span><br>  <span>la soluzione, pezza secondo me, è questa:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public sealed class </span><span style="color: #2b91af">WindowControlBoxBehavior </span>: <span style="color: #2b91af">Behavior</span><<span style="color: #2b91af">Window</span>>

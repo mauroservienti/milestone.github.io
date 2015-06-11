@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-01-30T12:48:00.617+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4474707820496657548
 blogger_orig_url: http://milestone.topics.it/2008/08/una-nota-curiosa-sulla-keyword-throw.html
+permalink: /2008/08/una-nota-curiosa-sulla-keyword-throw.html
 ---
 
         <span>Stamattina mentre sistemavo un po’ (un bel po’…) di warning generati dalla Code Analysis ho “scoperto” una cosa che non sapevo, come se fosse una delle poche ;-).</span><br>  <span>Osserviamo il seguente esempio:</span><br>  <span>public void MyMethod()   <br>{    <br>    try    <br>    {    <br>        //Do something interesting    <br>    }    <br>    catch( Exception x )    <br>    {    <br>        tracer.Critical( x );    <br>        throw x;    <br>    }    <br>}</span><br>  <span>In C# è possibile utilizzare sia “<em>throw x;</em>” che solo “<em>throw;</em>” il risultato è sempre lo stesso: l’exception viene rilanciata al chiamente.</span><br>  <span>C’è però un’importante differenza: se analizziamo lo stack trace dell’esempio scopriamo che l’origine dell’exception è la riga “<em>throw x;</em>” e non l’effettiva locazione dell’errore cosa che invece otterremmo con l’uso del semplice “<em>throw;</em>”.</span><br>  <span>.m</span><br>
