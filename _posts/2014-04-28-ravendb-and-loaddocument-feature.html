@@ -9,6 +9,7 @@ tags:
 modified_time: '2014-04-28T10:52:00.091+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3290666315649300410
 blogger_orig_url: http://milestone.topics.it/2014/04/ravendb-and-loaddocument-feature.html
+permalink: /2014/04/ravendb-and-loaddocument-feature.html
 ---
 
 <p>To make a long story short: <strong>handle with care</strong>.</p> <p><strong>The long story…</strong></p> <p>In a relational world you must live with joins, full stop. It is not a problem neither an advantage it is a sort of a non-functional requirement, this is it, a relational model most of the time requires joins.</p> <p>If you have in your object model a Person class with a list of Addresses it will be stored in 2 different tables and in order to load them there are 2 options:</p> <ul> <li>shoot yourself in a foot and perform 2 queries;  <li>issue a join and in one single round-trip to the db get all the data;</li></ul> <p>When it comes to document modeling in a non-relational world the available options are a bit more and ranges from model your document in a relational fashion (most of the time shooting yourself in a foot) or model them in a document oriented manner.</p> <p>Modeling in a document oriented manner open up to an infinite range of options because it barely depends on the context, the usage, the type of the application and much more. For the purpose of the article consider the above Person class, one solution in a document database is the following:</p> <blockquote><pre class="csharpcode">{

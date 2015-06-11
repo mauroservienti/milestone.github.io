@@ -9,6 +9,7 @@ tags:
 modified_time: '2013-11-15T10:50:30.561+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9192125898465751720
 blogger_orig_url: http://milestone.topics.it/2013/11/ravendb-responders.html
+permalink: /2013/11/ravendb-responders.html
 ---
 
 <p><a href="http://ravendb.net/" target="_blank">RavenDB</a> has an really good extensibility support that is based on Bundles and Responders. Bundles can be seen as plugins they are the high level extensibility API. RavenDB comes with a lot of <a href="http://ravendb.net/docs/2.5/studio/bundles" target="_blank">built-in bundles</a> and it is <a href="http://ravendb.net/docs/2.5/server/extending/plugins?version=2.5" target="_blank">pretty easy to create our own</a>.</p> <p>On the other side responders are the low level API to extend RavenDB. If you are used to ASP.Net a responder can be compared to an HttpHandler, a responder in RavenDB is bound to a URI as in the following sample:</p> <blockquote><pre class="csharpcode"><span class="kwrd">public</span> <span class="kwrd">class</span> MyResponder : AbstractRequestResponder

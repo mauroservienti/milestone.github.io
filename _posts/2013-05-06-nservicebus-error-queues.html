@@ -9,6 +9,7 @@ tags:
 modified_time: '2013-05-06T15:08:00.673+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1485704427737941226
 blogger_orig_url: http://milestone.topics.it/2013/05/nservicebus-error-queues.html
+permalink: /2013/05/nservicebus-error-queues.html
 ---
 
 <p><a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a> has the concept of error queue, that is used, as the name implies, <a href="http://support.nservicebus.com/customer/portal/articles/862410-how-do-i-handle-exceptions-" target="_blank">when an error occurs</a>; given this behavior the debate should move to:</p> <h3>What is an error?</h3> <p>Many things can be categorized as an error:</p> <ul> <li>pure bugs such as unhandled exceptions;</li> <li>validation failures: the incoming message does not satisfies the business validation rules;</li> <li>security violations: the incoming message, due the current security context, cannot be handled;</li> <li>etc.;</li></ul> <p>What we get for free in NServiceBus is that if our message handler does something like this:</p> <blockquote><pre class="csharpcode"><span class="kwrd">class</span> SampleHandler : IHandleMessages&lt;SampleMessage&gt;

@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-08-04T20:21:44.176+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6242762352963266156
 blogger_orig_url: http://milestone.topics.it/2009/10/weakreference-i-love-you.html
+permalink: /2009/10/weakreference-i-love-you.html
 ---
 
 <span><a href="http://ayende.com/Blog/archive/2009/10/01/sometimes-it-looks-like-select-is-broken-a-wpf-memory.aspx">Ayende ne ha parlato proprio in questi giorni</a>, ed io è qualche settimana che giro intorno… anche se lo scenario è diverso.</span><br>  <span>Un<strike>o</strike>a <strike>dei problemi</strike> delle differenze tra Wpf e Windows Forms è che <u>per il mondo</u> Wpf i concetti di IDisposable e di IComponent sono del tutto irrilevanti, del resto non ci sono risorse, aka handle ad esempio, da rilasciare.</span><br>  <span>In Windows Forms sfruttavo il fatto di poter realizzare un IComponent e avere gratis la chiamata a Dispose nel momento in cui veniva fatta la Dispose del componente contenitore, ad esempio la Form. In molti casi deviavo leggermente dal <a href="http://www.google.it/search?hl=it&q=Dispose+Pattern&meta=">Dispose Pattern</a> sfruttandolo per liberare anche risorse <em>managed</em> come ad esempio event handler.</span><br>  <span>Questo giochetto non funziona più! Osservate questo esempio:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>memento = <span style="color: blue">new </span><span style="color: #2b91af">ChangeTrackingService</span>();

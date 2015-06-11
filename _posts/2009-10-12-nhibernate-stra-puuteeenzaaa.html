@@ -10,6 +10,7 @@ modified_time: '2012-08-04T19:42:15.868+02:00'
 thumbnail: https://lh3.googleusercontent.com/-u2s69IILPWA/TyvMzPTv81I/AAAAAAAAAxQ/VqeIPXEu2FI/s72-c/image_thumb.png
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3618937504947512899
 blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-stra-puuteeenzaaa.html
+permalink: /2009/10/nhibernate-stra-puuteeenzaaa.html
 ---
 
 <span>Scenario:</span><br>  <span><a href="https://lh3.googleusercontent.com/-EFbiyNW3fyE/TyvM0PsLMmI/AAAAAAAAAxY/JfifRWuR91M/image_2.png" rel="lightbox"><img style="border-right-width: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px" title="image" border="0" alt="image" src="https://lh3.googleusercontent.com/-u2s69IILPWA/TyvMzPTv81I/AAAAAAAAAxQ/VqeIPXEu2FI/image_thumb.png" width="212" height="244"></a> </span><br>  <span>un dominio molto banale mappato su una singola tabella con una colonna che fa da discriminante, è così, è legacy e me lo devo tenere :-).</span><br>  <span>Adesso il nostro simpatico utente vuole fare una ricerca per tutti i <em>Subject</em>, a prescindere dal fatto che siano <em>Company</em> o <em>Person</em>, che contengono in <em>Subject.Name</em> qualcosa tipo (Like) ‘%mauro%’: una sorta di full-text.</span><br>  <span>Banale direte voi:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">var </span>criteria = querySpec.Keywords

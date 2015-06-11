@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-08-04T19:54:32.347+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5520192008020646780
 blogger_orig_url: http://milestone.topics.it/2009/05/ui-composition-imessagebroker-castle.html
+permalink: /2009/05/ui-composition-imessagebroker-castle.html
 ---
 
 <span>Un altro intermezzo, si lo so che ho promesso un’ultima puntata ma:</span><br>  <ul>   <li>Non ho tempo, ogni tanto lavoro :-); </li>    <li>La soluzione che per ora ho adottato per la gestione della navigazione, oggetto dell’ultima puntata, non mi piace, funziona, funziona bene, ma non mi piace… è rumorosa. </li> </ul>  <span>Facciamo invece un passo indierto: tempo fa abbiamo parlato di “<a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/imessagebroker.aspx" target="_blank">message broker</a>” per sopperire all’impossibilità di usare, in un’applicazione composita, i tradizionali eventi del mondo .net.</span><br>  <span>Una cosa che <em>tipicamente</em> si fa in un’applicazione composita è iniettare contenuti visuali, e lo si fa ad esempio rispondendo al messaggio che informa dello startup di una certa risorsa, nella fase di “Initialize” di un modulo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">this</span>.Broker.Subscribe<<span style="color: #2b91af">ViewModelLoading</span><<span style="color: #2b91af">IShellViewModel</span>>>( <span style="color: blue">this</span>, msg =>

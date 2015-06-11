@@ -11,6 +11,7 @@ tags:
 modified_time: '2012-05-18T09:50:00.181+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-6825288187361461419
 blogger_orig_url: http://milestone.topics.it/2012/05/radical-ui-composition-inject-content.html
+permalink: /2012/05/radical-ui-composition-inject-content.html
 ---
 
 <p><a href="{{ site.baseurl }}{% post_url 2012-05-16-radical-ui-composition-concepts %}" target="_blank">We have seen some of the concepts</a> behind the UI Composition features offered by the <a href="http://radical.codeplex.com/" target="_blank">Radical</a> framework, remember that all these concepts aims to be cross platform, currently WPF and Silverlight are supported, next will be Windows 8 Metro and Windows Phone 7.</p> <p><strong>Injection</strong></p> <p>The concept is trivial: a view defines one or more “areas” where another view can be injected.</p> <p>Currently it is a really easy operation, as we have seen the MainView simply defines some regions and the MainViewModel has nothing special:</p> <blockquote><pre style="font-family: ; background: white; color: "><font face="Consolas"><font style="font-size: 11.3pt"><span style="color: "><font color="#0000ff">class</font></span> <span style="color: "><font color="#2b91af">MainViewModel</font></span> : <span style="color: "><font color="#2b91af">AbstractViewModel</font></span>

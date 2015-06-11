@@ -10,6 +10,7 @@ tags:
 modified_time: '2012-01-31T14:04:45.281+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-9001230632470153984
 blogger_orig_url: http://milestone.topics.it/2009/05/aop-postsharp-e-m-v-vm.html
+permalink: /2009/05/aop-postsharp-e-m-v-vm.html
 ---
 
 <span>per ora è solo un’idea che mi frulla per la testa ma… una cosa che si fa con M-V-VM è la necessità di triggerare la rivalutazione dell’eseguibilità di un ICommand a fronte del fatto che una certa cosa è successa, tipicamente un’altra proprietà del VM è cambiata; un esempio:</span><br>  <blockquote>   <span>Il comando “Browse” non è attivo se la casella di testo “Criteri di Ricerca” (in binding con la proprietà QueryText del VM) è vuota, quando la proprietà QueryText cambia dobbiamo triggerare la rivalutazione dell’eseguibilità dell’ICommand.</span><br> </blockquote>  <span>Questo in termini di codice spesso si traduce in qualcose del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public static readonly </span><span style="color: #2b91af">DependencyProperty </span>QueryProperty = <span style="color: #2b91af">DependencyProperty</span>.Register(

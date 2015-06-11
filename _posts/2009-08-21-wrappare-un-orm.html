@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-02-02T12:17:04.902+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1085259720510327107
 blogger_orig_url: http://milestone.topics.it/2009/08/wrappare-un-orm.html
+permalink: /2009/08/wrappare-un-orm.html
 ---
 
 <span>…sembra una parolaccia, e per molti versi ritengo che lo sia, ma andiamo con ordine: </span><br>  <blockquote>   <span>diciamo che avete il vostro “bel” dominio mappato con il fido <em>Linq to Sql</em> e siete decisamente felici di come funzionano le cose, nonostante gli evidenti limiti di L2S, ma ad un certo punto succede che i requisiti vi impongono di integrare all’interno della vostra applicazione dati che arrivano da una sorgente dati diversa, nello specifico un preistorico database dbase (v.2), che ha il piccolo difetto di non supportare in alcun modo la multiutenza ergo il primo che arriva “locca” e gli altri si attaccano (in una “conversazione” via mail ho usato un termine più colorito :-D). La soluzione più ovvia è nascondere i file di dbase dietro un servizio (ho scelto Wcf ma è poco rilevante la tecnologia) e gestire li gli accessi concorrenti.</span><br> </blockquote>  <span>Adesso siete di fronte ad un problema, siete evidentemente abituati a scrivere una cosa del tipo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">new </span><span style="color: #2b91af">DomainDataContext</span>() )

@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-08-04T20:17:35.237+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3578853722437546967
 blogger_orig_url: http://milestone.topics.it/2009/01/ms-unit-tests-e-genericparameterhelper.html
+permalink: /2009/01/ms-unit-tests-e-genericparameterhelper.html
 ---
 
 <span>Oggi sono incappato in uno stranissimo comportamento che non mi spiegavo… stavo scrivendo degli unit test di una collection custom <em>scroccando</em> la classe GenericParameterHelper che è li apposta per quello… e ho scritto una cosa del tipo:</span><br>  <span>[TestMethod]    <br>public void entityCollection_remove_a_reference_not_in_the_collection_should_return_false()     <br>{     <br>    var target = this.CreateMock<GenericParameterHelper>();     <br>    target.Add( new GenericParameterHelper() );     <br>    target.Add( new GenericParameterHelper() );     <br>    target.Add( new GenericParameterHelper() ); </span><br>  <span>    var actual = target.Remove( new GenericParameterHelper() ); </span><br>  <span>    actual.ShouldBeFalse();    <br>}</span><br>  <span>ma il test falliva miseramente e <em>actual</em> era true… la cosa era un po’ inspiegabile se non che ad un certo punto dopo un po’ di sano debug mi è venuto lo schiribizzo di curiosare con il fido Reflector e ho scoper</span><br>  <span>to che quella maledetta classe di GenericParameterHelper fa l’override del metodo Equals falsando completamente il risultato…</span><br>  <span>Non ho parole.</span><br>  <span>.m</span><br>  
