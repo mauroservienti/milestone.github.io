@@ -8,6 +8,7 @@ tags:
 modified_time: '2013-04-30T18:05:23.118+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-983853959714778048
 blogger_orig_url: http://milestone.topics.it/2013/04/nservicebus-windsor-and-message-scopes.html
+permalink: /2013/04/nservicebus-windsor-and-message-scopes.html
 ---
 
 <p>if you are working with <a href="http://www.nservicebus.com/" target="_blank">NServiceBus</a>, using as backend IoC container Castle Windsor, remember that under the hood NServiceBus utilizes the Windsor scope feature to create a scope “around” messages in order to isolate dependencies required by each message handler.</p> <p>In this case if you need to have a component, registered in Windsor, that has its lifestyle bound to the message lifecycle it is enough to register the component using the “LifestyleScope”:</p> <blockquote><pre class="csharpcode">container.Register

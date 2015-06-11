@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-01-31T14:03:45.929+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-1393714531847944126
 blogger_orig_url: http://milestone.topics.it/2009/04/ui-composition-i-moduli.html
+permalink: /2009/04/ui-composition-i-moduli.html
 ---
 
 <span><em>Scoperto come scoprire</em> quali sono i moduli installati non ci resta che caricarli… fosse semplice ;-)</span><br>  <span>La prima cosa che dobbiamo fare è trovare un sistema per collegare un IModuleDescriptor ad un modulo, dato che le informazioni presenti in un ModuleDescriptor arrivano da un file di configurazione non abbiamo gratis nessun “ponte” tra i 2 mondi: la descrizione di un modulo e il modulo stesso.</span><br>  <span>Quello che possiamo banalmente fare, e che faremo, è aggiungere alcune informazioni al sistema di configurazione, in realtà scopriamo che ci basta aggiungere al file di configurazione un valore che ci dica quale sia la classe che fa da entry point per il nostro modulo; l’unico requisito è che questa classe sia un modulo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public interface </span><span style="color: #2b91af">IModule

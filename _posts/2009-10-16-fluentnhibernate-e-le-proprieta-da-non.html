@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-02-03T13:02:30.821+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5951387093452469613
 blogger_orig_url: http://milestone.topics.it/2009/10/fluentnhibernate-e-le-proprieta-da-non.html
+permalink: /2009/10/fluentnhibernate-e-le-proprieta-da-non.html
 ---
 
 <span>Supponendo di aver bisogno di mappare un’entità che espone delle proprietà calcolate con FluentNHibernate avete qualche problema…</span><br>  <span>L’inghippo di fondo è questo: quando mappate una entity, in fase di inizializzazione dei proxy (e qui vado a intuito) il <em>proxy builder</em> cerca tutte le proprietà e si lamenta, con una sonora exception, se una delle proprietà non è <em>virtual</em> o se manca del <em>set accessor</em>. Il messaggio di errore poi è quantomeno fuorviante :-)</span><br>  <span>Girovagando su internet si trovano tante colorite soluzioni (pezze direi io) tra cui la più bella è quella di disabilitare in toto il <em>proxy validator</em>:</span><br>  <blockquote>   <pre class="code"><span style="color: blue"><</span><span style="color: #a31515">property </span><span style="color: red">name</span><span style="color: blue">=</span>"<span style="color: blue">use_proxy_validator</span>"<span style="color: blue">></span>false<span style="color: blue"></</span><span style="color: #a31515">property</span><span style="color: blue">></span></pre>

@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-01-25T21:24:38.351+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-3458382406704092927
 blogger_orig_url: http://milestone.topics.it/2007/02/robocopy-e-i-postbuildevents-di-visual.html
+permalink: /2007/02/robocopy-e-i-postbuildevents-di-visual.html
 ---
 
 <span>Windows Vista include l'utility robocopy.exe, che prima era disponibile solo con i Resource kit. L'utility è decisamente più potente dell'xcopy tradizionale perchè ad esempio permette di fare un vero e proprio mirror di 2 directory.<br>C'è però un <em>problema</em> con i BuildEvents di Visual Studio perchè robocopy ha dei codici di ritorno che sono una bitmask per indicare cosa è successo durante la copia, mentre il buon Visual Studio si aspetta solo ed esclusivamente uno <em>0</em> per indicare che tutto è andato a buon fine, in caso contrario la build fallisce, la soluzione è semplicissima basta impostare nei build events un codice di ritorno che venga <em>digerito</em> da Visual Studio:</span><br> <span><em>robocopy.exe [Source] [Destination] /[Parameters]<br>exit 0</em></span><br> <span>e il gioco è fatto ;-)</span><br> <span>.m</span><br>

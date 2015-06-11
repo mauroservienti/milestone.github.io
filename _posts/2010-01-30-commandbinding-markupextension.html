@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-08-04T20:11:24.061+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4994231036738999946
 blogger_orig_url: http://milestone.topics.it/2010/01/commandbinding-markupextension.html
+permalink: /2010/01/commandbinding-markupextension.html
 ---
 
 <span>Estendere il motore di DataBinding, a oggi, è impossibile perchè è tutto <em>internal</em> e/o <em>sealed</em>… immagino abbiano avuto i loro buoni motivi e posso immaginare anche quali siano, sta di fatto che è una gran menata…</span><br>  <span>Possiamo però partire da <a href="http://www.hardcodet.net/2008/04/wpf-custom-binding-class" target="_blank">questo post</a>, come suggerito da <a href="http://blogs.ugidotnet.org/spaccabit" target="_blank">Giuseppe</a>, e wrappare la classe Binding in una nostra classe Binding esponendo le stesse identitche proprietà che saranno dei meri proxy verso la classe Binding reale; facendo infine semplicemente questo:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">public override object </span>ProvideValue( <span style="color: #2b91af">IServiceProvider </span>provider )

@@ -8,6 +8,7 @@ tags:
 modified_time: '2012-01-30T12:50:35.678+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-4725781423770005649
 blogger_orig_url: http://milestone.topics.it/2008/11/tfs-dispettoso-d.html
+permalink: /2008/11/tfs-dispettoso-d.html
 ---
 
 <span>ho passato l’ultima mezz’ora a litigare con TFS perchè non riuscivo a “bindare” una solution…</span><br>  <span>Antefatto: la solution stava su un TFS che non esiste più, è morto tempo fa, oggi mi serviva rimetterla sotto source control.</span><br>  <ul>   <li>Apro VS; </li>    <li>apro la solution aspetto che vada in timeout e arrivi la notifica del lavoro off-line; </li>    <li>rimuovo i binding al TFS “andato”; </li>    <li>chiudo la solution salvando tute le modifiche ai vari csproj e sln; </li>    <li>riapro a faccio un bel add to source control…, …, …, …, …, …, unable to connect to remote server…, e ce credo un ce sta…; </li>    <li>*^@!$$%&^^ </li> </ul>  <span>Litigo per un bel po’… scrivo a San <a href="http://www.geniodelmale.info/" target="_blank">Lorenzo</a>… su suo consiglio provo il tool <a href="http://www.codeproject.com/KB/dotnet/RemoveSCCInfo.aspx" target="_blank">SccRemover</a> ma nulla… alla fine illuminazione: la cache del team explorer… ctrl+A –> shift+canc :-D</span><br>  <span>.m</span><br>

@@ -9,6 +9,7 @@ tags:
 modified_time: '2013-04-16T10:45:08.814+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-906381735948668933
 blogger_orig_url: http://milestone.topics.it/2013/04/jason-v02-configuration-improvements.html
+permalink: /2013/04/jason-v02-configuration-improvements.html
 ---
 
 <p>As we have <a href="{{ site.baseurl }}{% post_url 2012-11-05-jason-way-to-handle-c-of-cqrs %}" target="_blank">already</a> <a href="{{ site.baseurl }}{% post_url 2012-11-19-jason-mvc-webapi-hosting %}" target="_blank">discussed</a> <a href="http://jason.codeplex.com/" target="_blank">Jason</a> is an infrastructure framework to handle the “Command” portion of the CQRS pattern, due to some customer feedback and requests today we released a brand new version of the whole toolkit adding a lot of improvements and, unfortunately, some breaking changes.</p> <h3>One configuration to rule them all</h3> <p>In the previous Jason version there was one different configuration per hosting type, basically in order to host Jason as a WCF service the developer needed to build a specific configuration that was different from the one required to host Jason as a WebAPI controller. This difference leaded to one big issue: you simply cannot host, in the same application, a Jason API controller and a Jason WCF service.</p> <p>In v0.2 we solved this scenario rebuilding the whole configuration stuff:</p> <blockquote><pre class="csharpcode">var jasonConfig = <span class="kwrd">new</span> DefaultJasonServerConfiguration

@@ -9,6 +9,7 @@ tags:
 modified_time: '2012-08-04T19:41:29.986+02:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5042488519203732971
 blogger_orig_url: http://milestone.topics.it/2009/10/nhibernate-ipreinserteventlistener.html
+permalink: /2009/10/nhibernate-ipreinserteventlistener.html
 ---
 
 <span>Poco tempo fa ho parlato di strategie di <a href="http://blogs.ugidotnet.org/topics/archive/0001/01/01/nhibernate-document-identifier.aspx">generazione del document identifier</a> con <a href="https://www.hibernate.org/343.html">NHibernate</a>, quello che vogliamo ottenere è rendere trasparente all’utilizzatore il fatto che un “id”, ad esempio il numero fattura, debba essere generato e dipenda da fattori esterni all’entità.</span><br>  <span>In soldoni vogliamo limitarci ad una cosa del genere:</span><br>  <blockquote>   <pre class="code"><span style="color: blue">using</span>( <span style="color: blue">var </span>dc = <span style="color: blue">this</span>.dataContextFactory.Create() )

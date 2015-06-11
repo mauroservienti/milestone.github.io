@@ -10,6 +10,7 @@ modified_time: '2014-03-06T10:10:00.163+01:00'
 thumbnail: http://lh4.ggpht.com/-TTHs7Hz1G70/UxgReZmCzAI/AAAAAAAACdg/FJ8Tezo4r5o/s72-c/image_thumb%25255B10%25255D.png?imgmax=800
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5543326654777693883
 blogger_orig_url: http://milestone.topics.it/2014/03/angularjs-ui-router-and-breadcrumbs.html
+permalink: /2014/03/angularjs-ui-router-and-breadcrumbs.html
 ---
 
 <p><a href="http://angularjs.org" target="_blank">AngularJS</a> is simply amazing, the intrinsic power of its architecture and the nature of JavaScript (with which I go on in a love &amp; hate manner) gives us so much power that we cannot fall in love with it.</p> <p><strong>UI Router</strong></p> <p>AngularJS has a built-in routing engine (that in the later versions has been detached from the core and transformed into a plug-in) that is really similar to the Asp.NET MVC routing engine, for whom has experience with it.</p> <p>But…I strongly suggest to give a try to the <a href="https://github.com/angular-ui/ui-router" target="_blank">AngularJS UI Router</a> plug-in that replaces the default routing engine introducing a routing engine that is conceptually based on a state machine, where states are identified by routes (or route matches), take a look at the following sample configuration:</p> <blockquote><pre class="csharpcode">$stateProvider.state(<span class="str">'viewById'</span>, {

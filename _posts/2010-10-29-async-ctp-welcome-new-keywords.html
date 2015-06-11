@@ -11,6 +11,7 @@ modified_time: '2012-08-04T17:43:25.702+02:00'
 thumbnail: https://lh6.googleusercontent.com/-RIEkttolPNI/T0Sk5Lx5DdI/AAAAAAAABx4/rESHvDONIPM/s72-c/wlEmoticon-smile_2_15.png
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-7310324953041910145
 blogger_orig_url: http://milestone.topics.it/2010/10/async-ctp-welcome-new-keywords.html
+permalink: /2010/10/async-ctp-welcome-new-keywords.html
 ---
 
 <span>fino a ieri non se ne poteva parlare, figo:</span><br>  <blockquote>   <pre style="font-family: "><font face="Consolas"><span style="color: "><font color="#0000ff"><font style="font-size: 12pt">class</font></font></span><font style="font-size: 12pt"> <span style="color: "><font color="#2b91af">Worker</font></span><br>{<br>	<span style="color: "><font color="#0000ff">public</font></span> <span style="color: "><font color="#0000ff">async</font></span> <span style="color: "><font color="#2b91af">Task</font></span><T> ExecuteAsyn<T>( T value )<br>	{<br>		<span style="color: "><font color="#0000ff">var</font></span> task = <span style="color: "><font color="#0000ff">await</font></span> <span style="color: "><font color="#2b91af">TaskEx</font></span>.Run( () => <br>		{<br>			<span style="color: "><font color="#2b91af">Thread</font></span>.Sleep( 1000 );<br>			<span style="color: "><font color="#0000ff">return</font></span> value; <br>		} );<br> <br>		<span style="color: "><font color="#0000ff">return</font></span> task;<br>	}<br>}</font></font></pre>
