@@ -8,9 +8,11 @@ tags:
 blogger_orig_url: http://milestone.topics.it/2015/03/radical-vegan-rc-release.html
 ---
 
-We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RC version of [Radical](https://github.com/RadicalFx/Radical) “Vegan”, closed issues: https://github.com/RadicalFx/radical/issues?q=milestone%3AVegan+is%3Aclosed
+We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RC version of [Radical](https://github.com/RadicalFx/Radical) “Vegan”.
 
 ### Highlights
+
+Closed issues: https://github.com/RadicalFx/radical/issues?q=milestone%3AVegan+is%3Aclosed
 
 * [Default conventions support](https://github.com/RadicalFx/radical/issues/104): simplifies how the user replaces/overrides conventions;
 * A [nasty MessageBroker bug](https://github.com/RadicalFx/radical/issues/108) related to thread safety;

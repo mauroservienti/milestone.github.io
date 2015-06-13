@@ -1,0 +1,23 @@
+---
+layout: default
+title: All posts
+permalink: /all/
+---
+
+<div class="home-content">
+
+  <h1 class="page-heading">Posts</h1>
+
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <h4>
+          <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          <br />
+          <small>{{ post.date | date: "%b %-d, %Y" }}</small>
+        </h4>
+      </li>
+    {% endfor %}
+  </ul>
+
+</div>

@@ -6,9 +6,11 @@ tags:
 - Radical
 ---
 
-We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RTW version of [Radical](https://github.com/RadicalFx/Radical) `Democracy`, closed issues: https://github.com/RadicalFx/radical/issues?q=milestone%3ADemocracy+is%3Aclosed
+We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RTW version of [Radical](https://github.com/RadicalFx/Radical) `Democracy`.
 
 ### Highlights
+
+Closed issues: https://github.com/RadicalFx/radical/issues?q=milestone%3ADemocracy+is%3Aclosed
 
 * Some [documentation improvements](https://github.com/RadicalFx/radical/issues?q=label%3ADocumentation+milestone%3ADemocracy+is%3Aclosed), that are always needed;
 * [Removed a dependency](https://github.com/RadicalFx/radical/issues/132) on an old and legacy Radical package not required any more;

@@ -10,7 +10,7 @@ blogger_orig_url: http://milestone.topics.it/2015/04/radical-splash-screen-suppo
 
 Take a look at the following snippet:
 
-```
+```csharp
 public App()
 {
     var bootstrapper = new WindsorApplicationBoostrapper<Presentation.MainView>()

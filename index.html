@@ -2,22 +2,45 @@
 layout: default
 ---
 
-<div class="home">
+<div class="home-content">
 
-  <h1 class="page-heading">Posts</h1>
-
-  <ul class="post-list">
-    {% for post in site.posts %}
-      <li>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
-        <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h2>
-      </li>
+  <div class="jumbotron first-post">
+    {% assign first = site.posts[0] %}
+    <h1>
+      <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>
+    </h1>
+    <hr class="h-splitter" />
+    <div>
+      {{ first.excerpt }}
+    </div>
+    <a href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
+  </div>
+  
+  <div class="row">
+    {% for post in site.posts limit:6 offset:1 %}
+    {% if forloop.index0 == 3 %}
+  </div>
+  <div class="row">
+    {% endif %}
+      <div class="col-md-4  latest-post">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <h3>
+              <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+            </h3>
+            <hr class="h-splitter" />
+            <div>
+              {{ post.excerpt }}
+            </div>
+          </div>          
+          <ul class="list-group">
+            <li class="list-group-item">
+              <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
+            </li>
+          </ul>
+        </div>
+      </div>
     {% endfor %}
-  </ul>
-
-  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+  </div>
 
 </div>

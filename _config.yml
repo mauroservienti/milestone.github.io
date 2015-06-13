@@ -12,6 +12,7 @@ url: "http://milestone.topics.it" # the base hostname & protocol for your site
 
 twitter_username: mauroservienti
 github_username:  mauroservienti
+github_repository:  mauroservienti.github.io
 
 highlighter: pygments
 
