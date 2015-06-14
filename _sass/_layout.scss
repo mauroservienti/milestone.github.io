@@ -2,6 +2,11 @@
 	margin-top: 20px;
 	margin-left: 15%;
 	margin-right: 15%;
+	
+	@media screen and (max-width: $break-small) {
+		margin-left: 0px;
+		margin-right: 0px;
+	}
 }
 
 .home-content{
@@ -39,6 +44,11 @@
 	padding-top: 10px;
 	padding-left: 20px;
 	padding-bottom: 10px;
+	
+	@media screen and (max-width: $break-small) {
+		border-left-width: 0px;
+		padding-left: 0px;
+	}
 }
 
 .post-meta{

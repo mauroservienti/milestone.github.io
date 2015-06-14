@@ -4,6 +4,8 @@
 @charset "utf-8";
 
 // Our variables
+$break-small: 768px;
+$break-large: 1280px;
 $base-font-family: Helvetica, Arial, sans-serif;
 $base-font-size:   16px;
 $small-font-size:  $base-font-size * 0.875;
