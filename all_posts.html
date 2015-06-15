@@ -8,16 +8,20 @@ permalink: /all/
 
   <h1 class="page-heading">Posts</h1>
 
-  <ul class="post-list">
-    {% for post in site.posts %}
+  {% for post in site.posts %}
+  {% assign currentdate = post.date | date: "%B %Y" %}
+    {% if currentdate != date %}
+      {% unless forloop.first %}</ul>{% endunless %}
+        <h3 id="y{{post.date | date: "%B %Y"}}">{{ currentdate }}</h3>
+        <ul class="post-list">
+          {% assign date = currentdate %}
+    {% endif %}
       <li>
-        <h4>
-          <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-          <br />
-          <small>{{ post.date | date: "%b %-d, %Y" }}</small>
-        </h4>
+        <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
       </li>
-    {% endfor %}
-  </ul>
+    {% if forloop.last %}
+    </ul>
+    {% endif %}
+  {% endfor %}
 
 </div>
