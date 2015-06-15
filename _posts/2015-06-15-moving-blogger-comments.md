@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Moving away from blogger: comments using Disqus"
+title: "Moving away from Blogger: comments using Disqus"
 author: Mauro Servienti
 tags:
 - Jekyll
