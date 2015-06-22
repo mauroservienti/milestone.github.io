@@ -9,6 +9,7 @@ tags:
 ---
 
 The question is certainly interesting: why should I use a platform (GitHub), that seems to be though with code in mind, to host a blog? The main reasons that comes to my mind are:
+
 * Collaboration;
 * Simplicity;
 * Separation of concern;
