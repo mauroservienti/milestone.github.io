@@ -11,7 +11,7 @@ I have been a stand-up worker for almost 2 years, I started to work standing up 
 * Cervical arthritis;
 * A broken coccyx (when I was young I used to be somewhat reckless);
 
-To be clear, I sat down for almost 25 years with a broken coccyx, so that is not the real issue and cervical arthritis as well is not the real issue. The real issue, 2 and a half year ago, was being unable to sleep due to something like 130k Euros of unpaid invoices, everything else is a detail and a consequence (I was a freelance at that time).
+To be clear, I sat down for almost 15 years with a broken coccyx, so that is not the real issue and cervical arthritis as well is not the real issue. The real issue, 2 and a half year ago, was being unable to sleep due to something like 130k Euros of unpaid invoices, everything else is a detail and a consequence (I was a freelance at that time).
 
 ### Retrospective
 
