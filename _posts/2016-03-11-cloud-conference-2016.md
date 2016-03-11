@@ -6,9 +6,9 @@ tags:
 - Work
 ---
 
-Yesterday I had this fantastic opportunity the speak at [CloudConf2016](http://2016.cloudconf.it/) along with a group of amazing speakers and professionals.
+Yesterday I had this fantastic opportunity to speak at [CloudConf2016](http://2016.cloudconf.it/) along with a group of amazing speakers and professionals.
 
-It was an opportunity to meet new friends and compare and discuss ideas. I'd like to say thank you to the perfect organization, [Gabriele and Walter](http://www.corley.it/) are awesome hosts, and to all the attendees for this amazing experience.
+It was an opportunity to meet new friends, compare and discuss ideas. I'd like to say thank you to the perfect organization, [Gabriele and Walter](http://www.corley.it/) are awesome hosts, and to all the attendees for this amazing experience.
 
 By the way :-) I talked about SOA:
 
