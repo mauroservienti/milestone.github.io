@@ -117,3 +117,6 @@ In my opinion the answer is no, they are not a bad thing. Roadmaps as well are a
 In case of a show roadmaps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance.
 
 In the software industry this might not be the case: high level roadmaps can be public, they help in engaging with customers, IMO, and deadlines unless not connected to public events might be private to reduce exposure to failures.
+
+
+By the way, the simplified show version we're running lasts 2 hours and 15 minutes.
