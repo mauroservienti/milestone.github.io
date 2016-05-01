@@ -106,17 +106,23 @@ While you progress there is the need to test that all you have so far works, how
 
 As you might imagine RTM cannot be missed: tickets sold, venue booked and paid, third-parties are ready and paid. Missing the RTM deadline is a huge failure, a catastrophic one in case of a show. Deadlines in the software industry might be a bit more flexible, might. However in any case having a clear end goal both in terms of time and in terms of requirements, thanks to a roadmap (the plot and the design) clearly helps in being committed and focused.
 
+### Major, Minor, bug fixing (AKA SemVer)
+
+Bugs happen and can be fixed at each release, where a release is a new performance. Fixing bugs is again constrained by deadlines: you may find a bug on the Saturday night show and there is no way that it can be fixed in time for the Sunday night one, however you know you can fix it for next weekend.
+Bugs are easy most of the time. Minor releases are much more complex, especially because with shows (and I don't think this applies to software) a Minor release might be valid for a couple of nights due to theater constraints, e.g. the stage has some unexpected constraints. The problem with minor releases and performing is that performing on a stage is the result of endless hours rehearsing, much like a Kata, and everything is so set in stone in your mind that is very complex to adapt to changes without advice and with very limited time.
+
+Mostly due to the same Kata thing Major releases, so breaking changes, are simply a no go, it basically means something similar to start from scratch, we could say that we always must be backward compatible.   
+
 ## Conclusions
 
 We started with a question:
 
 > **are deadlines a bad thing?**
 
-In my opinion the answer is no, they are not a bad thing. Roadmaps as well are a very good thing, sill, IMO.
+In my opinion the answer is no, they are not a bad thing. Roadmaps as well are a very good thing, still, IMO. They can easily become a bad thing, for example when connected to a set in stone GANTT based release plane, and many more examples come to my mind.
 
-In case of a show roadmaps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance.
+In case of a show roadmaps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance. In our case we set it 10 months before the first show but made it public when started advertising it 3 months before, we were confident enough to disclose it and publicly commit.
 
-In the software industry this might not be the case: high level roadmaps can be public, they help in engaging with customers, IMO, and deadlines unless not connected to public events might be private to reduce exposure to failures.
-
+In the software industry this might not be the case: high level roadmaps can be public, they may help in engaging with customers, IMO, and deadlines unless not connected to public events might be private reducing exposure to failures.
 
 By the way, the simplified show version we're running lasts 2 hours and 15 minutes.
