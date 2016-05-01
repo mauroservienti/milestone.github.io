@@ -19,7 +19,7 @@ Why am I telling you all these things?
 
 > Well, last week I was asking myself: **are deadlines a bad thing?**
 
-> We, the software industry, tend to say yes, deadlines and roadmaps are evil, we immediately connect them to waterfall and its evil nature. I started thinking and comparing the software production process to what we did to setup the show and to be honest I'm not anymore so sure that deadlines and roadmaps are evil.
+We, the software industry, tend to say yes, deadlines and roadmaps are evil, we immediately connect them to waterfall and its evil nature. I started thinking and comparing the software production process to what we did to setup the show and to be honest I'm not anymore so sure that deadlines and roadmaps are evil.
 
 Let me walk you through what does it mean to set up such a show.
 
