@@ -9,7 +9,7 @@ tags:
 ---
 
 You might already know that for living I work in the software industry, it has been my primary job for the last 16 years or so.
-You might not know that my secret dream that is being an artist.
+You might not know that my secret dream is to be an artist.
 
 I studied classical dance when I was young and I always enjoyed being on stage. When it comes to dancing, classical dance in particular, getting older doesn't really help, so in the last few years my hobby moved from pure dancing to acting, singing and dancing in an amateur acting company.
 
