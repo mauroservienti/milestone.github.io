@@ -29,11 +29,11 @@ From day zero to the first show it took us roughly 20 months, rehearsing for 2/3
 
 It all started with a small group of people (POs? Stakeholders?) that came together, in our case it was 6 of us, and picked an idea: `Mamma Mia`. We then started working to retrieve the plot and the script, the first iterations were us reworking the script to adapt it to our idea, capabilities and first budget draft.
 
-Once the script draft, yes still a draft, was good enough we outlined the list of people required, the crew, and started to huge work to find them all.
+Once the script draft, yes still a draft, was good enough we outlined the list of people required, the crew, and started the huge work to find them all.
 
 ### The crew
 
-19 people on the stage, 19 people among which 8 main characters and the corps de ballet. But the crew is just piece of the story, there are also 1 dj, 1 light specialist and 1 jack of all trades.
+19 people on the stage, 19 people among which 8 main characters and the corps de ballet. But the crew is just a piece of the story, there are also 1 dj, 1 light specialist and 1 jack of all trades.
 
 Out of the 19 composing the main crew 3 of them are also managing all the choreography, 2 others all the logistic, 2 more all the legal stuff and finally 3 others take care of the direction, acting and singing, lights and music.
 
