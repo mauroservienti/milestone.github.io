@@ -23,7 +23,7 @@ We, the software industry, tend to say yes, deadlines and roadmaps are evil, we 
 
 Let me walk you through what does it mean to set up such a show.
 
-From day zero to the first show it took us roughly 20 months, rehearsing for 2/3 times a week (3 to 4 hours each time), that means, if my math is correct, something like **700 hours**. A huge effort, trust me, especially given that it's your free time, it's time subtracted to families and friends. Be aware that I'm not complaining, just highlighting a fact.
+From day zero to the first show it took us roughly 20 months, rehearsing for 2/3 times a week (3 to 4 hours each time). That means, if my math is correct, something like **700 hours**. A huge effort, trust me, especially given that it's your free time, it's time subtracted to families and friends. Be aware that I'm not complaining, just highlighting a fact.
 
 ## Inception
 
@@ -77,7 +77,7 @@ Where we are? we have:
 * non functional requirements and third-party engagement process in place
 * a deadline: the first show at the first venue
 
-How does it work in the long-term? It is an agile SCRUM-like approach, where everything is planned, worked, re-worked and adjusted to meet the first deadline with the best possible outcome.
+How does it work in the long-term? It is an agile SCRUM-like approach, where everything is planned, worked, re-worked and adjusted to meet the first deadline with the best possible outcome. Directors, choreographers and specialists act like SCRUM Masters and Stakeholders, we don't have anyone putting money on the table that can really be considered a stakeholder, we are self-founded.
 
 ### Interim builds and CI
 
