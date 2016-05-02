@@ -21,7 +21,7 @@ Why am I telling you all these things?
 
 We in the software industry tend to say yes, deadlines and road-maps are evil. We immediately connect them to waterfall and its evil nature. I started thinking and comparing the software production process to what we did to setup the show and to be honest, I'm not so sure anymore that deadlines and road-maps **are evil**.
 
-Let me walk you through what it means to set up this show of this type.
+Let me walk you through what it means to set up a show of this type.
 
 From day one to the first performance took roughly 20 months, rehearsing 2/3 times a week (3 to 4 hours each time). That means, if my math is correct, approximately **700 hours**. A huge effort, trust me, especially given that it's your free time, it's time subtracted from families and friends. Be aware that I'm not complaining, just highlighting a fact.
 
