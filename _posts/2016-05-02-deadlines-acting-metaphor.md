@@ -8,32 +8,32 @@ tags:
 - process
 ---
 
-You might already know that for living I work in the software industry, it has been my primary job for the last 16 years or so.
+You might already know that for living I work in the software industry. It has been my primary job for the last 16 years or so.
 You might not know that my secret dream is to be an artist.
 
-I studied classical dance when I was young and I always enjoyed being on stage. When it comes to dancing, classical dance in particular, getting older doesn't really help, so in the last few years my hobby moved from pure dancing to acting, singing and dancing in an amateur acting company.
+I studied classical dance when I was young and I always enjoyed being on stage. When it comes to dancing (classical dance in particular) getting older doesn't really help, so in the last few years my hobby moved from pure dancing to acting, singing and dancing in an amateur dramatics company.
 
-Our current show is a reworked, and simplified, version of the awesome `Mamma Mia`.
+Our current show is a reworked and simplified version of the awesome, `Mamma Mia`.
 
 Why am I telling you all these things?
 
 > Well, last week I was asking myself: **are deadlines a bad thing?**
 
-We, the software industry, tend to say yes, deadlines and roadmaps are evil, we immediately connect them to waterfall and its evil nature. I started thinking and comparing the software production process to what we did to setup the show and to be honest I'm not anymore so sure that deadlines and roadmaps are evil.
+We in the software industry tend to say yes, deadlines and road-maps are evil. We immediately connect them to waterfall and its evil nature. I started thinking and comparing the software production process to what we did to setup the show and to be honest, I'm not so sure anymore that deadlines and road-maps **are evil**.
 
-Let me walk you through what does it mean to set up such a show.
+Let me walk you through what it means to set up this show of this type.
 
-From day zero to the first show it took us roughly 20 months, rehearsing for 2/3 times a week (3 to 4 hours each time). That means, if my math is correct, something like **700 hours**. A huge effort, trust me, especially given that it's your free time, it's time subtracted to families and friends. Be aware that I'm not complaining, just highlighting a fact.
+From day one to the first performance took roughly 20 months, rehearsing 2/3 times a week (3 to 4 hours each time). That means, if my math is correct, approximately **700 hours**. A huge effort, trust me, especially given that it's your free time, it's time subtracted from families and friends. Be aware that I'm not complaining, just highlighting a fact.
 
 ## Inception
 
-It all started with a small group of people (POs? Stakeholders?) that came together, in our case it was 6 of us, and picked an idea: `Mamma Mia`. We then started working to retrieve the plot and the script, the first iterations were us reworking the script to adapt it to our idea, capabilities and first budget draft.
+It all started with a small group of people (call them POs or Stakeholders if you wish) that came together, in our case it was 6 of us, and picked an idea: `Mamma Mia`. We then started working to retrieve the plot and the script, the first iterations were us reworking the script to adapt it to our idea, capabilities and first budget draft.
 
 Once the script draft, yes still a draft, was good enough we outlined the list of people required, the crew, and started the huge work to find them all.
 
 ### The crew
 
-19 people on the stage, 19 people among which 8 main characters and the corps de ballet. But the crew is just a piece of the story, there are also 1 dj, 1 light specialist and 1 jack of all trades.
+19 people on the stage, 19 people among which 8 main characters and the *corps de ballet*. But the crew is just a piece of the story, there are also 1 dj, 1 light specialist and 1 jack of all trades.
 
 Out of the 19 composing the main crew 3 of them are also managing all the choreography, 2 others all the logistic, 2 more all the legal stuff and finally 3 others take care of the direction, acting and singing, lights and music.
 
@@ -62,7 +62,7 @@ Large theaters are, however large theaters cost a lot, this means that picking u
 
 ### The venue
 
-The venue IS the deadline, full stop. Scenography requirements drive the venue choice, so far so good, as with third-party suppliers you simply cannot approach a theater a couple of weeks before the show and ask if they have a couple of nights for you. Even if this was possible you need to advertise the show long enough to sell enough tickets to reach you breakeven point.
+The venue IS the deadline, full stop. Scenography requirements drive the venue choice, so far so good, as with third-party suppliers you simply cannot approach a theater a couple of weeks before the show and ask if they have a couple of nights for you. Even if this was possible you need to advertise the show long enough to sell enough tickets to reach you break-even point.
 
 The above numbers mean that the first venue must be booked at least 10 months to one year in advance: **here is your deadline**.
 
@@ -104,7 +104,7 @@ While you progress there is the need to test that all you have so far works, how
 
 ### RTM
 
-As you might imagine RTM cannot be missed: tickets sold, venue booked and paid, third-parties are ready and paid. Missing the RTM deadline is a huge failure, a catastrophic one in case of a show. Deadlines in the software industry might be a bit more flexible, might. However in any case having a clear end goal both in terms of time and in terms of requirements, thanks to a roadmap (the plot and the design) clearly helps in being committed and focused.
+As you might imagine RTM cannot be missed: tickets sold, venue booked and paid, third-parties are ready and paid. Missing the RTM deadline is a huge failure, a catastrophic one in case of a show. Deadlines in the software industry might be a bit more flexible, might. However in any case having a clear end goal both in terms of time and in terms of requirements, thanks to a road-map (the plot and the design) clearly helps in being committed and focused.
 
 ### Major, Minor, bug fixing (AKA SemVer)
 
@@ -119,10 +119,10 @@ We started with a question:
 
 > **are deadlines a bad thing?**
 
-In my opinion the answer is no, they are not a bad thing. Roadmaps as well are a very good thing, still, IMO. They can easily become a bad thing, for example when connected to a set in stone GANTT based release plane, and many more examples come to my mind.
+In my opinion the answer is no, they are not a bad thing. Road-maps as well are a very good thing, still, IMO. They can easily become a bad thing, for example when connected to a set in stone GANTT based release plane, and many more examples come to my mind.
 
-In case of a show roadmaps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance. In our case we set it 10 months before the first show but made it public when started advertising it 3 months before, we were confident enough to disclose it and publicly commit.
+In case of a show road-maps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance. In our case we set it 10 months before the first show but made it public when started advertising it 3 months before, we were confident enough to disclose it and publicly commit.
 
-In the software industry this might not be the case: high level roadmaps can be public, they may help in engaging with customers, IMO, and deadlines unless not connected to public events might be private reducing exposure to failures.
+In the software industry this might not be the case: high level road-maps can be public, they may help in engaging with customers, IMO, and deadlines unless not connected to public events might be private reducing exposure to failures.
 
 By the way, the simplified show version we're running lasts 2 hours and 15 minutes.
