@@ -29,7 +29,7 @@ From day one to the first performance took roughly 20 months, rehearsing 2/3 tim
 
 It all started with a small group of people (call them POs or Stakeholders if you wish) that came together, in our case it was 6 of us, and picked an idea: `Mamma Mia`. We then started working to retrieve the plot and the script, the first iterations were us reworking the script to adapt it to our idea, capabilities and first budget draft.
 
-Once the script draft, yes still a draft, was good enough we outlined the list of people required, the crew, and started the huge work to find them all.
+Once the script draft, yes still a draft, was good enough we outlined the list of required people, the crew, and started the huge work to find them all.
 
 ### The crew
 
@@ -70,11 +70,11 @@ That's your end goal, can you miss it? for no reasons at all. And, trust me, in 
 
 ## Development
 
-Where we are? we have:
+Where are we? we have:
 
 * a draft architecture driven by requirements (script and plot)
 * a crew, or something like a draft crew
-* non functional requirements and third-party engagement process in place
+* non functional requirements and third-parties engagement process in place
 * a deadline: the first show at the first venue
 
 How does it work in the long-term? It is an agile SCRUM-like approach, where everything is planned, worked, re-worked and adjusted to meet the first deadline with the best possible outcome. Directors, choreographers and specialists act like SCRUM Masters and Stakeholders, we don't have anyone putting money on the table that can really be considered a stakeholder, we are self-founded.
@@ -85,7 +85,7 @@ During the week groups of people come together and work on their things, say a c
 
 ### Refactoring and improvements
 
-Running a CI process, as in the software industry, is key to raise issues and concerns that lead to refactoring and improvements, a certain scene doesn't work, a ballet doesn't really fit the venue stage a scene change is too complex and prone to too many errors, must be changed, however changing that might require a change in the main plot to adapt it to the new requirements.
+Running a CI process, as in the software industry, is key to raise issues and concerns that lead to refactoring and improvements, a certain scene doesn't work, a ballet doesn't really fit the venue stage, a scene change is too complex and/or prone to too many errors and thus must be changed, however changing that might require a change in the main plot to adapt it to the new requirements.
 
 Can we refactor and improve as we like? not really since there is a deadline and requirements and improvements must meet the deadline as well. Perfection is an _utopia_, live with that. As in the software industry you'll release with bugs and a deadline helps you in that regards, in 2 main ways:
 
