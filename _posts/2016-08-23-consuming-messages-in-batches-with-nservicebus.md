@@ -23,7 +23,7 @@ Unfortunately it is not supported, the NServiceBus transport, that is the underl
 
 ### That doesn't mean it cannot be done.
 
-The fact that it is not supported out of the box by NServiceBus it doesn't really mean that it cannot be done, imagine we have something producing a stream of messages, that is exactly what the NServiceBus transport does. What we could do is design something like the following:
+The fact that it is not supported out of the box by NServiceBus doesn't really mean that it cannot be done. Imagine we have something producing a stream of messages, that is exactly what the NServiceBus transport does, what we could do is design something like the following:
 
 ```csharp
 class BatchedMessageConsumer<TMessageType>
