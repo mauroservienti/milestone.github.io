@@ -13,11 +13,11 @@ Something similar to the [WS-Federation on top of NServiceBus](http://milestone.
 
 The sample is based on OWIN so I started by adding the following configuration to my `Startup` class:
 
-![OWIN basic Startup configuration](/img/the-case-of-broken-signalr-authentication/startup-config.png =450x)
+![OWIN basic Startup configuration](/img/the-case-of-broken-signalr-authentication/startup-config.png)
 
 With my surprise I immediately run into the following issue:
 
-![Missing identity](/img/the-case-of-broken-signalr-authentication/user-is-missing.png =450x)
+![Missing identity](/img/the-case-of-broken-signalr-authentication/user-is-missing.png)
 
 What was happening is that despite the fact that is claimed to be supported the authentication engine was not regenerating the incoming `ClaimsIdentity` when dealing with `SignalR` requests. What was really strange, as you may notice from the screenshot, is that the APS.Net authentication cookie is available in the incoming request. So something else was preventing the `ClaimsIdentity` to be created.
 
@@ -25,11 +25,11 @@ What was happening is that despite the fact that is claimed to be supported the 
 
 With great surprise, after reading hundreds of SO questions and blog posts talking about `SignalR` authentication support, most of them suggesting that the only solution is to move a Bearer Token based authentication, I discovered, by accident, that the solution was as easy as:
 
-![Correct statrtup configuration](/img/the-case-of-broken-signalr-authentication/correct-startup-config.png =450x)
+![Correct statrtup configuration](/img/the-case-of-broken-signalr-authentication/correct-startup-config.png)
 
 Simply, at OWIN configuration time, be sure to configure `SignalR` after the authentication configuration. Once done the `SignalR` incoming request principal is populated as expected:
 
-![Valid identity](/img/the-case-of-broken-signalr-authentication/valid-claims-identity.png =450x)
+![Valid identity](/img/the-case-of-broken-signalr-authentication/valid-claims-identity.png)
 
 Not funny.
 
