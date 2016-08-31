@@ -23,7 +23,7 @@ What was happening is that despite the fact that is claimed to be supported the 
 
 ### Surprise.
 
-With great surprise, after reading hundreds of SO questions and blog posts talking about `SignalR` authentication support, most of them suggesting that the only solution is to move a Bearer Token based authentication, I discovered, by accident, that the solution was as easy as:
+With great surprise, after reading hundreds of SO questions and blog posts talking about `SignalR` authentication support, most of them suggesting that the only solution is to move to a Bearer Token based authentication, I discovered, by accident, that the solution was as easy as:
 
 ![Correct statrtup configuration](/img/the-case-of-broken-signalr-authentication/correct-startup-config.png)
 
