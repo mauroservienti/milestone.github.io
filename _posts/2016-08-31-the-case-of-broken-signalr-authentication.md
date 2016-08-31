@@ -33,3 +33,8 @@ Simply, at OWIN configuration time, be sure to configure `SignalR` after the aut
 
 Not funny.
 
+### Update
+
+As pointed out by [Stéphane](https://twitter.com/serbrech) in this [Twitter conversation](https://twitter.com/serbrech/status/770927544224866304) it's the OWIN *expected* behavior: the order in which configuration options are invoked determines the order in which OWIN middlewares, managed by those configuration options, are added to the OWIN pipeline.
+
+Based on Stéphane's [last comment](https://twitter.com/serbrech/status/770930209637986304) I'm not the only one bitten by this. Shouldn't the API be more explicit?
