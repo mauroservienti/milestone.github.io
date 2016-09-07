@@ -79,4 +79,15 @@
 		@extend ul.contacts-list;
 		text-align: right;
 	}
+	
+	.footer-heading{
+    color: $grey-color-light;
+	}
+	
+	.wrapper{
+    .text{
+      color: $grey-color-light;
+      font-style: italic;
+    }
+	}
 }
