@@ -44,7 +44,7 @@ class TransactionMonitorSaga : Saga<TransactionMonitorSaga.SagaState>,
 
 The above is a "pseudo-near-to-complete" [NServiceBus Saga](http://docs.particular.net/nservicebus/sagas/) sample.
 
-#### Is that enough?
+### Is that enough?
 
 Absolutely no. The above sample is missing a key aspect, it misses the message that starts the Saga. We have an interesting issue now, how can we know when a new Saga needs to be started? Do we need to schedule somewhere a daily job that on a daily basis kicks off a new saga? What if that daily job fails and we miss one?
 
@@ -86,7 +86,7 @@ class TransactionMonitorSaga : Saga<TransactionMonitorSaga.SagaState>,
 
 There is a lot going on, let's go through the changes step by step:
 
-* We said that we need to find a way to [start a new Saga instance](http://docs.particular.net/nservicebus/sagas/#starting-a-saga), the simplest thing is to use the already defined `IMoneyTransactionProcessed` message and mark is as `IAmStartedByMessages<TMessage>` that indicates to NServiceBus that the incoming message type can start a new Saga.
+* We said that we need to find a way to [start a new Saga instance](http://docs.particular.net/nservicebus/sagas/#starting-a-saga), the simplest thing is to use the already defined `IMoneyTransactionProcessed` message and mark it as `IAmStartedByMessages<TMessage>` that indicates to NServiceBus that the incoming message type can start a new Saga.
 
 At this stage what happens is that for each incoming `IMoneyTransactionProcessed` a new Saga will be started, and it is not really what we want:
 
