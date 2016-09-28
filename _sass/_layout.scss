@@ -69,15 +69,18 @@
 	border-top-width: 1px;
 	border-top-color: $grey-color-dark;
 	
-	ul.contacts-list{
+	ul.links-list{
 		margin: 0;
 		padding: 0;
 		list-style-type: none;
 	}
 	
-	ul.subscribe-list{
-		@extend ul.contacts-list;
+	ul.right-links-list{
 		text-align: right;
+	}
+	
+	ul.left-links-list{
+
 	}
 	
 	.footer-heading{
