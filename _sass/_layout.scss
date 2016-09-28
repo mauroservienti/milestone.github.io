@@ -94,3 +94,51 @@
     }
 	}
 }
+
+.talks-list{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+
+	.link-icon{
+		margin-left: 3px;
+	}
+
+	.talk-host{
+		font-weight: bold;
+	}
+
+	.talk-details{
+		color: $text-color-light;
+		font-size: .8em;
+	}
+
+	.talk-details-icon{
+		margin-right: 3px;
+	}
+
+	.talk-date{
+		margin-right: 5px;
+	}
+
+	.talk-location{
+		margin-right: 5px;
+	}
+
+	.sessions-list{
+		margin: 0;
+		margin-top: 15px;
+		margin-left: 40px;
+		padding: 0;
+		list-style-type: square;
+
+		.session-title{
+			font-style: italic;
+		}
+
+		.session-abstract{
+			font-size: .8em;
+			color: $text-color-light;
+		}
+	}
+}
