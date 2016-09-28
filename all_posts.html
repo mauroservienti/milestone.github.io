@@ -1,14 +1,14 @@
 ---
 layout: default
-title: Archive
+title: Posts Archive
 permalink: /all/
 show_in_header: ''
 ---
 
 <div class="home-content">
 
-  <h1 class="page-heading">Posts</h1>
-
+  <h2 class="page-heading">Posts Archive</h2>
+<hr />
   {% for post in site.posts %}
   {% assign currentdate = post.date | date: "%B %Y" %}
     {% if currentdate != date %}
