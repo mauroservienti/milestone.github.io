@@ -115,6 +115,7 @@
 
 	.talk-details-icon{
 		margin-right: 3px;
+		height: 12px;
 	}
 
 	.talk-date{
@@ -137,6 +138,17 @@
 		}
 
 		.session-abstract{
+			font-size: .8em;
+			color: $text-color-light;
+		}
+
+		.session-recording-icon, .session-slides-icon, .session-demos-icon{
+			margin-right: 3px;
+			height: 12px;
+		}
+
+		.session-recording, .session-slides, .session-demos{
+			margin-right: 3px;
 			font-size: .8em;
 			color: $text-color-light;
 		}

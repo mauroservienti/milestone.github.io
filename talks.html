@@ -32,16 +32,16 @@ show_in_header: ''
                 {% endif %}
                 {{ talk.host }}
                 {% if talk.url and talk.url != "" %}
-                  <img src="/img/link.png" border="0" class="link-icon" width="10" />
+                  <img src="/img/link.png" border="0" class="link-icon" />
                 </a>
                 {% endif %}
               </h4>
               <div class="talk-details">
-                <img class="talk-details-icon" src="/img/calendar.png" width="16" />
+                <img class="talk-details-icon" src="/img/calendar.png" />
                 <span class="talk-date">{{ talk.date }}</span>
-                <img class="talk-details-icon" src="/img/location.png" width="16" />
+                <img class="talk-details-icon" src="/img/location.png" />
                 <span class="talk-location">{{ talk.location }}</span>
-                <img class="talk-details-icon" src="/img/language.png" width="16" />
+                <img class="talk-details-icon" src="/img/language.png" />
                 <span class="talk-language">{{ talk.language }}</span>
               </div>
               <ul class="sessions-list">
@@ -52,7 +52,7 @@ show_in_header: ''
                   {% endif %}
                     <span class="session-title">{{ session.title }}</span>
                     {% if session.url and session.url != "" %}
-                    <img src="/img/link.png" border="0" class="link-icon" width="10" />
+                    <img src="/img/link.png" border="0" class="link-icon" />
                   </a>
                   {% endif %}
 
@@ -60,14 +60,20 @@ show_in_header: ''
                   <div class="session-resources">
                     {% if session.slides and session.slides != "" %}
                     <a href="{{ session.slides }}" target="_blank" class="muted-link">
-                      <img class="session-slides-icon" border=0 src="/img/presentation.png" width="16" />
+                      <img class="session-slides-icon" border=0 src="/img/presentation.png" />
                       <span class="session-slides">Slides</span>
                     </a>
                     {% endif %}
                     {% if session.demos and session.demos != "" %}
-                    <a href="{{ session.slides }}" target="_blank" class="muted-link">
-                      <img class="session-demos-icon" border=0 src="/img/folder.png" width="16" />
+                    <a href="{{ session.demos }}" target="_blank" class="muted-link">
+                      <img class="session-demos-icon" border=0 src="/img/folder.png" />
                       <span class="session-demos">Demos</span>
+                    </a>
+                    {% endif %}
+                    {% if session.recording and session.recording != "" %}
+                    <a href="{{ session.recording }}" target="_blank" class="muted-link">
+                      <img class="session-recording-icon" border=0 src="/img/recording.png" />
+                      <span class="session-recording">Recording</span>
                     </a>
                     {% endif %}
                   </div>
