@@ -40,5 +40,19 @@
             "demos":"",
             "recording": "https://vimeo.com/176778929"
         }]
+    },{
+        "host":"UGIdotNET Birthday",
+        "location":"Milano",
+        "language":"Italian",
+        "url":"http://www.ugidotnet.org/eventi/45/Buon-compleanno-UGIdotNET!",
+        "date":"19/07/2016",
+        "sessions":[{
+            "title":"Services UI Composition",
+            "abstract":"Un'architettura basata sui comandamenti di SOA genera e guida verso sistemi basati sulla decomposizione dei servizi e sul disaccoppiamento del dominio al fine di creare componenti autonomi. Purtroppo, dato che la UI è il luogo dove aggreghiamo tutte le informazioni per l'utente, ci ritroviamo ad accoppiare nuovamente e spesso velocemente di nuovo tutto. Obiettivo della sessione è di sviscerare il problema fino alle sue radici e proporre alcuni possibili approcci per risolverlo.",
+            "url":"",
+            "slides":"http://downloads.ugidotnet.org/eventi/2016/15o/Services-UI-Composition-slide.zip",
+            "demos":"http://downloads.ugidotnet.org/eventi/2016/15o/Services-UI-Composition-demo.zip",
+            "recording": ""
+        }]
     }]
 }]
