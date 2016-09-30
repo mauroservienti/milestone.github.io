@@ -13,28 +13,12 @@ title: Events archive
   <div class="panel panel-default">
       <div class="panel-body">
         <div>
-          {{ event.datetime }}, {{ event.location }}<br />
-          Language: {{ event.language }}
+          {{ event.datetime }}, {{ event.location }} | {{ event.language }}
         </div>
         <h3>
           <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
         </h3>
-        <hr class="h-splitter" />
-        <div>
-          <ul class="sessions-list">
-            {% for session in event.sessions %}
-            <li>
-              <span class="session-title">{{ session.title }}</span>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
       </div>          
-      <ul class="list-group">
-        <li class="list-group-item">
-          <a href="{{ event.url | prepend: site.baseurl }}">More info...</a>
-        </li>
-      </ul>
     </div>
   {% endfor %}
   </ul>
