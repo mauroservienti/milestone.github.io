@@ -6,148 +6,74 @@ show_in_header: ''
 ---
 
 <div class="home-content">
-  {% assign upcomingevents = site.events | sort: 'date' | where: 'status', 'upcoming' %}
+{% assign upcomingevents = site.events | sort: 'eventdate' | where: 'status', 'upcoming' %}
+{% assign len = upcomingevents | size %}
   
+<h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the coming weeks.</h3>
 
-  <div class="jumbotron nearest-post">
+  {% if len > 0 %}
+  
+  <div class="jumbotron nearest-event">
     {% assign nearest = upcomingevents[0] %}
-    <h1>
+    <div>
+      {{ nearest.datetime }}, {{ nearest.location }}<br />
+      Language: {{ nearest.language }}
+    </div>
+    <h2>
       <a class="muted-link" href="{{ nearest.url | prepend: site.baseurl }}">{{ nearest.title }}</a>
-    </h1>
+    </h2>
     <hr class="h-splitter" />
     <div>
-      dettagli
-    </div>
-    <a href="{{ nearest.url | prepend: site.baseurl }}">Continue reading...</a>
-  </div>
-  
-  <div class="row">
-    {% for event in upcomingevents offset:1 %}
-    {% if forloop.index0 == 3 %}
-  </div>
-  <div class="row">
-    {% endif %}
-      <div class="col-md-4  latest-event">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <h3>
-              <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
-            </h3>
-            <hr class="h-splitter" />
-            <div>
-              dettagli
-            </div>
-          </div>          
-          <ul class="list-group">
-            <li class="list-group-item">
-              <a href="{{ event.url | prepend: site.baseurl }}">Continue reading...</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-  
-  
-  
-  
-  
-  
-  <h2 class="page-heading">Upcoming Events</h2>
-
-
-
-  <ul>
-  {% for event in upcomingevents %}
-  <li>
-  {{ event.title }}, {{ event.url | prepend: site.baseurl }}
-  </li>
-  {% endfor %}
-  </ul>
-  <a href="/events/archive/">archive</a>
-</div>
-
-
-<!--  <div class="row">
-    <div class="col-xs-2">
-      <ul class="nav nav-tabs tabs-left" role="tablist">
-        {% for yeargroup in site.data.talks %}
-        <li role="presentation" {% if forloop.first %}class="active"{% endif %}>
-          <a href="#y{{ yeargroup.year }}" aria-controls="{{ yeargroup.year }}" role="tab" data-toggle="tab">{{ yeargroup.year }}</a>
+      <ul class="sessions-list">
+        {% for session in nearest.sessions %}
+        <li>
+          <span class="session-title">{{ session.title }}</span>
+          <div class="session-abstract">{{ session.abstract }}</div>
         </li>
         {% endfor %}
       </ul>
     </div>
-    <div class="col-xs-10">
-      <div class="tab-content">
-        {% for yeargroup in site.data.talks %}
-        <div role="tabpanel" class="tab-pane{% if forloop.first %} active{% endif %}" id="y{{ yeargroup.year }}">
-          <ul class="talks-list">
-            {% for talk in yeargroup.talks %}      
+    <hr class="h-splitter" />
+    <a href="{{ nearest.url | prepend: site.baseurl }}">More info...</a>
+  </div>
+  
+  <div>
+    {% for event in upcomingevents offset:1 %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div>
+          {{ event.datetime }}, {{ event.location }}<br />
+          Language: {{ event.language }}
+        </div>
+        <h3>
+          <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
+        </h3>
+        <hr class="h-splitter" />
+        <div>
+          <ul class="sessions-list">
+            {% for session in event.sessions %}
             <li>
-              <h4 class="talk-host">
-                {% if talk.url and talk.url != "" %}
-                <a href="{{ talk.url }}" target="_blank" class="muted-link">
-                {% endif %}
-                {{ talk.host }}
-                {% if talk.url and talk.url != "" %}
-                  <img src="/img/link.png" border="0" class="link-icon" />
-                </a>
-                {% endif %}
-              </h4>
-              <div class="talk-details">
-                <img class="talk-details-icon" src="/img/calendar.png" />
-                <span class="talk-date">{{ talk.date }}</span>
-                <img class="talk-details-icon" src="/img/location.png" />
-                <span class="talk-location">{{ talk.location }}</span>
-                <img class="talk-details-icon" src="/img/language.png" />
-                <span class="talk-language">{{ talk.language }}</span>
-              </div>
-              <ul class="sessions-list">
-                {% for session in talk.sessions %}
-                <li>
-                  {% if session.url and session.url != "" %}
-                  <a href="{{ session.url }}" target="_blank" class="muted-link">
-                  {% endif %}
-                    <span class="session-title">{{ session.title }}</span>
-                    {% if session.url and session.url != "" %}
-                    <img src="/img/link.png" border="0" class="link-icon" />
-                  </a>
-                  {% endif %}
-
-                  <div class="session-abstract">{{ session.abstract }}</div>
-                  <div class="session-resources">
-                    {% if session.slides and session.slides != "" %}
-                    <a href="{{ session.slides }}" target="_blank" class="muted-link">
-                      <img class="session-slides-icon" border=0 src="/img/presentation.png" />
-                      <span class="session-slides">Slides</span>
-                    </a>
-                    {% endif %}
-                    {% if session.demos and session.demos != "" %}
-                    <a href="{{ session.demos }}" target="_blank" class="muted-link">
-                      <img class="session-demos-icon" border=0 src="/img/folder.png" />
-                      <span class="session-demos">Demos</span>
-                    </a>
-                    {% endif %}
-                    {% if session.recording and session.recording != "" %}
-                    <a href="{{ session.recording }}" target="_blank" class="muted-link">
-                      <img class="session-recording-icon" border=0 src="/img/recording.png" />
-                      <span class="session-recording">Recording</span>
-                    </a>
-                    {% endif %}
-                  </div>
-                </li>
-                {% endfor %}
-              </ul>
-              <hr />
+              <span class="session-title">{{ session.title }}</span>
             </li>
             {% endfor %}
-          </ul>    
+          </ul>
         </div>
-        {% endfor %}
-      </div>
+      </div>          
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="{{ event.url | prepend: site.baseurl }}">More info...</a>
+        </li>
+      </ul>
     </div>
+    {% endfor %}
+    <a href="/events/archive/">Looking for archived events?</a>
   </div>
-
+  
+  {% else %}
+  <div class="jumbotron">
+  Bummer! nothing planned...yet.<br />
+  Take a look <a href="/events/archive/">where I've been in the past</a>.
+  </div>
+  {% endif %}
+  
 </div>
--->
