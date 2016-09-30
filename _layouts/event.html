@@ -1,0 +1,65 @@
+---
+layout: default
+---
+<div class="event">
+  
+<h2 class="event-host">
+  {{ page.title }}
+</h2>
+<div class="event-details">
+  <img class="event-details-icon" src="/img/calendar.png" />
+  <span class="event-date">{{ page.date_time }}</span>
+  <img class="event-details-icon" src="/img/location.png" />
+  <span class="event-location">{{ page.location }}</span>
+  <img class="event-details-icon" src="/img/language.png" />
+  <span class="event-language">{{ page.language }}</span>
+</div>
+{% if page.event_url %}
+<div class="event-url">
+  <a href="{{ page.event_url }}" target="_blank" class="muted-link">{{ page.event_url }}<img src="/img/link.png" border="0" class="link-icon" /></a>
+</div>
+{% endif %}
+<ul class="sessions-list">
+  {% for session in page.sessions %}
+  <li>
+    {% if session.url %}
+    <a href="{{ session.url }}" target="_blank" class="muted-link">
+    {% endif %}
+      <span class="session-title">{{ session.title }}</span>
+      {% if session.url %}
+      <img src="/img/link.png" border="0" class="link-icon" />
+    </a>
+    {% endif %}
+
+    <div class="session-abstract">{{ session.abstract }}</div>
+    {% if session.slides or session.demos or session.recording %}
+    <div class="session-resources">
+      {% if session.slides %}
+      <a href="{{ session.slides }}" target="_blank" class="muted-link">
+        <img class="session-slides-icon" border=0 src="/img/presentation.png" />
+        <span class="session-slides">Slides</span>
+      </a>
+      {% endif %}
+      {% if session.demos  %}
+      <a href="{{ session.demos }}" target="_blank" class="muted-link">
+        <img class="session-demos-icon" border=0 src="/img/folder.png" />
+        <span class="session-demos">Demos</span>
+      </a>
+      {% endif %}
+      {% if session.recording %}
+      <a href="{{ session.recording }}" target="_blank" class="muted-link">
+        <img class="session-recording-icon" border=0 src="/img/recording.png" />
+        <span class="session-recording">Recording</span>
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>  
+
+<article class="event-content">
+    {{ content }}
+</article>
+
+</div>

@@ -1,4 +1,4 @@
-.home-content, .post{
+.home-content, .post, .event{
 	margin-top: 20px;
 	margin-left: 15%;
 	margin-right: 15%;
@@ -95,62 +95,88 @@
 	}
 }
 
-.talks-list{
+.event-content{
+
+	padding-top: 10px;
+	padding-left: 20px;
+	padding-bottom: 10px;
+	
+	@media screen and (max-width: $break-small) {
+		border-left-width: 0px;
+		padding-left: 0px;
+	}
+}
+
+.link-icon{
+	margin-left: 3px;
+}
+
+.event-host{
+	font-weight: bold;
+}
+
+.event-details{
+
+}
+
+.event-url{
+	font-size: .8em;
+}
+
+.event-details-icon{
+	margin-right: 3px;
+	height: 14px;
+}
+
+.event-date{
+	margin-right: 5px;
+}
+
+.event-location{
+	margin-right: 5px;
+}
+
+.sessions-list{
+	margin: 0;
+	margin-top: 15px;
+	margin-left: 40px;
+	padding: 0;
+	list-style-type: square;
+
+	.session-title{
+		font-style: italic;
+	}
+
+	.session-abstract{
+		color: $text-color-light;
+	}
+
+	.session-recording-icon, .session-slides-icon, .session-demos-icon{
+		margin-right: 3px;
+		height: 14px;
+	}
+
+	.session-recording, .session-slides, .session-demos{
+		margin-right: 3px;
+		color: $text-color-light;
+	}
+
+	.session-resources{
+		padding: 3px;
+		border-top-style: solid;
+		border-top-color: gainsboro;
+		border-top-width: 1px;
+		
+		border-bottom-style: solid;
+		border-bottom-color: gainsboro;
+		border-bottom-width: 1px;
+	}
+}
+
+.events-list{
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 
-	.link-icon{
-		margin-left: 3px;
-	}
-
-	.talk-host{
-		font-weight: bold;
-	}
-
-	.talk-details{
-		color: $text-color-light;
-		font-size: .8em;
-	}
-
-	.talk-details-icon{
-		margin-right: 3px;
-		height: 12px;
-	}
-
-	.talk-date{
-		margin-right: 5px;
-	}
-
-	.talk-location{
-		margin-right: 5px;
-	}
-
-	.sessions-list{
-		margin: 0;
-		margin-top: 15px;
-		margin-left: 40px;
-		padding: 0;
-		list-style-type: square;
-
-		.session-title{
-			font-style: italic;
-		}
-
-		.session-abstract{
-			font-size: .8em;
-			color: $text-color-light;
-		}
-
-		.session-recording-icon, .session-slides-icon, .session-demos-icon{
-			margin-right: 3px;
-			height: 12px;
-		}
-
-		.session-recording, .session-slides, .session-demos{
-			margin-right: 3px;
-			font-size: .8em;
-			color: $text-color-light;
-		}
-	}
+	
 }
