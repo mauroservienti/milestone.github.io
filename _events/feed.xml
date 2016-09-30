@@ -1,0 +1,28 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title | xml_escape }} - Talks and Events</title>
+    <description>{{ site.description | xml_escape }}</description>
+    <link>{{ site.url }}{{ site.baseurl }}/talks/</link>
+    <atom:link href="{{ "/talks.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    <generator>Jekyll v{{ jekyll.version }}</generator>
+    {% for yeargroup in site.data.talks limit:1 %}
+      {% for talk in yeargroup.talks %}
+        {% for session in talk.sessions %}     
+        <item>
+          <title>{{ session.title | xml_escape }} | {{ talk.host | xml_escape }}</title>
+          <description>{{ session.abstract | xml_escape }}</description>
+          <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+          <link>{% if session.url and session.url != "" %}{{ session.url }}{% else %}{{ talk.url }}{% endif %}</link>
+          <guid isPermaLink="true">{% if session.url and session.url != "" %}{{ session.url }}{% else %}{{ talk.url }}{% endif %}</guid>
+        </item>
+        {% endfor %}
+      {% endfor %}
+    {% endfor %}
+  </channel>
+</rss>
