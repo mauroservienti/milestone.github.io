@@ -8,15 +8,15 @@ layout: default
 </h2>
 <div class="event-details">
   <img class="event-details-icon" src="/img/calendar.png" />
-  <span class="event-date">{{ page.date_time }}</span>
+  <span class="event-date">{{ page.datetime }}</span>
   <img class="event-details-icon" src="/img/location.png" />
   <span class="event-location">{{ page.location }}</span>
   <img class="event-details-icon" src="/img/language.png" />
   <span class="event-language">{{ page.language }}</span>
 </div>
-{% if page.event_url %}
+{% if page.eventurl %}
 <div class="event-url">
-  <img src="/img/link.png" border="0" class="event-details-icon" /><a href="{{ page.event_url }}" target="_blank" class="muted-link">{{ page.event_url }}</a>
+  <img src="/img/link.png" border="0" class="event-details-icon" /><a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
 </div>
 {% endif %}
 <ul class="sessions-list">
