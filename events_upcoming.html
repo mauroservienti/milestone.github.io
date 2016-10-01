@@ -15,9 +15,13 @@ show_in_header: ''
   
   <div class="jumbotron nearest-event">
     {% assign nearest = upcomingevents[0] %}
-    <div>
-      {{ nearest.datetime }}, {{ nearest.location }}<br />
-      Language: {{ nearest.language }}
+    <div class="event-details">
+      <img class="event-details-icon" src="/img/calendar.png" />
+      <span class="event-date">{{ nearest.datetime }}</span>
+      <img class="event-details-icon" src="/img/location.png" />
+      <span class="event-location">{{ nearest.location }}</span>
+      <img class="event-details-icon" src="/img/language.png" />
+      <span class="event-language">{{ nearest.language }}</span>
     </div>
     <h2>
       <a class="muted-link" href="{{ nearest.url | prepend: site.baseurl }}">{{ nearest.title }}</a>
@@ -41,9 +45,13 @@ show_in_header: ''
     {% for event in upcomingevents offset:1 %}
     <div class="panel panel-default">
       <div class="panel-body">
-        <div>
-          {{ event.datetime }}, {{ event.location }}<br />
-          Language: {{ event.language }}
+        <div class="event-details">
+          <img class="event-details-icon" src="/img/calendar.png" />
+          <span class="event-date">{{ nearest.datetime }}</span>
+          <img class="event-details-icon" src="/img/location.png" />
+          <span class="event-location">{{ nearest.location }}</span>
+          <img class="event-details-icon" src="/img/language.png" />
+          <span class="event-language">{{ nearest.language }}</span>
         </div>
         <h3>
           <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
