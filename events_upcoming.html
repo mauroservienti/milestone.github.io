@@ -47,11 +47,11 @@ show_in_header: ''
       <div class="panel-body">
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />
-          <span class="event-date">{{ nearest.datetime }}</span>
+          <span class="event-date">{{ event.datetime }}</span>
           <img class="event-details-icon" src="/img/location.png" />
-          <span class="event-location">{{ nearest.location }}</span>
+          <span class="event-location">{{ event.location }}</span>
           <img class="event-details-icon" src="/img/language.png" />
-          <span class="event-language">{{ nearest.language }}</span>
+          <span class="event-language">{{ event.language }}</span>
         </div>
         <h3>
           <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
