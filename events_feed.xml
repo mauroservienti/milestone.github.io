@@ -8,7 +8,7 @@ permalink: /events/feed.xml
     <title>{{ site.title | xml_escape }} - Events</title>
     <description>{{ site.description | xml_escape }}</description>
     <link>{{ site.url }}{{ site.baseurl }}/events/</link>
-    <atom:link href="{{ "/events_feed.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
+    <atom:link href="{{ "/events/feed.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
     <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
     <generator>Jekyll v{{ jekyll.version }}</generator>
@@ -19,7 +19,7 @@ permalink: /events/feed.xml
         <description>
           I'll be speaking at {{ event.title | xml_escape }}
         </description>
-        <pubDate>{{ event.date | date_to_rfc822 }}</pubDate>
+        <pubDate>{% if event.date %}{{ event.date | date_to_rfc822 }}{% else %}{{ site.time | date_to_rfc822 }}{% endif %}</pubDate>
         <link>{{ event.url | prepend: site.baseurl | prepend: site.url }}</link>
         <guid isPermaLink="true">{{ event.url | prepend: site.baseurl | prepend: site.url }}</guid>
         {% for tag in event.tags %}

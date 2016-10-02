@@ -8,7 +8,17 @@ layout: default
 </h2>
 <div class="event-details">
   <img class="event-details-icon" src="/img/calendar.png" />
-  <span class="event-date">{{ page.datetime }}</span>
+  <span class="event-date">
+    {% if page.datetime %}
+      {{ page.datetime }}
+    {% else %}
+      {% if page.eventdate contains "T" %}
+        {{ page.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+      {% else %}
+        {{ page.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+      {% endif %}
+    {% endif %}
+  </span>
   <img class="event-details-icon" src="/img/location.png" />
   <span class="event-location">{{ page.location }}</span>
   <img class="event-details-icon" src="/img/language.png" />

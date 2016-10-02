@@ -14,7 +14,17 @@ title: Events archive
       <div class="panel-body">
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />
-          <span class="event-date">{{ event.datetime }}</span>
+          <span class="event-date">
+            {% if event.datetime %}
+              {{ event.datetime }}
+            {% else %}
+              {% if event.eventdate contains "T" %}
+                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% else %}
+                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+              {% endif %}
+            {% endif %}  
+          </span>
           <img class="event-details-icon" src="/img/location.png" />
           <span class="event-location">{{ event.location }}</span>
           <img class="event-details-icon" src="/img/language.png" />

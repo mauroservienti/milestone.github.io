@@ -5,8 +5,7 @@ title: "DevOps Heros 2016"
 location: "Dipartimento di Ingegneria dell’informazione dell’Università di Parma"
 language: "Italian"
 eventurl: "http://www.devopsheroes.net/"
-eventdate: "20161029"
-datetime: "29/10/2016"
+eventdate: "2016-10-29T09:00:00"
 date: 2016-09-01
 sessions:
 - title: "DevOps e scelte architetturali: due scenari reali"
