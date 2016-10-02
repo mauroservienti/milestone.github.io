@@ -32,34 +32,31 @@ layout: default
 <ul class="sessions-list">
   {% for session in page.sessions %}
   <li>
+    <span class="session-title">{{ session.title }}</span>
     {% if session.url %}
-    <a href="{{ session.url }}" target="_blank" class="muted-link">
+    <div class="session-url">
+      <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
+    </div>
     {% endif %}
-      <span class="session-title">{{ session.title }}</span>
-      {% if session.url %}
-      <img src="/img/link.png" border="0" class="link-icon" />
-    </a>
-    {% endif %}
-
     <div class="session-abstract">{{ session.abstract }}</div>
     {% if session.slides or session.demos or session.recording %}
     <div class="session-resources">
       {% if session.slides %}
       <a href="{{ session.slides }}" target="_blank" class="muted-link">
-        <img class="session-slides-icon" border=0 src="/img/presentation.png" />
-        <span class="session-slides">Slides</span>
+        <img class="session-details-icon" border=0 src="/img/presentation.png" />
+        <span class="session-details">Slides</span>
       </a>
       {% endif %}
       {% if session.demos  %}
       <a href="{{ session.demos }}" target="_blank" class="muted-link">
-        <img class="session-demos-icon" border=0 src="/img/folder.png" />
-        <span class="session-demos">Demos</span>
+        <img class="session-details-icon" border=0 src="/img/folder.png" />
+        <span class="session-details">Demos</span>
       </a>
       {% endif %}
       {% if session.recording %}
       <a href="{{ session.recording }}" target="_blank" class="muted-link">
-        <img class="session-recording-icon" border=0 src="/img/recording.png" />
-        <span class="session-recording">Recording</span>
+        <img class="session-details-icon" border=0 src="/img/recording.png" />
+        <span class="session-details">Recording</span>
       </a>
       {% endif %}
     </div>

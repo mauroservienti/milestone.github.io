@@ -151,12 +151,16 @@
 		color: $text-color-light;
 	}
 
-	.session-recording-icon, .session-slides-icon, .session-demos-icon{
+	.session-details-icon{
 		margin-right: 3px;
 		height: 14px;
 	}
 
-	.session-recording, .session-slides, .session-demos{
+	.session-url{
+		font-size: .8em;
+	}
+
+	.session-details{
 		margin-right: 3px;
 		color: $text-color-light;
 	}
