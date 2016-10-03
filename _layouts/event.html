@@ -65,7 +65,11 @@ layout: default
     {% endif %}
   </li>
   {% endfor %}
-</ul>  
+</ul>
+
+<header class="event-header">
+  <p class="event-meta">{% if page.author %} • {{ page.author }}{% endif %} • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
+</header>
 
 <article class="event-content">
     {{ content }}
