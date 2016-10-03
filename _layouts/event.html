@@ -37,6 +37,7 @@ layout: default
     <div class="session-url">
       <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
     </div>
+    {% endif %}
     {% if session.abstract %}
     <div class="session-abstract">{{ session.abstract }}</div>
     {% endif %}
