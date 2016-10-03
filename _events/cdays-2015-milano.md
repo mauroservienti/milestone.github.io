@@ -13,5 +13,5 @@ sessions:
   slides: http://www.communitydays.it/content/downloads/2015/dev08_slides.zip
   demos: http://www.communitydays.it/content/downloads/2015/dev08_demo.zip
 tags:
-- Organizations
+- NoSQL
 ---
