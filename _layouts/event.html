@@ -3,6 +3,10 @@ layout: default
 ---
 <div class="event">
   
+<header class="event-header">
+  <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
+</header>
+  
 <h2 class="event-host">
   {{ page.title }}
 </h2>
@@ -66,10 +70,6 @@ layout: default
   </li>
   {% endfor %}
 </ul>
-
-<header class="event-header">
-  <p class="event-meta">{% if page.author %} • {{ page.author }}{% endif %} • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
-</header>
 
 <article class="event-content">
     {{ content }}
