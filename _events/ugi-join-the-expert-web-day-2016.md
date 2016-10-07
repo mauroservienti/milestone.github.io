@@ -1,0 +1,15 @@
+---
+layout: event
+status: 'upcoming'
+title: "UGIdotNET: Join the Expert - Web Day"
+location: "Milano"
+language: "Italian"
+eventurl: "http://www.ugidotnet.org/eventi/48/Join-the-Expert--Web-Day"
+eventdate: "2016-11-18T09:00:00"
+date: 2016-09-01
+sessions:
+- title: "Implementare il single sign on con IdentityServer."
+tags:
+- Security
+- SSO
+---
