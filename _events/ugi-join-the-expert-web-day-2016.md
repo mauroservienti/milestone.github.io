@@ -2,7 +2,7 @@
 layout: event
 status: 'upcoming'
 title: "UGIdotNET: Join the Expert - Web Day"
-location: "Milano"
+location: "Auditorium Palazzo del Lavoro - Piazza IV novembre 5 - Milano"
 language: "Italian"
 eventurl: "http://www.ugidotnet.org/eventi/48/Join-the-Expert--Web-Day"
 eventdate: "2016-11-18T09:00:00"
