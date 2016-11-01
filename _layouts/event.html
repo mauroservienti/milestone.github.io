@@ -33,6 +33,11 @@ layout: default
   <img src="/img/link.png" border="0" class="event-details-icon" /><a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
 </div>
 {% endif %}
+{% if page.profileurl %}
+<div class="profile-url">
+  <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
+</div>
+{% endif %}
 <ul class="sessions-list">
   {% for session in page.sessions %}
   <li class="session">
