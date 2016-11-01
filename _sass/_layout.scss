@@ -130,6 +130,9 @@
 
 .event-url{
 	font-size: .8em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .profile-url{
