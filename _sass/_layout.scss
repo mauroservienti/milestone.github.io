@@ -132,6 +132,13 @@
 	font-size: .8em;
 }
 
+.profile-url{
+	font-size: .8em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .event-details-icon{
 	margin-right: 3px;
 	height: 14px;
