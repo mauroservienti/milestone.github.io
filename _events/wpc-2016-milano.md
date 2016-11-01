@@ -2,7 +2,7 @@
 layout: event
 status: 'upcoming'
 title: "WPC 2016"
-location: "Palazzo del Ghiaccio, via Piranesi - Milano"
+location: "NH Centro Congressi Milanofiori Strada 1 Palazzo WTC 20090 Assago, MI"
 language: "Italian"
 eventurl: "http://www.wpc2016.it/"
 eventdate: "2016-11-29T09:00:00"
