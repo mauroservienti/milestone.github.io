@@ -5,6 +5,7 @@ title: "WPC 2016"
 location: "NH Centro Congressi Milanofiori Strada 1 Palazzo WTC 20090 Assago, MI"
 language: "Italian"
 eventurl: "http://www.wpc2016.it/"
+profileurl: http://www.wpc2016.it/Speakers/Speaker/2be1512a-f1c8-4dc3-a733-c28df2462457?speakerId=e05f0351-8294-46bf-be4a-1415b06e7b91
 eventdate: "2016-11-29T09:00:00"
 datetime: "29/30 Novembre - 1 Dicembre 2016"
 sessions:
