@@ -2,7 +2,7 @@
 layout: event
 status: 'upcoming'
 title: "XE Community Meeting - Lavorare in team"
-location: "- Da definire- "
+location: "Training Center - Banchina dell'Azoto 15"
 language: "Italian"
 eventurl: "http://www.xedotnet.org/eventi/lavorare-in-team/"
 eventdate: "2016-12-16"
