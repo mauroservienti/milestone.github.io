@@ -6,7 +6,7 @@ show_in_header: ''
 ---
 
 <div class="home-content">
-{% assign upcomingevents = site.events | sort: 'eventdate' | where: 'status', 'upcoming' %}
+{% assign upcomingevents = site.events | sort: 'calendar.start' | where: 'status', 'upcoming' %}
 {% assign len = upcomingevents | size %}
   
 <h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the coming weeks.</h3>
@@ -18,13 +18,13 @@ show_in_header: ''
     <div class="event-details">
       <img class="event-details-icon" src="/img/calendar.png" />
       <span class="event-date">
-        {% if nearest.datetime %}
-          {{ nearest.datetime }}
+        {% if nearest.calendar.display %}
+          {{ nearest.calendar.display }}
         {% else %}
-          {% if nearest.eventdate contains "T" %}
-            {{ nearest.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+          {% if nearest.calendar.start contains "T" %}
+            {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
           {% else %}
-            {{ nearest.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+            {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
           {% endif %}
         {% endif %}
       </span>
@@ -58,13 +58,13 @@ show_in_header: ''
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />
           <span class="event-date">
-            {% if event.datetime %}
-              {{ event.datetime }}
+            {% if event.calendar.display %}
+              {{ event.calendar.display }}
             {% else %}
-              {% if event.eventdate contains "T" %}
-                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% if event.calendar.start contains "T" %}
+                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
               {% else %}
-                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
               {% endif %}
             {% endif %}
           </span>

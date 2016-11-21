@@ -5,8 +5,9 @@ title: "Community Days 2015"
 location: "Milano"
 language: "Italian"
 eventurl: "http://www.communitydays.it/events/2015/"
-eventdate: "2015-03-24T09:00:00"
-datetime: "24 - 25 Marzo 2015"
+calendar:
+  start: "2015-03-24T09:00:00"
+  display: "24 - 25 Marzo 2015"
 sessions:
 - title: "DEV08 - Developers <3 NoSQL"
   url: "http://www.communitydays.it/events/2015/dev08/"

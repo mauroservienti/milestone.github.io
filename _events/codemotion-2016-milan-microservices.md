@@ -5,8 +5,9 @@ title: "Microservices development deep dive @ Codemotion"
 location: "Politecnico di Milano – Bovisa | Building BL27"
 language: "Italian"
 eventurl: "http://milan2016.codemotionworld.com/workshop/microservices-development-deep-dive/"
-eventdate: "2016-11-24"
-datetime: "24 November 2016, 9:00 - 18:00"
+calendar:
+  start: "2016-11-24"
+  display: "24 November 2016, 9:00 - 18:00"
 date: 2016-09-01
 sessions:
 - title: "Microservices workshop"

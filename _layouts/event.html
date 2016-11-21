@@ -13,13 +13,13 @@ layout: default
 <div class="event-details">
   <img class="event-details-icon" src="/img/calendar.png" />
   <span class="event-date">
-    {% if page.datetime %}
-      {{ page.datetime }}
+    {% if page.calendar.display %}
+      {{ page.calendar.display }}
     {% else %}
-      {% if page.eventdate contains "T" %}
-        {{ page.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+      {% if page.calendar.start contains "T" %}
+        {{ page.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
       {% else %}
-        {{ page.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+        {{ page.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
       {% endif %}
     {% endif %}
   </span>

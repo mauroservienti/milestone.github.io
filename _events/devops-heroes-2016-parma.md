@@ -5,8 +5,8 @@ title: "DevOps Heros 2016"
 location: "Dipartimento di Ingegneria dell’informazione dell’Università di Parma"
 language: "Italian"
 eventurl: "http://www.devopsheroes.net/"
-eventdate: "2016-10-29T09:00:00"
-date: 2016-09-01
+calendar:
+  start: "2016-10-29T09:00:00"
 sessions:
 - title: "DevOps e scelte architetturali: due scenari reali"
   abstract: "DevOps è principalmente cultura aziendale e di team, DevOps è una nuova visione in cui alcune di quelle che sono le barriere tra mondo dello sviluppo e mondo operations vengono abbattute al fine di generare sinergie inimmaginabili prima.

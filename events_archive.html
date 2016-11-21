@@ -5,7 +5,7 @@ title: Events archive
 ---
 
 <div class="home-content">
-  {% assign archived = site.events | sort: 'eventdate' | where: 'status', 'done' | reverse %}
+  {% assign archived = site.events | sort: 'calendar.start' | where: 'status', 'done' | reverse %}
 
   <h3 class="page-heading">Events archive</h3>
   <ul>
@@ -15,13 +15,13 @@ title: Events archive
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />
           <span class="event-date">
-            {% if event.datetime %}
-              {{ event.datetime }}
+            {% if event.calendar.display %}
+              {{ event.calendar.display }}
             {% else %}
-              {% if event.eventdate contains "T" %}
-                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% if event.calendar.start contains "T" %}
+                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
               {% else %}
-                {{ event.eventdate | date_to_rfc822 | date: "%-d %B %Y" }}
+                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
               {% endif %}
             {% endif %}  
           </span>
