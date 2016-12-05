@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "WPC 2016"
 location: "NH Centro Congressi Milanofiori Strada 1 Palazzo WTC 20090 Assago, MI"
 language: "Italian"
