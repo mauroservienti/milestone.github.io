@@ -18,5 +18,5 @@ Unfortunately technology, sometimes, causes more headaches than needed. And when
 
 
 Resources:
-* https://github.com/mauroservienti/NServiceBus.POCs.OCRProcessing
-* https://docs.particular.net/samples/azure/azure-service-bus-long-running/
+* [Proof of Concept](https://github.com/mauroservienti/NServiceBus.POCs.OCRProcessing)
+* [Official sample](https://docs.particular.net/samples/azure/azure-service-bus-long-running/)
