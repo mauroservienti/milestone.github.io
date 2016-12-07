@@ -26,10 +26,21 @@
           </li>
           {% endif %}
         {% endfor %}
+          <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Archive <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="{{ '/archive/posts' | prepend: site.baseurl }}">All posts</a>
+              </li>
+              <li>
+                <a href="{{ '/archive/events/' | prepend: site.baseurl }}">Past events</a>
+              </li>
+            </ul>
+           </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-            <a class="navbar-link" href="http://feeds.feedburner.com/tpx">Posts feed</a>
+            <a class="navbar-link" href="http://feeds.feedburner.com/tpx">RSS</a>
         </li>
       </ul>
     </div><!-- /.navbar-collapse -->

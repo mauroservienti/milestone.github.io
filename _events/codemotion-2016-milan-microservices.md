@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Microservices development deep dive @ Codemotion"
 location: "Politecnico di Milano – Bovisa | Building BL27"
 language: "Italian"
