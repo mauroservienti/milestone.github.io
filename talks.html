@@ -1,0 +1,29 @@
+--- 
+layout: default
+title: Talks
+permalink: /talks/
+show_in_header: false 
+---
+
+<div class="home-content">
+  <h3 class="page-heading">Get Mauro speaking at your event.</h3>
+  <p>Here is the list of talks ready to be delivered. <a href="https://mauroservienti.typeform.com/to/luuJPw">Get in touch</a> to arrange details.</p>
+
+  <div>
+    {% for talk in site.talks %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <h3>{{ talk.title }}</h3>
+        <hr class="h-splitter" />
+        <span>{{ talk.abstract }}</span>
+        <div class="panel-footer">Available in:
+        {% for lang in talk.languages %}
+          <span> {{ lang }}</span>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>

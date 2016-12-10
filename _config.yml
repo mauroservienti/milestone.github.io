@@ -25,3 +25,5 @@ encoding: utf-8
 collections:
   events:
     output: true
+  talks:
+    output: true
