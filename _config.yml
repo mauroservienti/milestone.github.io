@@ -7,6 +7,7 @@ description: > # this means to ignore newlines until "baseurl:"
   The journey is the most important thing, not the destination.
   Find your next destination and start travelling again.
 
+excerpt_separator: <!--more-->
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://milestone.topics.it" # the base hostname & protocol for your site
 

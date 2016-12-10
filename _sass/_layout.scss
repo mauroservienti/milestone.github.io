@@ -108,7 +108,7 @@
 }
 
 .event-header{
-	align: right;
+	text-align: right;
 }
 
 .event-meta{
@@ -218,9 +218,20 @@
 	}
 }
 
-.talk-meta{
+.talk-title{
+	text-align: center;
+}
+
+.talk-abstract{
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: justify;
+}
+
+.talk-languages{
 	font-size: $small-font-size;
 	color: $grey-color;
+	text-align: center;
 }
 
 .talk-url{

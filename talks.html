@@ -2,7 +2,7 @@
 layout: default
 title: Talks
 permalink: /talks/
-show_in_header: false 
+show_in_header: '' 
 ---
 
 <div class="home-content">
@@ -13,17 +13,17 @@ show_in_header: false
     {% for talk in site.talks %}
     <div class="panel panel-default">
       <div class="panel-body">
-        <h3>{{ talk.title }}</h3>
+        <h3 class="talk-title">{{ talk.title }}</h3>
         <hr class="h-splitter" />
-        <span>{{ talk.abstract }}</span>
-        <div class="panel-footer">Available in:
+        <div class="talk-abstract">{{ talk.abstract }}</div>
+        <hr class="h-splitter" />
+        <div class="talk-languages">Available in:
         {% for lang in talk.languages %}
-          <span> {{ lang }}</span>
+          <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
         {% endfor %}
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
-
 </div>
