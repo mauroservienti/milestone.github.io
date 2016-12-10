@@ -2,6 +2,7 @@
 layout: post
 title: "On working 'standing up' - take 2"
 author: Mauro Servienti
+synopsis: "There is no math that can help you in finding the right setup to work when standing up. It’s not easy and keep in mind that is a long process made of trials and failures unless you find something that works for you."
 tags:
 - Work
 ---

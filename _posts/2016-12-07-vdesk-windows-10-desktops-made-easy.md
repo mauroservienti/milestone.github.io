@@ -2,6 +2,7 @@
 layout: post
 title: "VDesk: Windows 10 desktops made easy."
 author: Mauro Servienti
+synopsis: "I consider myself an happy Windows 10 user. With some issues, sometimes, due to the fact that I'm using a Windows 10 Insider beta version on both my work machines. Brave guy. As former OSX user I felt in love with multi-desktop support long time ago and I've always looked for ways to improve the very basic Windows 10 multi-desktop experience. Be aware that very basic doesn't mean poor."
 tags:
 - Windows 10
 - Virtual Desktops

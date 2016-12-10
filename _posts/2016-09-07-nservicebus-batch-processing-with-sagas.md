@@ -2,6 +2,7 @@
 layout: post
 title: "NServiceBus batch processing with Sagas."
 author: Mauro Servienti
+synopsis: "We have already seen how to consume, or simulate that, messages in batches. We might have a different use case, from the one outlined in the previous post, money transactions processing."
 tags:
 - NServiceBus
 - batch processing

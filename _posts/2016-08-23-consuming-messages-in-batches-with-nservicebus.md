@@ -2,6 +2,7 @@
 layout: post
 title: "Consuming messages in batches with NServiceBus."
 author: Mauro Servienti
+synopsis: "I already talked a lot about NServiceBus and as you might know I work for Particular Software, we make NServiceBus. I wrote a very basic introduction in 2012 using the phone call and express courier analogy. Some time ago I was asked if there is any option to consume NServiceBus messages in batches."
 tags:
 - NServiceBus
 - batch
