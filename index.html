@@ -11,7 +11,7 @@ layout: default
     </h1>
     <hr class="h-splitter" />
     <div>
-      {{ first.excerpt }}
+      {% if first.synopsis %}{{ first.synopsis }}{% else %}{{ first.excerpt }}{% endif %}
     </div>
     <a href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
   </div>
@@ -30,7 +30,7 @@ layout: default
             </h3>
             <hr class="h-splitter" />
             <div>
-              {{ post.excerpt }}
+              {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
             </div>
           </div>          
           <ul class="list-group">
@@ -42,5 +42,4 @@ layout: default
       </div>
     {% endfor %}
   </div>
-
 </div>

@@ -15,7 +15,7 @@
   <meta property="og:locale" content="en_US" />
   <meta property="og:site_name" content="Mauro Servienti - Milestone" />
   <meta property="og:title" content="{% if page.og_title %}{{ page.og_title }}{% elsif page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
-  <meta property="og:description" content="{% if page.og_description %}{{ page.og_description }}{% elsif page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
+  <meta property="og:description" content="{% if page.og_description %}{{ page.og_description }}{% elsif page.synopsis %}{{ page.synopsis | truncate: 160 }}{% elsif page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}" />
   {% if page.og_image %}
   <meta property="og:image" content="{{ page.og_image }}" />
   {% endif %}

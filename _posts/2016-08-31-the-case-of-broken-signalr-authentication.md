@@ -2,6 +2,7 @@
 layout: post
 title: "The case of broken SignalR Authentication."
 author: Mauro Servienti
+synopsis: "I’m playing with a sample project that utilizes ASP.Net MVC, WebAPI and SignalR. My need is to add a very basic authentication mechanism to show how to handle identity propagation to endpoints when using NServiceBus and messages."
 tags:
 - SignalR
 - auth
