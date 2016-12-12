@@ -1,4 +1,7 @@
 ---
+typora-root-url: ..
+typora-copy-images-to: ../img/posts
+
 layout: post
 title: "The case of NServiceBus long running handlers: OCR Processing."
 author: Mauro Servienti
@@ -13,8 +16,6 @@ Designing systems using a message based architecture is awesome. Messages are a 
 Unfortunately technology, sometimes, causes more headaches than needed. And when it comes to messaging, long running processes are a interesting headache to deal with.
 
 ### OCR Processing
-
-
 
 
 
