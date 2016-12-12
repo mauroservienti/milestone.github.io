@@ -1,4 +1,4 @@
-.home-content, .post, .event{
+.home-content, .post, .event, .talk{
 	margin-top: 20px;
 	margin-left: 15%;
 	margin-right: 15%;
@@ -8,6 +8,19 @@
 		margin-right: 0px;
 	}
 }
+
+.home-content-footer{
+	margin-left: 15%;
+	margin-right: 15%;
+	font-size: $small-font-size;
+	color: $grey-color;
+	
+	@media screen and (max-width: $break-small) {
+		margin-left: 0px;
+		margin-right: 0px;
+	}
+}
+
 
 .home-content{
 	.site-description{
