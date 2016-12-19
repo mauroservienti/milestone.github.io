@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "XE Community Meeting - Lavorare in team"
 location: "Training Center - Banchina dell'Azoto 15"
 language: "Italian"
