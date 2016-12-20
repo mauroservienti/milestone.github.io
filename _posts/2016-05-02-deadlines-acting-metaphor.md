@@ -120,9 +120,9 @@ We started with a question:
 
 > **are deadlines a bad thing?**
 
-In my opinion the answer is no, they are not a bad thing. Road-maps as well are a very good thing, still, IMO. They can easily become a bad thing, for example when connected to a set in stone GANTT based release plane, and many more examples come to my mind.
+In my opinion the answer is no, they are not a bad thing. Road-maps as well are a very good thing, still, IMO. They can easily become a bad thing, for example when connected to a set in stone GANTT based release plan, and many more examples come to my mind.
 
-In case of a show road-maps, or call it a plan if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance. In our case we set it 10 months before the first show but made it public when started advertising it 3 months before, we were confident enough to disclose it and publicly commit.
+In case of a show road-maps, or call it plans if you like, are clearly private and can be adjusted on the go as you like, deadlines are clearly public, the date of the show needs advertising in advance. In our case we set it 10 months before the first show but made it public when started advertising it 3 months before, we were confident enough to disclose it and publicly commit.
 
 In the software industry this might not be the case: high level road-maps can be public, they may help in engaging with customers, IMO, and deadlines unless not connected to public events might be private reducing exposure to failures.
 
