@@ -95,7 +95,7 @@ Can we refactor and improve as we like? not really since there is a deadline and
 
 Three other very interesting things happen:
 
-1. In some ways Kanban kicks in: the show must be as fluent as possible, so everything must be optimized to maximize the lead time
+* In some ways Kanban kicks in: the show must be as fluent as possible, so everything must be optimized to maximize the lead time
 * You know what? the above means W.I.P. limits during setup period and during live show as well
 * Last but not least what happens behind the scenes, if seen by a stranger, will be perceived by a nightmare that comes true, people running all around while other people change their costumes right in the back-stage with other people moving scenographies right above their head in a very dangerous way, back-stages are a non functional requirements with which you must live with. 
 
