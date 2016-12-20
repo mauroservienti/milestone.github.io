@@ -101,7 +101,7 @@ Three other very interesting things happen:
 
 ### Beta and RC versions
 
-While you progress there is the need to test that all you have so far works, how to? Beta releases, again driven by deadlines. When you book the theater you can arrange rehearsals that the venues as well, depending on what type of rehearsals you need sometimes these deadlines are flexible and can be decided later in the process, but again once defined are deadlines. Beta intermediate deadlines, say the ones without costumes and maybe not yet with the full scenography are important and are quite easy to met since the dependencies are that complex. RC versions on the contrary are much more important, need costumes and the full scenography, you need to test the entire flow in a safe environment, where you know you can stop the line and make changes and improvements on the fly. 
+While you progress there is the need to test that all you have so far works, how to? Beta releases, again driven by deadlines. When you book the theater you can arrange rehearsals at the venues as well, depending on what type of rehearsals you need sometimes these deadlines are flexible and can be decided later in the process, but again once defined are deadlines. Beta intermediate deadlines, say the ones without costumes and maybe not yet with the full scenography are important and are quite easy to met since the dependencies aren't that complex. RC versions on the contrary are much more important, need costumes and the full scenography, you need to test the entire flow in a safe environment, where you know you can stop the line and make changes and improvements on the fly.
 
 ### RTM
 
