@@ -33,11 +33,6 @@ layout: default
   {% for session in page.sessions %}
   <li class="session">
     <span class="session-title">{{ session.title }}</span>
-    {% if session.url %}
-    <div class="session-url">
-      <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
-    </div>
-    {% endif %}
     {% if session.language %}
     <div class="session-language">
       <img class="session-details-icon" src="/img/language.png" />
@@ -47,8 +42,13 @@ layout: default
     {% if session.abstract %}
     <div class="session-abstract">{{ session.abstract }}</div>
     {% endif %}
-    {% if session.slides or session.demos or session.recording %}
+    {% if session.url || session.slides || session.demos || session.recording %}
     <div class="session-resources">
+      {% if session.url %}
+    <div class="session-url">
+      More info: <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
+    </div>
+    {% endif %}
       {% if session.slides %}
       <a href="{{ session.slides }}" target="_blank" class="muted-link">
         <img class="session-details-icon" border=0 src="/img/presentation.png" />
