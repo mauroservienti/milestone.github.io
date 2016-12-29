@@ -9,7 +9,7 @@ calendar:
   start: "2016-11-18T09:00:00"
 sessions:
 - title: "Implementare il single sign on con IdentityServer."
-- slides: https://doc.co/yKcUqC
+  slides: https://doc.co/yKcUqC
 tags:
 - Security
 - SSO
