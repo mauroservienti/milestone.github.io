@@ -42,7 +42,7 @@ layout: default
     {% if session.abstract %}
     <div class="session-abstract">{{ session.abstract }}</div>
     {% endif %}
-    {% if session.url || session.slides || session.demos || session.recording %}
+    {% if session.url or session.slides or session.demos or session.recording %}
     <div class="session-resources">
       {% if session.url %}
     <div class="session-url">
@@ -77,7 +77,7 @@ layout: default
     {{ content }}
 </article>
 
-{% if page.eventurl || page.profileurl %}
+{% if page.eventurl or page.profileurl %}
 <div class="event-more-info">
   <hr />
 {% if page.eventurl %}
