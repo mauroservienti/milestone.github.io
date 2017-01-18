@@ -6,7 +6,7 @@ show_in_header: ''
 ---
 
 <div class="home-content">
-{% assign upcomingevents = site.events | sort: 'calendar.start' | where: 'status', 'upcoming' %}
+{% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
 {% assign len = upcomingevents | size %}
   
 <h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the coming weeks.</h3>
