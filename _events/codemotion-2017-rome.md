@@ -10,7 +10,6 @@ calendar:
   start: "2017-03-22"
   end: "2017-03-25"
   display: "22 / 25 Marzo 2017"
-date: 2016-12-23
 sessions:
 - title: "The road to a Service Oriented Architecture is paved with messages"
   abstract: "One of the options on the table when implementing a Service Oriented Architecture (SOA), or the communication style across multiple microservices, is based on messages and a service bus. This talk will drive you through the basic SOA building blocks, introduce message based architectures, and will connect the dots between technology and architectural principles through some samples using NServiceBus."
