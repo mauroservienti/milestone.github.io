@@ -13,4 +13,4 @@ One of the options on the table when implementing a Service Oriented Architectur
 
 # La strada verso una Service Oriented Architecture è lastricata di messaggi
 
-Una delle optioni sul tavolo quando implementiamo un'architettura basata sui dettami di SOA sono messaggi e un Enterprise Service Bus. Durante il talk nalizzeremo i concetti base di SOA, introduremmo le architetture basate su messaggi e conetteremo i puntini tra la tecnologia e i principi architetturali grazie ad alcuni esempi basati su NServiceBus. Per finire analizzando vantaggi e svantaggi delle scelte fatte.
+Una delle opzioni sul tavolo quando implementiamo un'architettura basata sui dettami di SOA sono messaggi e un Enterprise Service Bus. Durante il talk analizzeremo i concetti base di SOA, introdurremo le architetture basate su messaggi e connetteremo i puntini tra la tecnologia e i principi architetturali grazie ad alcuni esempi basati su NServiceBus. Per finire analizzando vantaggi e svantaggi delle scelte fatte.
