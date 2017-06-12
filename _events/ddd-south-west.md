@@ -15,7 +15,7 @@ sessions:
   url: https://dddsw-public.sharepoint.com/Pages/ddd-7-sessions/designing-a-ui-for-microservices.aspx
   language: "English"
   demos: https://github.com/mauroservienti/ddd-sw-2017
-  slides: https://doc.co/TPZhk9
+  slides: https://www.slideshare.net/mauroservienti/designing-a-ui-for-microservices
 tags:
 - SOA
 - Microservices
