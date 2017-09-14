@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Meet{cast} - Advanced .NET Frontend - #AperiTech"
 location: "LUISS ENLABS, Via Marsala 29/H (terzo piano) 00185 Roma"
 language: "Italian"
