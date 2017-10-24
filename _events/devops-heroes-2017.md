@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "DevOps Heroes 2017"
 location: "CDH – Hotel Parma e Congressi"
 language: "Italian"
@@ -12,6 +12,7 @@ sessions:
   abstract: "Parliamo tanto di DevOps e ci concentriamo sui tool senza soffermarci a pensare che DevOps è principalmente una metodologia. Lo scopo è rendere l'intera filiera il più fluida e lineare possibile, rimuovendo impedimenti e cercando di prevenire e anticipare problemi.
 Possiamo costruire tutto il processo di sviluppo, partendo dai vagiti iniziali del backlog per finire che il deploy fisico in ottica DevOps? Il processo ha impatto sulle scelte tecniche? Pratiche come SemVer e GitFlow hanno invece un impatto sul backlog?
 Analizzeremo l'intero processo di sviluppo di Particular Software, dalla gestione del backlog al deploy automatico in produzione, con lo scopo di evidenziare come pratiche che sembrano disconnesse abbiano invece impatto su tutta la filiera."
+  slides: https://www.slideshare.net/mauroservienti/dallidea-al-deploy-un-lungo-viaggio-che-passa-per-git-flow-e-semver
 tags:
 - Management
 - SemVer
