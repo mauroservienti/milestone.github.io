@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "WebAppConf 2017"
 location: "Centro Congressi Lingotto, via Nizza 280, Torino, Italy"
 language: "Italian"
