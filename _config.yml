@@ -28,3 +28,6 @@ collections:
     output: true
   talks:
     output: true
+    
+plugins:
+  - jekyll-seo-tag
