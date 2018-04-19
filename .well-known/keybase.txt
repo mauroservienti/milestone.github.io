@@ -1,0 +1,74 @@
+==================================================================
+https://keybase.io/mauroservienti
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://milestone.topics.it
+  * I am mauroservienti (https://keybase.io/mauroservienti) on keybase.
+  * I have a public key with fingerprint 9B93 6F1A AA57 6A36 2F6D  E858 102F 9EA9 6E42 48BD
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "010105a4900a8099f42dd33d4f0880add20a4602a870453bea07eda9fe9dc5b71b610a",
+      "fingerprint": "9b936f1aaa576a362f6de858102f9ea96e4248bd",
+      "host": "keybase.io",
+      "key_id": "102f9ea96e4248bd",
+      "kid": "010105a4900a8099f42dd33d4f0880add20a4602a870453bea07eda9fe9dc5b71b610a",
+      "uid": "cf593f1842e5896c41eecce9d0841a19",
+      "username": "mauroservienti"
+    },
+    "service": {
+      "hostname": "milestone.topics.it",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 1
+  },
+  "ctime": 1524139642,
+  "expire_in": 157680000,
+  "prev": "d9eda6f04fd31e0b2bdc36d8914960926ef78a00b8ea15a93e62f6722420f6be",
+  "seqno": 4,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+-----BEGIN PGP MESSAGE-----
+Version: Keybase OpenPGP v2.0.76
+Comment: https://keybase.io/crypto
+
+yMNQAnicrVJvUBRlHD6SUEFOB1FGU4gdEUHE/Xd7u9cQ4DQBOeJEWCAM1/5591ju
+2D1u9xC7UCg9QcQYzBxxNBKZcCglBSHkcGCAaQYrcmiSOrXQTklxtCOH0YB2mfzW
+x973wzu/d57neZ/f8/4GQhfoggOWbT51VtyS7gkY7jvj1O287na5IEbidkMmF2QF
+8wewcUBWzFaBg0wQjKjbQOMUDNMkTFE8jnIchnE4D5MkTHMcCtM4AaM0aYRxA8YA
+GjYCjqZ4QHGsgTEiDIHANJQA8YJoAQ67QxAVVZZiKIzgEZqmDUaCxgiUJzhAGkgE
+RnkK0BQBcBQnGU4lFkqyxlDNMbQMEgVJvVML87y9/8D/z76d83Isb6AwHiFxFBhI
+imBxBACWVbEwiSM0QmlAGThEuhio6GLa6ZDUslQAoiJA5QnQfMECLV6tn+c4waYm
+LYkgUZHsAisnCooqZHdIisRKNhVQqCh22aQJKLvtGmMXYMz/apkZQeTUUFVGKXDI
+giRCJkRFsoqgiSMGFEcwisDRBAiU2QUHMAsaQs2bhNWlvQNKVUmOUvsmeBjnOQwB
+MIMyHIsRHEkhOEXAFEoA3kjSMMyQgEYMNIUB7beMKIqjME8wANK6KxElyISrNmmL
+KikLFpFWnA4Alff35QfqAoJ1QS++oA2bLnjxsucjaJ1aOot8OlvX29TbGF0vH1l3
+dKzL111yom/bCld9dK7zp4yywzG+oPsvn072WuTsYP39XznxgC4j+ujtAzE7b3tz
+Rw99mff6EPe4bsP+JPOfMyZ95fXa8O7qtyMurOqevhtxc/ueIovsbdg4+sN75PaV
+B531OeVcjq80a7hja2ZnaLp7dPiY/uaCb8ZD4Cf17iP689OTM6ufLcpd41kVt7q1
+hUs9kbpH6jnfeLXw65XRDY0Tm9NsvKU3hk+tO/su2ZCanxdz7HJxZ22hu+te2JRx
+RcHyJmeZxx+eGN2TFe/PaVC6HkxXfG8frAtrjfN9Fxm1/2nK4S9cT3T7lgh/f35o
+tjHi1lf5QXfv2E8GPggYeWekyBvvPvdaxraKsofrDxpt1dkdTZW7vt1ravc3FFyr
+Wd544dbGHUnNS/MD459+ZmtNiirqLilgBp0zQ8aHw78BT2zkOXeI55M7NevCd4Rd
+fOOtM1dSNg0F9jxOv9Hy89XTk+1Zxa57N076sSR9VW3y2uAJ/ZvHTQM/zvhaddUf
+x1ZFjee7xibW1E21bcl+diX8w7iQlv5rm/6wLKzZl/n7Retfr6QZ1oKqzI6UyNAl
+H/1CVmaOz+VEzsW2dSzcG3u5OSbR2rwhz3PJ3rleyn0UP9j2KNmXdmoga9EcKXlH
+xrMCuj9gK9or+/2vvpTunXx/cW661Y+NtegSIi/9Aw4TxxI=
+=Sk+f
+-----END PGP MESSAGE-----
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/mauroservienti
+
+==================================================================
