@@ -11,3 +11,6 @@ tags:
 - Remote working
 - Slack
 ---
+
+I was reading this excellent article (https://medium.com/@martinkonicek/how-to-slack-6f5bf9be71ba) Slack (link) usage by Martin Konicek (https://medium.com/@martinkonicek) and I found myself reflecting on the way we use it in Particular (link).
+
