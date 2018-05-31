@@ -14,7 +14,7 @@ tags:
 
 I was reading [this excellent article](https://medium.com/@martinkonicek/how-to-slack-6f5bf9be71ba) on [Slack](https://slackhq.com/) usage by [Martin Konicek](https://medium.com/@martinkonicek) and I found myself reflecting on the way we use it in [Particular Software](https://particular.net).
 
-In Particular Software Slack is, along with [GitHub Issues](https://guides.github.com/features/issues/), the main communication tool. Our rule of thumb is something like:
+Slack is, along with [GitHub Issues](https://guides.github.com/features/issues/), our main communication tool. with a rule of thumb similar to:
 
 * Transient communication and disucssions happen in Slack
 * Decisions are documented on GitHub Issues
