@@ -10,7 +10,7 @@ calendar:
   end: "2018-10-18T21:00:00"
 sessions:
 - title: "Microservices: Non tutto il male vien per nuocere"
-  abstract: "Microservices è una delle buzzword del momento. Sembra quasi che un'architettura a microservices sia fondamentale. È veramente così? Faremo un tortuoso viaggio tra le buzzword del momento cercando di districarci tra cosa è bene e cosa è meno bene, ma soprattutto perché. Obiettivo è quello di comprendere quali sono i limiti di certe scelte architetturali e quali gli errori da non commettere. Il tutto nell'ottica di garantire ai nostri sistemi "lunga vita e posperità" (cit.)"
+  abstract: "Microservices è una delle buzzword del momento. Sembra quasi che un'architettura a microservices sia fondamentale. È veramente così? Faremo un tortuoso viaggio tra le buzzword del momento cercando di districarci tra cosa è bene e cosa è meno bene, ma soprattutto perché. Obiettivo è quello di comprendere quali sono i limiti di certe scelte architetturali e quali gli errori da non commettere. Il tutto nell'ottica di garantire ai nostri sistemi 'lunga vita e posperità' (cit.)"
 tags:
 - Domain decomposition
 - ViewModel Composition
