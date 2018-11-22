@@ -5,3 +5,7 @@ abstract: "Cosa succederebbe se i prodotti non fossero gestiti dai manager? O ad
 languages:
 - Italiano
 ---
+
+# PO is dead, long live the PO
+
+What if products were not managed by manager? Or even, what if there are no managers at all? Who will be responsible to define backlog priorities? In Particular Software there are no managers. Product management belongs to everyone. If this sounds like the inmates have taken over the asylum, you're only partially right. Nowadays more and more companies are transitioning to fluid organizational structures. What can be done to enable anyone to make decisions at any level? Is there a way to have a shared decision making process? We'll have a look at how Particular Software is structured in order to enable all the above. We'll analyze how problems are handled and which processes and tools we use to make decisions. All this without nurses, ooops, managers.
