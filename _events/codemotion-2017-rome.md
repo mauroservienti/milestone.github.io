@@ -16,6 +16,7 @@ sessions:
   url: http://rome2017.codemotionworld.com/talk-detail/?detail=5011
   language: "English"
   slides: https://www.slideshare.net/mauroservienti/the-road-to-a-service-oriented-architecture-is-paved-with-messages
+  recording: https://www.youtube.com/watch?v=-cI96-nCBKU
 - title: "Microservices development deep dive (1 day Workshop)"
   abstract: "Go beyond the hype and build a solid foundation of theory and practice with this workshop on Microservices development. This one day deep-dive will be a journey from SOA concepts to DevOps practices to fully understand what Microservices are and how to design, develop and manage them."
   url: http://rome2017.codemotionworld.com/workshop/microservices-development-deep-dive/
