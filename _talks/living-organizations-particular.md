@@ -1,6 +1,6 @@
 ---
 layout: talk
-title: "From cogs to nirvana"
+title: "Living organizations, Particular Software"
 abstract: "We are so used to organizations based on the traditional org-chart structure that we get for granted that it's the only option. Is a different approach possible?
 When I first joined Particular Software, it was a traditional, yet distributed, organization. We had  directors and a hierarchy. A year later conscious decision to change everything from the ground up was made. It was the best decision ever.
 Join Mauro on a journey that aims to disclose that another organization model is possible, that top/down decisions making is not the only viable solution, and that we can organize work schedules around our private life to achieve the best possible life-work balance." 
@@ -9,13 +9,13 @@ languages:
 - English
 ---
 
-# From cogs to nirvana
+# Living organizations, Particular Software
 
 We are so used to organizations based on the traditional org-chart structure that we get for granted that it's the only option. Is a different approach possible?
 When I first joined Particular Software, it was a traditional, yet distributed, organization. We had  directors and a hierarchy. A year later conscious decision to change everything from the ground up was made. It was the best decision ever.
 Join Mauro on a journey that aims to disclose that another organization model is possible, that top/down decisions making is not the only viable solution, and that we can organize work schedules around our private life to achieve the best possible life-work balance.
 
-# Non siamo ingranaggi, il nirvana è possibile
+# Organizzazioni come esseri viventi, Particular Software
 
 Siamo così abituati ad organizzazioni basate sul tradizionale organigramma che diamo per scontato che sia l'unica opzione. Un approccio differente è possibile?
 Quando sono entrato in Particular, era un'organizzazione tradizionale, sebbene distribuita. Avevamo manager e una gerarchia. Un anno dopo la decisione di rivoluzionare tutto. La miglior decisione di sempre.
