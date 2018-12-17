@@ -12,6 +12,7 @@ sessions:
 - title: "Welcome to the (state) machine "
   abstract: "Ultimamente ci hanno stressato come non mai che stateful è il male. Tutto deve essere stateless. Nonostante questo i sistemi software complessi, essendo basati su processi collaborativi, sono per natura stateful. Pane quotidiano per le Saghe. Le Saghe consentono di modellare sistemi complessi senza la necessità di transazioni distribuite e coordinamento esterno. Vedremo cosa sono le Saghe, come possono essere usate per modellare domini complessi, e che ruolo giocano quando progettiamo sistemi basati sui concetti di “design for failures” e “eventual consistency”."
   slides: https://www.slideshare.net/mauroservienti/welcome-to-the-state-machine-crafted-software
+  recording: https://www.youtube.com/watch?v=fjCVH_ZZy5o
 tags:
 - Sagas
 - SOA
