@@ -262,4 +262,9 @@
 	margin-left: 15%;
 	margin-right: 15%;
 	text-align: right;
+
+	.page-meta{
+		font-size: $small-font-size;
+		color: $grey-color;
+	}
 }
