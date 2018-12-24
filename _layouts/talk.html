@@ -10,11 +10,13 @@ layout: default
     <h2 class="talk-host">
         {{ page.title }}
     </h2>
-
-    {% for version in page.versions %}
-        <div class="talk-abstract">
-            {{ page.abstract }}
-        </div>
+    <hr class="h-splitter" />
+    <div class="talk-abstract">{{ page.abstract }}</div>
+    <hr class="h-splitter" />
+    <div class="talk-languages">Available in:
+    {% for lang in page.languages %}
+        <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
     {% endfor %}
+     </div>
 
 </div>
