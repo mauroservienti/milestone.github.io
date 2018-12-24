@@ -13,7 +13,9 @@ show_in_header: ''
     {% for talk in site.talks %}
     <div class="panel panel-default">
       <div class="panel-body">
-        <h3 class="talk-title">{{ talk.title }}</h3>
+        <h3 class="talk-title">
+            <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
+        </h3>
         <hr class="h-splitter" />
         <div class="talk-abstract">{{ talk.abstract }}</div>
         <hr class="h-splitter" />
