@@ -1,0 +1,20 @@
+---
+layout: default
+---
+<div class="talk">
+  
+    <header class="talk-header">
+        <p class="talk-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this talk</a></p>
+    </header>
+
+    <h2 class="talk-host">
+        {{ page.title }}
+    </h2>
+
+    {% for version in page.versions %}
+        <div class="talk-abstract">
+            {{ page.abstract }}
+        </div>
+    {% endfor %}
+
+</div>
