@@ -7,7 +7,7 @@ language: "English"
 eventurl: "http://exploreddd.com/"
 calendar:
   start: "2018-09-11"
-  start: "2018-09-14"
+  end: "2018-09-14"
   display: "September, 11-14"
 sessions:
 - title: "All our aggregates are wrong"
