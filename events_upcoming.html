@@ -96,15 +96,16 @@ show_in_header: ''
     {% endfor %}
     <a href="/archive/events/">Looking for archived events?</a>
   </div>
-  
-  {% else %}
-  <div class="jumbotron">
-  Bummer! nothing planned...yet!<br />
-  Take a look at <a href="/archive/events/">where I've been in the past</a>.
-  </div>
-  {% endif %}
-  
   <hr class="h-splitter" />
   <div class="cfp">Have a look at the <a href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP" target="_blank">call for papers (CFP)</a> I submitted to.</div>
+  
+  {% else %}
+  
+  <div class="jumbotron">
+  Bummer! nothing planned...yet!<br />
+  Take a look at <a href="/archive/events/">where I've been in the past</a>, or have a look at the <a href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP" target="_blank">call for papers (CFP)</a> I submitted to.
+  </div>
+  
+  {% endif %}
   
 </div>
