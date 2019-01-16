@@ -16,6 +16,39 @@ layout: page
     <a href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
   </div>
   
+
+  <div class="row">
+    {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
+    {% assign len = upcomingevents | size %}
+    {% if len > 0 %}
+      {% assign upcomingevent = upcomingevents[0] %}
+      <div class="upcoming-event">
+        I'll be speaking at {{ upcomingevent.title }}, {{ upcomingevent.location }}, on
+        <span class="upcoming-event-date">
+        {% if upcomingevent.calendar.display %}
+          {{ upcomingevent.calendar.display }}
+        {% else %}
+          {% if upcomingevent.calendar.start contains "T" %}
+            {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+          {% else %}
+            {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+          {% endif %}
+        {% endif %}
+      </span>.
+        <div>
+          I'll deliver the following talks:
+          <ul class="upcoming-event-sessions-list">
+            {% for session in upcomingevent.sessions %}
+            <li>
+              <span class="session-title">{{ session.title }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+  
   <div class="row">
     {% for post in site.posts limit:6 offset:1 %}
     {% if forloop.index0 == 3 %}
