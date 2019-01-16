@@ -25,6 +25,7 @@ layout: page
       <div class="col-md-12  upcoming-event">
         <div class="panel panel-default">
           <div class="panel-body">
+            <h3>Upcoming event</h3>
             I'll be speaking soon at <span class="upcoming-event-title">{{ upcomingevent.title }}</span>, {{ upcomingevent.location }}, on
             <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
@@ -51,6 +52,9 @@ layout: page
           <ul class="list-group">
             <li class="list-group-item">
               <a href="{{ upcomingevent.url | prepend: site.baseurl }}">More information...</a>
+            </li>
+            <li class="list-group-item">
+              <a href="{{ site.baseurl }}events/">More events...</a>
             </li>
           </ul>
         </div>
