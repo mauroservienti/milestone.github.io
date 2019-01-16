@@ -24,8 +24,8 @@ layout: page
       {% assign upcomingevent = upcomingevents[0] %}
       <div class="col-md-12  upcoming-event">
         <div class="panel panel-default">
+          <div class="panel-heading">Upcoming event</div>
           <div class="panel-body">
-            <h3>Upcoming event</h3>
             I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, {{ upcomingevent.location }}, on
             <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
