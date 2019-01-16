@@ -4,7 +4,7 @@ status: 'upcoming'
 title: "Do IT Better Community Meetup"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
 language: "Italian"
-eventurl: "https://www.meetup.com/Do-IT-Better-Community/"
+eventurl: "https://www.meetup.com/Do-IT-Better-Community/events/257892237/"
 calendar:
   start: "2019-02-05T18:45:00"
   end: "2019-02-05T21:00:00"
