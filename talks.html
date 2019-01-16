@@ -12,6 +12,11 @@ show_in_header: ''
   <div>
     {% for talk in site.talks %}
     <div class="panel panel-default">
+      {% if talk.header_image_url %}
+        <div class="panel-heading">
+          <img class="img-responsive" alt="{{ talk.title }} header image" src="{{ talk.header_image_url | prepend: site.baseurl }}" />
+        </div>
+      {% endif %}
       <div class="panel-body">
         <h3 class="talk-title">
             <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
