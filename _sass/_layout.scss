@@ -230,6 +230,15 @@
 	list-style-type: none;
 }
 
+.talk-header{
+	text-align: right;
+}
+
+.talk-meta{
+	font-size: $small-font-size;
+	color: $grey-color;
+}
+
 .talk-content{
 
 	padding-top: 10px;
