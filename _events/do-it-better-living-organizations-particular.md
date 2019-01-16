@@ -1,7 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
-title: "Living organizations, Particular Software"
+title: "Do IT Better Community Meetup"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
 language: "Italian"
 eventurl: "https://www.meetup.com/Do-IT-Better-Community/"
