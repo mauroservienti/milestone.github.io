@@ -1,5 +1,6 @@
 ---
 layout: talk
+header_image_url: /img/talks/living-organizations-particular-software-header.jpg
 title: "Living organizations, Particular Software"
 abstract: "We are so used to organizations based on the traditional org-chart structure that we get for granted that it's the only option. Is a different approach possible?
 When I first joined Particular Software, it was a traditional, yet distributed, organization. We had  directors and a hierarchy. A year later conscious decision to change everything from the ground up was made. It was the best decision ever.
