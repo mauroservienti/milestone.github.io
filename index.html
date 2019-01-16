@@ -26,7 +26,7 @@ layout: page
         <div class="panel panel-default">
           <div class="panel-body">
             <h3>Upcoming event</h3>
-            I'll be speaking soon at <span class="upcoming-event-title">{{ upcomingevent.title }}</span>, {{ upcomingevent.location }}, on
+            I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, {{ upcomingevent.location }}, on
             <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
                 {{ upcomingevent.calendar.display }}
@@ -37,22 +37,16 @@ layout: page
                   {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
                 {% endif %}
               {% endif %}
-            </span>.
-            <div>
-              I'll deliver the following talks:
-              <ul class="upcoming-event-sessions-list">
-                {% for session in upcomingevent.sessions %}
-                <li>
-                  <span class="session-title">{{ session.title }}</span>
-                </li>
-                {% endfor %}
-              </ul>
-            </div>
+            </span> | I'll deliver the following talks:
+            <ul class="upcoming-event-sessions-list">
+              {% for session in upcomingevent.sessions %}
+              <li>
+                <span class="session-title">{{ session.title }}</span>
+              </li>
+              {% endfor %}
+            </ul>
           </div>
           <ul class="list-group">
-            <li class="list-group-item">
-              <a href="{{ upcomingevent.url | prepend: site.baseurl }}">More information...</a>
-            </li>
             <li class="list-group-item">
               <a href="{{ site.baseurl }}events/">More events...</a>
             </li>
