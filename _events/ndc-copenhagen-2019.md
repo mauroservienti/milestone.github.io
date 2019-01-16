@@ -12,8 +12,16 @@ calendar:
 sessions:
 - title: "All our aggregates are wrong"
   url: https://ndccopenhagen.com/talk/all-our-aggregates-are-wrong/
+  speakers:
+  - name: "Mauro Servienti"
+    profileurl: https://ndccopenhagen.com/speaker/mauro-servienti
 - title: "2-Days Workshop: SOA Done Right (with examples in ASP.NET and NServiceBus)"
   url: https://ndccopenhagen.com/workshop/soa-done-right-with-examples-in-asp-net-and-nservicebus/
+  speakers:
+  - name: "Mauro Servienti"
+    profileurl: https://ndccopenhagen.com/speaker/mauro-servienti
+  - name: "Dennis van der Stelt"
+    profileurl: https://ndccopenhagen.com/speaker/dennis-van-der-stelt
 tags:
 - SOA
 - Microservices
