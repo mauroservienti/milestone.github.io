@@ -10,27 +10,34 @@ show_in_header: ''
   <p>Here is the list of talks ready to be delivered. <a href="https://mauroservienti.typeform.com/to/luuJPw">Get in touch</a> to arrange details.</p>
 
   <div class="talks-list">
+    <div class="row">
     {% for talk in site.talks %}
-    <div class="panel panel-default">
-      {% if talk.header_image_url %}
-        <div class="panel-heading">
-          <img class="img-responsive" alt="{{ talk.title }} header image" src="{{ talk.header_image_url | prepend: site.baseurl }}" />
-        </div>
+    {% if forloop.index0 == 2 %}
+    </div>
+    <div class="row">
       {% endif %}
-      <div class="panel-body">
-        <h3 class="talk-title">
-            <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
-        </h3>
-        <hr class="h-splitter" />
-        <div class="talk-abstract">{{ talk.abstract }}</div>
-        <hr class="h-splitter" />
-        <div class="talk-languages">Available in:
-        {% for lang in talk.languages %}
-          <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
-        {% endfor %}
+        <div class="col-md-6">
+          <div class="panel panel-default">
+          {% if talk.header_image_url %}
+            <div class="panel-heading">
+              <img class="img-responsive" alt="{{ talk.title }} header image" src="{{ talk.header_image_url | prepend: site.baseurl }}" />
+            </div>
+          {% endif %}
+          <div class="panel-body">
+            <h3 class="talk-title">
+              <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
+            </h3>
+            <hr class="h-splitter" />
+            <div class="talk-abstract">{{ talk.abstract }}</div>
+            <hr class="h-splitter" />
+            <div class="talk-languages">Available in:
+            {% for lang in talk.languages %}
+              <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
+            {% endfor %}
+            </div>
+          </div>
         </div>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 </div>
