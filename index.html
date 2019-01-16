@@ -24,10 +24,7 @@ layout: page
       {% assign upcomingevent = upcomingevents[0] %}
       <div class="col-md-12  upcoming-event">
         <div class="panel panel-default">
-          <div class="panel-heading">Upcoming event</div>
-          <div class="panel-body">
-            I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, {{ upcomingevent.location }}, on
-            <span class="upcoming-event-date">
+          <div class="panel-heading">Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
                 {{ upcomingevent.calendar.display }}
               {% else %}
@@ -37,7 +34,9 @@ layout: page
                   {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
                 {% endif %}
               {% endif %}
-            </span> | I'll deliver the following talks:
+            </span></div>
+          <div class="panel-body">
+            I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. I'll deliver the following talks:
             <ul class="upcoming-event-sessions-list">
               {% for session in upcomingevent.sessions %}
               <li>
