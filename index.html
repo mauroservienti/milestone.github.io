@@ -22,29 +22,36 @@ layout: page
     {% assign len = upcomingevents | size %}
     {% if len > 0 %}
       {% assign upcomingevent = upcomingevents[0] %}
-      <div class="upcoming-event">
-        I'll be speaking at {{ upcomingevent.title }}, {{ upcomingevent.location }}, on
-        <span class="upcoming-event-date">
-        {% if upcomingevent.calendar.display %}
-          {{ upcomingevent.calendar.display }}
-        {% else %}
-          {% if upcomingevent.calendar.start contains "T" %}
-            {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
-          {% else %}
-            {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
-          {% endif %}
-        {% endif %}
-      </span>.
-        <div>
-          I'll deliver the following talks:
-          <ul class="upcoming-event-sessions-list">
-            {% for session in upcomingevent.sessions %}
-            <li>
-              <span class="session-title">{{ session.title }}</span>
-            </li>
-            {% endfor %}
-          </ul>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          I'll be speaking soon at <span class="upcoming-event-title">{{ upcomingevent.title }}</span>, {{ upcomingevent.location }}, on
+          <span class="upcoming-event-date">
+            {% if upcomingevent.calendar.display %}
+              {{ upcomingevent.calendar.display }}
+            {% else %}
+              {% if upcomingevent.calendar.start contains "T" %}
+                {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% else %}
+                {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+              {% endif %}
+            {% endif %}
+          </span>.
+          <div>
+            I'll deliver the following talks:
+            <ul class="upcoming-event-sessions-list">
+              {% for session in upcomingevent.sessions %}
+              <li>
+                <span class="session-title">{{ session.title }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
+        <ul class="list-group">
+            <li class="list-group-item">
+              <a href="{{ upcomingevent.url | prepend: site.baseurl }}">More information...</a>
+            </li>
+        </ul>
       </div>
     {% endif %}
   </div>
