@@ -44,17 +44,17 @@ layout: default
     {% endif %}
     {% if session.url or session.slides or session.demos or session.recording %}
     <div class="session-resources">
-      {% if session.url %}
-      <div class="session-url">
-        More info: <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
-      </div>
-      {% endif %}
       {% if session.speakers %}
         {% for speaker in session.speakers %}
           <div class="profile-url">
-            Speaker info: <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
+            <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker: <a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
           </div>
         {% endfor %}
+      {% endif %}
+      {% if session.url %}
+      <div class="session-url">
+        <img src="/img/link.png" border="0" class="session-details-icon" /> More info: <a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
+      </div>
       {% endif %}
       {% if session.slides %}
       <a href="{{ session.slides }}" target="_blank" class="muted-link">
@@ -89,12 +89,12 @@ layout: default
   <hr />
 {% if page.eventurl %}
 <div class="event-url">
-  Event details: <img src="/img/link.png" border="0" class="event-details-icon" /><a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
+  <img src="/img/link.png" border="0" class="event-details-icon" /> Event details: <a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
 </div>
 {% endif %}
 {% if page.profileurl %}
 <div class="profile-url">
-  Speaker info: <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
+  <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker info: <a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
 </div>
 {% endif %}
 </div>
