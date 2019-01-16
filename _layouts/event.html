@@ -45,10 +45,17 @@ layout: default
     {% if session.url or session.slides or session.demos or session.recording %}
     <div class="session-resources">
       {% if session.url %}
-    <div class="session-url">
-      More info: <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
-    </div>
-    {% endif %}
+      <div class="session-url">
+        More info: <img src="/img/link.png" border="0" class="session-details-icon" /><a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
+      </div>
+      {% endif %}
+      {% if session.speakers %}
+        {% for speaker in session.speakers %}
+          <div class="profile-url">
+            Speaker info: <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
+          </div>
+        {% endfor %}
+      {% endif %}
       {% if session.slides %}
       <a href="{{ session.slides }}" target="_blank" class="muted-link">
         <img class="session-details-icon" border=0 src="/img/presentation.png" />
@@ -77,7 +84,7 @@ layout: default
     {{ content }}
 </article>
 
-{% if page.eventurl or page.profileurl or page.speakers %}
+{% if page.eventurl or page.profileurl %}
 <div class="event-more-info">
   <hr />
 {% if page.eventurl %}
@@ -89,13 +96,6 @@ layout: default
 <div class="profile-url">
   Speaker info: <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
 </div>
-{% endif %}
-{% if page.speakers %}
-  {% for speaker in page.speakers %}
-    <div class="profile-url">
-      Speaker info: <img src="/img/profile.png" border="0" class="event-details-icon" /><a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
-    </div>
-  {% endfor %}
 {% endif %}
 </div>
 {% endif %}
