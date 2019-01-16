@@ -97,14 +97,14 @@
 	}
 	
 	.footer-heading{
-    color: $grey-color-light;
+        	color: $grey-color-light;
 	}
 	
 	.wrapper{
-    .text{
-      color: $grey-color-light;
-      font-style: italic;
-    }
+    		.text{
+      			color: $grey-color-light;
+      			font-style: italic;
+    		}
 	}
 }
 
@@ -113,6 +113,9 @@
 	padding-top: 10px;
 	padding-left: 20px;
 	padding-bottom: 10px;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: $grey-color-light;
 	
 	@media screen and (max-width: $break-small) {
 		border-left-width: 0px;
@@ -175,7 +178,7 @@
 .sessions-list{
 	margin: 0;
 	margin-top: 15px;
-	margin-left: 0px;
+	margin-left: 5px;
 	padding: 0;
 	list-style: none;
 
