@@ -2,7 +2,7 @@
 layout: talk
 header_image_url: /img/talks/product-owner-is-dead-long-live-product-ownership-header.jpg
 title: "Product Owner is dead, long live Product Ownership"
-abstract: "What if products were not managed by manager? Or even, what if there are no managers at all? Who will be responsible to define backlog priorities? In Particular Software there are no managers. Product management belongs to everyone. If this sounds like the inmates have taken over the asylum, you're only partially right. Nowadays more and more companies are transitioning to adaptive organizational structures. What can be done to enable anyone to make decisions at any level? Is there a way to have a shared decision making process? We'll have a look at how Particular Software is structured in order to enable all the above. We'll analyze how problems are handled and which processes and tools we use to make decisions. All this without nurses, ooops, managers." 
+synopsis: "What if products were not managed by manager? Or even, what if there are no managers at all? Who will be responsible to define backlog priorities? In Particular Software there are no managers. Product management belongs to everyone. If this sounds like the inmates have taken over the asylum, you're only partially right. Nowadays more and more companies are transitioning to adaptive organizational structures. What can be done to enable anyone to make decisions at any level? Is there a way to have a shared decision making process? We'll have a look at how Particular Software is structured in order to enable all the above. We'll analyze how problems are handled and which processes and tools we use to make decisions. All this without nurses, ooops, managers." 
 languages:
 - Italiano
 - English
