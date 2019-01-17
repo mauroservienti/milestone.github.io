@@ -28,7 +28,7 @@ show_in_header: ''
               <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
             </h2>
             <hr class="h-splitter" />
-            <div class="talk-abstract">{{ talk.abstract }}</div>
+            <div class="talk-synopsis">{{ talk.synopsis }}</div>
             <hr class="h-splitter" />
             <div class="talk-languages">Available in:
             {% for lang in talk.languages %}
