@@ -24,7 +24,13 @@ layout: page
       {% assign upcomingevent = upcomingevents[0] %}
       <div class="col-md-12  upcoming-event">
         <div class="panel panel-default">
-          <div class="panel-heading">Upcoming event • <span class="upcoming-event-date">
+          <div class="panel-body">
+            <div class="media">
+              <div class="media-left">
+                <img class="media-object" src="img/speak.jpg" alt="speaker">
+              </div>
+                <div class="media-body">
+                  <h4 class="media-heading">Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
                 {{ upcomingevent.calendar.display }}
               {% else %}
@@ -34,16 +40,17 @@ layout: page
                   {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
                 {% endif %}
               {% endif %}
-            </span></div>
-          <div class="panel-body">
-            I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. I'll deliver the following talks:
-            <ul class="upcoming-event-sessions-list">
-              {% for session in upcomingevent.sessions %}
-              <li>
-                <span class="session-title">{{ session.title }}</span>
-              </li>
-              {% endfor %}
-            </ul>
+            </span></h4>
+                  I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. I'll deliver the following talks:
+                  <ul class="upcoming-event-sessions-list">
+                  {% for session in upcomingevent.sessions %}
+                    <li>
+                      <span class="session-title">{{ session.title }}</span>
+                    </li>
+                  {% endfor %}
+                  </ul>
+                </div>
+            </div>
           </div>
           <ul class="list-group">
             <li class="list-group-item">
