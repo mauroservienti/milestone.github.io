@@ -18,9 +18,9 @@ show_in_header: ''
       {% endif %}
         <div class="col-md-6">
           <div class="panel panel-default">
-          {% if talk.header_image_url %}
+          {% if talk.header_image %}
             <div class="panel-heading">
-              <img class="img-responsive" alt="{{ talk.title }} header image" src="{{ talk.header_image_url | prepend: site.baseurl }}" />
+              <img class="img-responsive" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
             </div>
           {% endif %}
           <div class="panel-body">

@@ -6,8 +6,8 @@ layout: page
 
   <div class="jumbotron first-post">
     {% assign first = site.posts[0] %}
-    {% if first.header_image_url %}
-      <img class="img-responsive img-rounded" alt="{{ first.title }} header image" src="{{ first.header_image_url | prepend: site.baseurl }}" />
+    {% if first.header_image %}
+      <img class="img-responsive img-rounded" alt="{{ first.title }} header image" src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <h1>
       <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>

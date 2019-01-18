@@ -19,8 +19,8 @@ layout: default
   </section>
 
   <header class="post-header">
-    {% if page.header_image_url %}
-    <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image_url | prepend: site.baseurl }}" />
+    {% if page.header_image %}
+    <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <h1 class="post-title">{{ page.title }}</h1>
     <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %} • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this post</a> • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a><br/> Reading time: <span class="eta"></span></p>

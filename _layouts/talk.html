@@ -7,8 +7,8 @@ layout: default
         <p class="talk-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this talk</a></p>
     </header>
 
-    {% if page.header_image_url %}
-      <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image_url | prepend: site.baseurl }}" />
+    {% if page.header_image %}
+      <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
   
     <h2 class="talk-host">
