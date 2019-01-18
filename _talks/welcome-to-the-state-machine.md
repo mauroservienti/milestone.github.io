@@ -1,6 +1,6 @@
 ---
 layout: talk
-header_image_url: /img/talks/welcome-to-the-state-machine-header.jpg
+header_image: /img/talks/welcome-to-the-state-machine-header.jpg
 title: "Welcome to the (state) machine"
 synopsis: "Stateless all the thing, they say. In the last few years we’ve been brainwashed: design stateless systems, otherwise they cannot scale, they cannot be highly available, and they are hard to maintain and evolve. In a nutshell stateful is bad. However complex software systems need to do collaborative processing, that is stateful by definition. Stateless myth busted! Collaborative domains deal with long business transactions and need to interact with distributed resources. The traditional distributed transactions approach, even if tempting, is a time bomb.
 

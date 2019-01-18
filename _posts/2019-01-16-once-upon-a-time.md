@@ -3,7 +3,7 @@ typora-root-url: ..
 typora-copy-images-to: ../img/posts/once-upon-a-time
 
 layout: post
-header_image_url: /img/posts/once-upon-a-time/header.jpg
+header_image: /img/posts/once-upon-a-time/header.jpg
 title: "Once upon a time..."
 author: Mauro Servienti
 synopsis: "I used to write 3 posts every week (on my Italian blog). Then she joined our lives and everything changed, from priorities to free time. Exactly a year later, so happy first birthday my love, I decided that it’s time to get back to that experiment."
