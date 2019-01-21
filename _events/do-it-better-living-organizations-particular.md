@@ -1,5 +1,6 @@
 ---
 layout: event
+header_image: /img/events/living-organizations-particular-software-header.png
 status: 'upcoming'
 title: "Do IT Better Community Meetup"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
