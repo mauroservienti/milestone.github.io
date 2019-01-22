@@ -40,12 +40,12 @@ Questi workshop sono caratterizzati dal non avere un formato preciso. Anche se l
 
 ### Agenda
 
-09.30 - 10.00 Welcome e registrazione
-10.00 - 11.00 Public speaking for geeks - Lorenzo Barbieri
-11.00 - 11.15 Pausa
-11.15 - 12.00 Titles, Abstracts, and Bio matters... Oh my! - Mauro Servienti
-12.00 - 12.15 Pausa
-12.15 - 13.30 Q&A, discussione e workshop (Portate le vostre idee: ci sarà l'occasione di condividerle, rielaborale inieme e presentarle agli altri)
+- 09.30 - 10.00 Welcome e registrazione
+- 10.00 - 11.00 Public speaking for geeks - Lorenzo Barbieri
+- 11.00 - 11.15 Pausa
+- 11.15 - 12.00 Titles, Abstracts, and Bio matters... Oh my! - Mauro Servienti
+- 12.00 - 12.15 Pausa
+- 12.15 - 13.30 Q&A, discussione e workshop (Portate le vostre idee: ci sarà l'occasione di condividerle, rielaborale inieme e presentarle agli altri)
 
 #### Note
 Le sessioni saranno in Italiano.
