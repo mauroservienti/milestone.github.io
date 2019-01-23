@@ -40,7 +40,7 @@ It never worked out very well, some days were literally awesome, but the majorit
 
 #### I'm a procrastinator
 
-I'm very good at convincing myself that something can be done later and that there are more important things to do now. You know, things like watching [TOP 10 Awesome Lego Creations](https://www.youtube.com/watch?v=yPKU8eYJlUU) on YouTube. Being a procrastinator makes it very hard to stick to a plan that is not really a plan,. it's just a suggestion.
+I'm very good at convincing myself that something can be done later and that there are more important things to do now. You know, things like watching [TOP 10 Awesome Lego Creations](https://www.youtube.com/watch?v=yPKU8eYJlUU) on YouTube. Being a procrastinator makes it very hard to stick to a plan that is not really a plan, but more a suggestion.
 
 #### Estimates are the root of many evils
 
@@ -60,7 +60,7 @@ All this can only lead to poor satisfaction: you reach the end of the day, look 
 
 ## Short term planning changed my day
 
-I'm now experimenting, with success so far, a different way to organize my week. Yes, the whole week. It's a combination of careful planning, relaxed planning and to-do lists.
+I'm now experimenting, with success so far, a different way of organizing my week. Yes, the whole week. It's a combination of careful planning, relaxed planning and to-do lists. Plus a little bit of refactoring.
 
 ### To-do lists
 
@@ -83,21 +83,20 @@ It doesn't end here. On Fridays I also plan the rest of the week, from Wednesday
 
 ### Consolidation
 
-On Wednesdays morning I finally consolidate the rest of the week, turning what were `free` slots to `busy, and adjusting or changing what needs intervention.
+On Wednesdays morning I finally consolidate the rest of the week, turning what were `free` slots to `busy`, and adjusting or changing what needs intervention (refactoring).
 
 ## Planning for the unplanned
 
-Everyday there is one slot, somewhere in the day, defined as `Inbox triage & TODOs`. It basically serves two purposes:
+Everyday there is one slot, sometime during the day, defined as `Inbox triage & TODOs`. It basically serves two purposes:
 
 * Groom my backlog by looking and new things that are coming through my inbox, whatever inbox means (we'll talk about that in a future post)
-
 * Act like a buffer to absorb wrong estimates.
 
-Buffer consumption is what's right now with this post. It was planned for this morning, last slot before lunch time. Due to a meeting that went late in the first slot in the morning, the whole morning has been pushed back by 30 minutes. The `Inbox triage & TODOs` is now giving away for "free" 30 minutes to allow me to:
+Buffer consumption is what's happening right now with this post. It was planned for this morning, last slot before lunch time. Due to a meeting that went late in the first slot in the morning, the whole morning has been pushed back by 30 minutes. The `Inbox triage & TODOs` is now giving away for "free" 30 minutes to allow me to:
 
 * finish the post
-* avoid that the morning delay won't affect the afternoon
+* make so that morning delay doesn't affect the afternoon
 
 ### What about emergencies then?
 
-They don't exist, I'm sorry. Your emergencies are not allowed to disrupt my day. In [Particular](https://particular.net/) we have a clearly defined process to handle. This is the On Call schedule. And this the way to handle things when the roof is on fire. Everything else can wait 2 days. If something that needs attention happens on Monday afternoon, it can easily wait till Wednesday afternoon. Otherwise it means that we have a much bigger problem than the emergency itself. this is another story, though, that deserves it's own post.
+They don't exist, I'm sorry. _Your_ emergencies are not allowed to disrupt _my_ day. In [Particular](https://particular.net/) we have a clearly defined process to handle them. This is the On Call schedule. And this the way to handle things when the roof is on fire. Everything else can wait 2 days. If something that needs attention happens on Monday afternoon, it can easily wait till Wednesday afternoon. Otherwise it means that we have a much bigger problem than the emergency itself. this is another story, though, that deserves it's own post.
