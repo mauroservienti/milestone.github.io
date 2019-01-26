@@ -16,12 +16,11 @@ github_username:  topics
 github_repository:  milestone.github.io
 
 highlighter: rouge
-
 markdown: kramdown
-
 exclude: ['README.md', 'LICENSE']
-
 encoding: utf-8
+plugins:
+  - jekyll-sitemap
 
 collections:
   events:
