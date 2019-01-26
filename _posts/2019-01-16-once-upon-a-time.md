@@ -1,8 +1,9 @@
 ---
 typora-root-url: ..
-typora-copy-images-to: ../img/posts
+typora-copy-images-to: ../img/posts/once-upon-a-time
 
 layout: post
+header_image: /img/posts/once-upon-a-time/header.jpg
 title: "Once upon a time..."
 author: Mauro Servienti
 synopsis: "I used to write 3 posts every week (on my Italian blog). Then she joined our lives and everything changed, from priorities to free time. Exactly a year later, so happy first birthday my love, I decided that it’s time to get back to that experiment."
@@ -31,7 +32,7 @@ In the beginning it was absolutely hard. Near to impossible. I didn't have ideas
 
 Then, suddenly, something happened. After a couple of months, and 29 mediocre (in retrospective) posts, I saw [the light at the end of the tunnel](https://www.youtube.com/watch?v=u-UoGYc906c):
 
-> Ideas started to form, the script was crystal clear, and the resulting post was very easy to write. I was a king of volcano of ideas, and honestly, the set schedule was not enough. I could written a post very single day without affecting my ideas backlog.
+> Ideas started to form, the script was crystal clear, and the resulting post was very easy to write. I was a kind of volcano of ideas, and honestly, the set schedule was not enough. I could have written a post very single day without affecting my backlog of ideas.
 
 The moral of the story is not that I'm a good writer. The moral of the story is that:
 
