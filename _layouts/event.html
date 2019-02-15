@@ -7,6 +7,10 @@ layout: default
   <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
 </header>
   
+{% if page.header_image %}
+  <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+{% endif %}
+  
 <h2 class="event-host">
   {{ page.title }}
 </h2>
@@ -42,7 +46,7 @@ layout: default
     {% if session.abstract %}
     <div class="session-abstract">{{ session.abstract }}</div>
     {% endif %}
-    {% if session.url or session.slides or session.demos or session.recording %}
+    {% if session.url or session.slides or session.demos or session.recording or session.speakers %}
     <div class="session-resources">
       {% if session.speakers %}
         {% for speaker in session.speakers %}
