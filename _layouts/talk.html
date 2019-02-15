@@ -7,11 +7,15 @@ layout: default
         <p class="talk-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this talk</a></p>
     </header>
 
+    {% if page.header_image %}
+      <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+    {% endif %}
+  
     <h2 class="talk-host">
         {{ page.title }}
     </h2>
     <hr class="h-splitter" />
-    <div class="talk-abstract">{{ page.abstract }}</div>
+    <div class="talk-synopsis">{{ page.synopsis }}</div>
     <hr class="h-splitter" />
     <div class="talk-languages">Available in:
     {% for lang in page.languages %}

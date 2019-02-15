@@ -47,7 +47,9 @@
 }
 
 .post-header{
-	
+	img{
+		margin-top: 15px;
+	}
 }
 
 .post-content{
@@ -97,14 +99,14 @@
 	}
 	
 	.footer-heading{
-    color: $grey-color-light;
+        	color: $grey-color-light;
 	}
 	
 	.wrapper{
-    .text{
-      color: $grey-color-light;
-      font-style: italic;
-    }
+    		.text{
+      			color: $grey-color-light;
+      			font-style: italic;
+    		}
 	}
 }
 
@@ -113,6 +115,9 @@
 	padding-top: 10px;
 	padding-left: 20px;
 	padding-bottom: 10px;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: $grey-color-light;
 	
 	@media screen and (max-width: $break-small) {
 		border-left-width: 0px;
@@ -175,7 +180,7 @@
 .sessions-list{
 	margin: 0;
 	margin-top: 15px;
-	margin-left: 0px;
+	margin-left: 5px;
 	padding: 0;
 	list-style: none;
 
@@ -227,6 +232,15 @@
 	list-style-type: none;
 }
 
+.talk-header{
+	text-align: right;
+}
+
+.talk-meta{
+	font-size: $small-font-size;
+	color: $grey-color;
+}
+
 .talk-content{
 
 	padding-top: 10px;
@@ -243,7 +257,7 @@
 	text-align: center;
 }
 
-.talk-abstract{
+.talk-synopsis{
 	padding-left: 20px;
 	padding-right: 20px;
 	text-align: justify;
@@ -260,6 +274,12 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.talks-list{
+	.panel-heading{
+		padding: 0px;	
+	}
 }
 
 .page-footer{
