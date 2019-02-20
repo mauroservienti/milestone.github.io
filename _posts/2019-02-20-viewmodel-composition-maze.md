@@ -48,7 +48,7 @@ Given a key, `products/1`, we can now ask services to return data identified by 
 
 At this point there is nothing preventing us doing something as simple as merging data returned from different services to automatically generate the required ViewModel. In theory, if Marketing returns something like:
 
-```json
+```
 {
    key: 'products/1',
    name: 'Banana Protector',
@@ -58,7 +58,7 @@ At this point there is nothing preventing us doing something as simple as mergin
 
 And Sales something like:
 
-```json
+```
 {
    key: 'products/1',
    price: 7.99
@@ -67,7 +67,7 @@ And Sales something like:
 
 We could blindly and transparently merge everything we have to a resulting ViewModel such as the following:
 
-```json
+```
 {
    key: 'products/1',
    name: 'Banana Protector',
