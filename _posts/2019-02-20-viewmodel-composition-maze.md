@@ -28,7 +28,7 @@ The aforementioned product is a combination of the 2 mentioned scenarios. Single
 
 ### Prerequisites
 
-If data, required to build the ViewModel, are distributed across multiple services there is the need to correlate them in some way. It is not different to the problem we have when in need to compose data coming from different tables in a relational database. We need be able to correlate data in some way, relational databases elegantly solve this problem by using the concept of shared keys. Data related to each other, but living in different tables, in some way share the same key.
+If data, required to build the ViewModel, are distributed across multiple services there is the need to correlate them in some way. It is not different to the problem we have when in need to compose data coming from different tables in a relational database. We need to be able to correlate data in some way: relational databases elegantly solve this problem by using the concept of shared keys. Data related to each other, but living in different tables, in some way share the same key.
 
 > Databases further refine this concept by introducing, for example, foreign keys. Databases keys and strategies are outside the scope of this post.
 
