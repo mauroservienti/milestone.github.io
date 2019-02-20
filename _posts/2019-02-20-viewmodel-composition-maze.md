@@ -28,11 +28,13 @@ The aforementioned product is a combination of the 2 mentioned scenarios. Single
 
 ### Prerequisites
 
-If data, required to build the ViewModel, are distributed across multiple services there is the need to correlate them in some way. It is not different to the problem we have when in need to compose data coming from different table in a relational database. We need be able to correlate data in some way, relational databases elegantly solve this problem by using the concept of shared keys. Data related to each other, but living in different tables, in some way share the same key.
+If data, required to build the ViewModel, are distributed across multiple services there is the need to correlate them in some way. It is not different to the problem we have when in need to compose data coming from different tables in a relational database. We need be able to correlate data in some way, relational databases elegantly solve this problem by using the concept of shared keys. Data related to each other, but living in different tables, in some way share the same key.
 
 > Databases further refine this concept by introducing, for example, foreign keys. Databases keys and strategies are outside the scope of this post.
 
-Once there is a shared key, it can be used to issue a join request, still using the database metaphor. Is there anything preventing us to apply the same concept to data owned by different services?
+Once there is a shared key, it can be used to issue a join request, still using the database metaphor.
+
+Is there anything preventing us to apply the same concept to data owned by different services?
 
 If, each service, other than storing its own data, also takes care of attaching a shared key to its own representation, we'll have a way to ask them to retrieve data connected to a specific key. That is not that different from the database join operation mentioned before.
 
@@ -40,11 +42,11 @@ This operation can be schematized like follows:
 
 ![a-composed-product](/img/posts/viewmodel-composition-maze/a-composed-product.jpg)
 
-Given a key, `products/1`, we can now ask services to return data identified by the given key. All the retrieve operation can be run in parallel as the only shared, and required, piece of information is the key. Once all the data are on the client, whatever client means in this context, they can be composed as a ViewModel.
+Given a key, `products/1`, we can now ask services to return data identified by the given key. All the retrieve operations can be run in parallel as the only shared, and required, piece of information is the key. Once all the data are on the client, whatever client means in this context, they can be composed as a ViewModel.
 
 ## Let's compose!
 
-At this point there is nothing preventing us doing something as simple as merging data returned from different services to automatically generate the required ViewModel. In theory if Marketing returns something like:
+At this point there is nothing preventing us doing something as simple as merging data returned from different services to automatically generate the required ViewModel. In theory, if Marketing returns something like:
 
 ```json
 {
@@ -78,4 +80,4 @@ We're still ignoring many nuances for sure, but this gives you a rough idea of w
 
 ## Conclusions
 
-At a first look it seems that ViewModel Composition needs to be manually and carefully crafted to solve every single scenario by using a dedicated solution. As we've seen we can reconduct all the composition scenarios to 2 main patterns: Single Item and Lists Composition. In this post we had a first look at the mechanics of Single Item Composition. Next one will dive into the Lists Composition scenarios. Say tuned.
+At a first look it seems that ViewModel Composition needs to be manually and carefully crafted to solve every single scenario by using a dedicated solution. As we've seen we can reconduct all the composition scenarios to 2 main patterns: Single Item and Lists Composition. In this post we had a first look at the mechanics of Single Item Composition. Next one will dive into Lists Composition scenarios. Say tuned.
