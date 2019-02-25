@@ -46,7 +46,7 @@ layout: page
                 <img class="media-object" src="img/speak.jpg" alt="speaker" width="175px">
               </div>
                 <div class="media-body">
-                  I'll be speaking soon at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
+                  I'll be at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
                   <ul class="upcoming-event-sessions-list">
                   {% for session in upcomingevent.sessions %}
                     <li>
