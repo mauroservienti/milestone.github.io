@@ -4,10 +4,10 @@ status: 'upcoming'
 title: "Codemotion free webinar - Microservices architecture: is it the right choice to design long-living systems?"
 location: "online webinar"
 language: "English"
-eventurl: ""
+eventurl: "https://about.codemotion.com/webinar-microservices-architecture-mauro-servienti/"
 calendar:
-  start: ""
-  end: ""
+  start: "2019-03-12T16:00:00"
+  end: "2019-03-12T16:45:00"
 sessions:
 - title: "Microservices architecture: is it the right choice to design long-living systems?"
   speakers:
