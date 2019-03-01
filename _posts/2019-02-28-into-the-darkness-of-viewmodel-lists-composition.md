@@ -60,19 +60,19 @@ The Marketing component, or `RequestHandler`, will return a list of products, so
 
 At this point Marketing is ready to notify all other interested parties that some products have been loaded:
 
-![1551362507668](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362507668.png)
+![1551362507668](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362507668.png){:class="img-responsive"}
 
 The Marketing `RequestHandler` publishes an in-memory event to notify that some products have been loaded. Sales and Shipping are interested in augmenting those products, thus they receive the `ProductsLoaded` event, that contains all the keys of the loaded products.
 
-![1551362519284](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362519284.png)
+![1551362519284](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362519284.png){:class="img-responsive"}
 
 Once all components have received the event they go to their respective backends to retrieve all the information related to all the loaded products, in 1 single roundtrip. 
 
-![1551362531125](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362531125.png)
+![1551362531125](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362531125.png){:class="img-responsive"}
 
 Once all the information are retrieved the last step, the composition, is not that different from the Single Item Composition scenario:
 
-![1551362461054](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362461054.png)
+![1551362461054](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362461054.png){:class="img-responsive"}
 
 It's as simple as an in-memory `foreach` iterating over the loaded product, giving each interested party the opportunity to augment each product with their data.
 
