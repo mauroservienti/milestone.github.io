@@ -42,7 +42,7 @@ Going on with our *made up* sample we could say that business wise Marketing/Pro
 
 In this case *Marketing* is the perfect place to ask for the list of Products we want to display. Marketing will be the one handling the `/products` request:
 
-![1551362496722](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362496722.png)
+![1551362496722](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362496722.png){:class="img-responsive"}
 
 The Marketing component, or `RequestHandler`, will return a list of products, something similar to:
 
