@@ -1,6 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
+header_image: /img/events/net-day-switzerland-2019/header.jpg
 title: ".NET Day Switzerland 2019"
 location: "Arena Cinemas AG, Kalanderplatz 8, Sihlcity, 8045 Zürich"
 language: "English"

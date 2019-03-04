@@ -1,6 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
+header_image: /img/events/agile-for-innovation-2019/header.jpg
 title: "Agile for Innovation 2019"
 location: "UNIVERSITÀ DEGLI STUDI DI MILANO-BICOCCA"
 language: "Italian"

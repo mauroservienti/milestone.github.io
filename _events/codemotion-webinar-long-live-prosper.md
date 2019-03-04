@@ -1,6 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
+header_image: /img/events/codemotion-webinar-long-live-prosper/header.jpg
 title: "Codemotion free webinar - Microservices architecture: is it the right choice to design long-living systems?"
 location: "online webinar"
 language: "English"
