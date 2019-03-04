@@ -13,6 +13,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+tags:
 - architecture
 - SOA
 - Microsevices
