@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "global diversity CFP day, Italian edition workshop"
 location: "Mikamai/Linkme | Via Giulio e Corrado Venini, 42, 20127 Milano MI"
 language: "Italian"
@@ -10,10 +10,12 @@ calendar:
   end: "2019-03-02T13:30:00"
 sessions:
 - title: "Public speaking for geeks"
+  slides: https://www.slideshare.net/geniodelmale/improving-your-public-speaking-skills
   speakers:
   - name: "Lorenzo Barbieri"
     profileurl: https://www.linkedin.com/in/geniodelmale/
 - title: "Titles, Abstracts, and Bio matters... Oh my!"
+  slides: https://www.slideshare.net/mauroservienti/titles-abstracts-and-bio-matter-oh-my-global-diversity-cfp-day-2019
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/

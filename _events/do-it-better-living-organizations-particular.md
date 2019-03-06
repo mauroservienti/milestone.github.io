@@ -1,6 +1,6 @@
 ---
 layout: event
-header_image: /img/events/living-organizations-particular-software-header.png
+header_image: /img/events/do-it-better-living-organizations-particular/header.png
 status: 'done'
 title: "Do IT Better Community Meetup"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
@@ -12,6 +12,7 @@ calendar:
 sessions:
 - title: "Living organizations, Particular Software"
   slides: https://www.slideshare.net/mauroservienti/living-organizations-particular-software-do-it-better-parma
+  recording: https://www.youtube.com/watch?v=0RYsClOMPVo
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
