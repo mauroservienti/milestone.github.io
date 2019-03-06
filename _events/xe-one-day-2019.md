@@ -1,5 +1,6 @@
 ---
 layout: event
+header_image: /img/events/xe-one-day-2019/header.jpg
 status: 'upcoming'
 title: "Xe One Day"
 location: "Holiday Inn Venezia, Venezia Mestre"
