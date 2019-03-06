@@ -23,7 +23,7 @@ Composing a list is a matter of doing 3 steps:
 - Step 2: get all the data for all the items in the list
 - Step 3: compose
 
-This reduces the number of HTTP calls to two and also reduces the load on our datastore since we can retrieve the details we need in one request (for each service).
+This reduces the number of HTTP calls to the minimum required and also reduces the load on our datastore since we can retrieve the details we need in one request (for each service).
 
 ## Business ownership
 
