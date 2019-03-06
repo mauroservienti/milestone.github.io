@@ -2,9 +2,9 @@
 layout: event
 status: 'upcoming'
 title: "Xe One Day"
-location: ""
+location: "Holiday Inn Venezia, Venezia Mestre"
 language: "Italian"
-eventurl: ""
+eventurl: "https://www.xedotnet.org/eventi/one-day-enterprise-application/"
 calendar:
   start: "2019-05-25"
 sessions:
