@@ -11,9 +11,9 @@ tags:
 - Services ViewModel Composition
 ---
 
-The ViewModel Composition discovery journey is nicely progressing, so far we the following topics were discussed:
+The ViewModel Composition discovery journey is progressing nicely, so far we've discussed:
 
-* What kind of problem is Services ViewModel Composition designed to solve in [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)
+* What problem is Services ViewModel Composition designed to solve in [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)
 * How is Single Item Composition designed in [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
 * How is ViewModels Lists Composition designed in [Into the darkness of ViewModels Lists Composition](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html)
 
@@ -21,9 +21,9 @@ The ViewModel Composition discovery journey is nicely progressing, so far we the
 
 It's probably the right time to start looking at some code, maybe still some theoretical and pseudo code, but at least something that explains how to put in practice what we've discovered so far.
 
-> I'll be using .NET and C# as it is my field of expertise. All what I'm showing can be achieved using different languages and platforms.
+> I'll be using .NET and C# as it is my field of expertise. All that I'm showing can be achieved using different languages and platforms.
 
-Let's keep this simple by looking at *Single Item Composition* first. Pursuing the Product sampled we used so far, we identified the following:
+Let's keep this simple by looking at *Single Item Composition* first. Pursuing the Product sample we used so far, we identified the following:
 
 * Each product is identified by a unique `key`.
 * Multiple services share the aforementioned key and use it to identify pieces of data that describe the Product from their point of view. As a recap we said:
@@ -31,7 +31,7 @@ Let's keep this simple by looking at *Single Item Composition* first. Pursuing t
   * *Sales* owns price.
   * *Warehouse* owns availability.
   * *Shipping* owns shipping options.
-* Whenever a Product is requested each services needs to participate in the request handling and augment the returned product, the ViewModel, with its data.
+* Whenever a Product is requested, each service needs to participate in the request handling and augment the returned product, the ViewModel, with its data.
 
 If each service needs to be able to participate in the request handling process we could start by designing something like:
 
@@ -42,11 +42,11 @@ interface IHandleRequests
 }
 ```
 
-Whenever a request comes into the system it'll be handled, by something we can call Composition Engine for now, that creates an empty `ViewModel`, the `dynamic vm` argument above, and invokes all the implementers of the `IHandleRequests` interface.
+Whenever a request comes into the system it'll be handled by something we can call Composition Engine for now that creates an empty `ViewModel`, the `dynamic vm` argument above, and invokes all the implementers of the `IHandleRequests` interface.
 
-> `IHandleRequests` implementations, given the current `RouteData` and the current `HttpRequest` need to make a decision first: am I interested in this specific request? Or put it in another way: is this for a Product or for something else?
+> `IHandleRequests` implementations, given the current `RouteData` and the current `HttpRequest` need to make a decision first: am I interested in this specific request? Or put another way: is this for a Product or for something else?
 
-We're probably assigning too many responsibilities to `Handle` implementation, we can enhance the situation by changing the above interface as follows:
+We're probably assigning too many responsibilities to the `Handle` implementation so we can enhance the situation by changing the above interface as follows:
 
 ```csharp
 interface IHandleRequests
@@ -56,7 +56,7 @@ interface IHandleRequests
 }
 ```
 
-The `Matches` method responsibility is to determine if the current `HttpRequest` is of interest for a given request handler. Introducing the `Matches` method means that the mentioned Composition Engine has the following behavior:
+The `Matches` method's responsibility is to determine if the current `HttpRequest` is of interest for a given request handler. Introducing the `Matches` method means that the mentioned Composition Engine has the following behavior:
 
 * Handles an incoming request
 * Iterates over all request handlers calling the `Matches` implementation
@@ -64,7 +64,7 @@ The `Matches` method responsibility is to determine if the current `HttpRequest`
   * Creates and empty `ViewModel`
   * Calls all the interested handlers `Handle` implementations
 
-Thinking about a Product one possible implementation, eg. for *Marketing*, could be:
+Thinking about a Product, one possible implementation, eg. for *Marketing*, could be:
 
 ```csharp
 class MarketingProductDetailsGetHandler : IHandleRequests
@@ -82,7 +82,7 @@ class MarketingProductDetailsGetHandler : IHandleRequests
 }
 ```
 
-The `MarketingProductDetailsGetHandler` `Matches` method inspects the current `HttpRequest` and based on its status determines if it is interested in handling it or not. In case it is interested it returns `true` and the Composition Engine will invoke the `Handle` method, that could look like similar to:
+The `MarketingProductDetailsGetHandler` `Matches` method inspects the current `HttpRequest` and based on its status determines if it is interested in handling it or not. In case it is interested it returns `true` and the Composition Engine will invoke the `Handle` method, that could look similar to:
 
 ```csharp
 class MarketingProductDetailsGetHandler : IHandleRequests
@@ -107,11 +107,11 @@ class MarketingProductDetailsGetHandler : IHandleRequests
 }
 ```
 
-At handling time the request handler loads data from its backend, in the above sample forwarding an http request, but it could use whatever technique it wants. Once data are retrieved they are appended to the incoming ViewModel (`dynamic vm`).
+At handling time the request handler loads data from its backend (in the above sample by forwarding an http request), but it could use whatever technique it wants. Once data are retrieved they are appended to the incoming ViewModel (`dynamic vm`).
 
 At this point it's probably clear that if all the services interested in a specific type of request, e.g. a Product details, deploy their own implementation of the `IHandleRequests` interface they can all participate in the ViewModel composition process.
 
-## Conclusions
+## Conclusion
 
 The entire composition flow can be summarized as follows:
 
