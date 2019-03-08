@@ -13,15 +13,17 @@ tags:
 
 We had [a first look at what problem ViewModel Composition is](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html) designed to solve, then we analyzed what it means to [compose a single item](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html), using a Product as sample model. It's now time to start exploring what it means to compose a list of Product ViewModels.
 
-## Dark times
+## Why can't we just...?
 
 The trap of composing lists of ViewModels is that we cannot apply the same technique used for single items. If we have a list of items, where each item in the list is composed by data coming from multiple services, we cannot compose each item. Composing each item one by one means that our list will turn into a scary `SELECT N+1` type of thing, but worse since it'll be over `HTTP`.
 
 Composing a list is a matter of doing 3 steps:
 
-- step 1: get the keys of the items that should be included in the list
-- step 2: get all the data for all the items in the list
-- step 3: compose
+- Step 1: get the keys of the items that should be included in the list
+- Step 2: get all the data for all the items in the list
+- Step 3: compose
+
+This reduces the number of HTTP calls to the minimum required and also reduces the load on our datastore since we can retrieve the details we need in one request (for each service).
 
 ## Business ownership
 
@@ -38,7 +40,7 @@ We have identified 4 different services so far:
 
 > Marketing should be really named *product catalog*, you know...naming is hard :-)
 
-Going on with our *made up* sample we could say that business wise Marketing/Product Catalog is the one that makes decisions about the existence of a Product. Which means that from the business perspective *Marketing* owns the concept of a Product.
+Continuing with our sample we could say that Marketing/Product Catalog is the one that makes decisions about the existence of a Product. Which means that from the business perspective, *Marketing* owns the concept of a Product.
 
 In this case *Marketing* is the perfect place to ask for the list of Products we want to display. Marketing will be the one handling the `/products` request:
 
@@ -66,11 +68,11 @@ The Marketing `RequestHandler` publishes an in-memory event to notify that some 
 
 ![1551362519284](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362519284.png){:class="img-responsive"}
 
-Once all components have received the event they go to their respective backends to retrieve all the information related to all the loaded products, in 1 single roundtrip. 
+Once all components have received the event they go to their respective backends to retrieve the information related to all the loaded products, in a single roundtrip. 
 
 ![1551362531125](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362531125.png){:class="img-responsive"}
 
-Once all the information are retrieved the last step, the composition, is not that different from the Single Item Composition scenario:
+Once the information has been retrieved, the last step (i.e. the composition) is not that different from the Single Item Composition scenario:
 
 ![1551362461054](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362461054.png){:class="img-responsive"}
 
@@ -78,6 +80,6 @@ It's as simple as an in-memory `foreach` iterating over the loaded product, givi
 
 ## Conclusions
 
-Composing lists of items sounds complex and scary, we don't want to fall into the `SELECT N+1 trap over HTTP`. Looking deeply into the problem however, first we can identify who is the service responsible to get the list of items to display keys. Once we have all the keys we can apply an approach similar to the one used for the Single Item Composition and retrieve data in batches to optimize server-side communication.
+Composing lists of items sounds complex and scary; we don't want to fall into the `SELECT N+1 trap over HTTP`. Looking deeply into the problem however, first we can identify who is the service responsible to get the list of items to display keys. Once we have all the keys we can apply an approach similar to the one used for the Single Item Composition and retrieve data in batches to optimize server-side communication.
 
 It's probably time to dive into some code. To be continued...
