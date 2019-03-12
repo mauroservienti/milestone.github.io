@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/codemotion-webinar-long-live-prosper/header.jpg
 title: "Codemotion free webinar - Microservices architecture: is it the right choice to design long-living systems?"
 location: "online webinar"
@@ -11,6 +11,7 @@ calendar:
   end: "2019-03-12T16:45:00"
 sessions:
 - title: "Microservices architecture: is it the right choice to design long-living systems?"
+  slides: https://www.slideshare.net/mauroservienti/microservices-architecture-is-it-the-right-choice-to-design-longliving-systems-codemotion-webinar
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
