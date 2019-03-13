@@ -78,7 +78,7 @@ Once the information has been retrieved, the last step (i.e. the composition) is
 
 It's as simple as an in-memory `foreach` iterating over the loaded product, giving each interested party the opportunity to augment each product with their data.
 
-## Conclusions
+## Conclusion
 
 Composing lists of items sounds complex and scary; we don't want to fall into the `SELECT N+1 trap over HTTP`. Looking deeply into the problem however, first we can identify who is the service responsible to get the list of items to display keys. Once we have all the keys we can apply an approach similar to the one used for the Single Item Composition and retrieve data in batches to optimize server-side communication.
 
