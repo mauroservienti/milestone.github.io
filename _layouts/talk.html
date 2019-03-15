@@ -11,16 +11,21 @@ layout: default
       <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
   
-    <h2 class="talk-host">
+    <!-- <h2 class="talk-host">
         {{ page.title }}
     </h2>
     <hr class="h-splitter" />
     <div class="talk-synopsis">{{ page.synopsis }}</div>
-    <hr class="h-splitter" />
+<hr class="h-splitter" /> -->
+    
     <div class="talk-languages">Available in:
     {% for lang in page.languages %}
         <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
     {% endfor %}
      </div>
+  <hr class="h-splitter" />
+  <article class="event-content">
+    {{ content }}
+</article>
 
 </div>
