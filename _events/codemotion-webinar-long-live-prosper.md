@@ -13,6 +13,7 @@ sessions:
 - title: "Microservices architecture: is it the right choice to design long-living systems?"
   slides: https://www.slideshare.net/mauroservienti/microservices-architecture-is-it-the-right-choice-to-design-longliving-systems-codemotion-webinar
   recording: https://youtu.be/148T9ixsN1M
+  demos: http://bit.ly/codemotion-webinar-microservices
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
