@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/agile-for-innovation-2019/header.jpg
 title: "Agile for Innovation 2019"
 location: "UNIVERSITÀ DEGLI STUDI DI MILANO-BICOCCA"
@@ -10,6 +10,7 @@ calendar:
   start: "2019-03-14"
 sessions:
 - title: "Be like water, my friend"
+  slides: https://www.slideshare.net/mauroservienti/be-like-water-my-friend-agile-for-innovation-2019
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
