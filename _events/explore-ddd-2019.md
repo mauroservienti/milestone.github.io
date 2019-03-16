@@ -2,6 +2,7 @@
 layout: event
 status: 'upcoming'
 title: "Explore DDD 2019"
+header_image: /img/events/explore-ddd-2019/header.jpg
 location: "Grand Hyatt – Denver, Colorado, USA"
 language: "English"
 eventurl: "http://exploreddd.com/"
