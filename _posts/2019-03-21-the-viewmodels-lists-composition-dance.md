@@ -11,7 +11,7 @@ tags:
 - Services ViewModel Composition
 ---
 
-We've recently had a [look at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized using the following diagram:
+We recently [looked at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized using the following diagram:
 
 ![composition engine information flow](https://milestone.topics.it/img/posts/viewmodel-composition-show-me-the-code/1551868103502.png){:class="img-responsive"}
 
@@ -19,7 +19,7 @@ The diagram is a bird-eye view of the composition flow, and misses details about
 
 ## Let's dance
 
-In the mentioned article, _Marketing_ is identified as the *Product* concept owner, and as such _Marketing_ is the one responsible to return the **list** of *Products*:
+In the mentioned articles, _Marketing_ is identified as the one owning the *Product* concept, and as such is responsible to return the **list** of *Products*:
 
 ```csharp
 class MarketingProductsListGetHandler : IHandleRequests
@@ -57,7 +57,7 @@ class MarketingProductsListGetHandler : IHandleRequests
 }
 ```
 
-Whenever a matching request is intercepted, _Marketing_ retrieves the list of available products, in the above snippet just IDs are returned.
+Whenever a matching request is intercepted, _Marketing_ retrieves the list of available products. Products that in the above snippet are just IDs.
 
 > As said _Marketing_ also owns names and descriptions, in which case in a real world scenario they would have been returned in the same response.
 
@@ -116,11 +116,11 @@ IDictionary<int, dynamic> MapToDictionary(IEnumerable<int> availableProducts)
 
 Once that's ready the `AvailableProductsLoaded` event is raised, and finally the composed ViewModels are appended to the response ViewModel (`vm`).
 
-> The way the event is raised and dispatched to handlers is still obscure. As obscure is the whole composition infrastructure. Don't desperate there will be a dedicated article.
+> The way the event is raised and dispatched to handlers is still obscure. As obscure is the whole composition infrastructure. Don't desperate, there will be a dedicated article.
 
 ## False notes
 
-The `IHandleRequests` interfaces is clearly insufficient. Semantically it's not designed to handle events.
+The `IHandleRequests` interfaces is clearly insufficient. Semantically, it's not designed to handle events.
 
 ```csharp
 interface ISubscribeToCompositionEvents
@@ -144,7 +144,9 @@ class AvailableProductsLoadedSubscriber : ISubscribeToCompositionEvents
 }
 ```
 
-At runtime the composition infrastructure will invoke all components that implement the `ISubscribeToCompositionEvents` interface giving them the opportunity to subscribe to composition events. In e above snippet _Sales_ is subscribing to the `AvailableProductsLoaded` event that _Marketing_ raises whenever a list of available products is requested. When _Sales_ handles the event, additional products information are retrieved and composed into the list:
+At runtime the composition infrastructure will invoke all components implementing the `ISubscribeToCompositionEvents` interface giving them the opportunity to subscribe to composition events. In the above snippet _Sales_ is subscribing to the `AvailableProductsLoaded` event that _Marketing_ raises whenever a list of available products is requested.
+
+When _Sales_ handles the event, additional products information are retrieved and composed into the list:
 
 ```csharp
 public void Subscribe(ISubscriptionStorage subscriptionStorage, RouteData routeData, HttpRequest request)
