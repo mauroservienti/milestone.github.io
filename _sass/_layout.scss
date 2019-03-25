@@ -104,16 +104,7 @@
 .event-content{
 
 	padding-top: 10px;
-	padding-left: 20px;
 	padding-bottom: 10px;
-	border-left-width: 1px;
-	border-left-style: solid;
-	border-left-color: $grey-color-light;
-	
-	@media screen and (max-width: $break-small) {
-		border-left-width: 0px;
-		padding-left: 0px;
-	}
 	
 	h1, h2, h3, h4, h5, h6{
 		font-style: italic;
