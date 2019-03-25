@@ -53,17 +53,8 @@
 }
 
 .post-content{
-	border-left-style: solid;
-	border-left-width: 2px;
-	border-left-color: $grey-color-light;
 	padding-top: 10px;
-	padding-left: 20px;
 	padding-bottom: 10px;
-	
-	@media screen and (max-width: $break-small) {
-		border-left-width: 0px;
-		padding-left: 0px;
-	}
 }
 
 .post-meta{
