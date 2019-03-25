@@ -118,7 +118,7 @@ Once that's ready the `AvailableProductsLoaded` event is raised, and finally the
 
 > The way the event is raised and dispatched to handlers is still obscure. As obscure is the whole composition infrastructure. Don't desperate, there will be a dedicated article.
 
-## False notes
+## False notes: events are not requests
 
 The `IHandleRequests` interfaces is clearly insufficient. Semantically, it's not designed to handle events.
 
@@ -126,10 +126,10 @@ The `IHandleRequests` interfaces is clearly insufficient. Semantically, it's not
 interface ISubscribeToCompositionEvents
 {
    void Subscribe(ISubscriptionStorage subscriptionStorage, RouteData routeData, HttpRequest request);
-    }
+}
 ```
 
-`ISubscribeToCompositionEvents` expresses the intent very well. Components implementing it are interested in subscribing to composition events. For example, _Sales_ could do something like:
+`ISubscribeToCompositionEvents` expresses the intent much better. Components implementing it are interested in subscribing to composition events. For example, _Sales_ could do something like:
 
 ```csharp
 class AvailableProductsLoadedSubscriber : ISubscribeToCompositionEvents
@@ -174,6 +174,8 @@ It's important to note that the event handler:
 - once additional information are retrieved it iterates over the elements in the dictionary, matching by ID, and augment each element with its own information.
 
 Other handlers do the exact same thing in parallel, and once they are all done the composed list is returned to the client.
+
+> As previously said, requests handlers and events handlers are not constrained to use http themselves to retrieve data. They could use whatever technique they satisfies their needs.
 
 ## Conclusion
 
