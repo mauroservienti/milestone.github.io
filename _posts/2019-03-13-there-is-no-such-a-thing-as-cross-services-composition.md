@@ -13,10 +13,10 @@ tags:
 
 In fact there isn't such a thing as cross-service data sharing at all. Lately I started a series of articles about Service ViewModel Composition. I talked about:
 
-- What problem is services ViewModel Composition designed to solve in [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)".
+- What problem is services ViewModel Composition designed to solve in [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)
 - How Single Item Composition is designed in [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
 - How ViewModel Lists Composition is designed in [Into the darkness of ViewModels Lists Composition](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html)
-- Introduced some coding in [ViewModel Composition: show me the code!](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html).
+- Introduced some coding in [ViewModel Composition: show me the code!](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html)
 
 ## Share all the things!
 
