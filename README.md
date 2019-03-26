@@ -16,6 +16,6 @@ sudo apt-get install -y build-essential ruby-full
 ### update ruby gems and install Jekyll
 
 ```bash
-sudo gem update –system
+sudo gem update –-system
 sudo gem install jekyll bundler
 ```
