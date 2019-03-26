@@ -185,8 +185,8 @@ Finally, another important thing that deserves its own article: _Marketing_ does
 
 #### Articles in this series:
 
-- [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)”.
+- [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)
 - [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
 - [Into the darkness of ViewModels Lists Composition](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html)
-- [ViewModel Composition: show me the code!](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html).
+- [ViewModel Composition: show me the code!](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html)
 - [There is no such a thing as cross-service ViewModel Composition](https://milestone.topics.it/2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html)
