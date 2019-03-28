@@ -6,66 +6,82 @@ show_in_header: ''
 ---
 
 <div class="home-content">
-{% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
-{% assign len = upcomingevents | size %}
-  
-<h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the coming weeks.</h3>
+  {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
+  {% assign len = upcomingevents | size %}
+
+  <h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the
+    coming weeks.</h3>
 
   {% if len > 0 %}
-  
-  <div class="jumbotron nearest-event">
+
+  <div class="card bg-light nearest-event mb-3">
     {% assign nearest = upcomingevents[0] %}
-    <div class="event-details">
-      <img class="event-details-icon" src="/img/calendar.png" />
-      <span class="event-date">
-        {% if nearest.calendar.display %}
+    <div class="card-header">
+      <div class="event-details">
+        <img class="event-details-icon" src="/img/calendar.png" />
+        <span class="event-date">
+          {% if nearest.calendar.display %}
           {{ nearest.calendar.display }}
-        {% else %}
-          {% if nearest.calendar.start contains "T" %}
-            {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
           {% else %}
-            {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+          {% if nearest.calendar.start contains "T" %}
+          {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+          {% else %}
+          {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
           {% endif %}
-        {% endif %}
-      </span>
-      <img class="event-details-icon" src="/img/location.png" />
-      <span class="event-location">{{ nearest.location }}</span>
-      <img class="event-details-icon" src="/img/language.png" />
-      <span class="event-language">{{ nearest.language }}</span>
+          {% endif %}
+        </span>
+        <img class="event-details-icon" src="/img/location.png" />
+        <span class="event-location">{{ nearest.location }}</span>
+        <img class="event-details-icon" src="/img/language.png" />
+        <span class="event-language">{{ nearest.language }}</span>
+      </div>
     </div>
-    <h2>
-      <a class="muted-link" href="{{ nearest.url | prepend: site.baseurl }}">{{ nearest.title }}</a>
-    </h2>
-    <hr class="h-splitter" />
-    <div>
-      <ul class="sessions-list">
-        {% for session in nearest.sessions %}
-        <li>
-          <span class="session-title">{{ session.title }}</span>
-          <div class="session-abstract">{{ session.abstract }}</div>
-        </li>
-        {% endfor %}
-      </ul>
+
+    {% if nearest.header_image %}
+    <img class="img-fluid" alt=" {{ nearest.title }} header image"
+      src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    {% endif %}
+
+    <div class="card-body">
+      <h2 class="card-title">
+        <a class="muted-link" href="{{ nearest.url | prepend: site.baseurl }}">{{ nearest.title }}</a>
+      </h2>
+
+      <hr class="h-splitter" />
+      <p class="card-text">
+        <ul class="sessions-list">
+          {% for session in nearest.sessions %}
+          <li>
+            <span class="session-title">{{ session.title }}</span>
+            <div class="session-abstract">{{ session.abstract }}</div>
+          </li>
+          {% endfor %}
+        </ul>
+      </p>
+      <p class="card-text">
+        <small class="text-muted">
+          <a href="{{ nearest.url | prepend: site.baseurl }}">More information...</a>
+        </small>
+      </p>
     </div>
-    <hr class="h-splitter" />
-    <a href="{{ nearest.url | prepend: site.baseurl }}">More info...</a>
+
   </div>
-  
+
   <div>
     {% for event in upcomingevents offset:1 %}
-    <div class="panel panel-default">
-      <div class="panel-body">
+    <div class="card mb-3">
+      <div class="card-header">
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />
           <span class="event-date">
             {% if event.calendar.display %}
-              {{ event.calendar.display }}
+            {{ event.calendar.display }}
             {% else %}
-              {% if event.calendar.start contains "T" %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
-              {% else %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
-              {% endif %}
+            {% if event.calendar.start contains "T" %}
+            {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+            {% else %}
+            {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+            {% endif %}
             {% endif %}
           </span>
           <img class="event-details-icon" src="/img/location.png" />
@@ -73,11 +89,13 @@ show_in_header: ''
           <img class="event-details-icon" src="/img/language.png" />
           <span class="event-language">{{ event.language }}</span>
         </div>
-        <h3>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title">
           <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
-        </h3>
+        </h4>
         <hr class="h-splitter" />
-        <div>
+        <p class="card-text">
           <ul class="sessions-list">
             {% for session in event.sessions %}
             <li>
@@ -85,27 +103,32 @@ show_in_header: ''
             </li>
             {% endfor %}
           </ul>
-        </div>
-      </div>          
-      <ul class="list-group">
-        <li class="list-group-item">
-          <a href="{{ event.url | prepend: site.baseurl }}">More info...</a>
-        </li>
-      </ul>
+        </p>
+        <p class="card-text">
+          <small class="text-muted">
+            <a href="{{ event.url | prepend: site.baseurl }}">More information...</a>
+          </small>
+        </p>
+      </div>
     </div>
     {% endfor %}
+
     <a href="/archive/events/">Looking for archived events?</a>
   </div>
   <hr class="h-splitter" />
-  <div class="cfp">Have a look at the <a href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP" target="_blank">call for papers (CFP)</a> I submitted to.</div>
-  
+  <div class="cfp">Have a look at the <a
+      href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP"
+      target="_blank">call for papers (CFP)</a> I submitted to.</div>
+
   {% else %}
-  
+
   <div class="jumbotron">
-  Bummer! nothing planned...yet!<br />
-  Take a look at <a href="/archive/events/">where I've been in the past</a>, or have a look at the <a href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP" target="_blank">call for papers (CFP)</a> I submitted to.
+    Bummer! nothing planned...yet!<br />
+    Take a look at <a href="/archive/events/">where I've been in the past</a>, or have a look at the <a
+      href="https://github.com/mauroservienti/milestone.github.io/pulls?q=is%3Apr+is%3Aopen+label%3ACFP"
+      target="_blank">call for papers (CFP)</a> I submitted to.
   </div>
-  
+
   {% endif %}
-  
+
 </div>

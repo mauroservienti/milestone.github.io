@@ -2,50 +2,59 @@
 layout: default
 ---
 <div class="post">
-  
+
   <section class="post-nav">
     <div class="row">
-    {% if page.previous.url %}
-      <div class="col-md-6 prev"> 
+      {% if page.previous.url %}
+      <div class="col-md-6 prev">
         <a href="{{ page.previous.url | prepend: site.baseurl }}">&laquo; {{page.previous.title}}</a>
-      </div> 
-    {% endif %} 
-    {% if page.next.url %} 
+      </div>
+      {% endif %}
+      {% if page.next.url %}
       <div class="col-md-6 next">
         <a href="{{ page.next.url | prepend: site.baseurl }}">{{page.next.title}} &raquo;</a>
-      </div> 
-    {% endif %} 
+      </div>
+      {% endif %}
     </div>
   </section>
 
   <header class="post-header">
     {% if page.header_image %}
-    <img class="img-responsive" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+    <img class="img-fluid rounded" alt="{{ page.title }} header image"
+      src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
-    <h1 class="post-title">{{ page.title }}</h1>
-    <p class="post-meta">{{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} • {{ page.meta }}{% endif %} • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this post</a> • <a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a><br/> Reading time: <span class="eta"></span></p>
+    <h2 class="post-title">{{ page.title }}</h2>
+    <p class="post-meta">
+      {{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} •
+      {{ page.meta }}{% endif %} • Reading time: <span class="eta"></span> • <a
+        href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
+        this post</a> • <a
+        href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>
+    </p>
+    <hr class="h-splitter" />
   </header>
 
   <article class="post-content">
     {{ content }}
   </article>
-   
+
   <script type="text/javascript">
     $('.post-content').readingTime();
-   </script>
-   
+  </script>
+
   <div id="disqus_thread"></div>
-<script type="text/javascript">
+  <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = 'milestonetopicsit';
-    
+
     /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
+      powered by Disqus.</a></noscript>
 
 </div>
