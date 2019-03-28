@@ -4,93 +4,92 @@ layout: page
 
 <div class="home-content">
 
-  <div class="jumbotron first-post">
+  <div class="card mb-3">
     {% assign first = site.posts[0] %}
     {% if first.header_image %}
-      <img class="img-fluid rounded" alt="{{ first.title }} header image" src="{{ first.header_image | prepend: site.baseurl }}" />
+    <img class="img-fluid card-img-top alt=" {{ first.title }} header image"
+      src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
-    <h1>
-      <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>
-    </h1>
-    <hr class="h-splitter" />
-    <div>
-      {% if first.synopsis %}{{ first.synopsis }}{% else %}{{ first.excerpt }}{% endif %}
+    <div class="card-body">
+      <h1 class="card-title">
+        <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>
+      </h1>
+      <hr class="h-splitter" />
+      <p class="card-text">
+        {% if first.synopsis %}{{ first.synopsis }}{% else %}{{ first.excerpt }}{% endif %}
+      </p>
+      <p class="card-text">
+        <small class="text-muted">
+          <a class="card-link" href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
+        </small>
+      </p>
     </div>
-    <a href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
   </div>
-  
 
-  <div class="row">
-    {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
-    {% assign len = upcomingevents | size %}
-    {% if len > 0 %}
-      {% assign upcomingevent = upcomingevents[0] %}
-      <div class="col-md-12  upcoming-event">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h3 class="panel-title">Upcoming event • <span class="upcoming-event-date">
+  {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
+  {% assign len = upcomingevents | size %}
+  {% if len > 0 %}
+  {% assign upcomingevent = upcomingevents[0] %}
+  <div class="card mb-3">
+    <div class="row no-gutters">
+      <div class="col-md-4">
+        <img src="img/speak.jpg" class="card-img" alt="Speaker">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
-                {{ upcomingevent.calendar.display }}
+              {{ upcomingevent.calendar.display }}
               {% else %}
-                {% if upcomingevent.calendar.start contains "T" %}
-                  {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
-                {% else %}
-                  {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
-                {% endif %}
+              {% if upcomingevent.calendar.start contains "T" %}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% else %}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
               {% endif %}
-            </span></h3>
-          </div>
-          <div class="panel-body">
-            <div class="media">
-              <div class="media-left hidden-xs hidden-sm">
-                <img class="media-object" src="img/speak.jpg" alt="speaker" width="175px">
-              </div>
-                <div class="media-body">
-                  I'll be at <a class="upcoming-event-title" href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
-                  <ul class="upcoming-event-sessions-list">
-                  {% for session in upcomingevent.sessions %}
-                    <li>
-                      <span class="session-title">{{ session.title }}</span>
-                    </li>
-                  {% endfor %}
-                  </ul>
-                </div>
-            </div>
-          </div>
-          <ul class="list-group">
-            <li class="list-group-item">
+              {% endif %}
+            </span>
+          </h5>
+          <p class="card-text">I'll be at <a class="upcoming-event-title"
+              href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
+              class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
+            <ul class="upcoming-event-sessions-list">
+              {% for session in upcomingevent.sessions %}
+              <li>
+                <span class="session-title">{{ session.title }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </p>
+          <p class="card-text">
+            <small class="text-muted">
               <a href="{{ site.baseurl }}events/">More events...</a>
-            </li>
-          </ul>
+            </small>
+          </p>
         </div>
       </div>
-    {% endif %}
+    </div>
   </div>
-  
-  <div class="row">
+  {% endif %}
+
+  <div class="card-columns">
     {% for post in site.posts limit:6 offset:1 %}
-    {% if forloop.index0 == 3 %}
-  </div>
-  <div class="row">
-    {% endif %}
-      <div class="col-md-4  latest-post">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <h3>
-              <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-            </h3>
-            <hr class="h-splitter" />
-            <div>
-              {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
-            </div>
-          </div>          
-          <ul class="list-group">
-            <li class="list-group-item">
-              <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
-            </li>
-          </ul>
-        </div>
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title">
+          <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h3>
+        <hr class="h-splitter" />
+        <p class="card-text">
+          {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
+        </p>
+        <p class="card-text">
+          <small class="text-muted">
+            <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
+          </small>
+        </p>
       </div>
+    </div>
     {% endfor %}
   </div>
+
 </div>
