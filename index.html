@@ -11,9 +11,9 @@ layout: page
       src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <div class="card-body">
-      <h1 class="card-title">
+      <h2 class="card-title">
         <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>
-      </h1>
+      </h2>
       <hr class="h-splitter" />
       <p class="card-text">
         {% if first.synopsis %}{{ first.synopsis }}{% else %}{{ first.excerpt }}{% endif %}
@@ -75,9 +75,9 @@ layout: page
     {% for post in site.posts limit:6 offset:1 %}
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title">
+        <h4 class="card-title">
           <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        </h3>
+        </h4>
         <hr class="h-splitter" />
         <p class="card-text">
           {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
