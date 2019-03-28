@@ -13,7 +13,7 @@ tags:
 
 We recently [looked at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized as:
 
-![composition engine information flow](/img/posts/the-viewmodels-lists-composition-dance/1551868103502.png){:class="img-responsive"}
+![composition engine information flow](/img/posts/the-viewmodels-lists-composition-dance/1551868103502.png){:class="img-fluid"}
 
 The diagram is a bird-eye view of the composition flow, and misses details about list composition whose [darkness we've already investigated](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html). But now it's time to see how it looks in code.
 
