@@ -30,8 +30,7 @@ layout: page
   {% assign len = upcomingevents | size %}
   {% if len > 0 %}
   {% assign upcomingevent = upcomingevents[0] %}
-  <hr class="h-splitter" />
-  <div class="media mb-3">
+  <div class="jumbotron media mb-3 upcoming-event">
     <img src="img/speak.jpg" class="mr-3" alt="Speaker">
     <div class="media-body">
       <h4>Upcoming event • <span class="upcoming-event-date">
@@ -64,7 +63,6 @@ layout: page
       </p>
     </div>
   </div>
-  <hr class="h-splitter" />
   {% endif %}
 
   <div class="card-columns">
