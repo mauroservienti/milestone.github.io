@@ -1,43 +1,44 @@
---- 
+---
 layout: page
 title: Talks
 permalink: /talks/
-show_in_header: '' 
+show_in_header: ''
 ---
 
 <div class="home-content">
   <h3 class="page-heading">Get Mauro speaking at your event.</h3>
-  <p>Here is the list of talks ready to be delivered. <a href="https://mauroservienti.typeform.com/to/luuJPw">Get in touch</a> to arrange details.</p>
+  <p>Here is the list of talks ready to be delivered. <a href="https://mauroservienti.typeform.com/to/luuJPw">Get in
+      touch</a> to arrange details.</p>
 
   <div class="talks-list">
-    <div class="row">
-    {% for talk in site.talks %}
-    {% if forloop.index0 == 2 %}
-    </div>
-    <div class="row">
-      {% endif %}
-        <div class="col-md-6">
-          <div class="panel panel-default">
-          {% if talk.header_image %}
-            <div class="panel-heading">
-              <img class="img-fluid rounded" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
-            </div>
-          {% endif %}
-          <div class="panel-body">
-            <h2 class="talk-title">
-              <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
-            </h2>
-            <hr class="h-splitter" />
-            <div class="talk-synopsis">{{ talk.synopsis }}</div>
-            <hr class="h-splitter" />
-            <div class="talk-languages">Available in:
+
+    <div class="card-columns">
+      {% for talk in site.talks %}
+      <div class="card">
+        {% if talk.header_image %}
+        <img class="img-fluid card-img-top alt=" {{ talk.title }} header image"
+          src="{{ talk.header_image | prepend: site.baseurl }}" />
+        {% endif %}
+        <div class="card-body">
+          <h3 class="card-title">
+            <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
+          </h3>
+          <hr class="h-splitter" />
+          <p class="card-text talk-synopsis">{{ talk.synopsis }}</p>
+          <p class="card-text">
+            <small class="text-muted">
+              <a href="{{ talk.url | prepend: site.baseurl }}">More information...</a>
+            </small>
+          </p>
+          <hr class="h-splitter" />
+          <p class="card-text talk-languages">Available in:
             {% for lang in talk.languages %}
-              <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
+            <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
             {% endfor %}
-            </div>
-          </div>
+          </p>
         </div>
       </div>
       {% endfor %}
     </div>
-</div>
+    
+  </div>
