@@ -1,7 +1,7 @@
 .home-content, .post, .event, .talk{
 	margin-top: 20px;
-	margin-left: 15%;
-	margin-right: 15%;
+	margin-left: 5%;
+	margin-right: 5%;
 	
 	@media screen and (max-width: $break-small) {
 		margin-left: 0px;
@@ -10,8 +10,8 @@
 }
 
 .home-content-footer{
-	margin-left: 15%;
-	margin-right: 15%;
+	margin-left: 5%;
+	margin-right: 5%;
 	font-size: $small-font-size;
 	color: $grey-color;
 	
@@ -68,8 +68,8 @@
 	padding-right: 20px;
 	margin-top: 20px;
 	margin-bottom: 20px;
-	margin-left: 15%;
-	margin-right: 15%;
+	margin-left: 5%;
+	margin-right: 5%;
 	
 	border-top-style: solid;
 	border-top-width: 1px;
@@ -265,8 +265,8 @@
 }
 
 .page-footer{
-	margin-left: 15%;
-	margin-right: 15%;
+	margin-left: 5%;
+	margin-right: 5%;
 	text-align: right;
 
 	.page-meta{
