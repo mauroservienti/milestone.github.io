@@ -16,6 +16,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://ndccopenhagen.com/speaker/mauro-servienti
+    slides: https://www.slideshare.net/mauroservienti/all-our-aggregates-are-wrong-ndc-copenhagen-2019
 - title: "2-Days Workshop: SOA Done Right (with examples in ASP.NET and NServiceBus)"
   url: https://ndccopenhagen.com/workshop/soa-done-right-with-examples-in-asp-net-and-nservicebus/
   speakers:
