@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/ndc-copenhagen-2019/header.jpg
 title: "NDC Copenhagen 2019"
 location: "DGI-byen, Copenhagen"
