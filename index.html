@@ -30,37 +30,43 @@ layout: page
   {% assign len = upcomingevents | size %}
   {% if len > 0 %}
   {% assign upcomingevent = upcomingevents[0] %}
-  <div class="jumbotron media mb-3 upcoming-event">
-    <img src="img/speak.jpg" class="mr-3" alt="Speaker">
-    <div class="media-body">
-      <h4>Upcoming event • <span class="upcoming-event-date">
-          {% if upcomingevent.calendar.display %}
-          {{ upcomingevent.calendar.display }}
-          {% else %}
-          {% if upcomingevent.calendar.start contains "T" %}
-          {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
-          {% else %}
-          {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
-          {% endif %}
-          {% endif %}
-        </span>
-      </h4>
-      <p>I'll be at <a class="upcoming-event-title"
-          href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
-          class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
-        <ul class="upcoming-event-sessions-list">
-          {% for session in upcomingevent.sessions %}
-          <li>
-            <span class="session-title">{{ session.title }}</span>
-          </li>
-          {% endfor %}
-        </ul>
-      </p>
-      <p>
-        <small class="text-muted">
-          <a href="{{ site.baseurl }}events/">More events...</a>
-        </small>
-      </p>
+  <div class="card border-none mb-3 upcoming-event">
+    <div class="row no-gutters">
+      <div class="col-md-2">
+        <img src="img/speak.jpg" class="m-3 rounded" width="150rem" alt="Speaker">
+      </div>
+      <div class="col-md-10">
+        <div class="card-body">
+          <h4>Upcoming event • <span class="upcoming-event-date">
+              {% if upcomingevent.calendar.display %}
+              {{ upcomingevent.calendar.display }}
+              {% else %}
+              {% if upcomingevent.calendar.start contains "T" %}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {% else %}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+              {% endif %}
+              {% endif %}
+            </span>
+          </h4>
+          <p>I'll be at <a class="upcoming-event-title"
+              href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
+              class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
+            <ul class="upcoming-event-sessions-list">
+              {% for session in upcomingevent.sessions %}
+              <li>
+                <span class="session-title">{{ session.title }}</span>
+              </li>
+              {% endfor %}
+            </ul>
+          </p>
+          <p>
+            <small class="text-muted">
+              <a href="{{ site.baseurl }}events/">More events...</a>
+            </small>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
   {% endif %}
