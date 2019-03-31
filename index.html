@@ -31,12 +31,13 @@ layout: page
   {% if len > 0 %}
   {% assign upcomingevent = upcomingevents[0] %}
   <div class="card border-none mb-3 upcoming-event">
+  <div class="card-body">
     <div class="row no-gutters">
       <div class="col-md-2">
         <img src="img/speak.jpg" class="m-3 rounded" width="150rem" alt="Speaker">
       </div>
       <div class="col-md-10">
-        <div class="card-body">
+        
           <h4>Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
               {{ upcomingevent.calendar.display }}
@@ -65,9 +66,10 @@ layout: page
               <a href="{{ site.baseurl }}events/">More events...</a>
             </small>
           </p>
-        </div>
+        
       </div>
     </div>
+  </div>
   </div>
   {% endif %}
 
