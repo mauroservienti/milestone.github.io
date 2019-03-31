@@ -31,14 +31,9 @@ layout: page
   {% if len > 0 %}
   {% assign upcomingevent = upcomingevents[0] %}
   <div class="card border-none mb-3 upcoming-event">
-  <div class="card-body">
-    <div class="row no-gutters">
-      <div class="col-md-2">
-        <img src="img/speak.jpg" class="img-fluid m-3 rounded" alt="Speaker">
-      </div>
-      <div class="col-md-10">
-        
-          <h4>Upcoming event • <span class="upcoming-event-date">
+                                                   <div class="card-header">
+                                                                           
+                                                                           <span>Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
               {{ upcomingevent.calendar.display }}
               {% else %}
@@ -49,7 +44,17 @@ layout: page
               {% endif %}
               {% endif %}
             </span>
-          </h4>
+          </span>
+                                                                           
+                                                                           </div>
+  <div class="card-body">
+    <div class="row no-gutters">
+      <div class="col-md-2">
+        <img src="img/speak.jpg" class="img-fluid m-3 rounded" alt="Speaker">
+      </div>
+      <div class="col-md-10">
+        
+          
           <p>I'll be at <a class="upcoming-event-title"
               href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
               class="upcoming-event-location">{{ upcomingevent.location }}</span>. We'll talk about:
