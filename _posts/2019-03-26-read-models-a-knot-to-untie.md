@@ -11,7 +11,7 @@ tags:
 - Services ViewModel Composition
 ---
 
-When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem building read models. Read models designed to satisfy data presentation requirements, containing data coming from different services.
+When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem building read models. Read models designed to satisfy presentation requirements, containing data coming from different services.
 
 > This series of articles is not focused on CQRS. There are amazing resources available out there about the topic.
 
