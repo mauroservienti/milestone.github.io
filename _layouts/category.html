@@ -9,20 +9,18 @@ layout: default
       src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <h2 class="category-title">{{ page.title }}</h2>
-    <hr class="h-splitter" />
   </header>
 
   <article class="category-content">
     {{ content }}
+    <ul class="category-posts-list">
+        {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
+        {% for post in category_posts %}
+        <li>
+          <a href="{{ post.url }}">{{ post.title }}</a>
+        </li>
+      {% endfor %}
+      </ul>
   </article>
-
-  <div>
-    {% assign category_posts = site.posts | where: 'category',page.category %}
-    {% for post in category_posts %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-  </div>
 
 </div>

@@ -4,20 +4,6 @@
 
 .home-content, .post, .event, .talk{
 	margin-top: 20px;
-	margin-left: 5%;
-	margin-right: 5%;
-	
-	@media screen and (max-width: $break-small) {
-		margin-left: 0px;
-		margin-right: 0px;
-	}
-}
-
-.home-content-footer{
-	margin-left: 5%;
-	margin-right: 5%;
-	font-size: $small-font-size;
-	color: $grey-color;
 	
 	@media screen and (max-width: $break-small) {
 		margin-left: 0px;
@@ -40,41 +26,47 @@
 	}
 }
 
-.post-list{
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-}
+.post{
 
-.post-nav{
-	font-size: $small-font-size;
-	.prev{
+	margin-left: 5%;
+	margin-right: 5%;
 
+	.post-list{
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
 	}
 	
-	.next{
-		text-align: right;
+	.post-nav{
+		font-size: $small-font-size;
+		.prev{
+	
+		}
+		
+		.next{
+			text-align: right;
+		}
 	}
-}
-
-.post-header{
-	img{
-		margin-top: 1rem;
+	
+	.post-header{
+		img{
+			margin-top: 1rem;
+		}
+		.post-title{
+			margin-top: 1.5rem;
+			margin-bottom: 1.5rem;
+		}
 	}
-	.post-title{
-		margin-top: 1.5rem;
-		margin-bottom: 1.5rem;
+	
+	.post-content{
+		padding-top: 10px;
+		padding-bottom: 10px;
 	}
-}
-
-.post-content{
-	padding-top: 10px;
-	padding-bottom: 10px;
-}
-
-.post-meta{
-	font-size: $small-font-size;
-	color: $grey-color;
+	
+	.post-meta{
+		font-size: $small-font-size;
+		color: $grey-color;
+	}
 }
 
 .site-footer{
@@ -116,176 +108,203 @@
 	}
 }
 
-.event-content{
+.event{
+	margin-left: 5%;
+	margin-right: 5%;
 
-	padding-top: 10px;
-	padding-bottom: 10px;
-	
-	h1, h2, h3, h4, h5, h6{
-		font-style: italic;
-	}
-}
+	.event-content{
 
-.event-header{
-	text-align: right;
-}
-
-.event-meta{
-	font-size: $small-font-size;
-	color: $grey-color;
-}
-
-.link-icon{
-	margin-left: 3px;
-}
-
-.event-host{
-	font-weight: bold;
-}
-
-.event-details{
-
-}
-
-.event-url{
-	font-size: .8em;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.profile-url{
-	font-size: .8em;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.event-details-icon{
-	margin-right: 3px;
-	height: 14px;
-}
-
-.event-date{
-	margin-right: 5px;
-}
-
-.event-location{
-	margin-right: 5px;
-}
-
-.sessions-list{
-	margin: 0;
-	margin-top: 15px;
-	margin-left: 5px;
-	padding: 0;
-	list-style: none;
-
-	.session{
-		margin-bottom: 10px;
-	}
-	
-	.session-title{
-		font-style: italic;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		
+		h1, h2, h3, h4, h5, h6{
+			font-style: italic;
+		}
 	}
 
-	.session-abstract{
-		color: $text-color-light;
+	.event-header{
+		text-align: right;
 	}
 
-	.session-details-icon{
+	.event-meta{
+		font-size: $small-font-size;
+		color: $grey-color;
+	}
+
+	.link-icon{
+		margin-left: 3px;
+	}
+
+	.event-host{
+		font-weight: bold;
+	}
+
+	.event-details{
+
+	}
+
+	.event-url{
+		font-size: .8em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.profile-url{
+		font-size: .8em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.event-details-icon{
 		margin-right: 3px;
 		height: 14px;
 	}
 
-	.session-url{
-		font-size: .8em;
-	}
-	
-	.session-language{
-		font-size: .8em;
+	.event-date{
+		margin-right: 5px;
 	}
 
-	.session-details{
-		margin-right: 3px;
-		color: $text-color-light;
+	.event-location{
+		margin-right: 5px;
 	}
 
-	.session-resources{
-		padding: 3px;
-		border-top-style: none;
-		border-top-color: gainsboro;
-		border-top-width: 1px;
+	.sessions-list{
+		margin: 0;
+		margin-top: 15px;
+		margin-left: 5px;
+		padding: 0;
+		list-style: none;
+
+		.session{
+			margin-bottom: 10px;
+		}
 		
-		border-bottom-style: solid;
-		border-bottom-color: gainsboro;
-		border-bottom-width: 1px;
+		.session-title{
+			font-style: italic;
+		}
+
+		.session-abstract{
+			color: $text-color-light;
+		}
+
+		.session-details-icon{
+			margin-right: 3px;
+			height: 14px;
+		}
+
+		.session-url{
+			font-size: .8em;
+		}
+		
+		.session-language{
+			font-size: .8em;
+		}
+
+		.session-details{
+			margin-right: 3px;
+			color: $text-color-light;
+		}
+
+		.session-resources{
+			padding: 3px;
+			border-top-style: none;
+			border-top-color: gainsboro;
+			border-top-width: 1px;
+			
+			border-bottom-style: solid;
+			border-bottom-color: gainsboro;
+			border-bottom-width: 1px;
+		}
+	}
+
+	.events-list{
+		margin: 0;
+		padding: 0;
+		list-style-type: none;
 	}
 }
 
-.events-list{
-	margin: 0;
-	padding: 0;
-	list-style-type: none;
-}
-
-.talk-header{
-	text-align: right;
-}
-
-.talk-meta{
-	font-size: $small-font-size;
-	color: $grey-color;
-}
-
-.talk-content{
-
-	padding-top: 10px;
-	padding-left: 20px;
-	padding-bottom: 10px;
-	
-	@media screen and (max-width: $break-small) {
-		border-left-width: 0px;
-		padding-left: 0px;
-	}
-}
-
-.talk-title{
-	text-align: center;
-}
-
-.talk-synopsis{
-	padding-left: 20px;
-	padding-right: 20px;
-	text-align: justify;
-}
-
-.talk-languages{
-	font-size: $small-font-size;
-	color: $grey-color;
-	text-align: center;
-}
-
-.talk-url{
-	font-size: .8em;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-.talks-list{
-	.panel-heading{
-		padding: 0px;	
-	}
-}
-
-.page-footer{
+.talk{
 	margin-left: 5%;
 	margin-right: 5%;
-	text-align: right;
 
-	.page-meta{
+	.talk-header{
+		text-align: right;
+	}
+
+	.talk-meta{
 		font-size: $small-font-size;
 		color: $grey-color;
+	}
+
+	.talk-content{
+
+		padding-top: 10px;
+		padding-left: 20px;
+		padding-bottom: 10px;
+		
+		@media screen and (max-width: $break-small) {
+			border-left-width: 0px;
+			padding-left: 0px;
+		}
+	}
+
+	.talk-title{
+		text-align: center;
+	}
+
+	.talk-synopsis{
+		padding-left: 20px;
+		padding-right: 20px;
+		text-align: justify;
+	}
+
+	.talk-languages{
+		font-size: $small-font-size;
+		color: $grey-color;
+		text-align: center;
+	}
+
+	.talk-url{
+		font-size: .8em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.talks-list{
+		.panel-heading{
+			padding: 0px;	
+		}
+	}
+}
+
+.page{
+	margin-left: 5%;
+	margin-right: 5%;
+	
+	.page-content{}
+
+	.page-footer{
+		.page-meta{
+			text-align: right;
+			font-size: $small-font-size;
+			color: $grey-color;
+		}
+	}
+}
+
+.category{
+	.category-header{
+		.category-title{}
+	}
+	.category-content{
+		.category-posts-list{
+			margin: 0;
+			padding: 0;
+			list-style-type: none;
+		}
 	}
 }
