@@ -9,6 +9,7 @@ synopsis: "Time was spent discussing ViewModel Composition concepts and their de
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 
 The ViewModel Composition discovery journey is progressing nicely, so far we've discussed:

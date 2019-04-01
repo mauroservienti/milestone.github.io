@@ -1,0 +1,27 @@
+---
+layout: default
+---
+<div class="category">
+
+  <header class="category-header">
+    {% if page.header_image %}
+    <img class="img-fluid rounded" alt="{{ page.title }} header image"
+      src="{{ page.header_image | prepend: site.baseurl }}" />
+    {% endif %}
+    <h2 class="category-title">{{ page.title }}</h2>
+    <hr class="h-splitter" />
+  </header>
+
+  <article class="category-content">
+    {{ content }}
+  </article>
+
+  <div>
+    {% for post in site.posts | where: 'category', {{page.category}} %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+  </div>
+
+</div>

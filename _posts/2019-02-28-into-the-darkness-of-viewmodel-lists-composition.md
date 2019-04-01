@@ -9,6 +9,7 @@ synopsis: "ViewModels Lists composition has an interesting challenge: must be de
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 
 We had [a first look at what problem ViewModel Composition is](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html) designed to solve, then we analyzed what it means to [compose a single item](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html), using a Product as sample model. It's now time to start exploring what it means to compose a list of Product ViewModels.

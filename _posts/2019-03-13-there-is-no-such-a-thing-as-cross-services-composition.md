@@ -9,6 +9,7 @@ synopsis: "At a first look it might sound reasonable to use ViewModel Compositio
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 
 In fact there isn't such a thing as cross-service data sharing at all. Lately I started a series of articles about Service ViewModel Composition. I talked about:

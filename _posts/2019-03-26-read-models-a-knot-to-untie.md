@@ -9,6 +9,7 @@ synopsis: "Read models can be a tempting solution when it comes to presenting da
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 
 When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem building read models. Read models designed to satisfy presentation requirements, containing data coming from different services.
