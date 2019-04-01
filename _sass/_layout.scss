@@ -297,13 +297,18 @@
 }
 
 .category{
+	margin-left: 5%;
+	margin-right: 5%;
+
 	.category-header{
 		.category-title{}
 	}
 	.category-content{
 		.category-posts-list{
-			margin: 0;
 			padding: 0;
+			margin: 0;
+			margin-left: 2%;
+			margin-right: 2%;
 			list-style-type: none;
 		}
 	}

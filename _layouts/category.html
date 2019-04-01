@@ -17,7 +17,8 @@ layout: default
         {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
         {% for post in category_posts %}
         <li>
-          <a href="{{ post.url }}">{{ post.title }}</a>
+          <h5><a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h5>
+          <p>{% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}</p>
         </li>
       {% endfor %}
       </ul>
