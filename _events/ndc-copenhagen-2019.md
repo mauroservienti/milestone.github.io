@@ -38,7 +38,7 @@ It always starts well. At first glance the requirements seem straightforward, an
 
 In this talk, we'll analyze what appears to be a straightforward e-commerce shopping cart. We'll then go ahead and add a few more use-cases that make it more complex and see how it can negatively impact the overall design. Finally, we'll focus our attention to the business needs of these requirements and see how it can shed light on the correct approach to designing the feature. Walk away with a new understanding on how to take requirements apart to build the right software.
 
-Dive into Service Boundaries with Udi Dahan: http://go.particular.net/ndc-copenhagen-boundaries
+Dive into Service Boundaries with Udi Dahan: [http://go.particular.net/ndc-copenhagen-boundaries](http://go.particular.net/ndc-copenhagen-boundaries)
 
 ### Workshop: SOA Done Right (with examples in ASP.NET and NServiceBus)
 
