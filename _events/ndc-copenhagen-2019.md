@@ -14,6 +14,7 @@ sessions:
 - title: "All our aggregates are wrong"
   url: https://ndccopenhagen.com/talk/all-our-aggregates-are-wrong/
   slides: https://www.slideshare.net/mauroservienti/all-our-aggregates-are-wrong-ndc-copenhagen-2019
+  demos: http://bit.ly/ndc-copenhagen-demos
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://ndccopenhagen.com/speaker/mauro-servienti
@@ -36,6 +37,8 @@ tags:
 It always starts well. At first glance the requirements seem straightforward, and implementation proceeds without hiccups. Then the requirements start to get more complex, and you find yourself in a predicament, introducing technical shortcuts that smell for the sake of delivering the new feature on schedule.
 
 In this talk, we'll analyze what appears to be a straightforward e-commerce shopping cart. We'll then go ahead and add a few more use-cases that make it more complex and see how it can negatively impact the overall design. Finally, we'll focus our attention to the business needs of these requirements and see how it can shed light on the correct approach to designing the feature. Walk away with a new understanding on how to take requirements apart to build the right software.
+
+Dive into Service Boundaries with Udi Dahan: http://go.particular.net/ndc-copenhagen-boundaries
 
 ### Workshop: SOA Done Right (with examples in ASP.NET and NServiceBus)
 
