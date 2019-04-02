@@ -20,11 +20,21 @@
           </li>
           {% endif %}
         {% endfor %}
+
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Categories
+          </a>
+          <div class="dropdown-menu" aria-labelledby="categoriesDropdownMenuLink">
+            <a class="dropdown-item" href="{{ '/categories/view-model-composition' | prepend: site.baseurl }}">ViewModel Composition</a>
+          </div>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="archiveDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Archive
           </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <div class="dropdown-menu" aria-labelledby="archiveDropdownMenuLink">
             <a class="dropdown-item" href="{{ '/archive/posts' | prepend: site.baseurl }}">All posts</a>
             <a class="dropdown-item" href="{{ '/archive/events/' | prepend: site.baseurl }}">Past events</a>
           </div>
