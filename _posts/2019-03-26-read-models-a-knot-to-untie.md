@@ -10,6 +10,7 @@ tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
+redirect_from: "/2019/03/26/read-models-a-knot-to-untie.html"
 ---
 
 When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem building read models. Read models designed to satisfy presentation requirements, containing data coming from different services.

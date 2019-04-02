@@ -19,4 +19,5 @@ sudo apt-get install -y build-essential ruby-full
 sudo gem update –-system
 sudo gem install jekyll bundler
 sudo gem install jekyll-sitemap
+sudo gem install jekyll-redirect-from
 ```
