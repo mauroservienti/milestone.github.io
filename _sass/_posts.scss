@@ -1,0 +1,39 @@
+.post{
+}
+
+.post-list{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.post-nav{
+    font-size: $small-font-size;
+    .prev{
+
+    }
+    
+    .next{
+        text-align: right;
+    }
+}
+
+.post-header{
+    img{
+        margin-top: 1rem;
+    }
+    .post-title{
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.post-content{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.post-meta{
+    font-size: $small-font-size;
+    color: $grey-color;
+}

@@ -2,23 +2,31 @@
 	border-width: 0;
 }
 
-.home,
-.about,
-.post,
-.event,
-.talk,
-.talks,
-.category,
-.privacy,
-.credits,
-.posts-archive,
-.events-archive,
-.upcoming-events{
+.content
+{
 	margin-top: 20px;
+	margin-left: 5%;
+	margin-right: 5%;
 	
 	@media screen and (max-width: $break-small) {
 		margin-left: 0px;
 		margin-right: 0px;
+	}
+}
+
+.main-column{
+	padding-right: 2px;
+
+	@media screen and (max-width: $break-small) {
+		padding-right: 0px;
+	}
+}
+
+.sidebar-column{
+	padding-left: 2px;
+
+	@media screen and (max-width: $break-small) {
+		padding-left: 0px;
 	}
 }
 
@@ -34,49 +42,6 @@
 		.upcoming-event-details{
 			padding-left: .5rem
 		}
-	}
-}
-
-.post{
-
-	margin-left: 5%;
-	margin-right: 5%;
-
-	.post-list{
-		margin: 0;
-		padding: 0;
-		list-style-type: none;
-	}
-	
-	.post-nav{
-		font-size: $small-font-size;
-		.prev{
-	
-		}
-		
-		.next{
-			text-align: right;
-		}
-	}
-	
-	.post-header{
-		img{
-			margin-top: 1rem;
-		}
-		.post-title{
-			margin-top: 1.5rem;
-			margin-bottom: 1.5rem;
-		}
-	}
-	
-	.post-content{
-		padding-top: 10px;
-		padding-bottom: 10px;
-	}
-	
-	.post-meta{
-		font-size: $small-font-size;
-		color: $grey-color;
 	}
 }
 
@@ -119,210 +84,16 @@
 	}
 }
 
-.event{
-	margin-left: 5%;
-	margin-right: 5%;
 
-	.event-content{
-
-		padding-top: 10px;
-		padding-bottom: 10px;
-		
-		h1, h2, h3, h4, h5, h6{
-			font-style: italic;
-		}
-	}
-
-	.event-header{
-		text-align: right;
-	}
-
-	.event-meta{
-		font-size: $small-font-size;
-		color: $grey-color;
-	}
-
-	.link-icon{
-		margin-left: 3px;
-	}
-
-	.event-host{
-		font-weight: bold;
-	}
-
-	.event-details{
-		.event-details-icon{
-			margin-right: 3px;
-			height: 14px;
-		}
-	}
-
-	.event-url{
-		font-size: .8em;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.profile-url{
-		font-size: .8em;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.event-date{
-		margin-right: 5px;
-	}
-
-	.event-location{
-		margin-right: 5px;
-	}
-
-	.sessions-list{
-		margin: 0;
-		margin-top: 15px;
-		margin-left: 5px;
-		padding: 0;
-		list-style: none;
-
-		.session{
-			margin-bottom: 10px;
-		}
-		
-		.session-title{
-			font-style: italic;
-		}
-
-		.session-abstract{
-			color: $text-color-light;
-		}
-
-		.session-details-icon{
-			margin-right: 3px;
-			height: 14px;
-		}
-
-		.session-url{
-			font-size: .8em;
-		}
-		
-		.session-language{
-			font-size: .8em;
-		}
-
-		.session-details{
-			margin-right: 3px;
-			color: $text-color-light;
-		}
-
-		.session-resources{
-			padding: 3px;
-			border-top-style: none;
-			border-top-color: gainsboro;
-			border-top-width: 1px;
-			
-			border-bottom-style: solid;
-			border-bottom-color: gainsboro;
-			border-bottom-width: 1px;
-		}
-	}
-
-	.events-list{
-		margin: 0;
-		padding: 0;
-		list-style-type: none;
-	}
-}
-
-.talk{
-	margin-left: 5%;
-	margin-right: 5%;
-
-	.talk-header{
-		text-align: right;
-	}
-
-	.talk-meta{
-		font-size: $small-font-size;
-		color: $grey-color;
-	}
-
-	.talk-content{
-
-		padding-top: 10px;
-		padding-left: 20px;
-		padding-bottom: 10px;
-		
-		@media screen and (max-width: $break-small) {
-			border-left-width: 0px;
-			padding-left: 0px;
-		}
-	}
-
-	.talk-title{
-		text-align: center;
-	}
-
-	.talk-synopsis{
-		padding-left: 20px;
-		padding-right: 20px;
-		text-align: justify;
-	}
-
-	.talk-languages{
-		font-size: $small-font-size;
-		color: $grey-color;
-		text-align: center;
-	}
-
-	.talk-url{
-		font-size: .8em;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.talks-list{
-		.panel-heading{
-			padding: 0px;	
-		}
-	}
-}
 
 .page{
-	margin-left: 5%;
-	margin-right: 5%;
 	
 	.page-content{}
 
 	.page-footer{
 		.page-meta{
-			text-align: right;
 			font-size: $small-font-size;
 			color: $grey-color;
-		}
-	}
-}
-
-.category{
-	margin-left: 5%;
-	margin-right: 5%;
-
-	.category-header{
-		.category-title{
-			margin-top: .8rem;
-			margin-bottom: .8rem;
-		}
-	}
-	.category-content{}
-
-	.category-posts-list{
-		.post-details{
-			.post-details-icon{
-				margin-right: 3px;
-				height: 14px;
-			}
 		}
 	}
 }
