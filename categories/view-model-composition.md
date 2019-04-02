@@ -2,6 +2,7 @@
 layout: category
 category: view-model-composition
 title: "ViewModel Composition"
+synopsis: "Designing a UI when the back-end system consists of dozens (or more) of microservices is a challenge. We have separation and autonomy on the back end, but on the front-end this all needs to come back together. ViewModel Composition stops it from turning into a mess of spaghetti code, and prevents simple actions from causing an inefficient torrent of web requests."
 header_image: /img/categories/view-model-composition/header.jpg
 ---
 
