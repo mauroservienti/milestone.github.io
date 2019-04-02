@@ -5,7 +5,7 @@ permalink: /events/
 show_in_header: ''
 ---
 
-<div class="home-content">
+<div class="upcoming-events">
   {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
   {% assign len = upcomingevents | size %}
 
@@ -14,7 +14,7 @@ show_in_header: ''
 
   {% if len > 0 %}
 
-  <div class="card bg-light nearest-event mb-3">
+  <div class="card event bg-light nearest-event mb-3">
     {% assign nearest = upcomingevents[0] %}
     <div class="card-header">
       <div class="event-details">
@@ -69,7 +69,7 @@ show_in_header: ''
 
   <div>
     {% for event in upcomingevents offset:1 %}
-    <div class="card mb-3">
+    <div class="card event mb-3">
       <div class="card-header">
         <div class="event-details">
           <img class="event-details-icon" src="/img/calendar.png" />

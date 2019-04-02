@@ -2,7 +2,18 @@
 	border-width: 0;
 }
 
-.home-content, .post, .event, .talk{
+.home,
+.about,
+.post,
+.event,
+.talk,
+.talks,
+.category,
+.privacy,
+.credits,
+.posts-archive,
+.events-archive,
+.upcoming-events{
 	margin-top: 20px;
 	
 	@media screen and (max-width: $break-small) {
@@ -11,18 +22,18 @@
 	}
 }
 
-.home-content{
+.home{
 	.site-description{
 		text-align: justify;
 		text-justify: newspaper;
 	}
-}
 
-.upcoming-event{
-	background-color: #f5f5f5;
-	
-	.upcoming-event-details{
-		padding-left: .5rem
+	.upcoming-event{
+		background-color: #f5f5f5;
+		
+		.upcoming-event-details{
+			padding-left: .5rem
+		}
 	}
 }
 
@@ -140,7 +151,10 @@
 	}
 
 	.event-details{
-
+		.event-details-icon{
+			margin-right: 3px;
+			height: 14px;
+		}
 	}
 
 	.event-url{
@@ -155,11 +169,6 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	.event-details-icon{
-		margin-right: 3px;
-		height: 14px;
 	}
 
 	.event-date{
@@ -305,11 +314,12 @@
 	}
 	.category-content{
 		.category-posts-list{
-			padding: 0;
-			margin: 0;
-			margin-left: 2%;
-			margin-right: 2%;
-			list-style-type: none;
+			.post-details{
+				.post-details-icon{
+					margin-right: 3px;
+					height: 14px;
+				}
+			}
 		}
 	}
 }
