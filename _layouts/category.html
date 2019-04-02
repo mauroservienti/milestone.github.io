@@ -13,15 +13,35 @@ layout: default
 
   <article class="category-content">
     {{ content }}
-    <ul class="category-posts-list">
-        {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
-        {% for post in category_posts %}
-        <li>
-          <h5><a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></h5>
-          <p>{% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}</p>
-        </li>
+    <div class="card-columns category-posts-list">
+      {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
+      {% for post in category_posts %}
+      <div class="card">
+        <div class="card-header">
+          <div class="post-details">
+            <img class="post-details-icon" src="/img/calendar.png" />
+            <span class="post-date">
+              {{ post.date | date_to_rfc822 | date: "%-d %B %Y" }}
+            </span>
+          </div>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">
+            <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          </h4>
+          <hr class="h-splitter" />
+          <p class="card-text">
+            {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
+          </p>
+          <p class="card-text">
+            <small class="text-muted">
+              <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
+            </small>
+          </p>
+        </div>
+      </div>
       {% endfor %}
-      </ul>
+    </div>
   </article>
 
 </div>
