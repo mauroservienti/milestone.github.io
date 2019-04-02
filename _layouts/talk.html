@@ -3,16 +3,11 @@ layout: default
 ---
 <div class="talk">
 
+    <header>
     {% if page.header_image %}
       <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
-  
-    <!-- <h2 class="talk-host">
-        {{ page.title }}
-    </h2>
-    <hr class="h-splitter" />
-    <div class="talk-synopsis">{{ page.synopsis }}</div>
-<hr class="h-splitter" /> -->
+  </header>
     
     <div class="talk-languages">Available in:
     {% for lang in page.languages %}
