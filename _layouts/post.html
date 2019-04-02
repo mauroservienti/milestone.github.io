@@ -30,6 +30,12 @@ layout: default
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
         this post</a> • <a
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>
+      {% if page.category %}
+      <br />
+      {% assign pages_with_same_category = site.pages | where: 'category',page.category %}
+      {% assign category_page = pages_with_same_category[0] %}
+      Category: <a href="/categories/{{ category_page.category | prepend: site.baseurl }}">{{ category_page.title }}</a>
+      {% endif %}
     </p>
     <hr class="h-splitter" />
   </header>
