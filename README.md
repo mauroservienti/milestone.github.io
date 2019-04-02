@@ -18,4 +18,5 @@ sudo apt-get install -y build-essential ruby-full
 ```bash
 sudo gem update –-system
 sudo gem install jekyll bundler
+sudo gem install jekyll-sitemap
 ```
