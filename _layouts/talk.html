@@ -2,10 +2,6 @@
 layout: default
 ---
 <div class="talk">
-  
-    <header class="talk-header">
-        <p class="talk-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this talk</a></p>
-    </header>
 
     {% if page.header_image %}
       <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
@@ -27,5 +23,9 @@ layout: default
   <article class="event-content">
     {{ content }}
 </article>
+  
+   <footer class="talk-footer">
+        <p class="talk-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this talk</a></p>
+    </footer>
 
 </div>
