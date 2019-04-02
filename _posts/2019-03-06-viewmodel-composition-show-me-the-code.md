@@ -10,6 +10,7 @@ tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
+redirect_from: /2019/03/06/viewmodel-composition-show-me-the-code.html
 ---
 
 The ViewModel Composition discovery journey is progressing nicely, so far we've discussed:
