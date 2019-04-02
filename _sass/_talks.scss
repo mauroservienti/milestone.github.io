@@ -1,0 +1,52 @@
+.talk{
+}
+
+.talk-header{
+    text-align: right;
+}
+
+.talk-meta{
+    font-size: $small-font-size;
+    color: $grey-color;
+}
+
+.talk-content{
+
+    padding-top: 10px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    
+    @media screen and (max-width: $break-small) {
+        border-left-width: 0px;
+        padding-left: 0px;
+    }
+}
+
+.talk-title{
+    text-align: center;
+}
+
+.talk-synopsis{
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: justify;
+}
+
+.talk-languages{
+    font-size: $small-font-size;
+    color: $grey-color;
+    text-align: center;
+}
+
+.talk-url{
+    font-size: .8em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.talks-list{
+    .panel-heading{
+        padding: 0px;	
+    }
+}

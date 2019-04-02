@@ -26,5 +26,10 @@ $grey-color-dark:  darken($grey-color, 25%);
 @import
         "base",
         "layout",
+        "sidebar",
+        "posts",
+        "events",
+        "talks",
+        "categories",
         "syntax-highlighting"
 ;

@@ -1,0 +1,35 @@
+<section class="sidebar">
+
+    <div class="sidebar-widget sidebar-bio">
+        <p class="p-1">
+            <small>{% include bio-intro.txt %}</small>
+            <footer class="blockquote-footer"><cite title="Who I am.">Who I am.</cite> Mauro Servienti</footer>
+        </p>
+    </div>
+
+    <div class="sidebar-widget sidebar-categories">
+        <header>Categories</header>
+        <section>
+            <ul>
+                {% assign category_pages = site.pages | where: "layout","category" %}
+                {% for category_page in category_pages %}
+                <li><small><a class="muted-link" title="{{ category_page.title }}"
+                    href="{{ category_page.url | prepend: site.baseurl }}">{{ category_page.title }}</a></small></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <div class="sidebar-widget sidebar-recent-posts">
+        <header>Recent Posts</header>
+        <section>
+            <ul>
+                {% for post in site.posts limit:4 %}
+                <li><small><a class="muted-link" title="{{ post.title }}"
+                            href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></small></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+</section>
