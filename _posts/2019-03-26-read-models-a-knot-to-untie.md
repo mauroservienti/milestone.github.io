@@ -13,7 +13,7 @@ category: view-model-composition
 redirect_from: "/2019/03/26/read-models-a-knot-to-untie.html"
 ---
 
-When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem building read models. Read models designed to satisfy presentation requirements, containing data coming from different services.
+When dealing with distributed systems it's very tempting, and apparently easy and simple, to solve the "we need to present data to users" problem by building read models. Read models are designed to satisfy presentation requirements, containing data coming from different services.
 
 > This series of articles is not focused on CQRS. There are amazing resources available out there about the topic.
 
@@ -53,7 +53,7 @@ class SampleHandler : IHandleRequests
 }
 ```
 
-the infrastructure executing the above code could, at runtime, store the resulting ViewModel, the `dynamic vm`, in a dedicated incredibly fast storage, and query that storage for all the subsequent requests for the same URL. We've basically created a read model at runtime at the first request. So far, so good.
+the infrastructure executing the above code could, at runtime, store the resulting ViewModel, the `dynamic vm`, in a dedicated incredibly fast storage, and query that storage for all subsequent requests for the same URL. We've basically created a read model at runtime at the first request. So far, so good.
 
 ### You know what?
 
@@ -71,10 +71,10 @@ One of the biggest architectural issues that comes along with caching composed r
 
 A business requirement in _Marketing_ could change the way data should be presented to users, in essence invalidating all the cached read models. _Marketing_ doesn't own the resulting model, thus the only option we're left with is to invalidate the whole set. _Product_ read models are wiped from the "cache" and:
 
-- in the first scenario, the fancy diagram, we end up with an incredibly fast but empty read storage. storage that needs to be re-synchronized, with the risk of huge delays
+- in the first scenario, the fancy diagram, we end up with an incredibly fast but empty read storage. The storage needs to be re-synchronized, with the risk of huge delays
 - in the second scenario, the cached ViewModel, we end with an empty cache that has to be gradually rebuilt
 
-In both scenarios we'll end up with a huge load on the entire system. All services will be hammered, in one way or the other, for the sake of nothing since the only thing that changed is _Marketing_.
+In both scenarios we'll end up with a huge load on the entire system. All services will be hammered, in one way or another, for the sake of nothing since the only thing that changed is _Marketing_.
 
 This is very good sample of coupling.
 
@@ -88,7 +88,7 @@ Shipping options cannot be cached, unless we want to cache all possible combinat
 
 ## Conclusion
 
-Read models are an interesting solution, as all the solutions they are not a silver bullet. We described two scenarios in which read models can cause pain we can avoid by using ViewModel Composition. This doesn't mean that read models should be avoided like plague: they have their place, and we'll talk about that in a future article. There is a place for caches as well, but we need to uncover full vertical slices, first.
+Read models are an interesting solution, and like all solutions they are not a silver bullet. We described two scenarios in which read models cause pain that we can avoid by using ViewModel Composition. This doesn't mean that read models should be avoided like the plague: they have their place, and we'll talk about that in a future article. There is a place for caches as well, but we need to uncover full vertical slices first.
 
 #### Articles in this series:
 
