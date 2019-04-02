@@ -6,7 +6,7 @@ synopsis: "Stateless all the thing, they say. In the last few years we’ve been
 
 This is when Sagas come into play. Sagas allow to model complex collaborative domains without the need for distributed transactions and/or orchestration across multiple resources. Join Mauro on a journey that aims to disclose what sagas are, how they can be used to model a complex collaborative domain, and what role they play when it comes to designing systems with failure and eventual consistency in mind.
 
-(It’s all right, I know were you’ve been)" 
+(It’s all right, I know where you’ve been)" 
 languages:
 - Italiano
 - English
@@ -18,7 +18,7 @@ Stateless all the thing, they say. In the last few years we’ve been brainwashe
 
 This is when Sagas come into play. Sagas allow to model complex collaborative domains without the need for distributed transactions and/or orchestration across multiple resources. Join Mauro on a journey that aims to disclose what sagas are, how they can be used to model a complex collaborative domain, and what role they play when it comes to designing systems with failure and eventual consistency in mind.
 
-(It’s all right, I know were you’ve been)
+(It’s all right, I know where you’ve been)
 
 ## Welcome to the (state) machine
 
@@ -27,4 +27,4 @@ Nonostante questo i sistemi software complessi, essendo basati su processi colla
 
 Pane quotidiano per le Saghe. Le Saghe consentono di modellare sistemi complessi senza la necessità di transazioni distribuite e coordinamento esterno. Vedremo cosa sono le Saghe, come possono essere usate per modellare domini complessi, e che ruolo giocano quando progettiamo sistemi basati sui concetti di “design for failures” e “eventual consistency”
 
-(It’s all right, I know were you’ve been)
+(It’s all right, I know where you’ve been)
