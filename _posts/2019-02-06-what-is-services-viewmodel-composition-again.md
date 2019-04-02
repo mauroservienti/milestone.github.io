@@ -10,6 +10,7 @@ synopsis: "Building distributed systems requires facing an interesting challenge
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 Building distributed systems requires facing an interesting challenge: there is a dichotomy between the way behaviors and data are decomposed at the backend and the way users expect to consume them from the frontend.
 

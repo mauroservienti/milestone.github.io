@@ -9,6 +9,7 @@ synopsis: "Composing a list in an efficient way is complex. Multiple components 
 tags:
 - SOA
 - Services ViewModel Composition
+category: view-model-composition
 ---
 
 We recently [looked at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized as:
