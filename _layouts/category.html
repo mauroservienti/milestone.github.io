@@ -13,7 +13,11 @@ layout: default
 
   <article class="category-content">
     {{ content }}
-    <div class="card-columns category-posts-list">
+  </article>
+
+  <h5>Articles in this category:</h5>
+
+  <div class="card-columns category-posts-list">
       {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
       {% for post in category_posts %}
       <div class="card">
@@ -42,6 +46,5 @@ layout: default
       </div>
       {% endfor %}
     </div>
-  </article>
 
 </div>
