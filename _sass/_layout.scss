@@ -14,22 +14,6 @@
 	}
 }
 
-.main-column{
-	padding-right: 2px;
-
-	@media screen and (max-width: $break-small) {
-		padding-right: 0px;
-	}
-}
-
-.sidebar-column{
-	padding-left: 2px;
-
-	@media screen and (max-width: $break-small) {
-		padding-left: 0px;
-	}
-}
-
 .home{
 	.site-description{
 		text-align: justify;

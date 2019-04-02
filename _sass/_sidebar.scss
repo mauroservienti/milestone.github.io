@@ -1,3 +1,22 @@
 .sidebar{
 	
 }
+
+.sidebar-widget{
+    border-left: $grey-color-light 1px solid;
+    margin-bottom: 1rem;
+    
+    header{
+        border-bottom: $grey-color-light 1px solid;
+        padding: .2rem;
+    }
+
+    section{
+        padding: .2rem;
+
+        ul{
+            padding-inline-start: 1.5rem;
+            margin-bottom: .1rem;
+        }
+    }
+}
