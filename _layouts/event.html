@@ -3,10 +3,6 @@ layout: default
 ---
 <div class="event">
   
-<header class="event-header">
-  <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
-</header>
-  
 {% if page.header_image %}
   <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
 {% endif %}
@@ -103,5 +99,9 @@ layout: default
 {% endif %}
 </div>
 {% endif %}
+  
+ <footer class="event-footer">
+  <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
+</footer>
   
 </div>
