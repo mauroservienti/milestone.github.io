@@ -10,6 +10,7 @@ tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
+redirect_from: /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
 ---
 
 In fact there isn't such a thing as cross-service data sharing at all. Lately I started a series of articles about Service ViewModel Composition. I talked about:
