@@ -1,0 +1,24 @@
+.category{
+
+	.category-header{
+		.category-title{
+			margin-top: .8rem;
+			margin-bottom: .8rem;
+		}
+	}
+	.category-content{}
+
+	.category-posts-list{
+		.post-details{
+			.post-details-icon{
+				margin-right: 3px;
+				height: 14px;
+			}
+		}
+	}
+	
+	.category-meta{
+           font-size: $small-font-size;
+           color: $grey-color;
+        }
+}

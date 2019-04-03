@@ -27,4 +27,4 @@ Ultimamente ci hanno stressato come non mai che stateful è il male. Tutto deve 
 
 Pane quotidiano per le Saghe. Le Saghe consentono di modellare sistemi complessi senza la necessità di transazioni distribuite e coordinamento esterno. Vedremo cosa sono le Saghe, come possono essere usate per modellare domini complessi, e che ruolo giocano quando progettiamo sistemi basati sui concetti di “design for failures” e “eventual consistency”
 
-(It’s all right, I know we’re you’ve been)
+(It’s all right, I know where you’ve been)

@@ -3,17 +3,15 @@ layout: default
 ---
 <div class="event">
   
-<header class="event-header">
-  <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
-</header>
-  
+  <header class="event-header">
 {% if page.header_image %}
   <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
 {% endif %}
-  
-<h2 class="event-host">
+    <h2 class="event-title">
   {{ page.title }}
 </h2>
+  </header>
+  
 <div class="event-details">
   <img class="event-details-icon" src="/img/calendar.png" />
   <span class="event-date">
@@ -103,5 +101,9 @@ layout: default
 {% endif %}
 </div>
 {% endif %}
+  
+ <footer class="event-footer">
+  <p class="event-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this event</a></p>
+</footer>
   
 </div>
