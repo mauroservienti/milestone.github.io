@@ -9,35 +9,35 @@
     </div>
     {% endif %}
 
-{% if page.id != 'home' and page.id != 'upcoming-events' %}
+    {% if page.id != 'home' and page.id != 'upcoming-events' %}
     {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
     {% assign len = upcomingevents | size %}
     {% if len > 0 %}
     {% assign upcomingevent = upcomingevents[0] %}
-        {% if page.url != upcomingevent.url %}
-        <div class="sidebar-widget sidebar-upcoming-event">
-            <header>Upcoming event
-            </header>
-            <section>
-                <small>
-                    <span class="upcoming-event-date">
-                        {% if upcomingevent.calendar.display %}
-                        {{ upcomingevent.calendar.display }}
-                        {% else %}
-                        {% if upcomingevent.calendar.start contains "T" %}
-                        {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
-                        {% else %}
-                        {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
-                        {% endif %}
-                        {% endif %}</span> • I'll be at <a class="upcoming-event-title"
-                            href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
-                            class="upcoming-event-location">{{ upcomingevent.location }}</span>. Check it out!
-                    </small>
-            </section>
-        </div>
-        {% endif %}
+    {% if page.url != upcomingevent.url %}
+    <div class="sidebar-widget sidebar-upcoming-event">
+        <header>Upcoming event
+        </header>
+        <section>
+            <small>
+                <span class="upcoming-event-date">
+                    {% if upcomingevent.calendar.display %}
+                    {{ upcomingevent.calendar.display }}
+                    {% else %}
+                    {% if upcomingevent.calendar.start contains "T" %}
+                    {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+                    {% else %}
+                    {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+                    {% endif %}
+                    {% endif %}</span> • I'll be at <a class="upcoming-event-title"
+                    href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
+                    class="upcoming-event-location">{{ upcomingevent.location }}</span>. Check it out!
+            </small>
+        </section>
+    </div>
     {% endif %}
-{% endif %}
+    {% endif %}
+    {% endif %}
 
     <div class="sidebar-widget sidebar-categories">
         <header>Categories</header>
@@ -76,6 +76,37 @@
             </ul>
         </section>
     </div>
+    {% endif %}
+
+    {% if page.id != 'archived-events' %}
+    {% assign archived_events = site.events | where: 'status', 'done' | sort: 'calendar.start' | reverse %}
+    {% assign len = archived_events | size %}
+    {% if len > 0 %}
+    <div class="sidebar-widget sidebar-recent-events">
+        <header>Recent events
+        </header>
+        <section>
+            <div class="p-1">
+                <small>I recently had the opportunity to deliver talks at the following events:</small>
+            </div>
+            <ul>
+                {% for event in archived_events limit:4 %}
+                <li><small>
+                        {% if page.url == event.url %}
+                        <span class="font-italic">{{ event.title }}</span>
+                        {% else %}
+                        <a class="muted-link" title="{{ event.title }}"
+                            href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
+                        {% endif %}
+                    </small></li>
+                {% endfor %}
+            </ul>
+            <div class="p-1">
+                <small>Each event lists links to slides, demos, recording, and additional material. Check it out.</small>
+            </div>
+        </section>
+    </div>
+    {% endif %}
     {% endif %}
 
 </section>
