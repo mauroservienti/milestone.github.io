@@ -18,6 +18,7 @@
         <header>Upcoming event
         </header>
         <section>
+            <small>
             On <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
               {{ upcomingevent.calendar.display }}
@@ -30,6 +31,7 @@
             {% endif %}</span> I'll be at <a class="upcoming-event-title"
               href="{{ upcomingevent.url | prepend: site.baseurl }}">{{ upcomingevent.title }}</a>, <span
               class="upcoming-event-location">{{ upcomingevent.location }}</span>. Check it out!
+                </small>
         </section>
     </div>
   {% endif %}
