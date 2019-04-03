@@ -59,7 +59,7 @@ the infrastructure executing the above code could, at runtime, store the resulti
 
 *That's a cache*. It's the sad truth, but we should be honest with ourselves: what we just designed is a cache.
 
-## Ownership dilemma
+## Cache introduces an ownership dilemma
 
 As soon as the solution is identified for what it is, and especially given the distributed system context, it immediately shines as something we probably don't want.
 
