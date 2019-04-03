@@ -4,7 +4,10 @@
     <div class="sidebar-widget sidebar-bio">
         <p class="p-3">
             <small>{% include bio-intro.txt %}</small>
-            <footer class="blockquote-footer"><cite title="Who I am.">Who I am.</cite> Mauro Servienti</footer>
+            <footer class="blockquote-footer">
+                <a class="muted-link inherit-color" title="About me..." href="{{ '/about-me/' | prepend: site.baseurl }}">
+                    <cite title="Who I am.">Who I am.</cite> Mauro Servienti</a>
+            </footer>
         </p>
     </div>
     {% endif %}
@@ -102,7 +105,8 @@
                 {% endfor %}
             </ul>
             <div class="p-1">
-                <small>Each event lists links to slides, demos, recording, and additional material. Check it out.</small>
+                <small>Each event lists links to slides, demos, recording, and additional material. Check it
+                    out.</small>
             </div>
         </section>
     </div>

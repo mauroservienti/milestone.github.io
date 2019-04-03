@@ -53,11 +53,15 @@
 }
 
 .border-none{
-	border-width: 0;
+	border-width: 0 !important;
 }
 
 .transparent{
-	background-color: transparent;
+	background-color: transparent !important;
+}
+
+.inherit-color{
+	color: inherit !important;
 }
 
 .content
