@@ -21,7 +21,7 @@ In a few occasions I mentioned either `the infrastructure` or `the engine` and a
 
 To make sure that data can be aggregated we need to make clients interact with a third party and not directly with endpoints owned by services. Still using our services sample clients don't directly talk to *Marketing*, *Sales*, *Warehouse*, and *Shipping*. They connect to a service that sits between them and business services to run the composition logic.
 
->  This has also the nice side effect of masquerading the internal services topology. It solve spatial coupling issues.
+>  This has also the nice side effect of masquerading the internal services topology. It solves spatial coupling issues too.
 
 This service behaves like a reverse proxy:
 
@@ -52,9 +52,9 @@ public class Startup
 }
 ```
 
-The above `startup` simply does 3 things:
+The above `startup` "simply" does 3 things:
 
-1. Adds `Routing` components to the services that will be run by the ASP.Net Core application
+1. Adds the `Routing` component to the services that will be run by the ASP.Net Core application
 2. Through the `AddViewModelComposition`:
    1. Scans all assemblies in the `bin` directory looking for types that implement either the `IHandleRequests` interface or the `ISubscribeToCompositionEvents` one
    2. Registers all types matching the above "query" in the current "IoC/DI" container
@@ -64,7 +64,7 @@ The above `startup` simply does 3 things:
 
 #### HTTP Requests handling
 
-ASP.Net Core handles HTTP requests through a pipeline, "elements" in the handling pipeline are called middleware. Middleware can be passthrough, when they intercept the request and then pass it to the next in the pipeline or can be terminator as they will terminate the incoming request handling and are responsible to start the response.
+ASP.Net Core handles HTTP requests through a pipeline, "elements" in the handling pipeline are called middleware. Middleware can be passthrough, when they intercept the request and then pass it to the next middleware in the pipeline; or they can be terminator as they will terminate the incoming request handling and are responsible to start the response.
 
 > Basically there can be only 1 terminator in a pipeline. For example in in `Mvc` we could consider `Controllers` to be terminators. It's not that simple, but you probably get the point.
 >
@@ -75,21 +75,21 @@ The Composition Gateway when run acts like a terminator, it sits at the end of t
 ```csharp
 public static void RunCompositionGatewayWithDefaultRoutes(this IApplicationBuilder app)
 {
-	app.RunCompositionGateway(routes =>
+    app.RunCompositionGateway(routes =>
     {
-		routes.MapComposableGet( template: "{controller}/{id:int?}");
+	routes.MapComposableGet( template: "{controller}/{id:int?}");
         routes.MapRoute("{*NotFound}", context =>
         {
-        	context.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
             return Task.CompletedTask;
         });
-	});
+    });
 }
 ```
 
 What is does is:
 
-- defines a default route suing a simple template as `{controller}/{id:int?}`
+- defines a default route using a simple template as `{controller}/{id:int?}`
 - defines a *catch-all* route to return a `404` to clients hitting invalid routes
 
 It's a shortcut to:
@@ -97,7 +97,7 @@ It's a shortcut to:
 ```csharp
 public static void RunCompositionGateway(this IApplicationBuilder app, Action<IRouteBuilder> routes = null)
 {
-	var routeBuilder = new RouteBuilder(app);
+    var routeBuilder = new RouteBuilder(app);
     routes?.Invoke(routeBuilder);
 
     app.UseRouter(routeBuilder.Build());
@@ -106,25 +106,25 @@ public static void RunCompositionGateway(this IApplicationBuilder app, Action<IR
 
 > In a real world application we would probably call `RunCompositionGateway` configuring routes we need. We could say that `RunCompositionGatewayWithDefaultRoutes` is for simple scenarios or demo purposes.
 
-Here is when the new routing engine shines. Finally custom routes and route handlers can be defined and injected into the engine. That's exactly what we are doing in the `MapComposableGet` method:
+Here is when the new routing engine shines. Finally custom routes and route handlers can be defined and injected into the engine. That's exactly what we are doing in `MapComposableGet`. `MapComposableGet` calls a more generic `MapComposableRoute` defined as follows:
 
 ```csharp
-public static IRouteBuilder MapComposableGet(this IRouteBuilder routeBuilder,
+public static IRouteBuilder MapComposableRoute(this IRouteBuilder routeBuilder,
            string template,
            RouteValueDictionary defaults = null,
            RouteValueDictionary dataTokens = null)
 {
-	var route = new Route(
-    	target: new RouteHandler(ctx => ComposableRouteHandler.HandleGetRequest(ctx)),
+    var route = new Route(
+    	target: new RouteHandler(ctx => HandleRequest(ctx)),
         routeTemplate: template,
         defaults: defaults,
         constraints: new RouteValueDictionary(new
         {
-        	httpMethod = new HttpMethodRouteConstraint(HttpMethods.Get)
-		}),
+           httpMethod = new HttpMethodRouteConstraint(HttpMethods.Get)
+	}),
         dataTokens: dataTokens,
         inlineConstraintResolver: routeBuilder.ServiceProvider.GetRequiredService<IInlineConstraintResolver>()
-	);
+    );
 
     routeBuilder.Routes.Add(route);
 
@@ -135,7 +135,7 @@ public static IRouteBuilder MapComposableGet(this IRouteBuilder routeBuilder,
 We are defining a custom route using the supplied `template`, the relevant line of code is the following:
 
 ```csharp
-target: new RouteHandler(ctx => ComposableRouteHandler.HandleGetRequest(ctx))
+target: new RouteHandler(ctx => HandleRequest(ctx))
 ```
 
 where a custom route handler is defined. That custom route handler, finally, is where the composition happens.
