@@ -82,6 +82,14 @@ id: 'home'
   <div class="card-columns">
     {% for post in site.posts limit:6 offset:1 %}
     <div class="card">
+      <div class="card-header">
+         <div class="post-details">
+            <img class="post-details-icon" src="/img/calendar.png" />
+            <span class="post-date">
+              {{ post.date | date_to_rfc822 | date: "%-d %B %Y" }}
+            </span>
+         </div>
+      </div>
       <div class="card-body">
         <h4 class="card-title">
           <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
