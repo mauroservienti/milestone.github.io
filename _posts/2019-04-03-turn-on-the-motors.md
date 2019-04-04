@@ -21,7 +21,7 @@ In a few occasions I mentioned either `the infrastructure` or `the engine` and a
 
 To make sure that data can be aggregated we need to make clients interact with a third party and not directly with endpoints owned by services. Still using our services sample clients don't directly talk to *Marketing*, *Sales*, *Warehouse*, and *Shipping*. They connect to a service that sits between them and business services to run the composition logic.
 
->  This has also the nice side effect of masquerading the internal services topology. It solves spatial coupling issues too.
+>  This has also the nice side effect of masquerading the internal services topology. It solves spatial coupling issues.
 
 This service behaves like a reverse proxy:
 
@@ -54,23 +54,23 @@ public class Startup
 
 The above `startup` "simply" does 3 things:
 
-1. Adds the `Routing` component to the services that will be run by the ASP.Net Core application
-2. Through the `AddViewModelComposition`:
+1. Adds `Routing` to the services that will be run by the ASP.Net Core application
+2. Through calling `AddViewModelComposition`:
    1. Scans all assemblies in the `bin` directory looking for types that implement either the `IHandleRequests` interface or the `ISubscribeToCompositionEvents` one
-   2. Registers all types matching the above "query" in the current "IoC/DI" container
+   2. Registers all types matching the above "query" in the current IoC/DI container
 3. Runs the Composition Gateway as an ASP.Net Core pipeline terminator in `RunCompositionGatewayWithDefaultRoutes`
 
 > I know it doesn't really appear simple, have faith. It's not really complex either.
 
 #### HTTP Requests handling
 
-ASP.Net Core handles HTTP requests through a pipeline, "elements" in the handling pipeline are called middleware. Middleware can be passthrough, when they intercept the request and then pass it to the next middleware in the pipeline; or they can be terminator as they will terminate the incoming request handling and are responsible to start the response.
+ASP.Net Core handles HTTP requests through a pipeline, "elements" in the handling pipeline are called middleware. Middleware can be passthrough, when they intercept the request and then pass it to the next middleware in the pipeline; or they can be terminators as they will terminate the incoming request handling and are responsible to start the response.
 
 > Basically there can be only 1 terminator in a pipeline. For example in in `Mvc` we could consider `Controllers` to be terminators. It's not that simple, but you probably get the point.
 >
 > More on ASP.Net Core pipeline and middleware in <https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/>
 
-The Composition Gateway when run acts like a terminator, it sits at the end of the pipeline. `RunCompositionGatewayWithDefaultRoutes` is defined as follows:
+The Composition Gateway acts like a terminator, it sits at the end of the pipeline. `RunCompositionGatewayWithDefaultRoutes` is defined as follows:
 
 ```csharp
 public static void RunCompositionGatewayWithDefaultRoutes(this IApplicationBuilder app)
@@ -87,9 +87,9 @@ public static void RunCompositionGatewayWithDefaultRoutes(this IApplicationBuild
 }
 ```
 
-What is does is:
+What it does is:
 
-- defines a default route using a simple template as `{controller}/{id:int?}`
+- defines a default route using as template `{controller}/{id:int?}`
 - defines a *catch-all* route to return a `404` to clients hitting invalid routes
 
 It's a shortcut to:
@@ -138,9 +138,9 @@ We are defining a custom route using the supplied `template`, the relevant line 
 target: new RouteHandler(ctx => HandleRequest(ctx))
 ```
 
-where a custom route handler is defined. That custom route handler, finally, is where the composition happens.
+where a custom route handler is defined. Finally, in the custom route handler is where composition happens.
 
-`HandleGetRequest` does 5 things:
+`HandleRequest` does 5 things:
 
 1. Retrieves from the `IoC/DI` container all instances implementing either `IHandleRequests` or `ISubscribeToCompositionEvents`
 2. Filters out, calling `Matches`, all the one not interested in handling the current request
