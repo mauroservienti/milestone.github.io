@@ -15,7 +15,7 @@ category: view-model-composition
 
 We spent the last seven posts introducing ViewModel Composition and diving into many aspects of it. A detailed list of articles can be found in the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition.html) category.
 
-In a few occasions I mentioned either `the infrastructure` or `the engine` and always said that: "there will be a post about it". Time has come.
+In a few occasions I mentioned either `the infrastructure` or `the engine` and always said: "there will be a post about it". Time has come.
 
 ## Composition Gateway
 
