@@ -110,29 +110,27 @@ Here is when the new routing engine shines. Finally custom routes and route hand
 
 ```csharp
 public static IRouteBuilder MapComposableRoute(this IRouteBuilder routeBuilder,
-           string template,
-           RouteValueDictionary defaults = null,
-           RouteValueDictionary dataTokens = null)
+   string template,
+   IDictionary<string, object> constraints,
+   RouteValueDictionary defaults = null,
+   RouteValueDictionary dataTokens = null)
 {
-    var route = new Route(
-    	target: new RouteHandler(ctx => HandleRequest(ctx)),
-        routeTemplate: template,
-        defaults: defaults,
-        constraints: new RouteValueDictionary(new
-        {
-           httpMethod = new HttpMethodRouteConstraint(HttpMethods.Get)
-	}),
-        dataTokens: dataTokens,
-        inlineConstraintResolver: routeBuilder.ServiceProvider.GetRequiredService<IInlineConstraintResolver>()
-    );
+   var route = new Route(
+      target: new RouteHandler(ctx => HandleRequest(ctx)),
+      routeTemplate: template,
+      defaults: defaults,
+      constraints: constraints,
+      dataTokens: dataTokens,
+      inlineConstraintResolver: routeBuilder.ServiceProvider.GetRequiredService<IInlineConstraintResolver>()
+   );
 
-    routeBuilder.Routes.Add(route);
+   routeBuilder.Routes.Add(route);
 
-    return routeBuilder;
+   return routeBuilder;
 }
 ```
 
-We are defining a custom route using the supplied `template`, the relevant line of code is the following:
+We are defining a custom route using the supplied `template` and constraints. The relevant line of code is the following:
 
 ```csharp
 target: new RouteHandler(ctx => HandleRequest(ctx))
