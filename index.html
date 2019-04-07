@@ -12,6 +12,12 @@ id: 'home'
       src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <div class="card-body">
+                          <p class="card-text first-post-details">
+        <small class="first-post-date">
+              {{ first.date | date_to_rfc822 | date: "%-d %B %Y" }}
+          
+        </small>
+      </p>
       <h2 class="card-title">
         <a class="muted-link" href="{{ first.url | prepend: site.baseurl }}">{{ first.title }}</a>
       </h2>
