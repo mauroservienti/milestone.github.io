@@ -19,9 +19,9 @@ layout: default
       {{ page.calendar.display }}
     {% else %}
       {% if page.calendar.start contains "T" %}
-        {{ page.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+        {{ page.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
       {% else %}
-        {{ page.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+        {{ page.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
       {% endif %}
     {% endif %}
   </span>
