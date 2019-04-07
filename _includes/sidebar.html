@@ -52,7 +52,7 @@
                         {% if page.url == category_page.url %}
                         <span class="font-italic">{{ category_page.title }}</span>
                         {% else %}
-                        <a class="muted-link" title="{{ category_page.title }}"
+                        <a class="muted-link inherit-color" title="{{ category_page.title }}"
                             href="{{ category_page.url | prepend: site.baseurl }}">{{ category_page.title }}</a>
                         {% endif %}
                     </small></li>
@@ -71,7 +71,7 @@
                         {% if page.url == post.url %}
                         <span class="font-italic">{{ post.title }}</span>
                         {% else %}
-                        <a class="muted-link" title="{{ post.title }}"
+                        <a class="muted-link inherit-color" title="{{ post.title }}"
                             href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
                         {% endif %}
                     </small></li>
@@ -98,7 +98,7 @@
                         {% if page.url == event.url %}
                         <span class="font-italic">{{ event.title }}</span>
                         {% else %}
-                        <a class="muted-link" title="{{ event.title }}"
+                        <a class="muted-link inherit-color" title="{{ event.title }}"
                             href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
                         {% endif %}
                     </small></li>
