@@ -12,7 +12,7 @@ id: 'home'
       src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <div class="card-body">
-                          <p class="card-text first-post-details">
+      <p class="card-text first-post-details">
         <small class="first-post-date">
               {{ first.date | date_to_rfc822 | date: "%B %-d, %Y" }}
           
@@ -38,16 +38,15 @@ id: 'home'
   {% if len > 0 %}
   {% assign upcomingevent = upcomingevents[0] %}
   <div class="card border-none mb-3 upcoming-event">
-                                                   <div class="card-header">
-                                                                           
-                                                                           <span>Upcoming event • <span class="upcoming-event-date">
+    <div class="card-header">
+       <span>Upcoming event • <span class="upcoming-event-date">
               {% if upcomingevent.calendar.display %}
               {{ upcomingevent.calendar.display }}
               {% else %}
               {% if upcomingevent.calendar.start contains "T" %}
-              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
               {% else %}
-              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+              {{ upcomingevent.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
               {% endif %}
               {% endif %}
             </span>
@@ -89,7 +88,7 @@ id: 'home'
       <div class="card-header">
          <div class="post-details">
             <span class="post-date">
-              {{ post.date | date_to_rfc822 | date: "%-d %B %Y" }}
+              {{ post.date | date_to_rfc822 | date: "%B %-d, %Y" }}
             </span>
          </div>
       </div>
