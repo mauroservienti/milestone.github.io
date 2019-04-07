@@ -20,9 +20,9 @@ title: Events archive
               {{ event.calendar.display }}
             {% else %}
               {% if event.calendar.start contains "T" %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+                {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
               {% else %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+                {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
               {% endif %}
             {% endif %}  
           </span>
