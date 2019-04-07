@@ -8,7 +8,6 @@ language: "English"
 eventurl: "https://dotnetday.ch/"
 calendar:
   start: "2019-05-28"
-  display: "28 May 2019"
 sessions:
 - title: "Designing a UI for Microservices"
   speakers:
