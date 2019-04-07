@@ -16,7 +16,7 @@ When building systems based on SOA principles service boundaries are a key aspec
 The transition from the user mental model, what the domain expert describes, to the service boundaries architectural model in the SOA space raises many different concerns. If domain entities, as described by domain experts, are split among several different services:
 
 - how can we then display to users what they need to visualize?
-- when systems need to make decisions how can they “query” data, required to make that decision, that stored in many different services?
+- when systems need to make decisions how can they “query” data, required to make that decision, stored in many different services?
 
 This type of questions lead systems to be designed using rich events, and not thin ones, in order to share data between services and at the same to share data with cache-like things, such as Elastic Search, to satisfy UI query/visualization needs.
 
