@@ -25,9 +25,9 @@ show_in_header: ''
           {{ nearest.calendar.display }}
           {% else %}
           {% if nearest.calendar.start contains "T" %}
-          {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+          {{ nearest.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
           {% else %}
-          {{ nearest.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+          {{ nearest.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
           {% endif %}
           {% endif %}
         </span>
@@ -79,9 +79,9 @@ show_in_header: ''
             {{ event.calendar.display }}
             {% else %}
             {% if event.calendar.start contains "T" %}
-            {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y, %H:%M" }}
+            {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
             {% else %}
-            {{ event.calendar.start | date_to_rfc822 | date: "%-d %B %Y" }}
+            {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
             {% endif %}
             {% endif %}
           </span>
