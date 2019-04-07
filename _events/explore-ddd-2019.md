@@ -9,7 +9,7 @@ eventurl: "http://exploreddd.com/"
 calendar:
   start: "2019-09-18"
   start: "2019-09-20"
-  display: "September, 18-20"
+  display: "September 18-20, 2019"
 sessions:
 - title: "Welcome to the (state) machine"
   speakers:
