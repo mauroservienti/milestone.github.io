@@ -23,7 +23,7 @@ Images processing takes time and is done in background, when processing is compl
 
 This process can be outlined as follows:
 
-![1482055831647](/img/posts/1482055831647.png)
+![1482055831647](/img/posts/1482055831647.png){:class="img-fluid"}
 
 OCR processing can take a long time and we don't want to hold the incoming user request until the work is completed. An interesting option is to offload the OCR work to a back-end system:
 
@@ -55,7 +55,7 @@ A closer look at the business problem shows that there are two different busines
 
 [NServiceBus Sagas](https://docs.particular.net/nservicebus/sagas/) are a perfect fit for the state machine. As mentioned before, due to the transactional behavior of queuing systems, messages are not a good solution when it comes to long processing time.
 
-![1482059636774](/img/posts/1482059636774.png)
+![1482059636774](/img/posts/1482059636774.png){:class="img-fluid"}
 
 The backend is now split to handle the two concerns. It's obvious that the communication technology across the `OCR state machine` and the `OCR worker process` cannot be queue based.
 
