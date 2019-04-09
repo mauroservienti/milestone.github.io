@@ -117,7 +117,7 @@ At this point it's probably clear that if all the services interested in a speci
 
 The entire composition flow can be summarized as follows:
 
-![composition engine information flow](/img/posts/viewmodel-composition-show-me-the-code/1551868103502.png){:class="img-fluid"}
+![composition engine information flow](/img/posts/viewmodel-composition-show-me-the-code/1551868103502.png){:class="img-fluid mx-auto d-block"}
 
 The composition engine handles the incoming request:
 
