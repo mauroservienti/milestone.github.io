@@ -17,7 +17,7 @@ In [last instalment](/2019/02/06/what-is-services-viewmodel-composition-again.ht
 
 ## Can be scary, at a first look
 
-![a-product](/img/posts/viewmodel-composition-maze/a-product.jpg){:class="img-fluid"}
+![a-product](/img/posts/viewmodel-composition-maze/a-product.jpg){:class="img-fluid mx-auto d-block"}
 
 The product in the screenshot, if observed in [its original context](https://www.amazon.com/Benran-Outdoor-Travel-Protector-Storage/dp/B013QXJ3OQ/), is overwhelming. It's composed by a tremendous amount of information, coming for many different services. It's very easy to fall into the trap of concluding that ViewModel Composition should be manually crafted for every scenario as the complexity of the information we want to represent cannot be incapsulated into simpler patterns.
 
@@ -42,7 +42,7 @@ If, each service, other than storing its own data, also takes care of attaching 
 
 This operation can be schematized like follows:
 
-![a-composed-product](/img/posts/viewmodel-composition-maze/a-composed-product.jpg){:class="img-fluid"}
+![a-composed-product](/img/posts/viewmodel-composition-maze/a-composed-product.jpg){:class="img-fluid mx-auto d-block"}
 
 Given a key, `products/1`, we can now ask services to return data identified by the given key. All the retrieve operations can be run in parallel as the only shared, and required, piece of information is the key. Once all the data are on the client, whatever client means in this context, they can be composed as a ViewModel.
 
