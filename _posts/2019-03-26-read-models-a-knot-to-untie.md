@@ -21,7 +21,7 @@ When dealing with distributed systems it's very tempting, and apparently easy an
 
 Traditionally read models are presented in a very fancy way. I performed a [Google Images search](https://www.google.com/search?q=read+model&source=lnms&tbm=isch&sa=X&ved=0ahUKEwii7OfopJ_hAhVKsaQKHT3rCc0Q_AUIDigB&biw=1707&bih=818) and picked one:
 
-![Related image](https://i.stack.imgur.com/eKU6r.png){:class="img-fluid"}
+![Related image](https://i.stack.imgur.com/eKU6r.png){:class="img-fluid mx-auto d-block"}
 
 Most of the proposed implementations imply that there is some sort of synchronization between the write storage, `RDBMS` in the image, and the read storage, the incredibly fast thing.
 
