@@ -46,7 +46,7 @@ Continuing with our sample we could say that Marketing/Product Catalog is the on
 
 In this case *Marketing* is the perfect place to ask for the list of Products we want to display. Marketing will be the one handling the `/products` request:
 
-![1551362496722](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362496722.png){:class="img-fluid"}
+![1551362496722](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362496722.png){:class="img-fluid mx-auto d-block"}
 
 The Marketing component, or `RequestHandler`, will return a list of products, something similar to:
 
@@ -64,19 +64,19 @@ The Marketing component, or `RequestHandler`, will return a list of products, so
 
 At this point Marketing is ready to notify all other interested parties that some products have been loaded:
 
-![1551362507668](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362507668.png){:class="img-fluid"}
+![1551362507668](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362507668.png){:class="img-fluid mx-auto d-block"}
 
 The Marketing `RequestHandler` publishes an in-memory event to notify that some products have been loaded. Sales and Shipping are interested in augmenting those products, thus they receive the `ProductsLoaded` event, that contains all the keys of the loaded products.
 
-![1551362519284](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362519284.png){:class="img-fluid"}
+![1551362519284](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362519284.png){:class="img-fluid mx-auto d-block"}
 
 Once all components have received the event they go to their respective backends to retrieve the information related to all the loaded products, in a single roundtrip. 
 
-![1551362531125](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362531125.png){:class="img-fluid"}
+![1551362531125](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362531125.png){:class="img-fluid mx-auto d-block"}
 
 Once the information has been retrieved, the last step (i.e. the composition) is not that different from the Single Item Composition scenario:
 
-![1551362461054](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362461054.png){:class="img-fluid"}
+![1551362461054](/img/posts/into-the-darkness-of-viewmodel-lists-composition/1551362461054.png){:class="img-fluid mx-auto d-block"}
 
 It's as simple as an in-memory `foreach` iterating over the loaded product, giving each interested party the opportunity to augment each product with their data.
 
