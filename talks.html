@@ -16,8 +16,7 @@ show_in_header: ''
       {% for talk in site.talks %}
       <div class="card">
         {% if talk.header_image %}
-        <img class="img-fluid card-img-top alt=" {{ talk.title }} header image"
-          src="{{ talk.header_image | prepend: site.baseurl }}" />
+        <img class="img-fluid card-img-top" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
         {% endif %}
         <div class="card-body">
           <h3 class="card-title">
