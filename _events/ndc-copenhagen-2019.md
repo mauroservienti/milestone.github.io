@@ -15,6 +15,7 @@ sessions:
   url: https://ndccopenhagen.com/talk/all-our-aggregates-are-wrong/
   slides: https://www.slideshare.net/mauroservienti/all-our-aggregates-are-wrong-ndc-copenhagen-2019
   demos: http://bit.ly/ndc-copenhagen-demos
+  recording: https://www.youtube.com/watch?v=hev65ozmYPI
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://ndccopenhagen.com/speaker/mauro-servienti
