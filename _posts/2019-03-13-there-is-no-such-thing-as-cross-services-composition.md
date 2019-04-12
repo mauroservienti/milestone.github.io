@@ -1,19 +1,21 @@
 ---
-typora-copy-images-to: ..\img\posts\there-is-no-such-a-thing-as-cross-services-composition
+typora-copy-images-to: ..\img\posts\there-is-no-such-thing-as-cross-services-composition
 typora-root-url: ..
 layout: post
-header_image: /img/posts/there-is-no-such-a-thing-as-cross-services-composition/header.jpg
-title: "There is no such a thing as cross-service ViewModel Composition"
+header_image: /img/posts/there-is-no-such-thing-as-cross-services-composition/header.jpg
+title: "There is no such thing as cross-service ViewModel Composition"
 author: Mauro Servienti
 synopsis: "At a first look it might sound reasonable to use ViewModel Composition to allow services to talk to each other. Why not allowing services to share complex data structure composed at runtime? Let me put it simple: you don't want a distributed monolith!"
 tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
-redirect_from: /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
+redirect_from:
+- /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
+- /view-model-composition/2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
 ---
 
-In fact there isn't such a thing as cross-service data sharing at all. Lately I started a series of articles about Service ViewModel Composition. I talked about:
+In fact there isn't such thing as cross-service data sharing at all. Lately I started a series of articles about Service ViewModel Composition. I talked about:
 
 - What problem is services ViewModel Composition designed to solve in [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)
 - How Single Item Composition is designed in [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
