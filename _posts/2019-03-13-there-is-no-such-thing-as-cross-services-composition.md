@@ -40,7 +40,7 @@ As soon as we have services querying each other for information we're immediatel
 
 ## Conclusion
 
-As soon as we allow cross-service data sharing, for example by allowing services to request data from another service, we end up with a the worst of two worlds: a monolith suddenly turns into a distributed monolith with all distributed system problems on top of a monolithic one. The system immediately loses two key aspects: 
+As soon as we allow cross-service data sharing, for example by allowing services to request data from another service, we end up with the worst of two worlds: a monolith suddenly turns into a distributed monolith with all distributed system problems on top of a monolithic one. The system immediately loses two key aspects: 
 
 - Services are not autonomous anymore
 - Services are temporally coupled
