@@ -26,7 +26,7 @@ In fact there isn't such thing as cross-service data sharing at all. Lately I st
 
 At a first look it might sound reasonable to use the ViewModel Composition approach to allow services to talk to each other. If `Service X` needs some information that are stored in `Service B` and `Service H` why not allow `X` to go to some sort of internal `Composition Engine` where request handlers from `B` and `H` could be deployed to solve the exact problem `X` has...? Thank you, but no, thank you.
 
-> As my Dutch colleague [Dennis van der Stelt](https://twitter.com/dvdstelt) would say "Autonomous microservices don't share data. Period.". That by the way is also the title of a talk he's going to give this month at [NDC Copenhagen, check it out](https://ndccopenhagen.com/talk/autonomous-microservices-dont-share-data-period/)!
+> As my Dutch colleague [Dennis van der Stelt](https://twitter.com/dvdstelt) would say "Autonomous microservices don't share data. Period.". That by the way is also the title of a talk he's going to give this month at [NDC Copenhagen, check it out](https://ndccopenhagen.com/talk/autonomous-microservices-dont-share-data-period/)! (recording is available on YouTube: https://www.youtube.com/watch?v=0TYbHVc2yWI)
 
 Even if it's technically possible to build such a thing, if we don't want to end up with a "wonderful" distributed monolith we probably want to avoid it.
 
