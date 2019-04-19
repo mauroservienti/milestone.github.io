@@ -39,7 +39,7 @@ Before diving into a real decomposition scenario, let me first demystify a coupl
 2. I want to start selling a new *product* online
 3. I want to change the price of a *product* we sell
 
-None of the above intentions/actions include changing an entire *product* at once. In order to sell a new *product* by adding it to the catalog we first need to buy it from a supplier. The warehouse has a back-office page that allows adding a new supplied *product* with details such as: supplier SKU, supplier price, supplier, description, etc.
+None of the above intentions/actions include changing an entire *product* at once. In order to sell a new *product* by adding it to the catalog we first need to buy it from a supplier. The Warehouse has a back-office page that allows adding a new supplied *product* with details such as: supplier SKU, supplier price, supplier, description, etc.
 
 Once the *product* is defined in Warehouse, it'll be available to both Marketing and Sales. Through a composite view, both can display products available in Warehouse that don't have a selling price defined, or that don't have a name and a description suitable for the online catalog.
 
