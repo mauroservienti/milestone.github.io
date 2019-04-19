@@ -78,7 +78,7 @@ class PaymentReservationHandler : IHandleRequests
       var controller = (string)routeData.Values["controller"];
 
       return HttpMethods.IsPost(httpVerb)
-         && controller.ToLowerInvariant() == "resevation"
+         && controller.ToLowerInvariant() == "reservation"
          && routeData.Values.ContainsKey("id");
    }
 }
@@ -86,7 +86,7 @@ class PaymentReservationHandler : IHandleRequests
 
 Payments can define a request handler that intercepts HTTP post requests to a URL like `/reservation/{reservation-id}`, the same can be done by Customer Care, and by Reservations.
 
-Let's start from the end: Reservation in the `Handle` method of its request handler will send a request to its backend to kick off the reservation process. The reservation process is a state machine whose first state is `reservation-pending`.
+Let's start from the end: Reservations in the `Handle` method of its request handler will send a request to its backend to kick off the reservation process. The reservation process is a state machine whose first state is `reservation-pending`.
 
 Customer Care simply stores customer information along with the `reservation-id` to keep track that a reservation belongs to a customer. By using list composition techniques Customer Care can now handle scenarios like: we want to display all the reservations made by a customer.
 
