@@ -121,7 +121,7 @@ Sending data to backend is not as easy at it seems at first glance. The incoming
 
 ## Conclusion
 
-In distributed systems it's very easy to find business cases where ViewModel Composition is what we need. We need to be careful in not falling into the "we need decomposition as well" trap . As we've seen that's not always the case. There are however scenarios in which ViewModel Decomposition techniques are required to satisfy specific business needs.
+In distributed systems it's very easy to find business cases where ViewModel Composition is what we need. We need to be careful in not falling into the "we need decomposition as well" trap. As we've seen that's not always the case. There are however scenarios in which ViewModel Decomposition techniques are required to satisfy specific business needs.
 
 ---
 
