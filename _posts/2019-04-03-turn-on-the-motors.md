@@ -11,6 +11,11 @@ tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
+demos:
+- title: "Composition Gateway"
+  url: https://github.com/mauroservienti/composition-gateway-sample
+- title: "Single Item Composition"
+  url: https://github.com/mauroservienti/composition-gateway-sample/src/basic-single-item
 ---
 
 We spent the last seven posts introducing ViewModel Composition and diving into many aspects of it. A detailed list of articles can be found in the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition.html) category.

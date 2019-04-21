@@ -15,40 +15,68 @@ layout: default
     {{ content }}
   </article>
 
-  <h5>Articles in this category:</h5>
+  <h4 class="mb-4 mt-4">Articles in this category</h4>
 
   <div class="card-columns category-posts-list">
-      {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
-      {% for post in category_posts %}
-      <div class="card">
-        <div class="card-header">
-          <div class="post-details">
-            <img class="post-details-icon" src="/img/calendar.png" />
-            <span class="post-date">
-              {{ post.date | date_to_rfc822 | date: "%-d %B %Y" }}
-            </span>
-          </div>
-        </div>
-        <div class="card-body">
-          <h4 class="card-title">
-            <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-          </h4>
-          <hr class="h-splitter" />
-          <p class="card-text">
-            {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
-          </p>
-          <p class="card-text">
-            <small class="text-muted">
-              <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
-            </small>
-          </p>
+    {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
+    {% for post in category_posts %}
+    {% if post.demos %}
+    {% assign there_are_posts_with_demos = true %}
+    {% endif %}
+    <div class="card">
+      <div class="card-header">
+        <div class="post-details">
+          <img class="post-details-icon" src="/img/calendar.png" />
+          <span class="post-date">
+            {{ post.date | date_to_rfc822 | date: "%-d %B %Y" }}
+          </span>
         </div>
       </div>
-      {% endfor %}
+      <div class="card-body">
+        <h4 class="card-title">
+          <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h4>
+        <hr class="h-splitter" />
+        <p class="card-text">
+          {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
+        </p>
+        <p class="card-text">
+          <small class="text-muted">
+            <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
+          </small>
+        </p>
+      </div>
     </div>
-  
-  <footer class="category-footer">
-        <p class="category-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this category</a></p>
-    </footer>
+    {% endfor %}
+  </div>
+
+  {% if page.demos or there_are_posts_with_demos %}
+  <h4 class="mb-2 mt-4">Demos available in this category</h4>
+  <ul class="demos-list">
+    {% if page.demos %}
+    {% for category_demo in page.demos %}
+    <li class="category-demo">{{ category_demo.title }}: <a title="{{ category_demo.title }}"
+        href="{{ category_demo.url }}">{{ category_demo.url }}</a></li>
+    {% endfor %}
+    {% endif %}
+
+    {% if there_are_posts_with_demos %}
+    {% for post in category_posts %}
+    {% if post.demos %}
+    {% for post_demo in post.demos %}
+    <li class="post-demo">{{ post_demo.title }}: <a title="{{ post_demo.title }}"
+      href="{{ post_demo.url }}">{{ post_demo.url }}</a> (Discussed in <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>)</li>
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+  </ul>
+  {% endif %}
+
+  <footer class="category-footer mt-4">
+    <p class="category-meta"><a
+        href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
+        this category</a></p>
+  </footer>
 
 </div>
