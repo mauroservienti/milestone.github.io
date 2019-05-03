@@ -88,7 +88,7 @@ If one of the 2 handlers fails the incoming message is retried, both handlers wi
 
 ## Conclusion
 
-Don't try to orchestrate multiple HTTP requests, there is very high change of ending up with a corrupted system. If from the UX perspective a fully asynchronous experience is doable then asynchronous messaging is likely to be the solution we're looking for. Idempotency is still needed, but its complexity can be delegated to the infrastructure using the Outbox pattern and a messaging framework.
+Don't try to orchestrate multiple HTTP requests, there is very high chance of ending up with a corrupted system. If from the UX perspective a fully asynchronous experience is doable, then asynchronous messaging is likely to be the solution we're looking for. Idempotency is still needed, but its complexity can be delegated to the infrastructure using the Outbox pattern and a messaging framework.
 
 *Disclaimer I work for Particular Software, the makers of NServiceBus*.
 
