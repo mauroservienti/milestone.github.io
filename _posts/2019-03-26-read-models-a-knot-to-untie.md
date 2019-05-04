@@ -90,7 +90,7 @@ Shipping options cannot be cached, unless we want to cache all possible combinat
 
 Read models are an interesting solution, and like all solutions they are not a silver bullet. We described two scenarios in which read models cause pain that we can avoid by using ViewModel Composition. This doesn't mean that read models should be avoided like the plague: they have their place, and we'll talk about that in a future article. There is a place for caches as well, but we need to uncover full vertical slices first.
 
-#### Articles in this series:
+#### Articles in this [series](https://milestone.topics.it/categories/view-model-composition):
 
 - [What is Services ViewModel Composition, again?](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html)”
 - [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
