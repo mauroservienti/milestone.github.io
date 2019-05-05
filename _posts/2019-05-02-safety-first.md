@@ -35,22 +35,27 @@ In our sample case, if *something* is an incoming HTTP we might have the followi
 <div class="mermaid">
 sequenceDiagram
     participant Client
-    participant Gateway
-    participant Service 1
-    participant Service 2
-    Client->>Gateway: HTTP Request
-    Gateway->>Service 1: First outgoing request
-    Gateway->>Service 2: Second outgoing request
-    Gateway->>Client: HTTP Request
+    participant Composition Gateway
+    participant Backend Service(s)
+    Client->>Composition Gateway: HTTP Request
+    Composition Gateway->>Backend Service(s): First outgoing request
+    Composition Gateway->>Backend Service(s): Second outgoing request
+    Composition Gateway->>Client: HTTP Response
 </div>
 
 the outgoing requests could be whatever we like, they could be 2 HTTP requests, or they could be a call to the Azure Table Storage trying to insert data and a SQL statement trying to update some data.
 
 In case of an infrastructure failure, we might end up in the following undesirable scenario:
 
-- HTTP request
-  - First outgoing request
-- *BSOD*
+<div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Composition Gateway
+    participant Backend Service(s)
+    Client->>Composition Gateway: HTTP Request
+    Composition Gateway->>Backend Service(s): First outgoing request
+    Note over Composition Gateway,Backend Service(s): BSOD
+</div>
 
 In such a scenario if the first outgoing request succeeded, and then machine crashes, there is no external transaction coordinator that can help. We have a corrupted system.
 
@@ -75,16 +80,29 @@ In most cases, users are simply looking for feedback. A response like:
 
 is more than enough. Then UX people can step in a build feedback mechanisms and notification areas to report back to users the status of their requests. If this is the case we can go fully asynchronous and modify the above scenario to:
 
-- HTTP request
-  - send a first message on a queue
-  - send a second message on a queue
-- HTTP response
+<div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Composition Gateway
+    participant Queuing System
+    Client->>Composition Gateway: HTTP Request
+    Composition Gateway->>Queuing System: send a first message on a queue
+    Composition Gateway->>Queuing System: send a second message on a queue
+    Composition Gateway->>Client: HTTP Response
+</div>
 
 However we just reduced to amount of time spent in that process, reducing the risk of a catastrophic failure hitting us. We haven't really solved the problem. But...because there is always a but, we could do something like:
 
-- HTTP request
-  - send the incoming HTTP request as a message payload to ourselves
-- HTTP response
+<div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Composition Gateway
+    participant Queuing System
+    Client->>Composition Gateway: HTTP Request
+    Composition Gateway->>+Queuing System: send HTTP Request as message payload
+    Queuing System-->>-Composition Gateway: handle the message
+    Composition Gateway->>Client: HTTP Response
+</div>
 
 This operation is known as send-local. What we have now is a 1 to 1 relationship between an incoming HTTP request and a messaging operation:
 
