@@ -6,6 +6,7 @@ header_image: /img/posts/safety-first/header.jpg
 title: "Safety first!"
 author: Mauro Servienti
 synopsis: "In a distributed system communication reliability is a key aspect. This is why orchestrating multiple HTTP calls is generally a bad idea, it's very hard, if not impossible, to be reliable. This is when messaging and patterns like the Outbox come into play."
+enable_mermaid: true
 tags:
 - SOA
 - Durable messaging
@@ -31,10 +32,17 @@ Then there are infrastructure failures: When *something* happens...BSOD.
 
 In our sample case, if *something* is an incoming HTTP we might have the following scenario:
 
-- HTTP request
-  - First outgoing request
-  - Second outgoing request
-- HTTP response
+<div class="mermaid">
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant Service 1
+    participant Service 2
+    Client->>Gateway: HTTP Request
+    Gateway->>Service 1: First outgoing request
+    Gateway->>Service 2: Second outgoing request
+    Gateway->>Client: HTTP Request
+</div>
 
 the outgoing requests could be whatever we like, they could be 2 HTTP requests, or they could be a call to the Azure Table Storage trying to insert data and a SQL statement trying to update some data.
 
