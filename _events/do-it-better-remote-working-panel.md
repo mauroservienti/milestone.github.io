@@ -12,6 +12,12 @@ calendar:
 sessions:
 - title: "Better Remote Working Panel"
   speakers:
+  - name: "Francesco Canovi"
+    profileurl: https://twitter.com/thedarkmist
+  - name: "Marco Ciscato"
+    profileurl: https://twitter.com/marcociscato73
+  - name: "Alessandro Maserati"
+    profileurl: https://twitter.com/AleMas2100
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
 tags:
