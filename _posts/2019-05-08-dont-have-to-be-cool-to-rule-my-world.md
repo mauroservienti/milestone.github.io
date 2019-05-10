@@ -126,7 +126,7 @@ But in what way is HTTP making it less coupled?
 
 Architecturally speaking, `MarketingProductDetailsGetHandler` is owned by the *Marketing* service, in which case it has all the rights to directly talk to a *Marketing*-owned database. The handler at deploy time is deployed at the Composition Gateway with all its settings, including the connection string to the database.
 
-> Ops people might then decide that since that the Composition Gateway lives in the DMZ, it cannot directly access an internal database and ask the *Marketing* team to setup an edge database for this specific scenario. All Operations concerns.
+> Ops people might then decide that since the Composition Gateway lives in the DMZ, it cannot directly access an internal database and ask the *Marketing* team to setup an edge database for this specific scenario. All Operations concerns.
 
 The fact that the `MarketingProductDetailsGetHandler` talks to a database rather then to an HTTP API doesn't introduce any more coupling. The handler belongs to the same service that owns the data, in which case they are cohesive. It's only a matter of deployment, when the handler is deployed it'll be hosted by the Composition Gateway, which is owned by IT/Ops. The Gateway has absolutely no knowledge about the way the handler will access its data, regardless of the fact it's using HTTP, a direct DB connection, or any other solution.
 
