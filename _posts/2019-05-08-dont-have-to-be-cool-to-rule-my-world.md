@@ -12,7 +12,7 @@ tags:
 - Logical Services
 ---
 
-*Today’s post will be more about KISS and SOA in general rather than ViewModel Composition, for such reason it won’t be part of the [ViewModel Composition category](https://milestone.topics.it/categories/view-model-composition). Even if the inception is something discussed in the ViewModel Composition series.*
+*Today’s post will be more about KISS and SOA in general rather than ViewModel Composition, so it won’t be part of the [ViewModel Composition category](https://milestone.topics.it/categories/view-model-composition). Even if the inception is something discussed in the ViewModel Composition series.*
 
 Nowadays HTTP is everywhere. HTTP is the Microservices way, so it must be used as a communication transport, they say. It even seems that if you're not "doing" HTTP you're not cool, you're legacy, you're living in the past!
 
@@ -43,19 +43,19 @@ class MarketingProductDetailsGetHandler : IHandleRequests
 
 ## Can you see it?
 
-That requests handler is hosted by the [Composition Gateway](/view-model-composition/2019/04/03/turn-on-the-motors.html), that acts like an HTTP reverse proxy. So what triggers that handler is an HTTP call, and this is fine because the Gateway is there to serve HTTP requests. But the question should be:
+That request handler is hosted by the [Composition Gateway](/view-model-composition/2019/04/03/turn-on-the-motors.html), which acts like an HTTP reverse proxy. The handler is triggered by an HTTP call, and this is fine because the Gateway is there to serve HTTP requests. But the question should be:
 
 > Is there any good reason to use HTTP to talk to the *Marketing* back-end?
 
-Which are the benefits that HTTP brings to the table in such scenario? Remember that:
+Which are the benefits that HTTP brings to the table in this scenario? Remember that:
 
 * Marketing is a service in the system
 
 * Marketing exposes data to the outside through the Composition Gateway
 
-* There is no such thing as [cross service communication/composition](/view-model-composition/2019/03/13/there-is-no-such-thing-as-cross-services-composition.html)
+* There is no such thing as [cross-service communication/composition](/view-model-composition/2019/03/13/there-is-no-such-thing-as-cross-services-composition.html)
 
-HTTP is nice, indeed, still has a few issues that we need to be aware of. The protocol tends to exacerbate some of the [fallacies of distributed computing](https://particular.net/s/free-ebook-dr-harvey-and-the-8-fallacies-of-distributed-computing). HTTP as a transport is highly interoperable, at the cost of transport costs. Serialization and deserialization impact on bandwidth and thus latency. And we need to be very careful about not introducing any not required additional cost.
+HTTP is nice, indeed, but still has a few issues that we need to be aware of. The protocol tends to exacerbate some of the [fallacies of distributed computing](https://particular.net/s/free-ebook-dr-harvey-and-the-8-fallacies-of-distributed-computing). HTTP as a transport is highly interoperable, at the expense of transport costs. Serialization and deserialization impact on bandwidth and thus latency. And we need to be very careful about not introducing any unrequired additional cost.
 
 The designed interaction can be represented using the following diagram:
 
@@ -120,15 +120,15 @@ graph LR
 
 Usually the main argument against this approach is: **Coupling**!
 
-In which way HTTP is making it less coupled?
+But in what way is HTTP making it less coupled?
 
 ## Whatchoo talkin' 'bout, Mauro? (cit.)
 
-Architecturally speaking the `MarketingProductDetailsGetHandler` is owned by the *Marketing* service, in which case it has all the rights to directly talk to a *Marketing*-owned database. The handler at deploy time is deployed at the Composition Gateway with all its settings including the connection string to the database.
+Architecturally speaking, `MarketingProductDetailsGetHandler` is owned by the *Marketing* service, in which case it has all the rights to directly talk to a *Marketing*-owned database. The handler at deploy time is deployed at the Composition Gateway with all its settings, including the connection string to the database.
 
-> Ops people might then decide that given that the Composition Gateway live in the DMZ it cannot directly access an internal database and ask the *Marketing* team to setup an edge database for this specific scenario. All Operations concerns.
+> Ops people might then decide that since the Composition Gateway lives in the DMZ, it cannot directly access an internal database and ask the *Marketing* team to setup an edge database for this specific scenario. All Operations concerns.
 
-The fact that the `MarketingProductDetailsGetHandler` talks to a database rather then to an HTTP API doesn't introduce any more coupling. The handler belongs to the same service that own the data, in which case they are cohesive. It's only a matter of deployment, when the handler is deployed it'll be hosted by the Composition Gateway, owned by IT/Ops. The Gateway has absolutely no knowledge about the way the handler will access its data, regardless of the fact it's using HTTP, a direct DB connection, or any other solution.
+The fact that the `MarketingProductDetailsGetHandler` talks to a database rather then to an HTTP API doesn't introduce any more coupling. The handler belongs to the same service that owns the data, in which case they are cohesive. It's only a matter of deployment, when the handler is deployed it'll be hosted by the Composition Gateway, which is owned by IT/Ops. The Gateway has absolutely no knowledge about the way the handler will access its data, regardless of the fact it's using HTTP, a direct DB connection, or any other solution.
 
 ## Conclusion
 
