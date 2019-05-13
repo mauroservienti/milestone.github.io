@@ -2,7 +2,7 @@
 layout: event
 header_image: /img/events/xe-one-day-2019/header.jpg
 status: 'upcoming'
-title: "Xe One Day"
+title: "Xe One Day - Enterprise application"
 location: "Holiday Inn Venezia, Venezia Mestre"
 language: "Italian"
 eventurl: "https://www.xedotnet.org/eventi/one-day-enterprise-application/"
