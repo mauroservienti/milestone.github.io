@@ -58,7 +58,7 @@ I’d say that in a small system, with a small team, with a low data change rate
 
 However it’s a huge source of coupling. As soon as the system grows, or the team gets larger, or there is higher data or data schema change rate, the hodgepodge becomes a source of pain.
 
-Multiple services, and thus teams, will find themselves fighting with each other to evolve document schema, to change query structure, to invalidate document sections, on so on. All these will surface also as deployment and development constraints.
+Multiple services, and thus teams, will find themselves fighting with each other to evolve document schema, to change query structure, to invalidate document sections etc.. All these will surface also as deployment and development constraints.
 
 ## Conclusion
 
