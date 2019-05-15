@@ -22,7 +22,7 @@ Last week I was on a call with my colleague [Tomek](https://twitter.com/Masterna
 
 Most of the times the “you are not Google” mantra is used to say that if you’re not at the scale of Google something (technology or architecture choices) is not worth it. The comment is not about the scale but rather about the business domain. For example, Amazon is not Google in the sense that search is not at the center of their business.
 
-How does this reflect on the architecture? In a service oriented architecture:
+How does this reflect in the architecture? In a service-oriented architecture:
 
 > a Service is the technical authority for a specific business capability.
 
