@@ -31,10 +31,12 @@ layout: default
         this post</a> • <a
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>
       {% if page.category %}
-      <br />
       {% assign pages_with_same_category = site.pages | where: 'category',page.category %}
-      {% assign category_page = pages_with_same_category[0] %}
-      Category: <a href="/categories/{{ category_page.category | prepend: site.baseurl }}">{{ category_page.title }}</a>
+        {% if pages_with_same_category and pages_with_same_category.size > 0 %}
+        {% assign category_page = pages_with_same_category[0] %}
+        <br />
+        Category: <a href="/categories/{{ category_page.category | prepend: site.baseurl }}">{{ category_page.title }}</a>
+        {% endif %}
       {% endif %}
     </p>
     <hr class="h-splitter" />
