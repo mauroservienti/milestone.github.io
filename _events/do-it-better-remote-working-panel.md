@@ -20,6 +20,7 @@ sessions:
     profileurl: https://twitter.com/AleMas2100
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  recording: https://youtu.be/xSaKjCLVKEc
 tags:
 - remote working
 ---
