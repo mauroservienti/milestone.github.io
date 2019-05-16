@@ -5,7 +5,7 @@ layout: post
 header_image: /img/posts/the-quest-for-a-better-search/header.jpg
 title: "The Quest for a better Search"
 author: Mauro Servienti
-synopsis: "There is search and then there is search. And despite having the same their business meaning, and thus their technical implications, are shaped by the business we are in. Let's have a look at what search in a distributed system is and what problems brings to the table."
+synopsis: "There is search and then there is search. And despite having the same name their meaning, and thus their technical implications, is shaped by the business we are in. Let's have a look at what search in a distributed system is and what problems brings to the table."
 tags:
 - SOA
 - Search
