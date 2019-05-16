@@ -16,7 +16,7 @@ tags:
 
 Nowadays HTTP is everywhere. HTTP is the Microservices way, so it must be used as a communication transport, they say. It even seems that if you're not "doing" HTTP you're not cool, you're legacy, you're living in the past!
 
-I somewhat felt into the trap, take a look at this snippet originally posted in [ViewModel Composition: show me the code!](/view-model-composition/2019/03/06/viewmodel-composition-show-me-the-code.html):
+I somewhat fell into this trap, take a look at this snippet originally posted in [ViewModel Composition: show me the code!](/view-model-composition/2019/03/06/viewmodel-composition-show-me-the-code.html):
 
 ```csharp
 class MarketingProductDetailsGetHandler : IHandleRequests
