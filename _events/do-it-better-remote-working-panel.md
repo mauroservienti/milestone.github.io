@@ -1,7 +1,7 @@
 ---
 layout: event
 header_image: /img/events/do-it-better-remote-working-panel/header.jpg
-status: 'upcoming'
+status: 'done'
 title: "Better Remote Working Panel"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
 language: "Italian"
