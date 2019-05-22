@@ -41,6 +41,8 @@ In this talk, we'll analyze what appears to be a straightforward e-commerce shop
 
 Dive into Service Boundaries with Udi Dahan: [http://go.particular.net/ndc-copenhagen-boundaries](http://go.particular.net/ndc-copenhagen-boundaries)
 
+<iframe src="//www.slideshare.net/slideshow/embed_code/key/3ZYjkSG52GrjsG" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe>
+
 ### Workshop: SOA Done Right (with examples in ASP.NET and NServiceBus)
 
 Go beyond the hype and build a solid foundation of theory and practice with this workshop on SOA development.
