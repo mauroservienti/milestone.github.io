@@ -1,7 +1,7 @@
 ---
 layout: event
 header_image: /img/events/xe-one-day-2019/header.jpg
-status: 'upcoming'
+status: 'done'
 title: "Xe One Day - Enterprise application"
 location: "Holiday Inn Venezia, Venezia Mestre"
 language: "Italian"
@@ -13,6 +13,8 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  slides: https://www.slideshare.net/mauroservienti/welcome-to-the-state-machine-xe-one-day-enterprise-applications
+  demos: http://bit.ly/xe-state-machine
 tags:
 - Microservices
 - Sagas
