@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/net-day-switzerland-2019/header.jpg
 title: ".NET Day Switzerland 2019"
 location: "Arena Cinemas AG, Kalanderplatz 8, Sihlcity, 8045 Zürich"
@@ -13,6 +13,8 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://dotnetday.ch/mauro-servienti.html
+  slides: https://www.slideshare.net/mauroservienti/designing-a-ui-for-microservices-net-day-switzerland-2019
+  demos: http://bit.ly/dnd19-composition
 tags:
 - Domain decomposition
 - ViewModel Composition
