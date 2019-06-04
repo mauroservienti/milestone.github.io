@@ -37,7 +37,7 @@ One can safely assume that the search attributes won't belong to a single servic
 If we look at the above requirements, as they are listed, in theory, we could design a distributed search process by applying [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition) in the following way:
 
 * Registry will handle the first part of the query returning the list of hotel IDs matching the `location` criteria
-* Returned IDs are then handover to Reservations that filters out, based on selected dates, IDs matching hotels not available
+* Returned IDs are then handed over to Reservations that filters out IDs based on availability in the selected search period
 * Finally IDs are passed to Marketing, and again Registry, to execute a [Faceted search](https://en.wikipedia.org/wiki/Faceted_search) and build facets results.
 
 It works, still is very inefficient. It would be like if the engineers from the header image of this article were to move the race car to different locations to change tyres or to refuel it. Very inefficient.
