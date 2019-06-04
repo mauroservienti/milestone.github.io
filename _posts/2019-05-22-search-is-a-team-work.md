@@ -23,7 +23,7 @@ Let's use the Hotel Reservations scenario as a way to identify some requirements
   * stars
   * guests reviews and ratings
 
-By looking at the above requirements and doing a very rough, and highly unsuggested, boundaries analysis, we could identify that:
+One can safely assume that the search attributes won't belong to a single service. We won't get into the service boundaries identification here though and for the sake of simplicity assume that we are dealing with the following decomposition:
 
 * Registry owns:
   * the hotel location
