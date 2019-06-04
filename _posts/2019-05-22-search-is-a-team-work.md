@@ -40,7 +40,7 @@ If we look at the above requirements, as they are listed, in theory, we could de
 * Returned IDs are then handed over to Reservations that filters out IDs based on availability in the selected search period
 * Finally IDs are passed to Marketing, and again Registry, to execute a [Faceted search](https://en.wikipedia.org/wiki/Faceted_search) and build facets results.
 
-It works, still is very inefficient. It would be like if the engineers from the header image of this article were to move the race car to different locations to change tyres or to refuel it. Very inefficient.
+It works, still is very inefficient. A lot of data will be moved around, across services, for the purpose of filtering them. Both latency and bandwidth will have a huge impact on the overall performance. It would be like if the engineers from the header image of this article were to move the race car to different locations to change tyres or to refuel it.
 
 ## A different approach
 
