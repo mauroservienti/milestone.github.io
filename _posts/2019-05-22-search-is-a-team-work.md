@@ -34,7 +34,7 @@ One can safely assume that the search attributes won't belong to a single servic
 
 ## A naïf design
 
-If we look at the above requirements, as they are listed, in theory we could design a distributed search process like the following (by applying some [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition)):
+If we look at the above requirements, as they are listed, in theory, we could design a distributed search process by applying [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition) in the following way:
 
 * Registry will handle the first part of the query returning the list of hotel IDs matching the `location` criteria
 * Returned IDs are then handover to Reservations that filters out, based on selected dates, IDs matching hotels not available
