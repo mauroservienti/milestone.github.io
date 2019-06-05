@@ -1,8 +1,8 @@
 ---
-typora-copy-images-to: ..\img\posts\search-is-a-team-work
+typora-copy-images-to: ..\img\posts\search-is-a-team-effort
 typora-root-url: ..
 layout: post
-header_image: /img/posts/search-is-a-team-work/header.jpg
+header_image: /img/posts/search-is-a-team-effort/header.jpg
 title: "Search is a Team Effort"
 author: Mauro Servienti
 synopsis: "Designing search functionality for a distributed system is challenging. There is the coupling threat on the one hand, and on the other we cannot sacrifice efficiency. There are a lot of similarities to what happens during a race car pit stop."
