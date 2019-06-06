@@ -10,6 +10,7 @@ tags:
 - SOA
 - Search
 category: soa-search
+redirect_from: /soa-search/2019/05/22/search-is-a-team-work.html
 ---
 
 In last installment, [The Quest for a Better Search](<https://milestone.topics.it/soa-search/2019/05/15/the-quest-for-a-better-search.html>), [Tomek](https://twitter.com/Masternak) and myself scratched the surface by looking at the high level problem that searching in a distributed system brings to the table.
