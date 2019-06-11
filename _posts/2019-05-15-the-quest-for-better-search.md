@@ -1,15 +1,16 @@
 ---
-typora-copy-images-to: ..\img\posts\the-quest-for-a-better-search
+typora-copy-images-to: ..\img\posts\the-quest-for-better-search
 typora-root-url: ..
 layout: post
-header_image: /img/posts/the-quest-for-a-better-search/header.jpg
-title: "The Quest for a better Search"
+header_image: /img/posts/the-quest-for-better-search/header.jpg
+title: "The Quest for better Search"
 author: Mauro Servienti
 synopsis: "There is search and then there is search. And despite having the same name their meaning, and thus their technical implications, is shaped by the business we are in. Let's have a look at what search in a distributed system is and what problems brings to the table."
 tags:
 - SOA
 - Search
 category: soa-search
+redirect_from: /soa-search/2019/05/15/the-quest-for-a-better-search.html
 ---
 
 As a developer if there is one thing I should blame Google for it's the distortion they inflicted on the search experience for users. When customer requirements list things like “Google-like search capabilities” my comment is generally along the lines of:
