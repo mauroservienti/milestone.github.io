@@ -77,7 +77,7 @@ However full vertical ownership comes at a cost, complexity:
 
 - it's harder to understand what is going on
 - it's harder to maintain visual coherence
-- deployment techniques need to be "invented" to make, for example, that each service can manage styling information but at deploy time everything is packed into the smallest number of artifacts.
+- deployment techniques need to be "invented" to make so that, for example, each service can manage styling information but at deploy time everything is packed into the smallest possible number of artifacts.
 
 ## Conlusion
 
