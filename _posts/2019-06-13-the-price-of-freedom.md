@@ -5,7 +5,7 @@ layout: post
 header_image: /img/posts/the-price-of-freedom/header.jpg
 title: "The Price of Freedom"
 author: Mauro Servienti
-synopsis: "When deisgning UIs for a distributed system we're faced with many choices. It's hard to districate ourselves into the options jungle. We might be tempted to select what at a first look seems to be most flexible solution, as flexilbility pretend to imply freedom. It's tremendously easy to transition from freedom to anarchy."
+synopsis: "When designing UIs for a distributed system we're faced with many choices. It's hard to districate ourselves into the options jungle. We might be tempted to select what at a first look seems to be most flexible solution, as flexibility pretend to imply freedom. It's tremendously easy to transition from freedom to anarchy."
 tags:
 - SOA
 - Services ViewModel Composition
