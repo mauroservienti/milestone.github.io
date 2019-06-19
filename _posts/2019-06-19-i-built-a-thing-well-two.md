@@ -74,14 +74,14 @@ And replace the routing configuration as follows:
 var endpointConfiguration = new EndpointConfiguration("my-endpoint-name");
 endpointConfiguration.UseTransport<SomeTransport>();
 
-endpointConfiguration.EnableAttributeRouting();
+endpointConfiguration.UseAttributeRouting();
 
 var endpoint = await Endpoint.Start(endpointConfiguration);
 ```
 
 At endpoint start time the attribute routing feature kicks in and automatically configure the routing table for all the messages (and commands) that have the `RouteTo` attribute applied.
 
-> Note: The `EnableAttributeRouting` will soon be renamed to `UseAttributeRouting`.
+> ~~Note: The `EnableAttributeRouting` will soon be renamed to `UseAttributeRouting`~~ renamed in v0.0.5.
 >
 > For more information on the little NServiceBus community feature head to: <https://github.com/mauroservienti/NServiceBus.AttributeRouting>
 
