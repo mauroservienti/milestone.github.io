@@ -83,7 +83,7 @@ At endpoint start time the attribute routing feature kicks in and automatically 
 
 > ~~Note: The `EnableAttributeRouting` will soon be renamed to `UseAttributeRouting`~~ renamed in v0.0.5.
 >
-> For more information on the little NServiceBus community feature head to: <https://github.com/mauroservienti/NServiceBus.AttributeRouting>
+> For more information on this little community feature head to: <https://github.com/mauroservienti/NServiceBus.AttributeRouting>
 
 ## I got carried away...
 
@@ -108,7 +108,7 @@ var endpointConfiguration = new EndpointConfiguration("my-endpoint-name");
 endpointConfigration.UseAttributeConventions();
 ```
 
-> For more information on this other feature head to: <https://github.com/mauroservienti/NServiceBus.AttributeConventions
+> For more information on this other feature head to: <https://github.com/mauroservienti/NServiceBus.AttributeConventions>
 
 What I find very nice is the result when the two features are combined:
 
