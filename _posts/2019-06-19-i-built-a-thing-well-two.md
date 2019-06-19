@@ -124,7 +124,7 @@ I personally find it very expressive.
 
 ## Conclusion
 
-NServiceBus is a powerful framework, with a lot of extensibility points. By crafting those two little things I just scratched the surface. Hopefully there will more. In the meantime, if you want to give a try to the features just head to their GitHub repositories and follow the very simple instructions there. Do not hesitate to raise issues in case you have any problem or any suggestion.
+NServiceBus is a powerful framework, with a lot of extensibility points. By crafting those two little things I just scratched the surface. Hopefully there will be more. In the meantime, if you want to give a try to the features just head to their GitHub repositories and follow the very simple instructions there. Do not hesitate to raise issues in case you have any problem or any suggestion.
 
 ---
 
