@@ -5,7 +5,7 @@ layout: post
 header_image: /img/posts/i-built-a-thing-well-two/header.jpg
 title: "I built a thing, well...two."
 author: Mauro Servienti
-synopsis: "NServiceBus as a configurable routing engine whose role is to define where messages should be routed when sent. The routing engine is configured along with the endpoint, that might not be the most comfortable solution. Is there anything we can do about it?"
+synopsis: "NServiceBus has a configurable routing engine whose role is to define where messages should be routed when sent. The routing engine is configured along with the endpoint, that might not be the most comfortable solution. Is there anything we can do about it?"
 tags:
 - NServiceBus
 - Routing
