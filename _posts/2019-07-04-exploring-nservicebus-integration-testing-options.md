@@ -152,7 +152,7 @@ public class MyServiceConfiguration : EndpointConfiguration
 }
 ```
 
-Here is the trick: in the endpoint code instead of using the `EndpointConfiguration` class directly I'm creating a class the inherits from it setting configuration values in the constructor. In this way I can then reference that class in the test to identify a configuration that should be used to spin up an endpoint. The `ServiceTemplate` thing in the test code is again a tricky way to glue my spike with the existing Acceptance testing infrastructure.
+Here is the trick: in the endpoint code instead of using the `EndpointConfiguration` class directly I'm creating a class the inherits from it setting configuration values in the constructor. This way I can then reference that class in the test to identify a configuration that should be used to spin up an endpoint. The `ServiceTemplate` thing in the test code is again a tricky way to glue my spike with the existing Acceptance testing infrastructure.
 
 The "only" thing the testing infrastructure is doing when endpoints are started in the test is to inject a pipeline behavior to capture information about what the endpoint is doing and allow, for example, the done condition or the asserts to be evaluated.
 
