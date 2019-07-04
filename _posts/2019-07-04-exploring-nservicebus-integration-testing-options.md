@@ -5,7 +5,7 @@ layout: post
 header_image: /img/posts/exploring-nservicebus-integration-testing-options/header.jpg
 title: "Exploring NServiceBus Integration Testing options"
 author: Mauro Servienti
-synopsis: "Sometimes there is the need to test the full business scenario. Like when rehearsing for a show you feel the need to test the entire choreography. When using messaging it's not easy and NServiceBus unit testing capabilities don't help much. Follow me in a journey that explores integration testing options with NServiceBus."
+synopsis: "Sometimes there is the need to test the full business scenario. Like when rehearsing for a show the entire choreography is tested. When using messaging, business scenarios testing is not easy and NServiceBus unit testing capabilities don't help much."
 tags:
 - NServiceBus
 - Testing
