@@ -45,7 +45,7 @@ The presented unit test uses `NUnit` as testing infrastructure, but that choice 
 
 ## Is this enough?
 
-Not necessarily. We could say that if users are testing in isolation their components (handlers, sagas, behaviors, etc...), and that if we test all the NServiceBus components the system is guaranteed to work as expected. That's true in theory but not in practice. There could scenarios, for example, in which the endpoint routing is misconfigured causing messages to not reach the expected destination. This type of error, and many others similar to this, cannot really be validated in a unit testing scenario.
+Not necessarily. We could say that if users are testing in isolation their components (handlers, sagas, behaviors, etc...), and that if we test all the NServiceBus components the system is guaranteed to work as expected. That's true in theory but not in practice. There could scenarios, for example, in which the endpoint routing is misconfigured causing messages to not reach the expected destination. This type of error, and many others like wrongly configured subscriptions when using message based pub/sub transports like MSMQ, cannot really be validated in a unit testing scenario.
 
 In general we could say that business scenarios cannot be tested. When testing a business scenario the goal is to validate that the expected message choreography happens and that all the components (mainly handlers and sagas) are invoked as expected. In this case we don't care much about data, and in general input/output values, those are handled by unit tests, we care much more that what's described in the business scenario happens.
 
