@@ -15,12 +15,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
-- title: ""
-  speakers:
-  - name: "Mauro Servienti"
-    profileurl: https://milestone.topics.it/about-me/
 tags:
-- Sagas
 - SOA
 - Microservices
 ---
