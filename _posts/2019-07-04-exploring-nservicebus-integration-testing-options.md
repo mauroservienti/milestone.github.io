@@ -12,7 +12,7 @@ tags:
 - Integration Testing
 ---
 
-NServiceBus comes with a [powerful unit testing](https://docs.particular.net/nservicebus/testing/) framework. The unit testing framework is designed to allow users to test components in isolation. Let's take, for example, the following message handler:
+NServiceBus comes with a [powerful unit testing framework](https://docs.particular.net/nservicebus/testing/). The unit testing framework is designed to allow users to test components in isolation. Let's take, for example, the following message handler:
 
 ```csharp
 public class MyReplyingHandler : IHandleMessages<MyRequest>
@@ -33,8 +33,7 @@ public async Task ShouldReplyWithResponseMessage()
     var handler = new MyReplyingHandler();
     var context = new TestableMessageHandlerContext();
 
-    await handler.Handle(new MyRequest(), context)
-        .ConfigureAwait(false);
+    await handler.Handle(new MyRequest(), context);
 
     Assert.AreEqual(1, context.RepliedMessages.Length);
     Assert.IsInstanceOf<MyResponse>(context.RepliedMessages[0].Message);
@@ -45,26 +44,28 @@ The presented unit test uses `NUnit` as testing infrastructure, but that choice 
 
 ## Is this enough?
 
-Not necessarily. We could say that if users are testing in isolation their components (handlers, sagas, behaviors, etc...), and that if we test all the NServiceBus components the system is guaranteed to work as expected. That's true in theory but not in practice. There could scenarios, for example, in which the endpoint routing is misconfigured causing messages to not reach the expected destination. This type of error, and many others like wrongly configured subscriptions when using message based pub/sub transports like MSMQ, cannot really be validated in a unit testing scenario.
+Not necessarily. We could say that if users are testing in isolation their components (handlers, sagas, behaviors, etc...), and that if we test all the NServiceBus components the system is guaranteed to work as expected. That's true in theory but not in practice. There could be scenarios, for example, in which the endpoint routing is misconfigured causing messages to not reach the expected destination. This type of error, and many others like wrongly configured subscriptions when using message based pub/sub transports like MSMQ, cannot really be validated in a unit testing scenario.
 
-In general we could say that business scenarios cannot be tested. When testing a business scenario the goal is to validate that the expected message choreography happens and that all the components (mainly handlers and sagas) are invoked as expected. In this case we don't care much about data, and in general input/output values, those are handled by unit tests, we care much more that what's described in the business scenario happens.
+In general we could say that business scenarios cannot be tested. When testing a business scenario the goal is to validate that the expected messages choreography happens and that all the components (mainly handlers and sagas) are invoked as expected. In this case we don't care much about data, and in general input/output values, those are handled by unit tests. We care much more that what's described in the business scenario happens.
 
 ## NServiceBus Acceptance Testing
 
-NServiceBus has an [Acceptance Testing framework](https://www.nuget.org/packages/NServiceBus.AcceptanceTesting/). It's unsupported, and undocumented. And it's intentional. The NServiceBus Acceptance Testing framework is designed for internal usage to test NServiceBus components not end users code. We use it extensively to guarantee that all our components plays nicely when used together in an endpoint.
+NServiceBus has an [Acceptance Testing framework](https://www.nuget.org/packages/NServiceBus.AcceptanceTesting/). It's unsupported, and undocumented. And it's intentional. The NServiceBus Acceptance Testing framework is designed for internal usage to test NServiceBus components, not end users code. We use it extensively to guarantee that all our components plays nicely when used together in an endpoint.
 
-[Roy Cornelissen](https://roycornelissen.wordpress.com/) wrote an article on how to use the Acceptance Testing framework to achieve something like what a business scenario test could look like. It available on his blog at https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/
+[Roy Cornelissen](https://roycornelissen.wordpress.com/), an [NServiceBus Champ](https://particular.net/champions), wrote an article on how to use the Acceptance Testing framework to achieve something like what a business scenario test could look like. It available on his blog at https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/
 
-Roy's approach is good, however it has two main drawbacks:
+Roy's approach is good and uses the Acceptance Testing framework exactly as intended. However it has two main drawbacks:
 
 - it's very complex
-- it requires a lot of code duplication and in the end it's hard to say that the test tests any production code
+- it requires a lot of code duplication
+
+In the end it's hard to say that the tests are testing any production code.
 
 Both complexity and code duplication are imposed by the Acceptance Testing framework, that as said is not really designed for such kind of testing.
 
 ## NServiceBus Integration testing
 
-Not being able to test business scenario, exercising the real production code, can be a limitation in a lot of cases so I decided to try to understand what could be the requirements and I spiked a [solution](https://github.com/mauroservienti/NServiceBus.IntegrationTesting). A Solution that right now has a ton of limitations and is far from being anything ready to be used.
+Not being able to test business scenario, exercising the real production code, can be a limitation in a lot of cases so I decided to try to understand what could be the requirements and I spiked a [solution](https://github.com/mauroservienti/NServiceBus.IntegrationTesting). A solution that right now has a ton of limitations and is far from being anything ready to be used.
 
 Let's say that there is a system that is composed by two endpoints: [MyService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyService), [MyOtherService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyOtherService). These are just regular NServiceBus endpoints. The business flow is something like:
 
@@ -110,15 +111,15 @@ public async Task something_should_happen()
 There is lot going on, I'd like to highlight just two things for now:
 
 - The test is spinning up 2 endpoints, `MyServiceEndpoint` and `MyOtherServiceEndpoint`. Those are real NServiceBus endpoints.
-- The test is defining a `Done` condition used internally by the testing infrastructure to determine that the test is done and asserts can be executed. Thus is needed because there real messages flowing around on real queues, so everything is asynchronous. What's interesting is what's in the done condition, the test is done:
+- The test is defining a `Done` condition used internally by the testing infrastructure to determine that the test is done and asserts can be executed. It is needed because there are real messages flowing around on real queues, so everything is asynchronous. What's interesting is what's in the done condition, the test is done when:
   - `AMessageHandler` is invoked (satisfying `MyService` sends `AMessage` to `MyOtherService`)
-  - `AReplyMessageHandler` is invoked (satisfying`MyService` handles `AReplyMessage`)
+  - `AReplyMessageHandler` is invoked (satisfying `MyService` handles `AReplyMessage`)
   - `ASaga` is invoked (satisfying `ASaga` is started in `MyService`)
   - Or something goes badly and there are errors
 
 ### Endpoints
 
-What are those endpoints? They are defined in the same class as the test, as follows:
+What are those endpoints? They are defined in the same test class as follows:
 
 ```csharp
 class MyServiceEndpoint : EndpointConfigurationBuilder
