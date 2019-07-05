@@ -65,7 +65,7 @@ Both complexity and code duplication are imposed by the Acceptance Testing frame
 
 ## NServiceBus Integration testing
 
-Not being able to test business scenario, exercising the real production code, can be a limitation in a lot of cases so I decided to try to understand what could be the requirements and I spiked a [solution](https://github.com/mauroservienti/NServiceBus.IntegrationTesting). A solution that right now has a ton of limitations and is far from being anything ready to be used.
+Not being able to test business scenario, exercising the real production code, can be a limitation in a lot of cases so I decided to try to understand what could be the requirements and spiked a [solution](https://github.com/mauroservienti/NServiceBus.IntegrationTesting). A solution that right now has a ton of limitations and is far from being anything ready to be used.
 
 Let's say that there is a system that is composed by two endpoints: [MyService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyService), [MyOtherService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyOtherService). These are just regular NServiceBus endpoints. The business flow is something like:
 
