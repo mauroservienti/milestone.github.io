@@ -50,18 +50,18 @@ In general we could say that business scenarios cannot be tested. When testing a
 
 ## NServiceBus acceptance testing
 
-NServiceBus has an [acceptance testing framework](https://www.nuget.org/packages/NServiceBus.AcceptanceTesting/). It's unsupported, and undocumented. And that's intentional. The NServiceBus Acceptance Testing framework is designed for internal usage to test NServiceBus components, not end user code. We use it extensively to guarantee that all our components play nicely when used together in an endpoint.
+NServiceBus has an [acceptance testing framework](https://www.nuget.org/packages/NServiceBus.AcceptanceTesting/). It's unsupported, and undocumented. And that's intentional. The NServiceBus acceptance testing framework is designed for internal usage to test NServiceBus components, not end user code. We use it extensively to guarantee that all our components play nicely when used together in an endpoint.
 
-[Roy Cornelissen](https://roycornelissen.wordpress.com/), an [NServiceBus Champ](https://particular.net/champions), wrote an article on how to use the Acceptance Testing framework to achieve something like what a business scenario test could look like. It's available on his blog at [https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/](https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/)
+[Roy Cornelissen](https://roycornelissen.wordpress.com/), an [NServiceBus Champ](https://particular.net/champions), wrote an article on how to use the acceptance testing framework to achieve something like what a business scenario test could look like. It's available on his blog at [https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/](https://roycornelissen.wordpress.com/2014/10/25/automating-end-to-end-nservicebus-tests-with-nservicebus-acceptancetesting/)
 
-Roy's approach is good and uses the Acceptance Testing framework exactly as intended. However it has two main drawbacks:
+Roy's approach is good and uses the acceptance testing framework exactly as intended. However it has two main drawbacks:
 
 - it's very complex
 - it requires a lot of code duplication
 
 In the end it's hard to say that the tests are testing any production code.
 
-Both complexity and code duplication are imposed by the Acceptance Testing framework, after all, it is not really designed for this kind of testing.
+Both complexity and code duplication are imposed by the acceptance testing framework, after all, it is not really designed for this kind of testing.
 
 ## NServiceBus integration testing
 
