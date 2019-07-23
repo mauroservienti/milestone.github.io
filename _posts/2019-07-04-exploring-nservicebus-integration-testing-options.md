@@ -161,7 +161,7 @@ The "only" thing the testing infrastructure is doing when endpoints are started 
 
 This is the very first step in exploring options to run integration tests using NServiceBus. Using the acceptance testing framework as a building block allowed me to spike something in a couple of hours. It's also showing its limitations. Limitations that are preventing a few things to work and that are imposing a few restrictions. I had a chat with my colleague [Tim Bussmann](https://github.com/timbussmann) and we brainstormed options to evolve this spike. Stay tuned.
 
-The full source code is available on GitHub: https://github.com/mauroservienti/NServiceBus.IntegrationTesting/
+The full source code is available on GitHub at  <https://github.com/mauroservienti/NServiceBus.IntegrationTesting/>
 
 ---
 
