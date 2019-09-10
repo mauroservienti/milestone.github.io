@@ -18,7 +18,7 @@ I was in a meeting at a customer, a long time ago, when the monitoring system st
 
 The customer is a bank. The system is an internal system whose primary business role is to handle `cash order` payment requests, validate and store them. Once the `cash order` is notified to the debtor, the system keeps track of payments and delays.
 
-Italian bank regulations state that the debt identified by a `cash order` cannot expire on a non working day, a bank holiday in Anglo-Saxons terminology.
+Italian bank regulations state that the debt identified by a `cash order` cannot expire on a non-working day, a bank holiday in Anglo-Saxons terminology.
 
 > Note: I'm oversimplifying, for simplicity, both the business scenario and they way it failed in production. Nitty gritty details are not required in this case.
 
@@ -29,17 +29,17 @@ A couple of hours later the glitch was found: the end user front-end application
 
 At that point I decided to chime in asking what I thought was a very innocent question:
 
-> How come that a business failure caused a message to end up in a error queue?
+> How come that a business failure caused a message to end up in the error queue?
 
 ## Eyes staring at me
 
-They immediately started explaining the root cause of the issues. Javascript validation code at the front-end was misbehaving, causing a command to be sent from front-end to back-end services that upon message handling time were reevaluating the business rule and throwing an exception due to the validation failure.
+They immediately started explaining the root cause of the issue. Javascript validation code at the front-end was misbehaving, causing a command to be sent from front-end to back-end services that upon message handling time were reevaluating the business rule and throwing an exception due to the validation failure.
 
 Being a message based system the message retry engine was kicking in and eventually failed messages were ending up in the error queue.
 
 The root cause was clear and pretty straightforward. However I asked the same question again:
 
-> How come that a business failure caused a message to end up in a error queue?
+> How come that a business failure caused a message to end up in the error queue?
 
 At which point, I had their attention.
 
@@ -50,7 +50,7 @@ When dealing with failed messages in a message based system there are two import
 * Is there any good reason to retry, in a tight loop or manually later, a message failing due to a well known business failure?
 * Is there something that an Operations Team can do, other that stating the obvious, when faced with a message that failed for a business reason?
 
-In a scenario, such as the above one, there is no point is retrying the create `cash order` request, given its actual state, it will always fail. Blindly retrying the failed message will cause an infinite look, it'll fail again, and again, and again.
+In a scenario, such as the above one, there is no point is retrying the create `cash order` request, given its actual state, it will always fail. Blindly retrying the failed message will cause an infinite loop, it'll fail again, and again, and again.
 
 ### Design for (business) failures
 
