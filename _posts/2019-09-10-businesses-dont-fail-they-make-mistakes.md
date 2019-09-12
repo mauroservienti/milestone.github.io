@@ -12,11 +12,11 @@ tags:
 - Failed messages
 ---
 
-It will eventually happen. Our beloved message based system sooner or later will fail and the error queue,  created as a safety net a long time ago, will be filled with failed messages.
+It will eventually happen. Our beloved message-based system sooner or later will fail and the error queue, created as a safety net a long time ago, will be filled with failed messages.
 
-I was in a meeting at a customer, a long time ago, when the monitoring system started screaming. A few messages just failed, unexpectedly. There was a bunch of people from the DevOps team sitting around the table with me and, as expected, their attention was dragged away by the sounding alarm.
+I was in a meeting at a customer, a long time ago, when the monitoring system started screaming. A few messages just failed unexpectedly. There was a bunch of people from the DevOps team sitting around the table with me and, as expected, their attention was dragged away by the sounding alarm.
 
-The customer is a bank. The system is an internal system whose primary business role is to handle `cash order` payment requests, validate and store them. Once the `cash order` is notified to the debtor, the system keeps track of payments and delays.
+The customer is a bank. The system is an internal system whose primary business role is to handle `cash order` payment requests, and validate and store them. Once the `cash order` is notified to the debtor, the system keeps track of payments and delays.
 
 Italian bank regulations state that the debt identified by a `cash order` cannot expire on a non-working day, a bank holiday in Anglo-Saxons terminology.
 
@@ -24,39 +24,39 @@ Italian bank regulations state that the debt identified by a `cash order` cannot
 
 ## The glitch
 
-After a few minutes debugging the team realized that all the failed messages are related to `cash order` requests due to expire on Easter Monday. A clear violation of the aforementioned business rule.
-A couple of hours later the glitch was found: the end user front-end application is affected by bug related to the way Easter date is calculated causing Easter Monday not to be considered a holiday.
+After a few minutes of debugging, the team realized that all the failed messages are related to `cash order` requests due to them expiring on Easter Monday, a clear violation of the aforementioned business rule.
+A couple of hours later the glitch was found: the end user front-end application is affected by a bug related to the way the Easter date is calculated causing Easter Monday not to be considered a holiday.
 
 At that point I decided to chime in asking what I thought was a very innocent question:
 
-> How come that a business failure caused a message to end up in the error queue?
+> How come a business failure caused a message to end up in the error queue?
 
 ## Eyes staring at me
 
 They immediately started explaining the root cause of the issue. Javascript validation code at the front-end was misbehaving, causing a command to be sent from front-end to back-end services that upon message handling time were reevaluating the business rule and throwing an exception due to the validation failure.
 
-Being a message based system the message retry engine was kicking in and eventually failed messages were ending up in the error queue.
+Being a message-based system, the message retry engine was kicking in and eventually failed messages were ending up in the error queue.
 
 The root cause was clear and pretty straightforward. However I asked the same question again:
 
-> How come that a business failure caused a message to end up in the error queue?
+> How come a business failure caused a message to end up in the error queue?
 
 At which point, I had their attention.
 
 ## Business failures are not errors
 
-When dealing with failed messages in a message based system there are two important questions we should ask:
+When dealing with failed messages in a message-based system there are two important questions we should ask:
 
-* Is there any good reason to retry, in a tight loop or manually later, a message failing due to a well known business failure?
-* Is there something that an Operations Team can do, other that stating the obvious, when faced with a message that failed for a business reason?
+* Is there any good reason to retry, in a tight loop or manually later, a message failing due to a well-known business failure?
+* Is there something that an Operations Team can do, other than stating the obvious, when faced with a message that failed for a business reason?
 
-In a scenario, such as the above one, there is no point is retrying the create `cash order` request, given its actual state, it will always fail. Blindly retrying the failed message will cause an infinite loop, it'll fail again, and again, and again.
+In a scenario, such as the above one, there is no point in retrying the create `cash order` request, given its actual state; it will always fail. Blindly retrying the failed message will cause an infinite loop, it'll fail again, and again, and again.
 
 ### Design for (business) failures
 
-Designing for failures is on of the leading mantra when it comes to distributed systems. The same approach should be applied to business scenarios by modelling failures using messages.
+Designing for failures is one of the leading mantras when it comes to distributed systems. The same approach should be applied to business scenarios by modelling failures using messages.
 
-In the mentioned case what the back-end services should do is reply to the request originator with a specific message describing the failure encountered and, if required, compensating actions that can be performed to fix the business rule violation.
+In the mentioned case, what the back-end services should do is reply to the request originator with a specific message describing the failure encountered and, if required, compensating actions that can be performed to fix the business rule violation.
 
 ## Conclusion
 
