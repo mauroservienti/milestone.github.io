@@ -68,7 +68,7 @@ Once the back-end services fail to handle the `CreateCashOrder`, the message is 
 - if a message comes in with an invalid date
 - automatically find the next available date, where available means available according the defined business rules.
 
-This is clearly not an option: it would end up creating something very similar to corrupted data. The orginal request came in with a date, date also returned to the user requesting the operation. But then the real operation will be executed on a different date.
+This is clearly not an option: it would end up creating something very similar to corrupted data. The original request came in with a date, date also returned to the user requesting the operation. But then the real operation will be executed on a different date.
 
 In the mentioned case, what the back-end services should do is reply to the request originator with a specific message describing the failure encountered and, if required, compensating actions that can be performed to fix the business rule violation. Designing the interaction with the business failure in mind is represented in the following diagram:
 
@@ -84,7 +84,7 @@ sequenceDiagram
    Note over B,C: Reason: invalid date
 </div>
 
-The system has now many options to react to the bueinss failure. For example an email could be sent to the user stating the previously entered `cash order` failed the validation process, and has been suspended.
+The system has now many options to react to the business failure: for example an email could be sent to the user warning them that the previously entered `cash order` failed the validation process, and has been suspended.
 
 ## Conclusion
 
