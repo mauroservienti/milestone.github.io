@@ -6,6 +6,7 @@ header_image: /img/posts/businesses-dont-fail-they-make-mistakes/header.jpg
 title: "Businesses don't fail, they make mistakes"
 author: Mauro Servienti
 synopsis: "Sooner or later the system will fail. Doesn't matter if it'll be for an infrastructure failure or a bug. It'll fail. Dealing with failures can be tricky especially when business failures are handled like if they were infrastructure ones."
+enable_mermaid: true
 tags:
 - NServiceBus
 - Messaging
