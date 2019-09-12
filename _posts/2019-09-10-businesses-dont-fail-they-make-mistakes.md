@@ -6,6 +6,7 @@ header_image: /img/posts/businesses-dont-fail-they-make-mistakes/header.jpg
 title: "Businesses don't fail, they make mistakes"
 author: Mauro Servienti
 synopsis: "Sooner or later the system will fail. Doesn't matter if it'll be for an infrastructure failure or a bug. It'll fail. Dealing with failures can be tricky especially when business failures are handled like if they were infrastructure ones."
+enable_mermaid: true
 tags:
 - NServiceBus
 - Messaging
@@ -54,9 +55,36 @@ In a scenario, such as the above one, there is no point in retrying the create `
 
 ### Design for (business) failures
 
-Designing for failures is one of the leading mantras when it comes to distributed systems. The same approach should be applied to business scenarios by modelling failures using messages.
+Designing for failures is one of the leading mantras when it comes to distributed systems. The same approach should be applied to business scenarios by modelling failures using messages. The aforementioned failing business scenario is outlined (in its simplified version) in the following diagram:
 
-In the mentioned case, what the back-end services should do is reply to the request originator with a specific message describing the failure encountered and, if required, compensating actions that can be performed to fix the business rule violation.
+<div class="mermaid">
+graph LR
+   A[fa:fa-globe Client] -->|CreateCashOrder| B[fa:fa-server Back-end]
+   B -->|Exception| C[Error Queue]
+</div>
+
+Once the back-end services fail to handle the `CreateCashOrder`, the message is delivered to the `error` queue, monitored by Operations. As we've seen Operations is left with no options, the message cannot be retried as it'd fail again. In such case the only option would be to ask the development team to introduce, in the back-end message handling code, a special case:
+
+- if a message comes in with an invalid date
+- automatically find the next available date, where available means available according the defined business rules.
+
+This is clearly not an option: it would end up creating something very similar to corrupted data. The original request came in with a date, date also returned to the user requesting the operation. But then the real operation will be executed on a different date.
+
+In the mentioned case, what the back-end services should do is reply to the request originator with a specific message describing the failure encountered and, if required, compensating actions that can be performed to fix the business rule violation. Designing the interaction with the business failure in mind is represented in the following diagram:
+
+<div class="mermaid">
+sequenceDiagram
+   participant C as Client
+   participant B as Back-end
+   C ->> B: CreateCashOrder
+   activate B
+   B ->> B: SuspendCashOrder
+   B -->>C: CashOrderCreationError
+   deactivate B
+   Note over B,C: Reason: invalid date
+</div>
+
+The system has now many options to react to the business failure: for example an email could be sent to the user warning them that the previously entered `cash order` failed the validation process, and has been suspended.
 
 ## Conclusion
 
