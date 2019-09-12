@@ -59,8 +59,8 @@ Designing for failures is one of the leading mantras when it comes to distribute
 
 <div class="mermaid">
 graph LR
-   A[fa:fa-globe Client] -->|CreateCashOrder| B[fa:fa-server Back-end]
-   B -->|Exception| C[Error Queue]
+   Client -->|CreateCashOrder| B[Back-end]
+   B -->|Exception| E[Error Queue]
 </div>
 
 Once the back-end services fail to handle the `CreateCashOrder`, the message is delivered to the `error` queue, monitored by Operations. As we've seen Operations is left with no options, the message cannot be retried as it'd fail again. In such case the only option would be to ask the development team to introduce, in the back-end message handling code, a special case:
