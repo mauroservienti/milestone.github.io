@@ -7,7 +7,8 @@ location: "Au Premier · Bahnhofpl. 15 · Zürich · Room Bernina (first floor)"
 language: "English"
 eventurl: "https://www.meetup.com/en-AU/Software-Architecture-and-Project-Design-Zurich/events/263933370/"
 calendar:
-  start: "2019-10-15"
+  start: "2019-10-15T18:30:00"
+  end: "2019-10-15T21:30:00"
 sessions:
 - title: "Designing a UI for Microservices"
   speakers:
