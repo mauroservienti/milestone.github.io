@@ -16,6 +16,7 @@ sessions:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
   slides: https://www.slideshare.net/mauroservienti/welcome-to-the-state-machine-exploreddd-2019
+  demos: http://bit.ly/eddd-state-machine
 tags:
 - Sagas
 - SOA
