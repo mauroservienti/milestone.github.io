@@ -15,6 +15,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  slides: https://www.slideshare.net/mauroservienti/welcome-to-the-state-machine-exploreddd-2019
 tags:
 - Sagas
 - SOA
