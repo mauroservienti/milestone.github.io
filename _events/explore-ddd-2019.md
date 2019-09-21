@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Explore DDD 2019"
 header_image: /img/events/explore-ddd-2019/header.jpg
 location: "Grand Hyatt – Denver, Colorado, USA"
