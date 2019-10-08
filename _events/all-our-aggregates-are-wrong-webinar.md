@@ -11,8 +11,9 @@ calendar:
   end: "2019-11-13T19:00:00"
 sessions:
 - title: "All our aggregates are wrong"
+  speakers:
   - name: "Mauro Servienti"
-    profileurl: https://milestone.topics.it/about-me/
+    profileurl: /about-me/
 tags:
 - architecture
 - SOA
