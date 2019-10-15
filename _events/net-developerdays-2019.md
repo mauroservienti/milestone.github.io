@@ -15,6 +15,10 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+- title: "Welcome to the (state) machine"
+  speakers:
+  - name: "Mauro Servienti"
+    profileurl: https://milestone.topics.it/about-me/
 tags:
 - SOA
 - Microservices
