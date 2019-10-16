@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/the-distributed-big-ball-of-mud/header.jpg
 title: "The Distributed Big Ball of Mud"
 location: "Au Premier · Bahnhofpl. 15 · Zürich · Room Bernina (first floor)"
@@ -14,6 +14,8 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: /about-me/
+  slides: bit.ly/slides-sapdz-composition
+  demos: bit.ly/sapdz-composition
 tags:
 - Domain decomposition
 - ViewModel Composition
