@@ -14,8 +14,8 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: /about-me/
-  slides: bit.ly/slides-sapdz-composition
-  demos: bit.ly/sapdz-composition
+  slides: https://bit.ly/slides-sapdz-composition
+  demos: https://bit.ly/sapdz-composition
 tags:
 - Domain decomposition
 - ViewModel Composition
