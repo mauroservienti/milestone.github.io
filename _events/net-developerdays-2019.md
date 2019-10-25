@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: ".NET DeveloperDays 2019"
 header_image: /img/events/net-developerdays-2019/header.jpg
 location: "EXPO XXI - Pradzynskiego 12-14 Str. - Warsaw"
@@ -12,10 +12,14 @@ calendar:
   display: "23 - 25 October 2019"
 sessions:
 - title: "Designing a UI for Microservices"
+  demos: http://bit.ly/dnd-wa-composition
+  slides: http://bit.ly/dnd-wa-composition-slides
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
 - title: "Welcome to the (state) machine"
+  demos: http://bit.ly/dnd-wa-state-machine
+  slides: http://bit.ly/dnd-wa-state-machine-slides
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
