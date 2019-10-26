@@ -23,7 +23,7 @@ This is when Sagas come into play. Sagas allow to model complex collaborative do
 ## Welcome to the (state) machine
 
 Ultimamente ci hanno stressato come non mai che stateful è il male. Tutto deve essere stateless, altrimenti non scala, non può essere altamente disponibile, ed è complesso da manutenere ed evolvere. 
-Nonostante questo i sistemi software complessi, essendo basati su processi collaborativi, sono per natura stateful. I processi collaborativi, noti anche come long running business transactions, necessitano di interagiscono con risorse distribuite. L'approccio tradizionale basato su transazioni distribuite, anche se allettante, è una bomba pronta ad esplodere.
+Nonostante questo i sistemi software complessi, essendo basati su processi collaborativi, sono per natura stateful. I processi collaborativi, noti anche come long running business transactions, necessitano di e interagiscono con risorse distribuite. L'approccio tradizionale basato su transazioni distribuite, anche se allettante, è una bomba pronta ad esplodere.
 
 Pane quotidiano per le Saghe. Le Saghe consentono di modellare sistemi complessi senza la necessità di transazioni distribuite e coordinamento esterno. Vedremo cosa sono le Saghe, come possono essere usate per modellare domini complessi, e che ruolo giocano quando progettiamo sistemi basati sui concetti di “design for failures” e “eventual consistency”
 
