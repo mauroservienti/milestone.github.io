@@ -2,7 +2,7 @@
 layout: event
 status: "upcoming"
 title: "Crafted Software Meetup"
-header_image: ""
+header_image: /img/events/crafted-software-11-2019/header.jpg
 location: ""
 language: "Italian"
 eventurl: ""
