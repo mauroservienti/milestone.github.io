@@ -5,7 +5,7 @@ title: "Crafted Software Meetup"
 header_image: /img/events/crafted-software-11-2019/header.jpg
 location: "TAG Milano Merano - Via Merano, 16, 20127 Milano MI"
 language: "Italian"
-eventurl: ""
+eventurl: "https://www.meetup.com/Crafted-Software/events/266133674/"
 calendar:
   start: "2019-11-21T19:00:00"
   end: "2018-11-21T21:00:00"
