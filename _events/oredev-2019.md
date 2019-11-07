@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Øredev 2019"
 header_image: /img/events/oredev-2019/header.jpg
 location: "Malmö Mässan, Exhibition & Conference Center"
@@ -12,6 +12,8 @@ calendar:
   display: "November 06-09, 2019"
 sessions:
 - title: "All our aggregates are wrong"
+  slides: https://bit.ly/oredev-aggregates-slides
+  demos: https://bit.ly/oredev-aggregates
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://oredev.org/line-up/mauro-servienti
