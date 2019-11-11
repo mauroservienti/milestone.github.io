@@ -14,6 +14,7 @@ sessions:
 - title: "All our aggregates are wrong"
   slides: https://bit.ly/oredev-aggregates-slides
   demos: https://bit.ly/oredev-aggregates
+  recording: https://vimeo.com/371803742/recommended
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://oredev.org/line-up/mauro-servienti
