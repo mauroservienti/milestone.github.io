@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/fuffa-day-2019/header.jpg
 title: "Fuffa Day 2019"
 location: "Microsoft House, Milan"
@@ -10,6 +10,7 @@ calendar:
   start: "2019-11-22"
 sessions:
 - title: "Be like water, my friend"
+  slides: http://bit.ly/be-like-fuffa
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
