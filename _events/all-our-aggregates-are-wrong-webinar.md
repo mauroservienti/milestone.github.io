@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 header_image: /img/events/all-our-aggregates-are-wrong-webinar/banana-gun.jpg
 title: "Particular webinar - All our aggregates are wrong"
 location: "online webinar"
@@ -11,6 +11,9 @@ calendar:
   end: "2019-11-13T19:00:00"
 sessions:
 - title: "All our aggregates are wrong"
+  recording: https://youtu.be/MotE7e30jGM
+  slides: http://bit.ly/webinar-wrong-aggregates-slides
+  demos: http://bit.ly/webinar-wrong-aggregates
   speakers:
   - name: "Mauro Servienti"
     profileurl: /about-me/
