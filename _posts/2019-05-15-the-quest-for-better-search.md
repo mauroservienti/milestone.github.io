@@ -36,13 +36,13 @@ You’re right, this is not the entire story. Whenever a search is performed, tw
 - A list of matching items/goods
 - A set of facets, usually in the left sidebar, designed to narrow the results set.
 
-![1557912046187](/img/posts/the-quest-for-a-better-search/1557912046187.png){:class="img-fluid mx-auto d-block"}
+![1557912046187](/img/posts/the-quest-for-better-search/1557912046187.png){:class="img-fluid mx-auto d-block"}
 
 From the above screenshot it’s pretty clear that those faceted results are coming from different services, not only from Product Catalog.
 
 There are even more complex scenarios when it comes to searches. Think about hotel reservation systems. Users need to search by location and availability (if not even more criteria) and then possibly narrow the results by stars, rating, or amenities like a fitness room, or a spa.
 
-![1557912425551](/img/posts/the-quest-for-a-better-search/1557912425551.png){:class="img-fluid mx-auto d-block"}
+![1557912425551](/img/posts/the-quest-for-better-search/1557912425551.png){:class="img-fluid mx-auto d-block"}
 
 In this scenario there are at least two services that participate in the search, let’s call them Hotel Catalog and Reservations. And then there are other services involved in the facets generation, for example Marketing to handle ratings, and again Hotel Catalog to handle amenities.
 
