@@ -11,6 +11,12 @@ calendar:
   end: "2018-12-12T21:00:00"
 sessions:
 - title: "Better Company Culture Panel"
+  speakers:
+  - name: "Vincenzo (Wilk) Ferrari"
+  - name: "Lorenzo Massacci"
+  - name: "Mario Grimaldi"
+  - name: "Mauro Servienti"
+    profileurl: https://milestone.topics.it/about-me/
 tags:
 - Organizations
 - Culture
