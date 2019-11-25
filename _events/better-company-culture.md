@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Better Company Culture Panel"
 header_image: "/img/events/better-company-culture/header.jpg"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
