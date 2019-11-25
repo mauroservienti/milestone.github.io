@@ -49,7 +49,12 @@ layout: default
       {% if session.speakers %}
         {% for speaker in session.speakers %}
           <div class="profile-url">
-            <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker: <a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
+            <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker:
+            {% if speaker.profileurl %}
+            <a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
+            {% else %}
+            {{ speaker.name }}
+            {% endif %}
           </div>
         {% endfor %}
       {% endif %}
