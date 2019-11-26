@@ -5,7 +5,7 @@ title: "Better Company Culture Panel"
 header_image: "/img/events/better-company-culture/header.jpg"
 location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
 language: "Italian"
-eventurl: "https://www.meetup.com/en-AU/Do-IT-Better-Community/events/266723560/"
+eventurl: "https://www.meetup.com/Do-IT-Better-Community/events/266723560/"
 calendar:
   start: "2019-12-12T18:45:00"
   end: "2018-12-12T21:00:00"
