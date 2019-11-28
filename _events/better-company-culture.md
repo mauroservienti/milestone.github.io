@@ -3,7 +3,7 @@ layout: event
 status: 'upcoming'
 title: "Better Company Culture Panel"
 header_image: "/img/events/better-company-culture/header.jpg"
-location: "Arte e Gusto - Via Emilia Est, 87 - Parma"
+location: "La Fabbrica Della Birra · Via dei Gonzaga, 41 · Reggio Emilia"
 language: "Italian"
 eventurl: "https://www.meetup.com/Do-IT-Better-Community/events/266723560/"
 calendar:
