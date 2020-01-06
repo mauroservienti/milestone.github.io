@@ -22,8 +22,6 @@ tags:
 
 ---
 
-### Welcome to the (State) Machine
-
 ### All out aggregates are wrong
 
 ---
