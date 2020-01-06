@@ -10,10 +10,6 @@ calendar:
   start: "2020-02-03"
   end: "2020-02-07"
 sessions:
-- title: "Welcome to the (State) Machine"
-  speakers:
-  - name: "Mauro Servienti"
-    profileurl: https://milestone.topics.it/about-me/
 - title: "All out aggregates are wrong"
   speakers:
   - name: "Mauro Servienti"
