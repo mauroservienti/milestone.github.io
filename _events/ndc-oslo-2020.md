@@ -8,7 +8,7 @@ language: "English"
 eventurl: "https:/ndcoslo.com/"
 calendar:
   start: "2020-06-08"
-  start: "2019-06-12"
+  end: "2020-06-12"
   display: "June, 8-12, 2020"
 sessions:
 - title: "Designing a UI for Microservices"
