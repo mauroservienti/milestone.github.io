@@ -23,7 +23,7 @@ layout: default
     <img class="img-fluid rounded" alt="{{ page.title }} header image"
       src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
-    <h2 class="post-title">{{ page.title }}</h2>
+    <h1 class="post-title">{{ page.title }}</h1>
     <p class="post-meta">
       {{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} •
       {{ page.meta }}{% endif %} • Reading time: <span class="eta"></span> • <a
