@@ -134,4 +134,6 @@ As we've seen, it's easy to implement paging by looking for the logical owner of
 
 With sorting, things are not so easy. However, if the composition engine exposes the ability to plug-in a post-composition processor, there is an opportunity to design a sorting mechanism that preserves the services' isolation and autonomy, and also is entirely transparent to the engine itself.
 
+---
+
 Header image: by [Kolar.io](https://unsplash.com/@jankolar?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/sort?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
