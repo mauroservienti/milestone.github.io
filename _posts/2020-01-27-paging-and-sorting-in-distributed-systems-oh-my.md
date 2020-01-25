@@ -3,13 +3,13 @@ layout: post
 header_image: /img/posts/paging-and-sorting-in-distributed-systems-oh-my/header.jpg
 title: "Paging and sorting in distributed systems, oh my!"
 author: Mauro Servienti
-synopsis: "Paging and sorting sound like a controversial and complex topic when it comes to displaying data in distributed systems; however, as not all that glitters is gold, not necessarily paging and sorting need to be complicated, even in distributed systems."
+synopsis: "Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems."
 tags:
 - SOA
 - Services ViewModel Composition
 category: view-model-composition
 ---
-Paging and sorting sound like a controversial and complex topic when it comes to displaying data in distributed systems; however, as not all that glitters is gold, not necessarily paging and sorting need to be complicated, even in distributed systems.
+Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems.
 
 In the [blog posts series about ViewModel Composition](/categories/view-model-composition) we used as a sample domain model a list of products composed by the following services:
 
@@ -30,32 +30,32 @@ In that article, we briefly identified what the process of composing a list is:
 >Note: More details about the entire composition process are available in [The ViewModels Lists Composition Dance](/view-model-composition/2019/03/21/the-viewmodels-lists-composition-dance.html) article.
 
 ## Paging
-If *Marketing* is the logical owner of products and is also the one responsible for loading the products list, *Marketing* can easily be responsible for paging too.
+If *Marketing* is the logical owner of products and is also the one responsible for loading the product list, *Marketing* can easily be responsible for paging too.
 
-When a request, such as `/products?pageIndex=0&pageSize=10`, comes in *Marketing* uses the paging information to restrict the number of IDs loaded, and if required, to calculate the total amount of pages.
+When a request, such as `/products?pageIndex=0&pageSize=10`, comes in, *Marketing* uses the paging information to restrict the number of IDs loaded, and if required, to calculate the total amount of pages.
 
-All the other services receive, in the event raised by *Marketing*, an already paged/trimmed list of products, making so that they do not need to be aware of any paging concern at all.
+In the event raised by *Marketing*, all the other services receive an already-paged/trimmed list of products. In other words, they do not need to be aware of any paging concern at all.
 
 ## Sorting
-Sorting, unfortunately, it's not so easy as paging. For simple sorting scenarios, like the one in which we need to sort by a single property, the approach might be straightforward. Might be.
+Sorting, unfortunately, it's not as easy as paging. For simple sorting scenarios, like the one in which we need to sort by a single property, the approach might be straightforward. Might be.
 
 When a request like `/products?orderBy=price` comes in what could happen is that:
 
 * *Marketing* behaves the usual way, loading product IDs and publishing the corresponding event.
-* All other services, but *Sales*, react as usual loading data by product ID and composing the products list.
+* All other services but *Sales* react as usual, loading data by product ID and composing the product list.
 * *Sales* loads products' prices, and once its part of the composition is complete, it sorts the list by price. *Sales* is the one that can handle the `orderBy` query string parameter when the value is `price`.
 
 Unfortunately, such a simple approach immediately fails if services are invoked in parallel, like in our case. A service cannot directly change the order of something that is simultaneously touched by other services.
 
-If the request coming in is like `/products?orderBy=price,description` then sorting is not anymore so easy, even if we were allowed to sort the list directly. The problem, in this second scenario, is that *Sales* can sort by price, *Marketing* can sort by description, but what the request is asking for is different:
+If the request coming in is like `/products?orderBy=price,description` then sorting is not so easy, even if we were allowed to sort the list directly. The problem in this second scenario is that *Sales* can sort by price, *Marketing* can sort by description, but what the request is asking for is different:
 
 >I want products sorted by price and then by description.
 
-Which, in essence, creates a kind of circular dependency between *Sales* and *Marketing*. *Marketing* must execute after *Sales*. Worse, it needs to know who already sorted data and how because of the "and then by" sort dependency. There is no way we can achieve this as *Marketing*, being the logical owner, is already executed first.
+In essence, this creates a kind of circular dependency between *Sales* and *Marketing*. *Marketing* must execute after *Sales*. Worse, it needs to know who already sorted data and how because of the "and then by" sort dependency. There is no way we can achieve this as the *Marketing* endpoint, being the logical owner, has already executed.
 
 The trick is to have a post-composition step in the composition pipeline designed to post-process the composition result.
 
-In the end, what we'd want to do is as simple as being able to do something like:
+In the end, what we want to do is as simple as:
 
 ```csharp
 var sortedProducts = composedProducts
@@ -111,7 +111,7 @@ interface IApplySorting
 }
 ```
 
-And *Sales*, for example, could have the `ApplySort` implementation as simple as:
+And *Sales*, for example, could have the `ApplySort` implementation as follows:
 
 ```csharp
 IEnumerable<dynamic> ApplySort(IEnumerable<dynamic> data, bool executedFirst)
@@ -128,10 +128,10 @@ IEnumerable<dynamic> ApplySort(IEnumerable<dynamic> data, bool executedFirst)
 
 ## Conclusion
 
-The composition process and the composition engine [are transparent to the way data are composed](/view-model-composition/2019/04/09/slice-it.html), and so they have to be the way paging and sorting affect the composed data.
+The composition process and the composition engine [are transparent to the way data are composed](/view-model-composition/2019/04/09/slice-it.html), so they have to be the way paging and sorting affect the composed data.
 
 As we've seen, it's easy to implement paging by looking for the logical owner of the incoming request.
 
-With sorting, things are not easy, in any case. However, if the composition engine exposes the ability to plug-in a post-composition processor, there is an opportunity to design a sorting mechanism that preserves the services isolation and autonomy, and also is entirely transparent to the engine itself.
+With sorting, things are not so easy. However, if the composition engine exposes the ability to plug-in a post-composition processor, there is an opportunity to design a sorting mechanism that preserves the services' isolation and autonomy, and also is entirely transparent to the engine itself.
 
 Header image: by [Kolar.io](https://unsplash.com/@jankolar?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/s/photos/sort?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
