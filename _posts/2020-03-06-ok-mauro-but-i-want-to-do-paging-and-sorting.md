@@ -29,7 +29,7 @@ The problem is that if we have to sort first and the request coming in is like `
 
 If we were to apply the outlined logic manually, it's like we're reinventing the wheel. And we've already discussed something very similar recently.
 
-When we talked about searching in distributed systems, the suggestion was to ship data into a commonplace best suited to perform a search. The same rule applies here. If the need is to sort data across multiple services and apply paging to the sorted result set, it's way simpler to perform all these steps in a single place, for example, a SQL database or an Elasticsearch instance.
+When we talked about searching in distributed systems, the suggestion was to ship data into a common place best suited to perform a search. The same rule applies here. If the need is to sort data across multiple services and apply paging to the sorted result set, it's way simpler to perform all these steps in a single place, for example, a SQL database or an Elasticsearch instance.
 
 [Tomek](https://twitter.com/masternak) and I discussed at length how to do that in [The Quest for Better Search](https://milestone.topics.it/soa-search/2019/05/15/the-quest-for-better-search.html) and the follow-up [Search is a Team Effort](https://milestone.topics.it/soa-search/2019/05/22/search-is-a-team-effort.html). It's just a matter of applying the same logic in this case.
 
