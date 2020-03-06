@@ -15,7 +15,7 @@ It's a kind of [tornado of souls](https://www.youtube.com/watch?v=K-HzFACAedk) h
 One way or the other, I've been working remotely for the last ten years or so, and in the last six years, I've been 100% remote working.
 Don't worry. I don't want to talk "remote working," at least not today.
 
-This post assumes that you've read ["Paging and sorting in distributed systems, oh my!"](https://milestone.topics.it/view-model-composition/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html) article. If this is not the case, go and read it. I'll wait here.
+This post assumes that you've read ["Paging and sorting in distributed systems, oh my!"](/view-model-composition/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html) article. If this is not the case, go and read it. I'll wait here.
 
 As you probably noticed, the approaches described to page data and sort data work in isolation, but immediately fall apart if we need to use them together. If the need is to apply "paging and sorting" in the same request, then the proposed solutions cannot be applied. Or, if implemented, can only result in a very chatty and non-performant design.
 
@@ -29,9 +29,9 @@ The problem is that if we have to sort first and the request coming in is like `
 
 If we were to apply the outlined logic manually, it's like we're reinventing the wheel. And we've already discussed something very similar recently.
 
-When we talked about searching in distributed systems, the suggestion was to ship data into a common place best suited to perform a search. The same rule applies here. If the need is to sort data across multiple services and apply paging to the sorted result set, it's way simpler to perform all these steps in a single place, for example, a SQL database or an Elasticsearch instance.
+[When we talked about searching in distributed systems](/soa-search/2019/05/15/the-quest-for-better-search.html), the suggestion was to ship data into a common place best suited to perform a search. The same rule applies here. If the need is to sort data across multiple services and apply paging to the sorted result set, it's way simpler to perform all these steps in a single place, for example, a SQL database or an Elasticsearch instance.
 
-[Tomek](https://twitter.com/masternak) and I discussed at length how to do that in [The Quest for Better Search](https://milestone.topics.it/soa-search/2019/05/15/the-quest-for-better-search.html) and the follow-up [Search is a Team Effort](https://milestone.topics.it/soa-search/2019/05/22/search-is-a-team-effort.html). It's just a matter of applying the same logic in this case.
+[Tomek](https://twitter.com/masternak) and I discussed at length how to do that in [The Quest for Better Search](/soa-search/2019/05/15/the-quest-for-better-search.html) and the follow-up [Search is a Team Effort](/soa-search/2019/05/22/search-is-a-team-effort.html). It's just a matter of applying the same logic in this case.
 
 ## Conclusion
 
