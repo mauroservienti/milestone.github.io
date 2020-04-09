@@ -1,0 +1,27 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>{{ site.title | xml_escape }} - My custom podcasts</title>
+    <description>My custom podcasts</description>
+    <link>{{ site.url }}{{ site.baseurl }}/</link>
+    <atom:link href="{{ "/custom-podcasts.xml" | prepend: site.baseurl | prepend: site.url }}" rel="self" type="application/rss+xml"/>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    <generator>Jekyll v{{ jekyll.version }}</generator>
+    {% for podcast in site.podcasts %}
+      <item>
+        <title>{{ podcast.title | xml_escape }}</title>
+        <description>{{ podcast.description | xml_escape }}</description>
+        <pubDate>{{ podcast.date | date_to_rfc822 }}</pubDate>
+        <link>{{ podcast.url }}</link>
+        <guid isPermaLink="true">{{ podcast.url }}</guid>
+        {% if podcast.category %}
+        <category>{{ podcast.category | xml_escape }}</category>
+        {% endif %}
+      </item>
+    {% endfor %}
+  </channel>
+</rss>
