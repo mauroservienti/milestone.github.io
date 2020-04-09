@@ -27,3 +27,5 @@ collections:
     output: true
   talks:
     output: true
+  custom-podcasts:
+    output: true
