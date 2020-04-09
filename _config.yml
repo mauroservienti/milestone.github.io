@@ -28,4 +28,4 @@ collections:
   talks:
     output: true
   custom-podcasts:
-    output: true
+    output: false
