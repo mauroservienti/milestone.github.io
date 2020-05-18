@@ -3,7 +3,7 @@ layout: event
 status: 'upcoming'
 title: "NDC Oslo 2020"
 header_image: /img/events/ndc-oslo-2020/header.jpg
-location: "Oslo Spektrum - Oslo, Norway"
+location: "Online - Webex"
 language: "English"
 eventurl: "https:/ndcoslo.com/"
 calendar:
