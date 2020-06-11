@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "NDC Oslo 2020"
 header_image: /img/events/ndc-oslo-2020/header.jpg
 location: "Online - Webex"
@@ -15,6 +15,8 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  demos: https://github.com/mauroservienti/welcome-to-the-state-machine-demos/tree/NDC-Oslo-2020
+  
 tags:
 - SOA
 - Microservices
