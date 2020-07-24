@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/hey-hey-hey-its-started/header.jpg
 title: "Hey hey hey it's started"
 author: Mauro Servienti
-synopsis: "When using NServiceBus there are cases in which there is the need to perform actions when the endpoint is started. This can become cumbersome when using the .NET Core Generic Host infrastructure. NServiceBus.Extensions.EndpointStarted comes to the rescue, and allows to register a simple callback function during the endpoint configuration phase."
+synopsis: "When using NServiceBus, sometimes there is a need to perform actions when the endpoint is started. This can become cumbersome when using the .NET Core Generic Host infrastructure. NServiceBus.Extensions.EndpointStarted comes to the rescue, and allows to register a simple callback function during the endpoint configuration phase."
 tags:
 - NServiceBus
 - NServiceBus Extensions
@@ -17,7 +17,7 @@ Last time it happened I [released a couple of NServiceBus extensions](https://mi
 
 > As a user I need to know when an NServiceBus endpoint is started to perform some actions.
 
-Sounds like a trivial problem to solve, especially when self hosting endpoints using a console application:
+Sounds like a trivial problem to solve, especially when self-hosting endpoints using a console application:
 
 ```csharp
 public static async Task Main(string[] args)
@@ -33,7 +33,7 @@ public static async Task Main(string[] args)
 
 So far, so good. So what's the problem?
 
-NServiceBus supports the .NET Core generic hosting paradigm, which means that the above can be rewritten like follows:
+NServiceBus supports the .NET Core generic hosting paradigm, which means that the above can be rewritten as follows:
 
 ```csharp
 public static void Main(string[] args)
@@ -87,7 +87,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
         });
 ```
 
-The package is available on Nuget as [NServiceBus.Extensions.EndpointStarted](https://www.nuget.org/packages/NServiceBus.Extensions.EndpointStarted/), and the source code on [GitHub](https://github.com/mauroservienti/NServiceBus.Extensions.EndpointStarted). As usual, raise an issue if you face any issue :-)
+The package is available on NuGet as [NServiceBus.Extensions.EndpointStarted](https://www.nuget.org/packages/NServiceBus.Extensions.EndpointStarted/), and the source code on [GitHub](https://github.com/mauroservienti/NServiceBus.Extensions.EndpointStarted). As usual, raise an issue if you face any issues :-)
 
 ---
 
