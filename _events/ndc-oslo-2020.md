@@ -15,8 +15,9 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
-  demos: https://github.com/mauroservienti/welcome-to-the-state-machine-demos/tree/NDC-Oslo-2020
-  
+  demos: https://bit.ly/ndc-oslo-2020-state-machine
+  recording: http://bit.ly/ndc-oslo-2020-state-machine-recording
+  slides: https://bit.ly/ndc-oslo-2020-state-machine-slides  
 tags:
 - SOA
 - Microservices
