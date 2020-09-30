@@ -6,14 +6,14 @@ Start with:  `jekyll serve --force_polling [--incremental] [--drafts]` on BashOn
 
 ## Install Jekyll on Windows Linux Subsystem (Ubuntu)
 
-### Get Ubuntu up to date and install Ruby
+### Get Ubuntu up to date and Install Ruby
 
 ```bash
 sudo apt-get update -y && sudo apt-get upgrade -y
 sudo apt-get install -y build-essential ruby-full
 ```
 
-### update ruby gems and install Jekyll
+### Update ruby gems and Install Jekyll
 
 ```bash
 sudo gem update –-system
