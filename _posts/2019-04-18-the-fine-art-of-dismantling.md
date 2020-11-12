@@ -117,7 +117,7 @@ class PaymentReservationHandler : IHandleRequests
 
 ### Not all that glitters is gold
 
-Sending data to backend is not as easy at it seems at first glance. The incoming request is HTTP and there are, in this sample, three different handlers that try to handle part of the request. What if one of them fails? We need to find a way to deal with the fact that HTTP has no transaction support. The next article will be focused on what we can do when things go wrong.
+Sending data to backend is not as easy at it seems at first glance. The incoming request is HTTP and there are, in this sample, three different handlers that try to handle part of the request. What if one of them fails? We need to find a way to deal with the fact that HTTP has no transaction support. The [next article](/2019/05/02/safety-first.html) will be focused on what we can do when things go wrong.
 
 ## Conclusion
 
