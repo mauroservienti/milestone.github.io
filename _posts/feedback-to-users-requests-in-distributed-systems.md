@@ -95,6 +95,10 @@ Once the backplane is in place, the full communication flow is like the followin
   - checks if the client is connected:
     - if it is, uses the WebSocket connection to inform the client about the status
     - if it's not, uses the backplane to propagate the received information to other web server instances.
+    
+### The elephant in the room
+
+One aspect that we haven't touched, it probably deserves its own set of articles, is how to handle results eventual consistency at the user interface level. My colleague Dennis Van Der Stelt does an excellent job in a [presentation he gave at Oredev](https://www.youtube.com/watch?v=jTz74m1KbBs).
 
 ## Wrap up 
 
