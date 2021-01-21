@@ -11,7 +11,7 @@ tags:
 - Failures
 ---
 
-It failed. Systems fail all the time: Bugs, unavailability of required resources, hardware failures, and many more reasons cause systems to fail. When the system uses messages and queues to exchange information and drive behaviors, one of the advantages is that we can retry messages. A message comes in, and the message handling process fails. The message can be returned to the queue and tried again. If message processing logic changes some data, it can rollback the corresponding database transaction. So far, so good, in many scenarios, we can retry messages.
+Systems fail all the time: Bugs, unavailability of required resources, hardware failures, and many more reasons cause systems to fail. When the system uses messages and queues to exchange information and drive behaviors, one of the advantages is that we can retry messages. A message comes in, and the message handling process fails. The message can be returned to the queue and tried again. If message processing logic changes some data, it can rollback the corresponding database transaction. So far, so good, in many scenarios, we can retry messages.
 
 > More information about errors, failed messages, and retries are available in my ["Businesses don't fail, they make mistakes"](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html) and in David Boike's excellent ["I caught an exception. Now what?"](https://particular.net/blog/but-all-my-errors-are-severe) article on Particular's blog.
 
@@ -19,7 +19,7 @@ Is this it? Or is there something more that we can do? There are use cases in wh
 
 ## No incoming message
 
-All systems interact with the external world, and I fail to find a scenario in which a system with no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
+All systems interact with the external world, and I have yet to find a scenario in which a system with no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
 
 > It's also one of the mantras of distributed systems design: do not offload your problems to the caller.
 
@@ -47,17 +47,17 @@ public Task<HttpResponse> ProcessOrder(int orderId)
 }
 ```
 
-> Sending the message is not the only thing that can fail; as discussed in my last article ["Ehi! What's up? Feedback to users' requests in distributed systems"](https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html), in a complex system, there are many moving parts. In case we need to track the user request to provide feedback, the HTTT request handling code will be more complex, and more things can fail and are worth retrying.
+> Sending the message is not the only thing that can fail; as discussed in my last article ["Ehi! What's up? Feedback to users' requests in distributed systems"](https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html), in a complex system, there are many moving parts. In case we need to track the user request to provide feedback, the HTTP request handling code will be more complex, and more things can fail and are worth retrying.
 
-The above pseudo-code can become quite complicated; think about the need to design an exponential back-off policy. At each retry cycle, we wait a little more to increase the chances that the transient failure resolves itself. Tools like [Polly](https://github.com/App-vNext/Polly) are come to solve this exact problem elegantly.
+The above pseudo-code can become quite complicated; think about the need to design an exponential back-off policy. At each retry cycle, we wait a little more to increase the chances that the transient failure resolves itself. Tools like [Polly](https://github.com/App-vNext/Polly) solve this exact problem elegantly.
 
-We don't want to repeat the above code everywhere we send a message, though. When using NServiceBus to rule a massage based system, thanks to its extensibility model based on the so-called [pipeline behaviors](https://docs.particular.net/nservicebus/pipeline/manipulate-with-behaviors), we can extend the pipeline to plugin Polly to handle outgoing message dispatch failures.
+We don't want to repeat the above code everywhere we send a message, though. When using NServiceBus to create a message-based system, thanks to its extensibility model based on [pipeline behaviors](https://docs.particular.net/nservicebus/pipeline/manipulate-with-behaviors), we can extend the pipeline to plug Polly in to handle outgoing message dispatch failures.
 
 > I built an extension to handle outgoing message dispatch failures. More information and API usage details in the [NServiceBus.Extensions.DispatchRetries](https://github.com/mauroservienti/NServiceBus.Extensions.DispatchRetries) GitHub repository.
 
 ## What about failures in the context of an incoming message?
 
-It's an exciting scenario to discuss. The immediate reaction would be: Do nothing, the fail and retry pattern (built-in in NServiceBus for example) will fix any temporary dispatch failure. So far, so good.
+It's an exciting scenario to discuss. The immediate reaction would be: Do nothing, the fail and retry pattern (built-in to NServiceBus for example) will fix any temporary dispatch failure. So far, so good.
 
 ### What about side effects, though?
 
@@ -66,7 +66,7 @@ The response fails to be dispatched. The fail and retry logic kicks in and retri
 
 Systems usually offload these situations to human beings.
 
-Polly comes to the rescue once again. We can use all the retry policies provided by Polly to increase the chances the payment processing succeeds. Using such an approach, we can also significantly reduce the number of times the system resorts to human intervention to handle a failure. With the aforementioned NServiceBus extension, we can plugin the same Polly policies in the NServiceBus outgoing messages processing pipeline. And thus handle dispatch failures even in the case of handling an incoming message.
+Polly comes to the rescue once again. We can use all the retry policies provided by Polly to increase the chances the payment processing succeeds. Using such an approach, we can also significantly reduce the number of times the system resorts to human intervention to handle a failure. With the aforementioned NServiceBus extension, we can plug the same Polly policies into the NServiceBus outgoing messages processing pipeline. And thus handle dispatch failures even in the case of handling an incoming message.
 
 ## Conclusion
 
