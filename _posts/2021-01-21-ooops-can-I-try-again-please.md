@@ -15,11 +15,15 @@ Systems fail all the time: Bugs, unavailability of required resources, hardware 
 
 > More information about errors, failed messages, and retries are available in my ["Businesses don't fail, they make mistakes"](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html) and in David Boike's excellent ["I caught an exception. Now what?"](https://particular.net/blog/but-all-my-errors-are-severe) article on Particular's blog.
 
-Is this it? Or is there something more that we can do? There are use cases in which not going through the incoming message retry process is beneficial. Moreover, there are use cases where there is no incoming message to retry, but there is only an outgoing message. Let's start with the latter.
+Is this it? Or is there something more that we can do?
+
+There are use cases in which not going through the incoming message retry process is beneficial. For example, when dealing with third party systems we might not be in a position to retry messages because they are not idempotent. Another use case is when respurces are scarce or expensive; a database operation can be time consuming and lead to deadlocks. It's true that transactions can be rollback and then retried, but it's also true that if retrying has a cost and can lead to deadlocks it might be better to try to avoid retries at any cost. This is one of the reasons why [pessimistic locking was introduced in NServiceBus Sagas](https://particular.net/blog/optimizations-to-scatter-gather-sagas), in high contention scenarios retrying is way worse than waiting.
+
+Moreover, there are use cases where there is no incoming message to retry, but there is only an outgoing message. For example, a system that allows users to reserve hotel rooms throught a web application. The web application once the user submits the reservation request will send one or more messages to process it. However, the interaction with the user happens over HTTP and not using messages. Let's start with the latter.
 
 ## No incoming message
 
-All systems interact with the external world, and I have yet to find a scenario in which a system with no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
+All systems interact with the external world, and I have yet to find a scenario in which a system wh no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
 
 > It's also one of the mantras of distributed systems design: do not offload your problems to the caller.
 
