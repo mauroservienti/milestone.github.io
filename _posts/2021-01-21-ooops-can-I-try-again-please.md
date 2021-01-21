@@ -11,7 +11,7 @@ tags:
 - Failures
 ---
 
-Systems fail all the time: Bugs, unavailability of required resources, hardware failures, and many more reasons cause systems to fail. When the system uses messages and queues to exchange information and drive behaviors, one of the advantages is that we can retry messages. A message comes in, and the message handling process fails. The message can be returned to the queue and tried again. If message processing logic changes some data, it can rollback the corresponding database transaction. So far, so good, in many scenarios, we can retry messages.
+Systems fail all the time: Bugs, unavailability of required resources, hardware failures, and many more reasons cause systems to fail. When the system uses messages and queues to exchange information and drive behaviors, one of the advantages is that we can retry messages. A message comes in, and the message handling process fails. Once the root cause of the problem is fixed, the message can be returned to the queue and tried again. If message processing logic changes some data, it can rollback the corresponding database transaction. So far, so good, in many scenarios, we can retry messages.
 
 > More information about errors, failed messages, and retries are available in my ["Businesses don't fail, they make mistakes"](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html) and in David Boike's excellent ["I caught an exception. Now what?"](https://particular.net/blog/but-all-my-errors-are-severe) article on Particular's blog.
 
