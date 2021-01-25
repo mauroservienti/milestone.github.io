@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/transactions-none-thanks/header.jpg
 title: "Transaction? None, thanks"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Queues are designed for reliability. I personally stress a lot about designing message processing to be as transactional as possible. Is there a use case for unreliable message processing?"
 tags:
 - Distributed Systems
 - Transactions
