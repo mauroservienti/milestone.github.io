@@ -23,7 +23,7 @@ Moreover, there are use cases where there is no incoming message to retry, but t
 
 ## No incoming message
 
-All systems interact with the external world, and I have yet to find a scenario in which a system wh no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
+All systems interact with the external world, and I have yet to find a scenario in which a system with no outside input makes sense. Information and requests come into the system in many different ways. We cannot expect the caller/sender of these requests to use the same retry approach previously described.
 
 > It's also one of the mantras of distributed systems design: do not offload your problems to the caller.
 
