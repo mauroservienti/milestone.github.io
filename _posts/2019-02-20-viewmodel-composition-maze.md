@@ -19,7 +19,7 @@ In [last instalment](/2019/02/06/what-is-services-viewmodel-composition-again.ht
 
 ![a-product](/img/posts/viewmodel-composition-maze/a-product.jpg){:class="img-fluid mx-auto d-block"}
 
-The product in the screenshot, if observed in [its original context](https://www.amazon.com/Benran-Outdoor-Travel-Protector-Storage/dp/B013QXJ3OQ/), is overwhelming. It's composed by a tremendous amount of information, coming for many different services. It's very easy to fall into the trap of concluding that ViewModel Composition should be manually crafted for every scenario as the complexity of the information we want to represent cannot be incapsulated into simpler patterns.
+The product in the screenshot, if observed in [its original context](https://www.amazon.com/Benran-Outdoor-Travel-Protector-Storage/dp/B013QXJ3OQ/), is overwhelming. It's composed by a tremendous amount of information, coming from many different services. It's very easy to fall into the trap of concluding that ViewModel Composition should be manually crafted for every scenario as the complexity of the information we want to represent cannot be incapsulated into simpler patterns.
 
 Luckily, the reality is different. ViewModel Composition can always be reconducted to 2 scenarios:
 
