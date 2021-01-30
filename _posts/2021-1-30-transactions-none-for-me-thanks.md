@@ -39,3 +39,7 @@ The coordinator uses the transaction mode that best suits our environment needs,
 The coordinator still uses an NServiceBus saga to track the execution status; sagas are a perfect solution for managing long-running processes. At the same time, the coordinator can continue to use saga timeouts. This time the check is not a ping request using WCF, but it'll merely check against flags in the saga data waking itself up regularly.
 
 There are very few use cases in which a `TransportTransactionMode` value of `None` makes sense. The presented scenario avoids using a different technology to create a communication channel between coordinators and executors. There might be many more. Have you ever faced one, or do you want to discuss your scenario? Ping me in the comments, and we can chat about it.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@jcgellidon?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">JC Gellidon</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
