@@ -164,3 +164,7 @@ It's indeed a legit question. Data are now scattered across multiple entities an
 ## Conclusion
 
 When designing a distributed system, at the very least, behaviors are first-class citizens like data. I'd even push myself to say that behaviors probably matter more than data in the service boundaries discovery process. One of the things we need to be aware of is that the user mental model can trick us into dead-ends. Be careful, listen to users and ask questions aimed at discovering behaviors and not only data.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@florianklauer?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Florian Klauer</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
