@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/do-not-trust-the-user-mental-model/header.jpg
 title: "Do not trust the user mental model: Model behaviors, not data"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "When designing systems, we say how important it is to model the system following the user mental model. Nonetheless, it works. However, it's not necessarily always the right choice."
 tags:
 - Distributed Systems
 - Behaviors modeling
