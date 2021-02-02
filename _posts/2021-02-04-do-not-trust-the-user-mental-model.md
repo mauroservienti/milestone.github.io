@@ -20,7 +20,7 @@ When dealing with distributed systems, the effort should not be on data modeling
 
 It's easier to look at the problems that a traditional data model-based design approach raises when used in the context of a distributed system.
 
-> There are many cases in which a data model-based design works flawlessly. Don't get me wrong; I'm not implying that data model-based design approaches are a mistake. There is nothing wrong with building an application that uses something like "Active Record," whose foundations are within a data model-based design.
+> There are many cases in which a data model-based design works flawlessly. Don't get me wrong; I'm not implying that data model-based design approaches are a mistake. There is nothing wrong with building an application that uses something like "Active Record," whose foundations are within a data model-based design. For example, in a book library management application, recording books, authors, and publishers will probably work just fine using a data-driven model.
 
 Let's use the well-known and sometimes abused e-commerce domain. In the e-commerce domain, there is the concept of Customers. Customers want to browse for Products to select what best suits their needs.
 
