@@ -103,3 +103,7 @@ One aspect that we haven't touched is how to handle eventual consistency results
 ## Wrap up 
 
 As you've probably noticed by now, a lot is going on. Handling a request asynchronously and, at the same time, providing feedback to the user brings a lot of complexity into the system. It's essential to evaluate if all this complexity is required; all the moving pieces need to be governed and maintained over time. One of the biggest lessons I've learned in my career is that using the same technique, architecture, or even technology in the entire system is the worst thing we can do. We'll end up with complexity where we don't need it and simplicity where too simple is harmful. Even if it might seem more complicated initially, it's worth evaluating each scenario and deciding how to design that specific scenario in isolation. I'm sure there will be a few scenarios where asynchronicity is required and many others where a much simpler approach is a better fit.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@celpax?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Celpax</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
