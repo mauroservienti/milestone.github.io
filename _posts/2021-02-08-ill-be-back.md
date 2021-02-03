@@ -15,7 +15,7 @@ tags:
 Time, as a concept, is both elementary and incredibly complex, to the point that physicists like Carlo Rovelli say that [it doesn't exist](https://youtu.be/vgsoI4ZUkUA). If you spend some time (ironically, time exists if you can spend it) diving into the nuances, it's clear that time exists at a particular scale, it's not unique and ubiquitous, and it can be stretched and manipulated. And yes, at the quantum scale, it doesn't exist. Mind-blowing and fascinating.
 
 If we look at time from the perspective of systems design, it has many nuances and complexities.
-On the one hand, there is clock drift: different machines have different views of time; it's not unique and ubiquitous. On the other hand, there is the conceptual complexity of modeling the passage of time. Modeling the passage of time as a clock does seems to be a natural thing to do. It translates the [user mental model]() into the system design well and provides a reliable solution. However, if we look deeper, it might not be so good as a solution.
+On the one hand, there is clock drift: different machines have different views of time; it's not unique and ubiquitous. On the other hand, there is the conceptual complexity of modeling the passage of time. Modeling the passage of time as a clock does seems to be a natural thing to do. It translates the [user mental model](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html) into the system design well and provides a reliable solution. However, if we look deeper, it might not be so good as a solution.
 
 ## Clocks are batch jobs
 
@@ -51,7 +51,7 @@ What if we were to schedule in our calendar each time an invoice is issued that,
 
 ## Conclusion
 
-Once again, we need to be very [careful at modeling software systems slavishly following the users' mental models](). The biggest problem is that users come with solutions; here is how we check for payments (with an implicit "we've always done it this way"), they have a tough time describing the underlying problems. Our primary job is to set aside the proposed solution and dissect the real problem requirements they intend to solve.
+Once again, we need to be very [careful at modeling software systems slavishly following the users' mental models](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html). The biggest problem is that users come with solutions; here is how we check for payments (with an implicit "we've always done it this way"), they have a tough time describing the underlying problems. Our primary job is to set aside the proposed solution and dissect the real problem requirements they intend to solve.
 
 In a future article, we'll look at a possible technical solution to model the described "overdue invoices check" requirement using the agenda based pattern.
 
