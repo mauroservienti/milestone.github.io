@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/ill-be-back/header.jpg
 title: "I'll be back"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Time from the perspective of systems design has many nuances and complexities. There are clock drift issues and design issues related to modeling the passage of time. Shall we model the passage of time as a clock does?"
 tags:
 - Distributed Systems
 - Timeouts
