@@ -47,13 +47,11 @@ The same question today gets an entirely different answer: I rely on my phone to
 
 We stopped relying on agendas and instead, we rely on the agenda taking care of us. We mostly look at the schedule to get an overall view of the day if we want.
 
-What if we were to schedule in our calendar each time an invoice is issued that, forty days later, we have to check for the payment of that specific invoice? At this point, there is no need for a ticking clock to tell us regularly to check for overdue invoices; we'll rely on the agenda to come back to us with a notification that today there are invoices that we need to check.
+What if we were to schedule in our calendar each time an invoice is issued that, forty days later, we have to check for the payment of that specific invoice? At this point, there is no need for a ticking clock to tell us regularly to check for overdue invoices; we'll rely on the agenda to come back to us with a notification that today there are invoices that we need to check. In a future article, we'll look at a possible technical solution to model the described "overdue invoices check" requirement using the agenda based pattern.
 
 ## Conclusion
 
 Once again, we need to be very [careful at modeling software systems slavishly following the users' mental models](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html). The biggest problem is that users come with solutions; here is how we check for payments (with an implicit "we've always done it this way"), they have a tough time describing the underlying problems. Our primary job is to set aside the proposed solution and dissect the real problem requirements they intend to solve.
-
-In a future article, we'll look at a possible technical solution to model the described "overdue invoices check" requirement using the agenda based pattern.
 
 ---
 
