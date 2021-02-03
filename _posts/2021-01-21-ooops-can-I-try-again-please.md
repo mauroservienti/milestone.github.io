@@ -75,3 +75,7 @@ Polly comes to the rescue once again. We can use all the retry policies provided
 ## Conclusion
 
 Based on topics discussed in this article and the ones linked above, it's clear that errors and failures, especially in the context of distributed systems, have many nuances. As with all the complex problems, we cannot discard them with a general and simplistic solution that works in all cases. Each type of failure and error needs to be analyzed in detail and a dedicated solution defined.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@timmossholder?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Tim Mossholder</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
