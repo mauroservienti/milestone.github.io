@@ -39,8 +39,9 @@ show_in_header: ''
     </div>
 
     {% if nearest.header_image %}
-    <img class="img-fluid" alt=" {{ nearest.title }} header image"
-      src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    <img class="img-fluid" alt=" {{ nearest.title }} header image" src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    {% else %}
+    <img class="img-fluid rounded" alt="{{ nearest.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
     {% endif %}
 
     <div class="card-body">
