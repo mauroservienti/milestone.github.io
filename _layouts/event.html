@@ -6,6 +6,8 @@ layout: default
   <header class="event-header">
 {% if page.header_image %}
   <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+{% else %}
+  <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
 {% endif %}
     <h2 class="event-title">
   {{ page.title }}
