@@ -24,6 +24,11 @@ layout: null
         {% for cat in post.categories %}
         <category>{{ cat | xml_escape }}</category>
         {% endfor %}
+        {% if page.header_image %}
+        <enclosure url="{{ post.header_image | prepend: site.baseurl }}" type="image/jpeg"/>
+        {% else %}
+        <enclosure url="{{ '/img/posts/default-header.jpg' | prepend: site.baseurl }}" type="image/jpeg"/>
+        {% endif %}
       </item>
     {% endfor %}
   </channel>
