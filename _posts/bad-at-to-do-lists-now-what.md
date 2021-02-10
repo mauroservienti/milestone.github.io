@@ -59,3 +59,7 @@ Context switching is a problem, that's no doubt, mainly if it plays a primary ro
 At this point, the critical question is: assuming we cannot drop any of the activities we're doing, how do we reduce context switching and subsequently its consequences?
 
 Data was the key for me, and data will be the next installment star; stay tuned.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@egnaro?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Rick Mason</a> on <a href="https://unsplash.com/s/photos/mess?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
