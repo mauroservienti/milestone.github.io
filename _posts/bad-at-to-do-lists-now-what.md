@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/bad-at-to-do-lists-now-what/header.jpg
 title: "Life hacking 101: I'm bad at to-do lists, now what?"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "When it comes to to-do lists, I'm terrible. How do I get better at managing my activities and time? Context switching seems to be the real culprit. I'm pretty sure I won't get any better at to-do lists."
 tags:
 - Time management
 - To-Do lists
