@@ -136,3 +136,7 @@ Before invoking the endpoint handling logic, the runtime checks the metadata col
 ## Conclusion 
 
 Thanks to ASP.Net Endpoints, ServiceComposer now uses by default attribute-based routing and can leverage the authentication and authorization pipeline by merely applying the relevant attributes to composition handlers.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@sarahmutter?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Sarah Mutter</a> on <a href="https://unsplash.com/?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
