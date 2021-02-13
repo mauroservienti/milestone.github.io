@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Codegen 2021"
 location: "online"
 language: "Italian"
