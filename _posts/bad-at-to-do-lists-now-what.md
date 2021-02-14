@@ -18,7 +18,7 @@ I've been running on zero-notifications for the last five or more years. Zero-no
 
 - The calendar on the computer and phone
 - Phone calls and messages, including text messages, Signal, and WhatsApp. All groups, without exceptions, get muted on day one.
-Nothing else. And when it comes to phone calls and messages, my iPhone turns on "Do Not Disturb" automatically from 6 PM to  8 AM, in which case only 6 or 7 numbers can call in. That is it.
+Nothing else. And when it comes to phone calls and messages, my iPhone turns on "Do Not Disturb" automatically from 6 PM to  8 AM, in which case only 6 or 7 numbers can dial in. That is it.
 
 Running on zero-notifications is a relief; with no pressure coming from badges or any other sort of distracting and pressure-designed crap, my day is already doing great.
 
