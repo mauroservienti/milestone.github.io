@@ -101,3 +101,7 @@ What can I do for the next 45 minutes? That's easy; we have many activities that
 ## Conclusion
 
 Context switching is one of the ugly beasts that can be a productivity disruptor. It's not the only culprit, that's clear. Distractions are just around the corner and can be as problematic as context switching. In any case, before taking any action in an attempt to fix any personal productivity issue, it's essential to dissect the problem and try to understand its source. Only once we have a better understanding of the problem we want to solve can we implement countermeasures.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@ryoji__iwata?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Ryoji Iwata</a> on <a href="https://unsplash.com/s/photos/blind?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
