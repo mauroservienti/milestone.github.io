@@ -40,9 +40,7 @@ However, if I follow my brain's hint and switch to another activity, the effort 
 
 ## Fillers
 
-For a couple of months, so it's probably too early for some conclusions, I started injecting filler activities between daily tasks. These are leisure activities that I enjoy doing and that I can pick up and put down in short bursts. That is, they don't require a lot of mental activity to start or to stop.
-
-For me, reading is an excellent filler activity. Building LEGO is another satisfactory one.
+For a couple of months, so it's probably too early for some conclusions, I started injecting filler activities between daily tasks. These are leisure activities that I enjoy doing and that I can pick up and put down in short bursts. That is, they don't require a lot of mental activity to start or to stop. For me, reading is an excellent filler activity. Building LEGO is another satisfactory one.
 
 I extensively use [Pocket](https://getpocket.com) as the tool to keep track of all the articles I want to read. I carefully tag articles that I continuously store. I tend to read about everything except technology; if you could look at my tags, very few items are labeled as `technology` or `architecture`. My reading interests are mostly politics, economics, mindfulness, psychology, and art.
 
