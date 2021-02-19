@@ -28,7 +28,7 @@ However, as already said in the above-linked article, the day in Particular Soft
 
 One of the side effects of wearing multiple hats throughout the day is the rise of context switching. Let's do some extreme math to put the issue in context; if we were to have only 5-minute long tasks and an 8-hour workday, the hypothetical result is 96 completed tasks: 12 tasks every hour, times 8 hours. Now, factor in multiple hats, and again for the sake of the sample, let's imagine that each assignment requires a different hat and that to change it (context switch), it takes our brain about 5 minutes. In this scenario, we'll be able to complete 50% of the 96 tasks each day — a colossal dropoff.
 
-One could argue a zero-context switching approach would be an ideal world. Probably. I guess it depends on the person and the task. There are things that I enjoy a lot, like writing code or writing in general, that bores me very quickly; after a couple of hours in the best case, my mind starts digressing, signaling it's time for a change.
+One could argue a zero-context switching approach would be an ideal world. Probably. I guess it depends on the person and the task. For example, when it comes to me, there are things, like writing or programming, that I enjoy a lot. Simultaneously, the excitement starts to sunset, usually in a couple of hours. My mind starts digressing, signaling it's time for a change.
 
 > If there is an unsolved problem, like a bug or a not-yet wholly-identified solution, that's another story.
 
