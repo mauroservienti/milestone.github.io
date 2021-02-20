@@ -15,7 +15,7 @@ Your day is a mess. By the end of the day, the predominant feeling is that you p
 
 If that's the case, you're not alone. That was me two years ago. Did I solve all my time management and planning problems? Far from it. I did improve the situation a lot, though. Up to the point that I'm comfortable enough to say that I moved from a "fire-fighting" phase to a "what can we improve now?" phase. Big problems are a thing of the past. I'm now looking for opportunities rather than running after issues.
 
-In ["Life hacking 101: I'm bad at to-do lists, now what?"]() I discussed that one of the significant causes of frustration could be context switching. 
+In ["Life hacking 101: I'm bad at to-do lists, now what?"](https://milestone.topics.it/2021/02/19/bad-at-to-do-lists-now-what.html) I discussed that one of the significant causes of frustration could be context switching. 
 
 > From now on, I'm assuming that there are no other extraordinary causes. For example, there is a pandemic; Life catapulted you working from home on a kitchen table sitting on a high-chair, in a single room apartment with two toddlers around.
 
