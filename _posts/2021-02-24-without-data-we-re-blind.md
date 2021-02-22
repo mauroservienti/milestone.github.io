@@ -78,7 +78,7 @@ I had two options: give up on a few things or find a solution to reduce context 
 
 The first thing was to rearrange as much as I could my calendar to group similar things. For example, during recurring product management syncs, we capture action items, and at the end of the sync, we assign action items to each participant. It's easy to view those action items as tasks on a to-do list, in which case the problem for me is that they get a very low priority (remember that I'm a procrastinator). Instead, I scheduled a recurring 45-minute slot ten minutes after every sync to get all the assigned action items done.
 
-> Tip: always leave a buffer between scheduled calendar events. Things can exceed their planned time, or we need a break, coffee, tee, or a snack, or the restroom.
+> Tip: always leave a buffer between scheduled calendar events. Things can exceed their planned time, or we need a break, coffee, tee, or a snack, or the restroom. Or leave time for low-effort context-switching filler activities ;-)
 
 I didn't stop myself from defining "action items" slots on the calendar. I spent a significant amount of time rearranging my weekly schedule, which was enough to alleviate some of the problems. Again, with the goal of grouping similar activities.
 
