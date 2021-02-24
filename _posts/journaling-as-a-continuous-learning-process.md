@@ -38,7 +38,7 @@ For example, as I said in a previous post, I try to read a lot. By a lot, I mean
 
 ## Conclusion
 
-There are two things that I don't like. Getting at my desk every morning and being faced with the question, "what am I going to do today?," is one. It is an open door for context switching and unproductivity. It can only destroy my day. The second is that I'm bad at is brainstorming alone. If I need to sit down and think about questions like "what can I improve?" or "what's going wrong?" it'll get me nowhere. Carefully planning my week proved to be extremely effective in answering the first question. Journaling appears to be influential in shaping what's next.
+There are two things that I don't like. Getting at my desk every morning and being faced with the question, "what am I going to do today?," is one. It is an open door for context switching and non-productivity. It can only destroy my day. The second is that I'm bad at brainstorming alone. If I need to sit down and think about questions like "what can I improve?" or "what's going wrong?" it'll get me nowhere. Carefully planning my week proved to be extremely effective in answering the first question. Journaling appears to be influential in shaping what's next.
 
 ---
 
