@@ -32,6 +32,6 @@ Analizzeremo gli errori più comuni e vedremo come le architetture, si al plural
 
 #### Risorse aggiuntive
 
-- Presentazione: "Designing a UI for Microservices" - http://bit.ly/crafted-long-live-prosper-ui
-- Presentazione: "Welcome to the State Machine" - http://bit.ly/crafted-long-live-prosper-sagas
-- Articoli su ViewModel Composition: http://bit.ly/crafted-long-live-prosper-blog
+- Presentazione: ["Designing a UI for Microservices"](http://bit.ly/crafted-long-live-prosper-ui)
+- Presentazione: ["Welcome to the State Machine"](http://bit.ly/crafted-long-live-prosper-sagas)
+- Articoli su [ViewModel Composition](http://bit.ly/crafted-long-live-prosper-blog)
