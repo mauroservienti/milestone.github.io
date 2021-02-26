@@ -33,8 +33,8 @@ Analizzeremo gli errori più comuni e vedremo come le architetture, si al plural
 
 #### Risorse
 
-- Slides: http://bit.ly/crafted-long-live-prosper-slides
-- Registrazione: https://www.youtube.com/watch?v=YOJ0rQ2gn44
+- Slides: <http://bit.ly/crafted-long-live-prosper-slides>
+- Registrazione: <https://www.youtube.com/watch?v=YOJ0rQ2gn44>
 - Presentazione: ["Designing a UI for Microservices"](http://bit.ly/crafted-long-live-prosper-ui)
 - Presentazione: ["Welcome to the State Machine"](http://bit.ly/crafted-long-live-prosper-sagas)
 - Articoli su [ViewModel Composition](http://bit.ly/crafted-long-live-prosper-blog)
