@@ -11,6 +11,7 @@ calendar:
 sessions:
 - title: "Sistemi distribuiti: la via per lunga vita e prosperità"
   slides: http://bit.ly/crafted-long-live-prosper-slides
+  recording: https://www.youtube.com/watch?v=YOJ0rQ2gn44
   speakers:
   - name: "Mauro Servienti"
     profileurl: /about-me/
@@ -30,8 +31,10 @@ Al giorno d'oggi sembra che un'architettura non basata su microservizi non sia d
 
 Analizzeremo gli errori più comuni e vedremo come le architetture, si al plurale, possano avere un impatto radicale sulla progettazione. Sarà un viaggio che punta a scoprire cosa significhi progettare un sistema distribuito basato su architetture orientate ai (micro)servizi.
 
-#### Risorse aggiuntive
+#### Risorse
 
+- Slides: http://bit.ly/crafted-long-live-prosper-slides
+- Registrazione: https://www.youtube.com/watch?v=YOJ0rQ2gn44
 - Presentazione: ["Designing a UI for Microservices"](http://bit.ly/crafted-long-live-prosper-ui)
 - Presentazione: ["Welcome to the State Machine"](http://bit.ly/crafted-long-live-prosper-sagas)
 - Articoli su [ViewModel Composition](http://bit.ly/crafted-long-live-prosper-blog)
