@@ -188,7 +188,7 @@ There are other scenarios in which message ordering is essential from the busine
 
 Imagine the case in which customers are paying with a credit card at the time of the order. The generated invoice is immediately paid. The `InvoicePaid` event may arrive before the `InvoiceIssued`. Remember that physical message ordering is extremely hard, if ever possible, in distributed systems. With the above saga, the described scenario surfaces a problem. The saga is designed to be started only by the `InvoceIssued` message. If `InvocePaid` is dispatched first, NServiceBus cannot find an existing saga; the only viable assumption is that the saga is already completed, and thus the message can be discarded. Later NServiceBus processes the `InvoiceIssued` message and creates the saga. It is a data/message loss scenario.
 
-Suppose we find ourselves in a case like the one described above, which is true for most of the scenarios. In that case, we want to make sure that NServiceBus can start the saga regardless of messages arrival order:
+Suppose we find ourselves in a case like the one described above, which is true for most scenarios. In that case, we want to make sure that NServiceBus can start the saga regardless of messages arrival order:
 
 ```csharp
 class OverdueInvoicePolicy :
