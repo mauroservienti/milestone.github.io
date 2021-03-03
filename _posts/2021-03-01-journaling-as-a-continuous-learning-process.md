@@ -24,7 +24,7 @@ It was one of my first attempts at managing my day. Was it effective? In the beg
 
 Now that I'm reasonably confident that the techniques I'm using work for me and are effective, it's time to discuss how to look for improvements. I'm continuing my data collection through the calendar and a spreadsheet, and I'll review the situation more or less every six months.
 
-A few weeks ago I read ["How to be lucky"](https://psyche.co/guides/how-to-open-up-to-serendipity-and-create-your-own-luck) from [Psyche](https://psyche.co) (I suggest subscribing), and the thing that caught my attention was the suggestion of getting in the habit of journaling:
+A few weeks ago I read ["How to be lucky"](https://psyche.co/guides/how-to-open-up-to-serendipity-and-create-your-own-luck) from [Psyche, by Aeon](https://psyche.co) (I suggest subscribing), and the thing that caught my attention was the suggestion of getting in the habit of journaling:
 
 > If you are new to journaling, don't overthink it. **Set a timer for two minutes, then list out in two columns the parts of your day that led to positive outcomes and the parts of the day that did not**. As you break down your day into these segments, **examine the parts that worked really well for you, and the ones that were inefficient, stressful or unfulfilling. You might begin to notice some patterns that stand out, for good or bad.** Journalling and reflection is a way to begin decluttering your life, to explore the areas that take you out of being present, and keep you from recognizing serendipity. Sometimes, it's the seemingly small and insignificant nuisances that can deplete your energy and alertness the most.
 
