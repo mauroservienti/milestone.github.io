@@ -241,3 +241,4 @@ The full code is available on GitHub at <https://github.com/mauroservienti/got-t
 
 ---
 
+<span>Photo by <a href="https://unsplash.com/@alschim?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Alexander Schimmeck</a> on <a href="https://unsplash.com/s/photos/time?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
