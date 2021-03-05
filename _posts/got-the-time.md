@@ -114,7 +114,7 @@ public async Task Handle(InvoiceIssued message, IMessageHandlerContext context)
 }
 ```
 
-> The usage of `DateTime.Now` is terrible. It makes the code untestable and not timezones safe. Production-ready code needs to inject a component that can provide that information and use `DateTimeOffset` and account for time zones.
+> The usage of `DateTime.Now` is terrible. It makes the code untestable and not timezones safe. Production-ready code needs to inject a component that can provide that information and use `DateTimeOffset` and account for time zones. For the same reason, the number "40" should not be hardcoded; We should delegate the decision to a dedicated component injected via DI into the saga.
 
 In the `Handle` method for the `InvoiceIssued` event, we're scheduling a timeout using the `RequestTimeout` saga method. A timeout is nothing else than a message expected to be delivered in the future. The `CheckPayment` type represents the message that the infrastructure will dispatch in the future, and the `checkDate` argument is the "when" in the future. `CheckPayment`, in this sample, is an empty class such as the following:
 
@@ -169,7 +169,7 @@ When time has come, the saga, using the provided invoice service, checks the pay
 
 ### Checking is redundant
 
-Do we need to use an invoice service to check if a given invoice is overdue or not? The answer is no, and this comes with a significant simplification of the saga code. In our scenario, all the messages that the saga handles correctly describe all the possible options. When customers order, the system issues the `InvoiceIssued` event; when they pay, the system publishes the `InvoicePaid` event. There is no need to check for the status when the `CheckPayment` timeout expires from the overdue invoices saga perspective. When an invoice is paid, the infrastructure deletes the corresponding saga (mark as complete) which also removes the timeout. When NServiceBus successfully dispatches the timeout to the saga, it means that the customer didn't pay that specific invoice yet. The mere existence of the timeout means the invoice hasn't been paid.
+Do we need to use an invoice service to check if a given invoice is overdue or not? The answer is no, and this comes with a significant simplification of the saga code. In our scenario, all the messages that the saga handles correctly describe all the possible options. When customers order, the system issues the `InvoiceIssued` event; when they pay, the system publishes the `InvoicePaid` event. There is no need to check for the status when the `CheckPayment` timeout expires from the overdue invoices saga perspective. When an invoice is paid, the infrastructure deletes the corresponding saga (mark as complete). When NServiceBus successfully dispatches the timeout to the saga, it means that the customer didn't pay that specific invoice yet. The mere existence of the timeout means the invoice hasn't been paid.
 
 ### Order matters: Issue, pay, mark as complete
 
@@ -231,7 +231,38 @@ class OverdueInvoiceData : ContainSagaData
 }
 ```
 
-And use the two new flags in the code that handles incoming messages. 
+And use the two new flags in the code that handles incoming messages. For example:
+
+```csharp
+class OverdueInvoicePolicy :
+   Saga<OverdueInvoicePolicy.OverdueInvoiceData>,
+   IAmStartedByMessages<InvoiceIssued>,
+   IAmStartedByMessages<InvoicePaid>,
+   IHandleTimeouts<CheckPayment>
+{
+   public async Task Handle(InvoiceIssued message, IMessageHandlerContext context)
+   {
+      Data.InvoiceIssuedReceived = true;
+      if (Data.InvoiceIssuedReceived && Data.InvoicePaidReceived)
+      {
+         MarkAsComplete();
+         return;
+      }
+      
+      //rest of the code
+   }
+   public async Task Handle(InvoicePaid message, IMessageHandlerContext context)
+   {
+      Data.InvoicePaidReceived = true;
+      if (Data.InvoiceIssuedReceived && Data.InvoicePaidReceived)
+      {
+         MarkAsComplete();
+         return;
+      }
+      
+      //rest of the code
+   }
+}
 
 ## Conclusion
 
