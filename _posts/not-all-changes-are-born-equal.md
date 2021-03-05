@@ -65,3 +65,7 @@ As a side note, you can see the problem at play on many webshops. If you look fo
 ## Conclusion
 
 Whenever we design a software system, we should look at the coupling impact from different angles and in the context of the requirements we're implementing. As we saw, there is a coupling that we should avoid, one that we should embrace, and even one that we should not consider. Coupling is not marred by design. Hopefully, this article also answers the questions raised; if that is not the case, please leave a comment, and I'd be more than happy to discuss further.
+
+---
+
+<span>Photo by <a href="https://unsplash.com/@markusspiske?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Markus Spiske</a> on <a href="https://unsplash.com/s/photos/different?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a></span>
