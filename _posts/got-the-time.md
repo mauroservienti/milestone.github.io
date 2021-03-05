@@ -268,7 +268,11 @@ class OverdueInvoicePolicy :
 
 We can use sagas and timeouts to model the passage of time. When doing it, it's essential to think deeply about the problem we're modeling and see if there is an opportunity to flip it around and benefit from the passage of time instead of passively modeling it. However, the most important lesson is that we can use messages, and timeouts are just another type of message to model most of the system's interactions across components. That alongside the single responsibility principle generally leads to a significant simplification of the codebase.
 
-The full code is available on GitHub at <https://github.com/mauroservienti/got-the-time-demos/blob/master/src/OverdueInvoices/>
+### Resources
+
+- The full code is available on GitHub at <https://github.com/mauroservienti/got-the-time-demos/blob/master/src/OverdueInvoices/>
+- For more information on how to move away from batch jobs, read the excellent [Death to the batch job](https://particular.net/blog/death-to-the-batch-job) blog post
+- For more details on sagas a good starting point is the Particular's [NServiceBus sagas](https://docs.particular.net/tutorials/nservicebus-sagas/1-saga-basics/) tutorial.
 
 ---
 
