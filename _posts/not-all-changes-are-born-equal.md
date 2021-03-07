@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/not-all-changes-are-born-equal/header.jpg
 title: "Not all changes are born equal"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "We should not fear change. There are changes for good and changes for bad. As for change, we should not fear coupling. There is bad coupling and good coupling. The critical aspect is to understand the impact of the changes and the coupling."
 tags:
 - Design
 - Architecture
