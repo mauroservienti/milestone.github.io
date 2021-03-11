@@ -263,7 +263,7 @@ class OverdueInvoicePolicy :
       //rest of the code
    }
 }
-
+```
 ## Conclusion
 
 We can use sagas and timeouts to model the passage of time. When doing it, it's essential to think deeply about the problem we're modeling and see if there is an opportunity to flip it around and benefit from the passage of time instead of passively modeling it. However, the most important lesson is that we can use messages, and timeouts are just another type of message to model most of the system's interactions across components. That alongside the single responsibility principle generally leads to a significant simplification of the codebase.
