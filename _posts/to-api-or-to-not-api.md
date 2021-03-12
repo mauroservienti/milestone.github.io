@@ -58,3 +58,7 @@ Intermediate data access with proxies: having a "proxy in the middle" kind of th
 4. Consider technologies like GraphQL that approach the problem from a completely different angle: GraphQL, for example, drives us in designing an API that is client-driven and not server-controlled, leading to a situation where versioning is rarely required. GraphQL is not a silver bullet; it comes with its challenges.
  
 It's always a trade-off.
+
+---
+
+Photo by <a href="https://unsplash.com/@randallbruder?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Randall Bruder</a> on <a href="/collections/1702019/api?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
