@@ -28,7 +28,7 @@ One could argue that we need APIs in three places:
 
 Let's start from the end. In ["Slice it"](https://milestone.topics.it/view-model-composition/2019/04/09/slice-it.html), I introduced vertical slices and their relationship with the ViewModel Composition architectural concept. In my ["All our aggregates are wrong"](https://milestone.topics.it/talks/all-our-aggregates-are-wrong.html) talk, I look at vertical slices from a slightly different angle. Towards the end, I state that once we have full vertical slices, thanks to services isolation, cross-service communication can be implemented using thin events that can be as thin as name and identifier.
 
-[screenshot here]
+![slide screenshot](/img/posts/to-api-or-to-not-api/screenshot.png){:class="img-fluid mx-auto d-block"}
 
 > The presentation recording is available on YouTube; for example, [this one from the NDC Conference](https://youtu.be/hev65ozmYPI) in Copenhagen.
 
