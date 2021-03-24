@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/a-thorough-ux-analysis-is-part-of-the-solution/header.jpg
 title: "A thorough UX analysis is part of the solution"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Decomposing a monolith is a satisfying exercise. In many cases, the decomposition process leads to a task-based user interface with its set of issues. We should not try to address those using either technology or architecture. A UX analysis is the way."
 tags:
 - Task-based UI
 - Behavior modeling
