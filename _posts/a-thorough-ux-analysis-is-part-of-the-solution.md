@@ -16,7 +16,7 @@ Last week I read the excellent ["Decomposing CRUD to a Task Based UI"](https://c
 
 I firmly believe that a task-based user interface (UI) is a natural follow-up to my recent ["Do not trust the user mental model: Model behaviors, not data"](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html). The behavior modeling naturally leaks into the UI, and a task-based one is a perfect answer. The problem then shifts to the user, and I've heard comments like the following many times myself from customers:
 
-![Comment screenshot](link-here)
+![Comment screenshot](/img/posts/a-thorough-ux-analysis-is-part-of-the-solution/comment-screenshot.png){:class="img-fluid mx-auto d-block"}
 
 Derek proposes a legitimate solution that exposes its flank to critiques like the above ones, fair.
 
