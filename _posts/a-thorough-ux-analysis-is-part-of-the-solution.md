@@ -53,3 +53,4 @@ A task-based user interface is a natural follow-up to a system designed to model
 
 ---
 
+Photo by <a href="https://unsplash.com/@edgarlopezcoronado?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Edgar López</a> on <a href="https://unsplash.com/s/photos/strong?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
