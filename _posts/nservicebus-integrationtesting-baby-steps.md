@@ -26,7 +26,7 @@ As mentioned in the above-linked article, the main driver is what I like to call
 
 Looking ab the above "business story," the test needs to be able to assert that `ASaga` started and that `MyService` handled `AReplyMessage`.
 
-Choreography testing is an important part of the integration testing needs; however, users also need to test other parts of their systems that cannot be tested using a unit testing approach.
+Choreography testing is an important part of the integration testing needs; however, users also need to test other aspects of their systems that a unit testing-based approach cannot solve.
 
 ## Testing the endpoint configuration
 
@@ -98,7 +98,7 @@ public class MyServiceConfiguration : EndpointConfiguration
 }
 ```
 
-With the above configuration, the MyService endpoint will only scan the selected assemblies. A similar setup could have been applied to the test instead of to the production code; however, I prefer to restrict the production code for consistency to avoid tests behaving differently than production.
+With the above configuration, the MyService endpoint will only scan the selected assemblies. A similar setup could have been applied to the test instead of to the production code; however, I prefer to restrict the production code for consistency and to avoid tests behaving differently than production.
 
 The presented `IncludeOnly` method is an extension method that looks like the following:
 
@@ -123,7 +123,7 @@ There is no easy way, and maybe there's no way to fix the mentioned assembly sca
 - A set of libraries to execute tests and connect the dots between the tests and the chosen test runner (as of today, you're forced to use NUnit)
 - A Docker container base image to host each endpoint under test in isolation and a set of tools to communicate with the libraries in the test agent process
 
-With that in place we could write something like:
+With that in place, we could write something like:
 
 ```csharp
 public async Task Pseudo_test_this_is_hypothetical()
