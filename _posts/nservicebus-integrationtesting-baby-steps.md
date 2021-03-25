@@ -146,3 +146,7 @@ public async Task Pseudo_test_this_is_hypothetical()
 When run, the above scenario packages the supplied C# projects into containers and starts them. Each container will communicate with the test host, e.g., via HTTP, keep the host informed about execution status, and report handled messages and executed sagas. The host will then evaluate the supplied done conditions and determine when the test execution is complete.
 
 Say tuned; exciting times ahead!
+
+---
+
+Photo by <a href="https://unsplash.com/@christianchen?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Christian Chen</a> on <a href="https://unsplash.com/s/photos/steps?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
