@@ -10,7 +10,7 @@
 {% assign kw = nil %}
 {% if page.keywords %}
   {% assign kw = page.keywords %}
-{% elseif page.tags %}
+{% else if page.tags %}
   {% assign kw = page.tags %}
 {% endif %}
 {% if kw %}
