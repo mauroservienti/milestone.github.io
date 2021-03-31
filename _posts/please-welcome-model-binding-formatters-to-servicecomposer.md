@@ -150,3 +150,7 @@ Both formatters and model binding requires the MVC infrastructure to be in place
 With model binding and input and output formatters, ServiceComposer is moving from providing only a low-level API to a more robust and easy-to-use approach to maximize the developer experience and reduce errors. Model binding and formatters pave the way for a feature that has been in the back of my mind since the inception: a controller-like API that allows users to express their binding intentions through the handle method signature. The road is still long, but the journey just started.
 
 Last but not least, credit goes where credit is due. Thanks to [Mark Phillips](https://github.com/markphillips100) for the ideas, the brainstorming, and the support in developing the mentioned features.
+
+---
+
+Photo by <a href="https://unsplash.com/@brett_jordan?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Brett Jordan</a> on <a href="https://unsplash.com/s/photos/binder?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
