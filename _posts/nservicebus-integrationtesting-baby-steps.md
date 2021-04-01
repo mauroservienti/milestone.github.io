@@ -17,14 +17,14 @@ The integration testing framework saw the light mainly as an experiment; you can
 - What kind of integration testing are NServiceBuse users expecting to perform?
 - Which parts of the system cannot be unit tested?
 
-As mentioned in the above-linked article, the main driver is what I like to call choreography testing when it comes to integration testing. Choreography testing's primary goal is to validate that one or more business scenarios behave as expected. A business scenario is handled by many components in a distributed system, being autonomous or business components, hosted by as many again endpoints. The sample provided in the GitHub repository goes like follows:
+As mentioned in the above article, the main driver is what I like to call choreography testing when it comes to integration testing. Choreography testing's primary goal is to validate that one or more business scenarios behave as expected. A business scenario is handled by many components in a distributed system, being autonomous or business components, hosted by as many endpoints. The sample provided in the GitHub repository goes like this:
 
 - `MyService` sends `AMessage` to `MyOtherService`.
 - `MyOtherService` replies with a `AReplyMessage`.
 - `MyService` handles `AReplyMessage` and sends locally to itself a `StartASaga` message.
 - `ASaga` is started in `MyService`.
 
-Looking ab the above "business story," the test needs to be able to assert that `ASaga` started and that `MyService` handled `AReplyMessage`.
+Looking at the above "business story," the test needs to be able to assert that `ASaga` started and that `MyService` handled `AReplyMessage`.
 
 Choreography testing is an important part of the integration testing needs; however, users also need to test other aspects of their systems that a unit testing-based approach cannot solve.
 
@@ -143,7 +143,7 @@ public async Task Pseudo_test_this_is_hypothetical()
 }
 ```
 
-When run, the above scenario packages the supplied C# projects into containers and starts them. Each container will communicate with the test host, e.g., via HTTP, keep the host informed about execution status, and report handled messages and executed sagas. The host will then evaluate the supplied done conditions and determine when the test execution is complete.
+When run, the above scenario packages the supplied C# projects into containers and starts them. Each container will communicate with the test host, e.g. via HTTP, keep the host informed about execution status, and report handled messages and executed sagas. The host will then evaluate the supplied done conditions and determine when the test execution is complete.
 
 Say tuned; exciting times ahead!
 
