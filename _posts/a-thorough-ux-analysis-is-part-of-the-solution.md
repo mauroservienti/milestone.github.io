@@ -47,6 +47,8 @@ Using Derek's sample as a foundation, we had to implement a data entry section o
 
 On the page, there were two buttons: a "Done" button and a "Cancel" button. They redirect back to the previous page; before doing that, the "Done" button executes all client-side validation logic to guarantee data consistency and signals the backend to confirm the draft data. The "Cancel" button signals to the backend to discard the draft data. In case of a browser crash or connection loss, or worse, the design came with a handy surprise: data is there in a draft state, and users can recover from unexpected events and finish their task without starting over.
 
+If you’re old like I am, you probably used Microsoft Access; when designing forms in Access there was no save concept; Access used, and maybe still uses today, a cursor to handle data, changing something on a form meant changing it in the database. For younger people, a Google Spreadsheet behaves more or less in the same way; there is no need to hit the save button, that in fact doesn’t exist.
+
 ## Conclusion
 
 A task-based user interface is a natural follow-up to a system designed to model behaviors. However, a task-based UI comes with its challenges. Users might find their efficiency diminished by the new style of the user interface. It's crucial to involve the right expertise to help design an experience that embraces the behavior modeling approach used in the backend and respects users' requirements. If you find yourself in such a situation, a user experience architect is _the_ expert for you.
