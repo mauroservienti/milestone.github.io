@@ -13,7 +13,7 @@ tags:
 category: view-model-composition
 ---
 
-ServiceComposer API has been historically pretty low level. Users can access the incoming `HttpRequest` and the outgoing `HttpResponse` to read and manipulate content.
+The ServiceComposer API has been historically pretty low level. Users can access the incoming `HttpRequest` and the outgoing `HttpResponse` to read and manipulate content.
 
 > What's ServiceComposer? ServiceComposer is a view model composition gateway designed to compose data owned by different (micro)services and transparently serve users' requests with a single response view model. More information about the overall architectural problem and the many nuances are available in the [ViewModel Composition series](https://milestone.topics.it/categories/view-model-composition) of articles on this blog.
 
@@ -32,9 +32,9 @@ class SampleHandler : ICompostionRequestHandler
 
 At runtime, ServiceComposer inspects the incoming HttpRequest, and if any defined composition handler matches the request URL, ServiceComposer invokes the `Handle` method.
 
-> The incoming request matching is performed using regular ASP.Net attribute routing support. More information in ["Please welcome Attribute Routing to ServiceComposer."](https://milestone.topics.it/view-model-composition/2021/02/11/please-welcome-attribute-routing-to-servicecomposer.html)
+> The incoming request matching is performed using regular ASP.NET attribute routing support. More information is in ["Please welcome Attribute Routing to ServiceComposer."](https://milestone.topics.it/view-model-composition/2021/02/11/please-welcome-attribute-routing-to-servicecomposer.html)
 
-At this point, if there is a need to retrieve query string values, route data values, body or form content, users need to write the code to extract that information from the incoming `HttpRequest`; for example, to extract route data the following code is required:
+At this point, if there is a need to retrieve query string values, route data values, body or form content, users need to write the code to extract that information from the incoming `HttpRequest`. For example, to extract route data:
 
 ```csharp
 [HttpPost("sample/{id}")]
@@ -67,11 +67,11 @@ public async Task Handle(HttpRequest request)
 }
 ```
 
-Too many things are happening simultaneously; we first need to rewind the stream, there might have been other handlers that processed the request body, and thus, the stream position is at the end. We need to know the request encoding; in the above sample, UTF8 is hardcoded, and it's also crucial to leave the stream open when the read operation completes. Finally, we can't assume the content is a json object, parse and use it. If we don't want to deserialize to a POCO object, we need to deal with the JObject API.
+Too many things are happening simultaneously; we first need to rewind the stream, there might have been other handlers that processed the request body, and thus, the stream position is at the end. We need to know the request encoding; in the above sample, UTF8 is hardcoded, and it's also crucial to leave the stream open when the read operation completes. Finally, we can't assume the content is a JSON object, let alone parse and use it. If we don't want to deserialize to a POCO object, we need to deal with the JObject API.
 
 ## Model binding to the rescue
 
-Starting with version 1.9.0, ServiceComposer supports ASP.Net model binding. Using the above sample, we need to bind two things, the request body and one route value, the ID parameter. We first need a model for the request body:
+Starting with version 1.9.0, ServiceComposer supports ASP.NET model binding. Using the above sample, we need to bind two things, the request body and one route value, the ID parameter. We first need a model for the request body:
 
 ```csharp 
 class BodyModel
@@ -81,16 +81,16 @@ class BodyModel
 }
 ```
 
-If we were using ASP.Net controllers, that would have been enough. A controller action signature like the following describes the intention in a good enough manner for the binder to understand what to do:
+If we were using ASP.NET controllers, that would have been enough. A controller action signature like the following describes the intention in a good enough manner for the binder to understand what to do:
 
 ```csharp 
 [HttpPost("sample/{id}")]
 public Task<object> Sample(int id, [FromBody]BodyModel model)
 ```
 
-ASP.Net binding logic matches the first argument name with the route template value key, and thanks to the `[FromBody]` attribute, the second argument gets deserialized from the incoming request body. Pretty straightforward.
+ASP.NET binding logic matches the first argument name with the route template value key, and thanks to the `[FromBody]` attribute, the second argument gets deserialized from the incoming request body. Pretty straightforward.
 
-In ServiceComposer, we're not yet there, even if we're paving the road to provide a similar experience. We need to explain to the binder where the values we want to bind to are coming from; we can do that with an intermediate class:
+In ServiceComposer, we're not yet there, even if we're paving the road to provide a similar experience. We need to explain to the binder where the values we want to bind to are coming from. We can do that with an intermediate class:
 
 ```csharp
 class RequestModel
@@ -100,7 +100,7 @@ class RequestModel
 }
 ```
 
-The `ReqestModel` class is what glues all the concepts that we need. We have a public property, id, that matches the route value key and is decorated with the `[FromRoute]` attribute to explain to the binder where the value comes from, and public property for the body using binding attributes as well.
+The `RequestModel` class is what glues all the concepts that we need together. We have a public property, id, that matches the route value key and is decorated with the `[FromRoute]` attribute to explain to the binder where the value comes from, and a public property for the body using binding attributes as well.
 
 > By the way, class names can be whatever you want.
 
@@ -119,13 +119,13 @@ public async Task Handle(HttpRequest request)
 }
 ```
 
-The presented code, thanks to model binding, becomes much more maintainable and easy to understand. Not to mention that it is now compiler safe, being strongly typed.
+Thanks to model binding, the presented code becomes much more maintainable and easier to understand. Not to mention that it is now compiler safe, since it's strongly typed.
 
 ## Formatters
 
-The welcomed side effect of using the ASP.Net model binding infrastructure is that now ServiceComposer automatically supports input formatters. Previously it was up to the user to determine, in their handling code, the serialization format of the incoming payload, with model binding that becomes transparent and can be configured using standard ASP.Net configuration and HTTP headers to describe the request content type.
+A welcome side effect of using the ASP.NET model binding infrastructure is that now ServiceComposer automatically supports input formatters. Previously it was up to the user to determine the serialization format of the incoming payload in their handling code, with model binding that becomes transparent and can be configured using standard ASP.NET configuration and HTTP headers to describe the request content type.
 
-Similarly, we decided to support output formatters. Output formatters were a natural choice to decouple ServiceComposer from the hardcoded Json serialization format and start honoring the "accept" HTTP header. For backward compatibility reasons, output formatters are not enabled by default; they need to be explicitly enabled at configuration time:
+Similarly, we decided to support output formatters. Output formatters were a natural choice to decouple ServiceComposer from the hardcoded JSON serialization format and start honoring the "accept" HTTP header. For backward compatibility reasons, output formatters are not enabled by default; they need to be explicitly enabled at configuration time:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -138,7 +138,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-Both formatters and model binding requires the MVC infrastructure to be in place; this means that, as in the above snippet, one of the following needs to be configured:
+Both formatters and model binding require the MVC infrastructure to be in place. This means that, as in the above snippet, one of the following needs to be configured:
 
 - AddControllers()
 - AddControllersAndViews()
@@ -147,9 +147,9 @@ Both formatters and model binding requires the MVC infrastructure to be in place
 
 ## Conclusion
 
-With model binding and input and output formatters, ServiceComposer is moving from providing only a low-level API to a more robust and easy-to-use approach to maximize the developer experience and reduce errors. Model binding and formatters pave the way for a feature that has been in the back of my mind since the inception: a controller-like API that allows users to express their binding intentions through the handle method signature. The road is still long, but the journey just started.
+With model binding and input and output formatters, ServiceComposer is moving from providing only a low-level API to a more robust and easy-to-use approach to maximize the developer experience and reduce errors. Model binding and formatters pave the way for a feature that has been in the back of my mind since its inception: a controller-like API that allows users to express their binding intentions through the handle method signature. The road is still long, but the journey just started.
 
-Last but not least, credit goes where credit is due. Thanks to [Mark Phillips](https://github.com/markphillips100) for the ideas, the brainstorming, and the support in developing the mentioned features.
+Last but not least, credit where it's due. Thanks to [Mark Phillips](https://github.com/markphillips100) for the ideas, the brainstorming, and the support in developing the mentioned features.
 
 ---
 
