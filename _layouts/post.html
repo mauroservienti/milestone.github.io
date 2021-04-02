@@ -19,11 +19,13 @@ layout: default
   </section>
 
   <header class="post-header">
-    {% if page.header_image %}
-    <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
-    {% else %}
-    <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ '/img/posts/default-header.jpg' | prepend: site.baseurl }}" />
-    {% endif %}
+    <div class="post-img-crop">
+      {% if page.header_image %}
+      <img class="img-fluid" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+      {% else %}
+      <img class="img-fluid" alt="{{ page.title }} header image" src="{{ '/img/posts/default-header.jpg' | prepend: site.baseurl }}" />
+      {% endif %}
+    </div>
     <h1 class="post-title">{{ page.title }}</h1>
     <p class="post-meta">
       {{ page.date | date: "%b %-d, %Y" }}{% if page.author %} • {{ page.author }}{% endif %}{% if page.meta %} •

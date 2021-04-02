@@ -9,6 +9,7 @@
 
 .post-nav{
     font-size: $small-font-size;
+    margin-bottom: 10px;
     .prev{
 
     }
@@ -19,9 +20,25 @@
 }
 
 .post-header{
-    img{
-        margin-top: 1rem;
+
+    .post-img-crop{
+        max-height: 600px;
+        overflow: hidden;
     }
+
+    .post-img-crop img{
+        margin-top: -150px;
+    }
+
+    .post-img-crop:hover {
+        max-height: fit-content;
+        overflow: auto;
+    }
+
+    .post-img-crop img:hover{
+        margin-top: 0;
+    }
+
     .post-title{
         margin-top: 1.5rem;
         margin-bottom: 1.5rem;
