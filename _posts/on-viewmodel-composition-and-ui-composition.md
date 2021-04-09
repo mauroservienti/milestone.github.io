@@ -12,7 +12,7 @@ tags:
 category: view-model-composition
 ---
  
- They're not the same thing. They're not orthogonal. They can be used in conjunction or isolation, depending on the scenario.
+They're not the same thing. They're not orthogonal. They can be used in conjunction or isolation, depending on the scenario.
 
 I briefly touched on UI and ViewModel Composition in ["The Price of Freedom"](https://milestone.topics.it/view-model-composition/2019/06/13/the-price-of-freedom.html). This post details the responsibilities of two architectural approaches.
 
