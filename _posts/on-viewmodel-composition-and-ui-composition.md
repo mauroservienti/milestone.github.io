@@ -1,16 +1,16 @@
 ---
- layout: post
- header_image: /img/posts/on-viewmodel-composition-and-ui-composition/header.jpg
- title: "On ViewModel Composition and UI Composition"
- author: Mauro Servienti
- synopsis: "We often confuse UI and ViewModel Composition. They are not the same thing, and they solve different problems. We can use them in isolation, but in most cases, they give their best when used in conjunction."
- tags:
+layout: post
+header_image: /img/posts/on-viewmodel-composition-and-ui-composition/header.jpg
+title: "On ViewModel Composition and UI Composition"
+author: Mauro Servienti
+synopsis: "We often confuse UI and ViewModel Composition. They are not the same thing, and they solve different problems. We can use them in isolation, but in most cases, they give their best when used in conjunction."
+tags:
  - SOA
  - Services ViewModel Composition
  - UI Composition
  - Micro frontends
- category: view-model-composition
- ---
+category: view-model-composition
+---
  
  They're not the same thing. They're not orthogonal. They can be used in conjunction or isolation, depending on the scenario.
 
