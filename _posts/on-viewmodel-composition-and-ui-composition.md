@@ -146,3 +146,7 @@ You bet! In distributed systems, it's pretty common to have a form that needs to
 ## Conclusion
 
 It's easy to confuse UI and ViewModel composition and treat them as if they were a single thing. They are not. They address different problems. Once we understand what they solve, everything becomes much more straightforward, and the whole system will benefit from a leaner architecture where responsibilities are correctly assigned.
+
+---
+
+Photo by <a href="https://unsplash.com/@lazycreekimages?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Michael Dziedzic</a> on <a href="https://unsplash.com/s/photos/discuss?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
