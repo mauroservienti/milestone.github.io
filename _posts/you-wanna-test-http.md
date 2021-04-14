@@ -207,3 +207,7 @@ Cool, isn't it? We're self-hosting the whole web application in the test. We con
 ## Conclusion 
 
 As we've seen, there are cases in which we need to test components that require HTTP. We cannot quickly treat those components as external resources like we'd do with a data source in a test. The `WebApplicationFactory` class comes to the rescue allowing us to host a self-contained web application in a test.
+
+---
+
+Photo by <a href="https://unsplash.com/@scienceinhd?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Science in HD</a> on <a href="https://unsplash.com/s/photos/testing?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
