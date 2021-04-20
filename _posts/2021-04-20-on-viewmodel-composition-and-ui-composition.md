@@ -51,8 +51,8 @@ The above sample uses HTML IFrame elements to compose UI fragments from differen
    ViewBag.Title = "Available Products";
 }
 	 
-   <div class="jumbotron">
-      <h2>Available Products</h2>
+<div class="jumbotron">
+   <h2>Available Products</h2>
 </div>
 	 
 @await Component.InvokeAsync("Catalog.ViewComponents.AvailableProducts", Model.AvailableProducts)
