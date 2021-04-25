@@ -14,11 +14,11 @@ One of the beauties of testing is that it generates confidence. It's genuinely t
 
 There is a need for safety, and testing creates that.
 
-Testing practices alone are not enough to create the required safety. Manual testing, for example, is a form of testing that comes with little sense of security: manual testing is prone to human and distraction errors. To build the required level of trust, we need attributes such as repeatability, isolation, and automation. Tests need to be automated so that they can run automatically at well-known predefined stages. Tests need to be repeatable and idempotent to guarantee consistency of results; Finally, tests need to be isolated and self-contained to ensure that one test doesn't affect others.
+But testing practices alone are not enough to create the required safety. Manual testing, for example, is a form of testing that comes with little sense of security: manual testing is prone to human and distraction errors. To build the required level of trust, we need attributes such as repeatability, isolation, and automation. Tests need to be automated so that they can run automatically at well-known predefined stages. Tests need to be repeatable and idempotent to guarantee consistency of results. Finally, tests need to be isolated and self-contained to ensure that one test doesn't affect others.
 
 Isolation comes with some headaches. Typically we start facing troubles when the tested components depend on external resources. For example, if we're testing a repository component, we need a data source to test that the repository does what it promises. The dependency on external resources generally surfaces as a problem the more we approach the boundaries of the system under test. A business component might depend on the repository mentioned above; in a test, we can mock the repository and pilot the business component tests. When testing the repository, it's hard or even impossible to mimic the required data source.
 
-HTTP resources pose a similar issue. Let's imagine that you want to use [approval testing](https://approvaltests.com) techniques to validate that an HTTP endpoint returns the expected result. The test exercises the client of the HTTP resource, that is, the system under test. In this scenario, the HTTP resource is not different from the database required by the repository mentioned above. As for databases, we cannot mock HTTP resources. At the same time, hosting a webserver in a test is not straightforward.
+HTTP resources pose a similar issue. Let's imagine that you want to use [approval testing](https://approvaltests.com) techniques to validate that an HTTP endpoint returns the expected result. The test exercises the client of the HTTP resource, that is, the system under test. In this scenario, the HTTP resource is not different from the database required by the repository mentioned above. But unlike databases, we cannot mock HTTP resources. At the same time, hosting a webserver in a test is not straightforward.
 
 ## Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory
 
@@ -124,9 +124,9 @@ public void Configure(IApplicationBuilder app)
 }
 ```
 
-If we wanted to test the middleware, we could use the `WebApplicationFactory<TEntryPoint>` mentioned above. Still, we should include a dummy web application project in the solution just to referencing the `Startup` class. That sounds overkill.
+If we wanted to test the middleware, we could use the `WebApplicationFactory<TEntryPoint>` class mentioned above. Still, we should include a dummy web application project in the solution just to reference the `Startup` class. That sounds like overkill.
 
-Carefully looking at the [official documentation](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1?view=aspnetcore-5.0), it sounds that's not needed at all:
+Carefully looking at the [official documentation](https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1?view=aspnetcore-5.0), it sounds like that's not needed at all:
 
 > Creates an instance of WebApplicationFactory<TEntryPoint>. This factory can be used to create a TestServer instance using the MVC application defined by TEntryPoint and one or more HttpClient instances used to send HttpRequestMessage to the TestServer. The WebApplicationFactory<TEntryPoint> will find the entry point class of TEntryPoint assembly and initialize the application by calling IWebHostBuilder CreateWebHostBuilder(string [] args) on TEntryPoint.
 >
@@ -202,9 +202,9 @@ async Task SampleMiddlewareTest()
 }
 ```
 
-Cool, isn't it? We're self-hosting the whole web application in the test. We control the services customization and the application set up when started. Finally, we can exercise it like if it was an actual web application.
+Cool, isn't it? We're self-hosting the whole web application in the test. We control the services customization and the application set up when started. Finally, we can exercise it like it was an actual web application.
 
-> The `Dummy` class is nothing else that a marker/empty class defined in the test project. It can be whatever type in the test project; the runtime will use it to identify the assembly to create the dependency context to load dependencies.
+> The `Dummy` class is simply a marker/empty class defined in the test project. It can be whatever type in the test project; the runtime will use it to identify the assembly to create the dependency context to load dependencies.
 
 ## Conclusion 
 
