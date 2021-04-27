@@ -32,12 +32,16 @@ Yes, and that happens through a ViewModel decomposition process. It's easier if 
 We can imagine that there are three to four different services involved in the mentioned process. The reservation service owns check-in/check-out date, guest service owns guests details, and finance owns payment details and card authorization. Maybe a payment service is responsible for the card authorization; we don't need much detail in this simple scenario. 
 
 The user experience for the presented process goes more or less like the following:
-Users select dates for their stay 
-Based on the chosen dates, the system shows all the available hotels and room options
+
+- Users select dates for their stay 
+- Based on the chosen dates, the system shows all the available hotels and room options
+
 Users chose one or more options and are presented with a confirmation page composed of:
-The selected dates and options
-A form to input their guest and the payment method details
-A submit button
+
+- The selected dates and options
+- A form to input their guest and the payment method details
+- A submit button
+
 When all the required data have been provided and the submit button pressed, each set of information needs to be sent to their owning service.
 
 If the presented data is on a web page that groups it using an HTML form, we need to find a way to extract subsets of the form collection and dispatch them to the owning services. The process is called ViewModel decomposition. At a high level, the decomposition process works in the following way:
@@ -59,7 +63,7 @@ Conceptually we want to identify who is the logical owner of the business proces
 
 ### Why and what are the implications?
 
-There is no unique answer, and it depends on how we decide to architect the system. In the presented sample, two options come to my mind:
+There is no unique answer; it depends on how we decide to architect the system and, more importantly, how the business works. In the presented sample, two options come to my mind:
 
 1. When the user hits the submit button, the reservation service pre-locks the selected rooms and waits for an event published by finance to signal a successful card authorization. When the card is authorized, the reservation service confirms the selected rooms; at this point, finance confirms the authorization, and the process completes.
 2. A second option is to go to finance first. Finance authorizes the user's credit card, publishes the authorization event, and reservation marks the selected rooms as booked. Finance can now confirm the card's authorization, and the process completes.
@@ -80,8 +84,12 @@ Things are getting tricky! Let's analyze the booking system sample we have used 
 
 In the hotel booking sample, resources are fixed. The number of available rooms can be considered unelastic. Using a warehouse analogy, what's in stock is all that we have. Option one is the safest; we lock the selected rooms first, which guarantees they will be available to the customer. That is the same approach used by most ticket booking websites, for example. Option two is less safe even in low concurrent scenarios. The more rooms a customer tries to book, the higher the risk one will not be available when the credit card is authorized. In the booking business, it seems that locking is a better option.
 
-Let's now move to a different business. Lacadon, Inc. is a generic e-commerce website that sells many things. Lacadon has many warehouses worldwide, and when fulfilling orders, items can be picked up from different warehouses based on some business rules.
-Let's see what happens if we apply option one to the Lacadon business. Option one is a transaction-based approach. When an order comes in, products are locked for that order, and the credit card authorization is successful, the order is confirmed and later processed and shipped. If not all products are available in one warehouse, we need a distributed transaction over more than one warehouse.
+Is that always the case? As you probably guess, the simple fact that I'm asking the question means that the answer is no. The presented options are probably both valid even in booking-kind scenarios, and it depends on the business setup. So far, it seems that option one is safer than option two.
+Before presenting a booking scenario where option two, or a variation of it, might be better, let's have a look at a different business.
+
+Lacadon, Inc. is a generic e-commerce website that sells many things. Lacadon has many warehouses worldwide; the order fulfilling system might pick up items from different warehouses based on some business rules.
+
+Let's see what happens if we apply option one to the Lacadon business. Option one is a transaction-based approach. When an order comes in, products are locked for that order, and if the credit card authorization is successful, the order is confirmed and later processed and shipped. If not all products are available in one warehouse, we need a distributed transaction over more than one warehouse.
 In both cases, even the simpler one involving one warehouse, the system doesn't scale. The more order we have, the longer they'll wait until one way or the other they deadlock.
 In this kind of business, locking is rarely, if ever, an option. Appling option two doesn't change the situation much; it'll still be tough to guarantee the business rule. With option two, we first authorize the card and then check for items' availability. If items are in stock, we proceed with the order. The devil is in the details:
 
@@ -103,7 +111,7 @@ Meanwhile, we can send the customers an email, apologizing for the issue telling
 
 If we agree that there is no easy way to guarantee invariants, we have the opportunity to change the perspective. We can move from a model where business rules deny to a model where they open to different alternative paths. In the mentioned e-commerce use case, instead of preventing users from placing an order, we can always accept the order and then evaluate options, such as splitting the order into multiple sub-partial orders. Airline companies, for example, do that daily. They have statistics about passengers not showing up at gates. Based on that, they can safely sell more tickets; a practice called overbooking. Sometimes it happens that your seat gets moved, or as it occurred to me once, a bid is run at the gate because there were four more passengers than expected on the London City to Milan MXP Sunday night flight.
 
-In any case, it's both a follow-the-money approach and an excellent way to avoid a business rule similar to "when booking online only one customer can select a given seat." Interestingly, airplane seats are unelastic. Airline companies found exciting ways to work around the problem; other than the mentioned overbooking technique, they introduced different fares for different seats. At first look, different fares seem to be merely a sales technique; it's not only that, different fares for different seats allow creating seat clusters or something we could call transactional boundaries. They decrease the likelihood that two customers simultaneously booking the same flight will look at the same seat cluster, reducing conflicts.
+In any case, it's both a follow-the-money approach and an excellent way to avoid a business rule similar to "when booking online only one customer can select a given seat." Interestingly, airplane seats are unelastic, like hotel rooms. However, airline companies found exciting ways to work around the problem, other than the mentioned overbooking technique. They introduced different fares for different seats. At first look, different fares seem to be merely a sales technique; it's not only that, different fares for different seats allow creating seat clusters or something we could call transactional boundaries. They decrease the likelihood that two customers simultaneously booking the same flight will look at the same seat cluster, reducing conflicts.
 
 ## Conclusion 
 
