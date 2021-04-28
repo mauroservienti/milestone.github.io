@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/tales-of-a-reservation/header.jpg
 title: "Tales of a reservation"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Are you relying on invariants and assuming trust in business rules? Distributed software systems disrupt most of ours beliefs. They require a deep understanding of the business and a shift in the way we think. Let's see how the business affects the system design and what new opportunities come to life."
 tags:
  - SOA
 ---
