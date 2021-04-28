@@ -116,3 +116,8 @@ In any case, it's both a follow-the-money approach and an excellent way to avoid
 ## Conclusion 
 
 The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to be bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach use cases with a mindset that thinks compensating actions rather than rigid walls.
+
+---
+
+Photo by <a href="https://unsplash.com/@keemibarra?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">KEEM IBARRA</a> on <a href="https://unsplash.com/s/photos/hotel?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
