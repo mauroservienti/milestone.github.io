@@ -113,6 +113,12 @@ If we agree that there is no easy way to guarantee invariants, we have the oppor
 
 In any case, it's both a follow-the-money approach and an excellent way to avoid a business rule similar to "when booking online only one customer can select a given seat." Interestingly, airplane seats are unelastic, like hotel rooms. However, airline companies found exciting ways to work around the problem, other than the mentioned overbooking technique. They introduced different fares for different seats. At first look, different fares seem to be merely a sales technique; it's not only that, different fares for different seats allow creating seat clusters or something we could call transactional boundaries. They decrease the likelihood that two customers simultaneously booking the same flight will look at the same seat cluster, reducing conflicts.
 
+Before calling it a day, let me give you a real-life sample of how complex processes can be. We tend to believe how hard it can be; it's only a matter of shipping a few boxes. In chatting with my colleague [David Boike](https://www.davidboike.dev/), he presented the following case:
+
+> Got a personal example that shows another possible layer of complexity for a Warehouse/Fulfillment service. I ordered a 14-piece security system on sale. So we're talking a base station, 2 keypads, a range extender, 2 indoor motion detectors, and 8 door/window contact sensors. This was all one SKU or one "item in cart" but it arrived in 5 different packages (some in plain brown boxes, some Amazon boxes, and one plastic Amazon shipping pouch) over the course of 3 days, all with one tracking number. One package originated from Florida, another two from different cities in Ohio, one from Wisconsin, another from Illinois. All for essentially one "product."
+
+Scroll back up, and try to implement the "an order can only be placed if all of the items have stock at that time" business rule. It's impossible.
+
 ## Conclusion 
 
 The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to be bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach use cases with a mindset that thinks compensating actions rather than rigid walls.
