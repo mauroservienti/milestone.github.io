@@ -68,11 +68,11 @@ There is no unique answer; it depends on how we decide to architect the system a
 1. When the user hits the submit button, the reservation service pre-locks the selected rooms and waits for an event published by finance to signal a successful card authorization. When the card is authorized, the reservation service confirms the selected rooms; at this point, finance confirms the authorization, and the process completes.
 2. A second option is to go to finance first. Finance authorizes the user's credit card, publishes the authorization event, and reservation marks the selected rooms as booked. Finance can now confirm the card's authorization, and the process completes.
 
-The first consideration is that we never mentioned marketing as an actor in the above choreography. It is a crystal-clear signal that marketing is not the logical owner of the business process. We're left with finance or reservation. Both the presented options are valid, and a final selection probably depends on the business. Let's make some more assumptions, though; option two is more straightforward, there are fewer interactions. A downside of option two is that it is more fragile in high concurrency scenarios. Imagine thousands of people concurrently trying to book hotels in the same city for a big event. By the time a card is authorized, there is a high chance a different customer successfully booked the same room, and the process needs to start again to retry. Option one is more chatty but comes with a solution, a two-phase transaction approach, to the high concurrent scenarios.
+The first consideration is that we never mentioned marketing as an actor in the above choreography. It is a crystal-clear signal that marketing is not the logical owner of the business process. We're left with finance or reservation. Both the presented options are valid, and a final selection probably depends on the business. Let's make some more assumptions, though; option two is more straightforward, there are fewer interactions. A downside of option two is that it is more fragile in high concurrency scenarios. Imagine thousands of people concurrently trying to book hotels in the same city for a big event. By the time a card is authorized, there is a high chance a different customer successfully booked the same room, and the process needs to start again to retry. Option one is more chatty but comes with a solution to the high concurrent scenarios, a two-phase transaction approach.
 
 The described conversation requires some way for involved services to identify which conversation messages are related to; we call that a correlation identifier. Who generates the correlation identifier? Suppose the conversation starts from the user interface; A request needs to be decomposed and dispatched to many services. In that case, the correlation identifier needs to be generated at the user interface level. The logical owner is an excellent candidate to create the mentioned identifier.
 
-In complex systems, the implications ramifications can be huge; you probably understand why identifying logical ownership is essential.
+In complex systems, the implications ramifications can be significant; you probably understand why identifying logical ownership is essential.
 
 ## Invariants are evil
 
@@ -98,6 +98,12 @@ In this kind of business, locking is rarely, if ever, an option. Appling option 
 
 In between steps one and two, a different order can change the status. Again, the only viable option is a transaction with a pessimistic lock—a no-go in a distributed system and probably a no-go in any scenario.
 
+We tend to question how hard it can be; it's only a matter of shipping a few boxes. In chatting with my colleague [David Boike](https://www.davidboike.dev/), he presented the following case:
+
+> Got a personal example that shows another possible layer of complexity for a Warehouse/Fulfillment service. I ordered a 14-piece security system on sale. So we're talking a base station, 2 keypads, a range extender, 2 indoor motion detectors, and 8 door/window contact sensors. This was all one SKU or one "item in cart" but it arrived in 5 different packages (some in plain brown boxes, some Amazon boxes, and one plastic Amazon shipping pouch) over the course of 3 days, all with one tracking number. One package originated from Florida, another two from different cities in Ohio, one from Wisconsin, another from Illinois. All for essentially one "product."
+
+In such a scenario, implementing the "an order can only be placed if all of the items have stock at that time" business rule is impossible.
+
 ### So what?
 
 There is no technical solution. The solution is turning to the business and ask the following question:
@@ -105,7 +111,7 @@ There is no technical solution. The solution is turning to the business and ask 
 > What should the system do when an order cannot be fulfilled entirely because not all items are in stock?
 
 The key here is the "when" in the question; it's not a matter of "if." It'll happen. Probably the business will tell us to accept the order. Warehouse stocks are elastic; we can replenish them; this means we can take the order, making it an internal partial order. Ships what we have, create a second internal partial order and ship it when items are back in stock.
-Meanwhile, we can send the customers an email, apologizing for the issue telling them what to expect. Brutally said, it's a follow-the-money approach. In a complex system like the one we described, it's like that there is some analytics in place that captures low stocks for sold items and preorders them before they're going out of stock. If that's the case, the system will likely fulfill the pending partial order faster than the customer expects.
+Meanwhile, we can send the customers an email, apologizing for the inconvenience telling them what to expect. Brutally said, it's a follow-the-money approach. In a complex system like the one we described, some analytics captures low stocks for sold items and preorders them before going out of stock. If that's the case, the system will likely fulfill the pending partial order faster than the customer expects, which is probably something similar to what happened to David's order.
 
 ## Commands never fail
 
@@ -113,15 +119,9 @@ If we agree that there is no easy way to guarantee invariants, we have the oppor
 
 In any case, it's both a follow-the-money approach and an excellent way to avoid a business rule similar to "when booking online only one customer can select a given seat." Interestingly, airplane seats are unelastic, like hotel rooms. However, airline companies found exciting ways to work around the problem, other than the mentioned overbooking technique. They introduced different fares for different seats. At first look, different fares seem to be merely a sales technique; it's not only that, different fares for different seats allow creating seat clusters or something we could call transactional boundaries. They decrease the likelihood that two customers simultaneously booking the same flight will look at the same seat cluster, reducing conflicts.
 
-Before calling it a day, let me give you a real-life sample of how complex processes can be. We tend to believe how hard it can be; it's only a matter of shipping a few boxes. In chatting with my colleague [David Boike](https://www.davidboike.dev/), he presented the following case:
-
-> Got a personal example that shows another possible layer of complexity for a Warehouse/Fulfillment service. I ordered a 14-piece security system on sale. So we're talking a base station, 2 keypads, a range extender, 2 indoor motion detectors, and 8 door/window contact sensors. This was all one SKU or one "item in cart" but it arrived in 5 different packages (some in plain brown boxes, some Amazon boxes, and one plastic Amazon shipping pouch) over the course of 3 days, all with one tracking number. One package originated from Florida, another two from different cities in Ohio, one from Wisconsin, another from Illinois. All for essentially one "product."
-
-Scroll back up, and try to implement the "an order can only be placed if all of the items have stock at that time" business rule. It's impossible.
-
 ## Conclusion 
 
-The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to be bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach use cases with a mindset that thinks compensating actions rather than rigid walls.
+The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to be bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach business use cases with a mindset that thinks compensating actions rather than rigid walls.
 
 ---
 
