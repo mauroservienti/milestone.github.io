@@ -3,16 +3,16 @@ layout: post
 header_image: /img/posts/tales-of-a-reservation/header.jpg
 title: "Tales of a reservation"
 author: Mauro Servienti
-synopsis: "Are you relying on invariants and assuming trust in business rules? Distributed software systems disrupt most of ours beliefs. They require a deep understanding of the business and a shift in the way we think. Let's see how the business affects the system design and what new opportunities come to life."
+synopsis: "Are you relying on invariants and assuming trust in business rules? Distributed software systems disrupt most of our beliefs. They require a deep understanding of the business and a shift in the way we think. Let's see how the business affects the system design and what new opportunities come to life."
 tags:
  - SOA
 ---
 
-A talk I gave at [ExploreDDD in Denver in 2018](https://youtu.be/KkzvQSuYd5I) has more than 14.000 views. I'm astonished. It was the first time I was presenting my ["All our aggregates are wrong"](/talks/all-our-aggregates-are-wrong.html) at a major conference, and it's been a blast.
+A talk I gave at [ExploreDDD in Denver in 2018](https://youtu.be/KkzvQSuYd5I) has more than 14.000 views. I'm astonished. It was the first time I was presenting my ["All our aggregates are wrong"](/talks/all-our-aggregates-are-wrong.html) talk at a major conference, and it's been a blast.
 
 There isn't an easy way to get notifications about comments on videos uploaded by others on YouTube. Every once in a while, I quickly scan [all my presentations](https://youtube.com/playlist?list=PLhm595Y7ah_E42m_EwnSvqeMLVCD2EMb5) available on YouTube for new comments.
 
-I recently noticed the following [comment](https://www.youtube.com/watch?v=KkzvQSuYd5I&lc=Ugz_mJEoRQbVSOWnzcR4AaABAg), which I [responded](https://www.youtube.com/watch?v=KkzvQSuYd5I&lc=Ugz_mJEoRQbVSOWnzcR4AaABAg.9D69WRCMOQO9Lugq-tJqOZ), dense enough to deserve its blogpost.
+I recently noticed the following [comment](https://www.youtube.com/watch?v=KkzvQSuYd5I&lc=Ugz_mJEoRQbVSOWnzcR4AaABAg), which I [responded to](https://www.youtube.com/watch?v=KkzvQSuYd5I&lc=Ugz_mJEoRQbVSOWnzcR4AaABAg.9D69WRCMOQO9Lugq-tJqOZ), dense enough to deserve its blogpost.
 
 > How does placing an order then work? does the information in each boundary transition to its own order model? I could assume sales would be the one where this operation takes place, but how does validation in other services regarding the placement of this work? e.g. you could call sales to say place this order/order this cart, but what is there is a business rule for an order can only be placed if all of the items have stock at that time? Thanks
 
@@ -22,21 +22,21 @@ The comment is perfect; it summarizes most of the challenges designing a distrib
 
 > does the information in each boundary transition to its own order model?
 
-Yes, and that happens through a ViewModel decomposition process. It's easier if we use a sample. Imagine a hotel booking reservation system; placing an order corresponds to successfully submitting a booking request. To keep things the simplest, let's assume that to place a hotel room reservation, we need four things:
+Yes, and that happens through a ViewModel decomposition process. It's easier if we use an example. Imagine a hotel booking reservation system; placing an order corresponds to successfully submitting a booking request. To keep things the simplest, let's assume that to place a hotel room reservation, we need four things:
 
 - Valid check-in/check-out dates
 - Guests' information, such as first name, last name, etc.
-- Payment methods information
+- Payment method
 - A successful card authorization for the booking amount 
 
-We can imagine that there are three to four different services involved in the mentioned process. The reservation service owns check-in/check-out date, guest service owns guests details, and finance owns payment details and card authorization. Maybe a payment service is responsible for the card authorization; we don't need much detail in this simple scenario. 
+We can imagine that there are three to four different services involved in the mentioned process. The reservation service owns check-in/check-out date, the guest service owns guest details, and finance owns payment details and card authorization. Maybe a payment service is responsible for the card authorization; we don't need much detail in this simple scenario. 
 
 The user experience for the presented process goes more or less like the following:
 
 - Users select dates for their stay 
 - Based on the chosen dates, the system shows all the available hotels and room options
 
-Users chose one or more options and are presented with a confirmation page composed of:
+Users choose one or more options and are presented with a confirmation page composed of:
 
 - The selected dates and options
 - A form to input their guest and the payment method details
@@ -72,7 +72,7 @@ The first consideration is that we never mentioned marketing as an actor in the 
 
 The described conversation requires some way for involved services to identify which conversation messages are related to; we call that a correlation identifier. Who generates the correlation identifier? Suppose the conversation starts from the user interface; A request needs to be decomposed and dispatched to many services. In that case, the correlation identifier needs to be generated at the user interface level. The logical owner is an excellent candidate to create the mentioned identifier.
 
-In complex systems, the implications ramifications can be significant; you probably understand why identifying logical ownership is essential.
+In complex systems, the implications can be significant; you probably understand why identifying logical ownership is essential.
 
 ## Invariants are evil
 
@@ -84,14 +84,16 @@ Things are getting tricky! Let's analyze the booking system sample we have used 
 
 In the hotel booking sample, resources are fixed. The number of available rooms can be considered unelastic. Using a warehouse analogy, what's in stock is all that we have. Option one is the safest; we lock the selected rooms first, which guarantees they will be available to the customer. That is the same approach used by most ticket booking websites, for example. Option two is less safe even in low concurrent scenarios. The more rooms a customer tries to book, the higher the risk one will not be available when the credit card is authorized. In the booking business, it seems that locking is a better option.
 
-Is that always the case? As you probably guess, the simple fact that I'm asking the question means that the answer is no. The presented options are probably both valid even in booking-kind scenarios, and it depends on the business setup. So far, it seems that option one is safer than option two.
+Is that always the case? As you probably guess, the simple fact that I'm asking the question means that the answer is no. The presented options are probably both valid even in booking-type scenarios, and it depends on the business setup. So far, it seems that option one is safer than option two.
 Before presenting a booking scenario where option two, or a variation of it, might be better, let's have a look at a different business.
 
 Lacadon, Inc. is a generic e-commerce website that sells many things. Lacadon has many warehouses worldwide; the order fulfilling system might pick up items from different warehouses based on some business rules.
 
 Let's see what happens if we apply option one to the Lacadon business. Option one is a transaction-based approach. When an order comes in, products are locked for that order, and if the credit card authorization is successful, the order is confirmed and later processed and shipped. If not all products are available in one warehouse, we need a distributed transaction over more than one warehouse.
-In both cases, even the simpler one involving one warehouse, the system doesn't scale. The more order we have, the longer they'll wait until one way or the other they deadlock.
-In this kind of business, locking is rarely, if ever, an option. Appling option two doesn't change the situation much; it'll still be tough to guarantee the business rule. With option two, we first authorize the card and then check for items' availability. If items are in stock, we proceed with the order. The devil is in the details:
+
+In both cases, even the simpler one involving one warehouse, the system doesn't scale. The more orders we have, the longer they'll wait until one way or the other they deadlock.
+
+In this kind of business, locking is rarely, if ever, an option. Applying option two doesn't change the situation much; it'll still be tough to guarantee the business rule. With option two, we first authorize the card and then check for items' availability. If items are in stock, we proceed with the order. The devil is in the details:
 
 1. We first have to count items in stock that match the items in the order, and this might need to be cross-warehouse
 2. If there is enough availability, we proceed with the order
@@ -110,7 +112,7 @@ There is no technical solution. The solution is turning to the business and ask 
 
 > What should the system do when an order cannot be fulfilled entirely because not all items are in stock?
 
-The key here is the "when" in the question; it's not a matter of "if." It'll happen. Probably the business will tell us to accept the order. Warehouse stocks are elastic; we can replenish them; this means we can take the order, making it an internal partial order. Ships what we have, create a second internal partial order and ship it when items are back in stock.
+The key here is the "when" in the question; it's not a matter of "if." It'll happen. Probably the business will tell us to accept the order. Warehouse stocks are elastic; we can replenish them; this means we can take the order, making it an internal partial order. Ship what we have, create a second internal partial order and ship it when items are back in stock.
 Meanwhile, we can send the customers an email, apologizing for the inconvenience telling them what to expect. Brutally said, it's a follow-the-money approach. In a complex system like the one we described, some analytics captures low stocks for sold items and preorders them before going out of stock. If that's the case, the system will likely fulfill the pending partial order faster than the customer expects, which is probably something similar to what happened to David's order.
 
 ## Commands never fail
@@ -121,7 +123,7 @@ In any case, it's both a follow-the-money approach and an excellent way to avoid
 
 ## Conclusion 
 
-The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to be bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach business use cases with a mindset that thinks compensating actions rather than rigid walls.
+The mentioned samples are an excellent demonstration of the "commands never fail" design approach. The idea is to move from invariants, or what I prefer to call a denial approach, to a more Italian-style approach where rules are meant to bend. Trust me; I know what I'm talking about. The only way to guarantee an invariant is to use transactions; there are scenarios in which using transactions is perfectly legit. However, if we cannot use transactions, it's preferable to move away from invariants and approach business use cases with a mindset that thinks compensating actions rather than rigid walls.
 
 ---
 
