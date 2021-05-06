@@ -8,7 +8,7 @@ tags:
  - SOA
 ---
 
-A talk I gave at [ExploreDDD in Denver in 2018](https://youtu.be/KkzvQSuYd5I) has more than 14.000 views. I'm astonished. It was the first time I was presenting my ["All our aggregates are wrong"](/talks/all-our-aggregates-are-wrong.html) talk at a major conference, and it's been a blast.
+A talk I gave at [ExploreDDD in Denver in 2018](https://youtu.be/KkzvQSuYd5I) has more than 14,000 views. I'm astonished. It was the first time I was presenting my ["All our aggregates are wrong"](/talks/all-our-aggregates-are-wrong.html) talk at a major conference, and it's been a blast.
 
 There isn't an easy way to get notifications about comments on videos uploaded by others on YouTube. Every once in a while, I quickly scan [all my presentations](https://youtube.com/playlist?list=PLhm595Y7ah_E42m_EwnSvqeMLVCD2EMb5) available on YouTube for new comments.
 
