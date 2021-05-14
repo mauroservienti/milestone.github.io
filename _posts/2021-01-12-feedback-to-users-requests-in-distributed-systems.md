@@ -98,7 +98,7 @@ Once the backplane is in place, the full communication flow is this:
     
 ### The elephant in the room
 
-One aspect that we haven't touched is how to handle eventual consistency results at the user interface level. This probably deserves its own set of articles but my colleague Dennis Van Der Stelt does an excellent job in a [presentation he gave at Oredev](https://www.youtube.com/watch?v=jTz74m1KbBs).
+One aspect that we haven't touched is how to handle eventual consistency results at the user interface level. This probably deserves its own set of articles but my colleague [Dennis Van Der Stelt](https://twitter.com/dvdstelt) does an excellent job in a [presentation he gave at Oredev](https://www.youtube.com/watch?v=jTz74m1KbBs).
 
 ## Wrap up 
 
