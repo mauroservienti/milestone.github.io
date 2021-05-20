@@ -9,7 +9,7 @@ tags:
 - To-Do Lists
 ---
 
-I extensively wrote about how I plan my days and weeks and, more importantly, why I do what I do the way I do.
+I've written extensively about how I plan my days and weeks and, more importantly, why I do what I do the way I do:
 
 Everything I wrote is available in the following posts:
 
@@ -20,13 +20,13 @@ Everything I wrote is available in the following posts:
 
 ## Why do we plan?
 
-The human brain deals utterly bad with uncertainty let aside volatility. It constantly demands stability and certainty. We're not programmed to deal with the unknown. In the times of the COVID-19 pandemic, this is even more evident; people tend to find it unacceptable that we cannot answer questions like "when will it be over?"
+The human brain deals utterly badly with uncertainty, let alone volatility. It constantly demands stability and certainty. We're not programmed to deal with the unknown. In the times of the COVID-19 pandemic, this is even more evident; people tend to find it unacceptable that we cannot answer questions like "when will it be over?"
 
-A more relaxed sample is a bus timetable. There are countries in which we can count on the timetable. Switzerland, I'm looking at you. Do we need to be at that appointment by 3 PM? The bus leaves at 2.18 PM and takes 25 minutes, which gives enough time for the required short walk and any inconvenience along the way. Then there is Italy. Try to do the same in Rome; we'll probably be a couple of hours late for your appointment. If the timetable exists, no way we can trust it. That's uncertainty. If the trip, which is more an adventure, requires more than one public transport, for example, a couple of buses and a subway ride, we'll quickly learn what volatility is.
+A more relaxed sample is a bus timetable. There are countries in which we can count on the timetable. Switzerland, I'm looking at you. Do we need to be at that appointment by 3 PM? The bus leaves at 2.18 PM and takes 25 minutes, which gives enough time for the required short walk and any inconvenience along the way. Then there is Italy. Try to do the same in Rome; we'll probably be a couple of hours late for your appointment. If the timetable exists at all, there's no way we can trust it. That's uncertainty. If the trip, which is more of an adventure, requires more than one transfer, for example, a couple of buses and a subway ride, we'll quickly learn what volatility is.
 
 ## The quest for safety 
 
-If uncertainty comes with a sense of unsafety, it's legit that the human being tries to reduce uncertainty to increase safety. In retrospect, I realized that my recent attempts to gain more control over my daily or weekly planning were only an attempt to reduce uncertainty, or more precisely, volatility. Over the years, I gradually learned to embrace uncertainty; that doesn't mean I'm psychologically safe. The pandemic disrupted our lives, mine included, and moved the game of life to the next level. What was uncertainty became volatility. My reaction to that was to concentrate on the tomorrow and the far away future, completely ignoring the mid-term. It makes sense to assume that in 3 years, things will be over and back to some normal; if that is the case planning what primary school the 3yo will go to in 3 years makes sense. Similarly, planning this week or the following weekend makes sense, too; the situation is not going to change radically, and I'm pretty sure we won't be able to go to a movie theater anyway. The same logic cannot be applied to the mid-term, though. What will happen in 6 months? Nearly unpredictable. Will we be able to go on the summer holidays? No one really can tell. Sure we're vaccinating, but do not forget the timetable problem. Vaccines are not this post's topic; you probably understand how uncertainty affects different time scales.
+If uncertainty comes with a sense of unsafety, it's legit that the human being tries to reduce uncertainty to increase safety. In retrospect, I realized that my recent attempts to gain more control over my daily or weekly planning were only an attempt to reduce uncertainty, or more precisely, volatility. Over the years, I gradually learned to embrace uncertainty; that doesn't mean I'm psychologically safe. The pandemic disrupted our lives, mine included, and moved the game of life to the next level. What was uncertainty became volatility. My reaction to that was to concentrate on the tomorrow and the far away future, completely ignoring the mid-term. It makes sense to assume that in 3 years, things will be over and back to some normal; if that is the case planning what primary school my three-year-old will go to in three years makes sense. Similarly, planning this week or the following weekend makes sense, too; the situation is not going to change radically, and I'm pretty sure we won't be able to go to a movie theater anyway. The same logic cannot be applied to the mid-term, though. What will happen in 6 months? Nearly unpredictable. Will we be able to go on summer holidays? No one really can tell. Sure we're vaccinating, but do not forget the timetable problem. Vaccines are not this post's topic; you probably understand how uncertainty affects different time scales.
 
 ## Planning too much is harmful
 
@@ -40,7 +40,7 @@ Now, project a similar situation on our weekly schedule. The calendar is packed,
 
 As I mentioned in one of my previous posts, one technique is to add some slack time between scheduled slots. For example, instead of back-to-back appointment slots, plan them taking into account delays. Some buffer is the simplest way to absorb unexpected issues.
 
-Slack time helps on some occasions but is of minor help whit disruptions.
+Slack time helps on some occasions but is of minor help with disruptions.
 
 It's Tuesday morning, 9 AM; we're in the middle of our first meeting. Boom, power outage. We missed the memo in the office building lobby; it's planned maintenance. Power comes back two hours later, and we missed three meetings.
 
@@ -49,7 +49,7 @@ At this point, we have two options. At a first look, it seems that the best appr
 - everything will be delayed, at least, by 3 hours
 - everyone will be mad at us
 
-There is no guarantee that we can accommodate everything. The only inevitable result is that we'll generate troubles.
+There is no guarantee that we can accommodate everything. The only inevitable result is that we'll generate trouble.
 
 ## Respect others and yourself 
 
