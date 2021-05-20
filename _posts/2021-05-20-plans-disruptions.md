@@ -11,8 +11,6 @@ tags:
 
 I've written extensively about how I plan my days and weeks and, more importantly, why I do what I do the way I do:
 
-Everything I wrote is available in the following posts:
-
 - [I'm a procrastinator. I fail at To-Do lists.](https://milestone.topics.it/2019/01/23/i-m-a-procrastinator-i-fail-at-to-do-lists.html)
 - [Lifehacking 101: I'm bad at to-do lists, now what?](https://milestone.topics.it/2021/02/19/bad-at-to-do-lists-now-what.html)
 - [Lifehacking 101: without data we're blind](https://milestone.topics.it/2021/02/24/without-data-we-re-blind.html)
