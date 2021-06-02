@@ -1,7 +1,7 @@
 ---
 layout: post
 header_image: /img/posts/sean-has-a-crystal-ball/header.jpg
-title: "Sean has a crystal ball"
+title: "Can we predict the future?"
 author: Mauro Servienti
 synopsis: "Eventual consistency is everywhere. Distributed systems are not any different; in fact, they tend to make consistency issues stand out even more. Most of the time that's not a problem at all, except when it comes to the UI. What options do we have?"
 tags:
