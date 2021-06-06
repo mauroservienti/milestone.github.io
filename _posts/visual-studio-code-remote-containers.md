@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/visual-studio-code-remote-containers/header.jpg
 title: "Develop like a boss with Visual Studio Code Remote Containers"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Preparing bulletproof exercises and demos is a painful experience, especially if we need to support multiple OSes. Visual Studio Code Remote Containers expansion pack comes to the rescue and promises to be a game-changer."
 tags:
 - Visual Studio Code
 - Remote Containers
