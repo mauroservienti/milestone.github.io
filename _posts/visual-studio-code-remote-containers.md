@@ -83,22 +83,22 @@ The [`devcontainer.json`](https://github.com/mauroservienti/distributed-systems-
 
 ```
 {
-	"name": "C# (.NET) and RabbitMQ",
-	"dockerComposeFile": "docker-compose.yml",
-	"forwardPorts": [ 4369, 5671, 5672, 15671, 15672, 25672, 5432, 6432 ],
-	"service": "demos",
-	"workspaceFolder": "/workspace",
+    "name": "C# (.NET) and RabbitMQ",
+    "dockerComposeFile": "docker-compose.yml",
+    "forwardPorts": [ 4369, 5671, 5672, 15671, 15672, 25672, 5432, 6432 ],
+    "service": "demos",
+    "workspaceFolder": "/workspace",
 
-	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
-	},
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+    },
 
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"ms-dotnettools.csharp",
-		"ckolkman.vscode-postgres",
-	]
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+        "ms-dotnettools.csharp",
+        "ckolkman.vscode-postgres",
+    ]
 }
 ```
 
