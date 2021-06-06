@@ -111,7 +111,7 @@ The following three settings are what make the whole experience extremely cool. 
 If you take a look at the [Docker Compose file I'm using](https://github.com/mauroservienti/distributed-systems-101/blob/main/.devcontainer/docker-compose.yml), you'll notice that all containers share the same network, which makes sense since they need to communicate. So we can take advantage of that and use the `forwardPorts` setting to expose Docker network ports to the local machine.
 The Remote Container extension will remap and expose ports to the local machine allowing the local machine to access remote resources. When running Code connected to a remote container development environment, the Code user interface lists the exposed ports in a tab at the bottom:
 
-![Forwarded ports](/img/posts/visual-studio-code-remote-containers/)
+![Forwarded ports](/img/posts/visual-studio-code-remote-containers/ports.png){:class="img-fluid mx-auto d-block"}
 
 As you can see, local ports are randomly generated and mapped to remote ports to avoid any conflict with services already running locally.
 
