@@ -118,3 +118,5 @@ As you can see, local ports are randomly generated and mapped to remote ports to
 ## Conclusion
 
 Visual Studio Code has endless options. The Remote Containers extension pack brings it to the next level allowing us to "just" define the configuration of the development environment we want without warring how to set it up. As a bonus, if all that described lives in a GitHub repository, it automatically works with [GitHub Codespaces](https://github.com/features/codespaces), bringing the whole experience to the browser. Yes, you get it right. When using Codespaces, the only requirement is a modern browser.
+
+Photo by <a href="https://unsplash.com/@edulauton?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Edu Lauton</a> on <a href="https://unsplash.com/s/photos/excitement?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
