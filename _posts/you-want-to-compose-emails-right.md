@@ -54,3 +54,7 @@ When it comes to user interfaces, the coupling is inherently there because users
 ## Conclusion
 
 Composing emails poses the same set of problems of composing ViewModels for a user interface. We can approach both problems using ViewModel Composition techniques. Generally speaking, every time data leaves the system for an email, a user interface, or a report, composing information is a good solution, even if it smells a bit of temporal coupling.
+
+---
+
+Photo by <a href="https://unsplash.com/@jplenio?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Johannes Plenio</a> on <a href="https://unsplash.com/s/photos/mailbox?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
