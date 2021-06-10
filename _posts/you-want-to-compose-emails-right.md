@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/you-want-to-compose-emails-right/header.jpg
 title: "You want to compose emails, right?"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Composing emails comes with the same issues as composing ViewModels. All the time data leaves the system for an email, a user interface, or a report, ViewModel Composition techniques help define robust solutions."
 tags:
 - SOA
 - ViewModel Composition
