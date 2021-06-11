@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "DevCast Italian Edition 2021 #1"
 location: "online"
 language: "Italian"
