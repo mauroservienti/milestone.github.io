@@ -10,8 +10,8 @@ tags:
 - Docker
 ---
 
-You're finalizing a workshop that you plan to deliver in a couple of weeks. You're working on exercises and samples. Attendees will run examples and exercises on their machines. The workshop will be delivered online, giving you near-zero options to help them if something goes badly. To complicate things even more, attendees will join using their computers, running Windows, macOS, or Linux.
-You're sitting at your desk, and for the last four hours, you've been ping-ponging between the samples and exercise requirements and trying them. Meanwhile, you realized that you are missing a configuration bit there, an operating system setting here, and installing a third-party tool. You hardly see the light at the end of the tunnel, not to mention that your confidence with Linux is the same you'd have when petting a hungry cheetah. At least that's my level of confidence with Linux.
+You're finalizing a workshop that you plan to deliver in a couple of weeks. You're working on exercises and samples. Attendees will run examples and exercises on their machines. The workshop will be delivered online, giving you near-zero options to help them if something goes badly. To complicate things even more, attendees will join using their own computers, running Windows, macOS, or Linux.
+You're sitting at your desk, and for the last four hours, you've been ping-ponging between the samples and exercise requirements and trying them. Meanwhile, you realize that you are missing a configuration bit there, an operating system setting here, and installing a third-party tool. You hardly see the light at the end of the tunnel, not to mention that your confidence with Linux is the same as petting a hungry cheetah. At least that's my level of confidence with Linux.
 
 If that's you, you're not alone. That was me more or less six weeks ago.
 
@@ -21,7 +21,7 @@ Visual Studio Code is a fantastic tool that surprises me at every step. For exam
 
 In a nutshell, remote development allows you to run a Visual Studio Code server from a remote location and forward the Code user interface (UI) to your local shell. Of course, you can host the UI shell locally in the browser too!
 
-Deep dive into the architecture and all whistles and bells by reading the official Code documentation about [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers). For the sake of this article, a picture is worth a thousand words:
+Deep dive into the architecture and all bells and whistles by reading the official Code documentation about [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers). For the sake of this article, a picture is worth a thousand words:
 
 ![Visual Studio Code Remote - Containers architecture](https://code.visualstudio.com/assets/docs/remote/containers/architecture-containers.png)
 
@@ -29,7 +29,7 @@ Deep dive into the architecture and all whistles and bells by reading the offici
 
 ## What does Code allow us to achieve?
 
-Let me put it very simply. Code remote development allows to set up an entire development environment with just four requirements that any major operating system meets. When I say complete development environment, I mean a development environment with all the whistles and bells you can imagine. For example, for the workshop I mentioned above, the development environment is composed of a RabbitMQ instance, two PostgreSQL instances and a C#/.NET 5 dev environment configured to allow building and debugging .NET applications.
+Let me put it very simply. Code remote development allows to set up an entire development environment with just four requirements that any major operating system meets. When I say complete development environment, I mean a development environment with all the bells and whistles you can imagine. For example, for the workshop I mentioned above, the development environment is composed of a RabbitMQ instance, two PostgreSQL instances and a C#/.NET 5 dev environment configured to allow building and debugging .NET applications.
 
 > The complete sample is available on GitHub in the [mauroservienti/distributed-systems-101](https://github.com/mauroservienti/distributed-systems-101) repository.
 
@@ -117,6 +117,6 @@ As you can see, local ports are randomly generated and mapped to remote ports to
 
 ## Conclusion
 
-Visual Studio Code has endless options. The Remote Containers extension pack brings it to the next level allowing us to "just" define the configuration of the development environment we want without warring how to set it up. As a bonus, if all that described lives in a GitHub repository, it automatically works with [GitHub Codespaces](https://github.com/features/codespaces), bringing the whole experience to the browser. Yes, you get it right. When using Codespaces, the only requirement is a modern browser.
+Visual Studio Code has endless options. The Remote Containers extension pack brings it to the next level allowing us to just define the configuration of the development environment we want without worrying about how to set it up. As a bonus, if all that described lives in a GitHub repository, it automatically works with [GitHub Codespaces](https://github.com/features/codespaces), bringing the whole experience to the browser. Yes, you got that right. When using Codespaces, the only requirement is a modern browser.
 
 Photo by <a href="https://unsplash.com/@edulauton?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Edu Lauton</a> on <a href="https://unsplash.com/s/photos/excitement?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
