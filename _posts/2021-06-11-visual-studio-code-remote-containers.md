@@ -23,7 +23,7 @@ In a nutshell, remote development allows you to run a Visual Studio Code server 
 
 Deep dive into the architecture and all bells and whistles by reading the official Code documentation about [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers). For the sake of this article, a picture is worth a thousand words:
 
-![Visual Studio Code Remote - Containers architecture](https://code.visualstudio.com/assets/docs/remote/containers/architecture-containers.png)
+![Visual Studio Code Remote - Containers architecture](https://code.visualstudio.com/assets/docs/remote/containers/architecture-containers.png){:class="img-fluid mx-auto d-block"}
 
 > Courtesy of [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers), Visual Studio Code documentation
 
