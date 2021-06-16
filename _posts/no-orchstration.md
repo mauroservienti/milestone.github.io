@@ -53,3 +53,5 @@ As you can see, the result is the same. The system will ship tickets to customer
 Coupling doesn't only manifest itself as dependencies from a class to another one. Coupling can arise from other sources, too, like architectural and design choices. Deciding to use an orchestra director type of approach to solve a problem can result in a coupling that will reveal itself in the worst possible moment: when we need to implement new business requirements. There is nothing wrong with using an orchestrator, but it's crucial to be aware of the limitations it brings to the table.
 
 ---
+
+Photo by <a href="https://unsplash.com/@sohcahjoah?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joah Legg</a> on <a href="https://unsplash.com/s/photos/orchestra-director?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
