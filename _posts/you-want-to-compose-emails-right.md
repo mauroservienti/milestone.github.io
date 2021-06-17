@@ -22,7 +22,7 @@ It's not that different from a ViewModel/UI Composition problem, and we can solv
 Let's see in practice how something like that could work. First, let's imagine that you're using SendGrid or any of the available alternatives, such as Sendinblue or Moosend. The critical aspect is that those services primarily offer the following:
 
 - A template engine that behaves similarly to a [mail merge](https://en.wikipedia.org/wiki/Mail_merge) kind of functionality.
-- Makreting automation tools
+- Marketing automation tools
 - A promise that your messages won't end up in the recipient spam folder.
 
 For the sake of what we're discussing here, we're mainly interested in the template engine. The mail sending service offers the ability to define one or more templates. Then, using a markup language, the template author can define placeholders that the system will fill with data at send time.
