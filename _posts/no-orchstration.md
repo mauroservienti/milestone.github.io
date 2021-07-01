@@ -10,21 +10,21 @@ tags:
 - Sagas
 ---
 
-> The ticket booking process starts with users selecting events they like to attend. Once they're happy with their selections, they move on and proceed to checkout. Once tickets are set for checkout, the booking process locks them for a few minutes. If the process doesn't complete within the allocated timeout, those tickets become available again. When the checkout step ends, the booking process, if needed, creates a new customer and decides how to deliver tickets based on the shipping method of choice.
+> The ticket booking process starts with users selecting events they'd like to attend. Once they're happy with their selections, they proceed to checkout. Once tickets are set for checkout, the booking process locks them for a few minutes. If the process doesn't complete within the allocated timeout, those tickets become available again. When the checkout step ends, the booking process, if needed, creates a new customer and decides how to deliver tickets based on the shipping method of choice.
 
 In a nutshell, that's the way, a couple of years ago, in the context of an architectural review, I was presented with requirements for a booking system.
 
 ## It oozes orchestration from every pore
 
-The team choice was to implement the system using an orchestration architectural style. For example, a `BookingService` uses commands to pilot the steps of the process across many different services, among which, checkout, payments, customer management, booking, and many more. The following picture summarizes the described process:
+The team choice was to implement the system using an orchestration architectural style. For example, a `BookingService` uses commands to pilot the steps of the process across many different services, such as checkout, payments, customer management, booking, and many more. The following picture summarizes the described process:
 
 ![booking service orchestrator diagram](/img/posts/no-orchstration/orchestrator.png){:class="img-fluid mx-auto d-block"}
 
-Let me be clear. The system is alive and kicking. It has been selling tickets for the last few years and didn't have any significant issues. The review was in the context of some concerns the team had with recent changes they were trying to implement.
+Let me be clear. The system was alive and kicking. It had been selling tickets for the last few years (and still is) and didn't have any significant issues. The review was in the context of some concerns the team had with recent changes they were trying to implement.
 
 Without going into the details of the changes, the team was concerned by things like:
 
--  to add a new payment type, they needed to change the booking service
+- to add a new payment type, they needed to change the booking service
 - to change the way customers are created/handled, they needed to change the booking service
 - to add groups tickets, they needed to change the booking service
 
@@ -38,7 +38,7 @@ We think we need a booking service that orchestrates the process because we fall
 
 ## Can we get rid of the orchestrator?
 
-Business processes are not an orchestra; they don't need a director. Business processes are much more like choreography; they need choreographers. Once the organization defines a process, there isn't a need for constant directions. Instead, the process runs, and the organization monitors it instead of meticulously managing it. It's much like a ballet; there is a training phase in which the choreographer instructs the dancers. Then, when the choreography is performed, their role is to monitor and apply tweaks and changes to fix any issue. That is in contrast with an orchestra that requires a director to keep the players in sync.
+Business processes are not an orchestra; they don't need a director. Business processes are much more like choreography; they need choreographers. Once the organization defines a process, there isn't a need for constant directions. Instead, the process runs, and the organization monitors it instead of meticulously managing it. It's much like a ballet; there is a training phase in which the choreographer instructs the dancers. Then, when the choreography is performed, their role is to monitor and apply tweaks and changes to fix any issues. That is in contrast with an orchestra that requires a director to keep the various players in sync.
 
 We don't necessarily need a booking service to orchestrate the booking process. Everything starts at checkout. Once users proceed to check out, the reservation service can confirm the ticket selection. Confirmed tickets are the only requirement for payments to initiate the payment chat with the payment gateway. A successful payment closes the loop and allows the shipping part of the process to start. And so on with all the other involved services.
 
@@ -46,7 +46,7 @@ As in many other cases, a picture is worth a thousand words:
 
 ![booking saga choreography diagram](/img/posts/no-orchstration/choreopgraphy.png){:class="img-fluid mx-auto d-block"}
 
-As you can see, the result is the same. The system will ship tickets to customers. However, the advantage is that services are autonomous. Autonomy allows for independent evolution, which guarantees the respect of the single responsibility principle. Imagine a new requirement that introduces a new payment type; it'll only affect the system's payments.
+As you can see, the result is the same. The system will ship tickets to customers. However, the advantage is that services are autonomous. Autonomy allows for independent evolution, which guarantees the respect of the single responsibility principle. Imagine a new requirement that introduces a new payment type; it'll only affect the payment service.
 
 ## Conclusion
 
