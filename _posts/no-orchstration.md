@@ -34,7 +34,7 @@ In other words, the booking service violates the single responsibility principle
 
 ## Why do we think we need a booking service?
 
-We think we need a booking service that orchestrates the process because we fall into the trap of modeling the user mental model. [We model the user information and data representation instead of the behaviors that manipulate those data](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html). Users describe the booking process in such a way that emphasizes the centrality of the booking service. Not to mention that they continuously talk about how information and data are displayed. For example, by dictating that there is the need for a dashboard showing the state of the ongoing business process. ViewModel Composition techniques can solve the [dashboard dilemma](link to composing emails).
+We think we need a booking service that orchestrates the process because we fall into the trap of modeling the user mental model. [We model the user information and data representation instead of the behaviors that manipulate those data](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html). Users describe the booking process in such a way that emphasizes the centrality of the booking service. Not to mention that they continuously talk about how information and data are displayed. For example, by dictating that there is the need for a dashboard showing the state of the ongoing business process. ViewModel Composition techniques can solve the [dashboard dilemma](https://milestone.topics.it/2021/07/02/you-want-to-compose-emails-right.html).
 
 ## Can we get rid of the orchestrator?
 
