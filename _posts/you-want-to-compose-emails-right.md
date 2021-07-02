@@ -3,33 +3,33 @@ layout: post
 header_image: /img/posts/you-want-to-compose-emails-right/header.jpg
 title: "You want to compose emails, right?"
 author: Mauro Servienti
-synopsis: "Composing emails comes with the same issues as composing ViewModels. All the time data leaves the system for an email, a user interface, or a report, ViewModel Composition techniques help define robust solutions."
+synopsis: "Composing emails comes with the same issues as composing ViewModels. Data constantly leaves the system for an email, a user interface, or a report, ViewModel Composition techniques help define robust solutions."
 tags:
 - SOA
 - ViewModel Composition
 ---
 
-One of the e-commerce customers just placed an order. The system needs to send, via email, an update with the recent order details and some information about invoicing and shipment.
+One of the e-commerce customers just placed an order. The system needs to email an update with the recent order details and some information about invoicing and shipment.
 
-> I talked about the differences between updates, notifications, and dashboards in my last installment: [Can we predict the future?](https://milestone.topics.it/2021/06/02/can-we-predict-the-future.html)
+> I talked about the differences between updates, notifications, and dashboards in a recent installment: [Can we predict the future?](https://milestone.topics.it/2021/06/02/can-we-predict-the-future.html)
 
 The system is a distributed system. Different services own and store the information we need to send the email message with all the required details. For example, billing holds invoicing details, shipping delivery ones, and sales information about the order.
 
 It's not that different from a ViewModel/UI Composition problem, and we can solve it exactly in the same way by leveraging [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition).
 
-> For an overview of the problem and the many nuances involved, you can watch my ["All our aggregates are wrong"](https://youtu.be/KkzvQSuYd5I) YouTube video.
+> For an overview of the problem and the many nuances involved, you can watch my ["All our aggregates are wrong"](https://youtu.be/KkzvQSuYd5I) presentation.
 
-Let's see in practice how something like that could work. First, let's imagine that you're using SendGrid or any of the available alternatives, such as Sendinblue or Moosend. The critical aspect is that those services primarily offer the following:
+Let's see in practice how something like that could work. First, let's imagine that you're using an email service like SendGrid, Sendinblue, or Moosend. The critical aspect is that those services primarily offer the following:
 
-- A template engine that behaves similarly to a [mail merge](https://en.wikipedia.org/wiki/Mail_merge) kind of functionality.
+- A template engine that behaves similarly to a [mail merge](https://en.wikipedia.org/wiki/Mail_merge)
 - Marketing automation tools
-- A promise that your messages won't end up in the recipient spam folder.
+- A promise that your messages won't end up in the recipient's spam folder
 
 For the sake of what we're discussing here, we're mainly interested in the template engine. The mail sending service offers the ability to define one or more templates. Then, using a markup language, the template author can define placeholders that the system will fill with data at send time.
 
 We are in charge of providing the data to fill the template. To keep things simple, let's ignore the mass-mailing scenario. It's just an implementation detail that doesn't affect the solution design.
 
-Once the customer has placed an order, the sales service publishes an event, e.g., `OrderPlaced`, alongside details such as the order and the customer id. Shipping and billing as event subscribers receive the message and react accordingly. Billing starts the card authorization process that, if successful, will result in a `PaymentAuthorized` event that alongside `OrderPlaced` is important for shipping to start the shipping processes.
+Once the customer has placed an order, the sales service publishes an event, e.g., `OrderPlaced`, alongside details such as the order and the customer id. Shipping and billing, as event subscribers, receive the message and react accordingly. Billing starts the card authorization process that, if successful, will result in a `PaymentAuthorized` event that is important for shipping to start the shipping processes (along with `OrderPlaced` of course).
 
 > All the mentioned services already have all the data they need to process requests and proceed with their processes. So the legit question is, how did information end up being stored in their owning services? By using decomposition techniques. I discuss decomposition options in ["The fine art of dismantling"](https://milestone.topics.it/view-model-composition/2019/04/18/the-fine-art-of-dismantling.html) and ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-first.html).
 
@@ -39,7 +39,7 @@ Is there any difference between an email and a web page?
 
 In this context, no, the only real difference is the transport we use. A web page is delivered to the user via HTTP, a mail message through SMTP. Regardless of the transport used, they are both frontends.
 
-We can use the same [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition) if they are both frontends. Upon receiving one of the mentioned events, Marketing invokes a Composition gateway API that will compose the required data, e.g., a Json object, that later marketing can use to send a message to the email sender component. The following diagram shows the interactions across the different components to send the email message finally:
+We can use the same [ViewModel Composition techniques](https://milestone.topics.it/categories/view-model-composition) if they are both frontends. Upon receiving one of the mentioned events, Marketing invokes a Composition gateway API that will compose the required data, e.g., a JSON object, that marketing can later use to send a message to the email sender component. The following diagram shows the interactions across the different components to send the email message finally:
 
 ![email sending diagram](/img/posts/you-want-to-compose-emails-right/email-sending-diagram.png){:class="img-fluid mx-auto d-block"}
 
