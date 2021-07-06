@@ -34,7 +34,7 @@ At this point, it's easy to argue that given that caches are so powerful to keep
 
 ## On the fragile relationship between ViewModels and caches
 
-Let's dive into the problem using a sample. Let's imagine the requirement to design a product page whose only information is the product name and product price. The catalog service owns and stores the name of the product, the sales one the product price. Both of them need to be on the same page. We apply [ViewModel composition techniques](https://milestone.topics.it/categories/view-model-composition) to produce the required view model and move on. The following diagram summarizes the discussed scenario:
+Let's dive into the problem using a sample. Let's imagine the requirement to design a product page whose only information is the product name and product price. The catalog service owns and stores the name of the product, and the sales service owns the product price. Both of them need to appear on the same page. We apply [ViewModel composition techniques](https://milestone.topics.it/categories/view-model-composition) to produce the required view model and move on. The following diagram summarizes the discussed scenario:
 
 ![cache layer in front of the composition gateway](/img/posts/own-the-cache/outside.png){:class="img-fluid mx-auto d-block"}
 
@@ -42,7 +42,7 @@ After a while, we realize that the frontend has some performance issues while vi
 
 ## Prices change, but names don't.
 
-What appears to be a solution turns out to be a significant issue. Over time, with variable frequency, product prices change, and web pages must reflect that. However, the whole product view model is cached. Therefore, the only option for the system is to invalidate all cached resources for which prices changed.
+What appears to be a solution turns out to be a significant issue. Over time, with variable frequency, product prices change, and web pages must reflect that. However, the whole product view model is cached. Therefore, when prices change, the only option for the system is to invalidate all cached resources.
 
 The variability in prices causes a significant issue for the catalog service, though. Whenever a price changes, the product view model cached version gets invalidated and removed from the cache. The next time that product gets requested, the system needs to hit the catalog service to retrieve what was previously cached but not changed. In essence, whenever prices change, the impact goes to the catalog service and not to the sales one. From the catalog perspective, the crucial aspect is that the effect is unexpected and, more importantly, unpredictable. The change is happening somewhere else, in sales.
 
@@ -52,9 +52,9 @@ Interestingly, the lack of ownership of the cached resources is causing issues s
 
 ## Shall we stop caching resources?
 
-No. There is a more straightforward solution. We just need to move the caching layer inside the service boundaries. For example, the sales service needs to have its cache and maybe catalog too. If sales owns the cache, it can decide to change prices, change the schema, or randomly wipe items from the cache storage without affecting anyone else in the system. The same applies to any other service.
+No. There is a more straightforward solution. We just need to move the caching layer inside the service boundaries. For example, the sales service needs its cache for the prices and the catalog services needs one for the product name. Sales can decide to change prices, change the schema, or randomly wipe items from the cache storage without affecting anyone else in the system. The same applies to any other service.
 
-Given that we have [ViewModel composition techniques](https://milestone.topics.it/categories/view-model-composition) in our tool belt, it doesn't matter much the caching layer is in front or behind the composition gateway. Sure, having it behind might have an impact on the overall system performance. It's probably negligible.
+Given that we have [ViewModel composition techniques](https://milestone.topics.it/categories/view-model-composition) in our tool belt, it doesn't matter much whether the caching layer is in front of or behind the composition gateway. Having it behind does have an impact on the overall system performance, but this is negligible, especially compared to the impact of having it in front.
 
 The following diagram summarizes the proposed solution:
 
