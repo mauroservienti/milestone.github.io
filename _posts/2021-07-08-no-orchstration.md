@@ -1,6 +1,6 @@
 ---
 layout: post
-header_image: /img/posts/no-orchstration/header.jpg
+header_image: /img/posts/no-orchestration/header.jpg
 title: "There is no such thing as orchestration"
 author: Mauro Servienti
 synopsis: "Coupling is subtle and sneaks in from every hole. With long-running business processes, the overall business problem tends to take precedence over what seems to be a minor concern. Unfortunately, those choices might turn against us in the long run."
