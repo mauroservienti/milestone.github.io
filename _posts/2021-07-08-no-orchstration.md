@@ -18,7 +18,7 @@ In a nutshell, that's the way, a couple of years ago, in the context of an archi
 
 The team choice was to implement the system using an orchestration architectural style. For example, a `BookingService` uses commands to pilot the steps of the process across many different services, such as checkout, payments, customer management, booking, and many more. The following picture summarizes the described process:
 
-![booking service orchestrator diagram](/img/posts/no-orchstration/orchestrator.png){:class="img-fluid mx-auto d-block"}
+![booking service orchestrator diagram](/img/posts/no-orchestration/orchestrator.png){:class="img-fluid mx-auto d-block"}
 
 Let me be clear. The system was alive and kicking. It had been selling tickets for the last few years (and still is) and didn't have any significant issues. The review was in the context of some concerns the team had with recent changes they were trying to implement.
 
@@ -44,7 +44,7 @@ We don't necessarily need a booking service to orchestrate the booking process. 
 
 As in many other cases, a picture is worth a thousand words:
 
-![booking saga choreography diagram](/img/posts/no-orchstration/choreopgraphy.png){:class="img-fluid mx-auto d-block"}
+![booking saga choreography diagram](/img/posts/no-orchestration/choreopgraphy.png){:class="img-fluid mx-auto d-block"}
 
 As you can see, the result is the same. The system will ship tickets to customers. However, the advantage is that services are autonomous. Autonomy allows for independent evolution, which guarantees the respect of the single responsibility principle. Imagine a new requirement that introduces a new payment type; it'll only affect the payment service.
 
