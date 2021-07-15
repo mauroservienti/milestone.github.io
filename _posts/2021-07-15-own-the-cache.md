@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/own-the-cache/header.jpg
 title: "Own the cache"
 author: Mauro Servienti
-synopsis: "Caches are everywhere and power the internet. When it comes to distributed systems, they are an essential tool in our tool belt. However, special care needs to put into defining who owns the cache."
+synopsis: "Caches are everywhere and power the internet. When it comes to distributed systems, they are an essential tool in our tool belt. However, special care needs to be put into defining who owns the cache."
 tags:
 - Architecture
 - Distributed systems
