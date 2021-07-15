@@ -1,3 +1,14 @@
+---
+layout: post
+header_image: /img/posts/dont-keep-a-saga-in-both-camps/header.jpg
+title: "Don't keep a saga in both camps"
+author: Mauro Servienti
+synopsis: "When it comes to distributed systems, autonomy is a guiding star, and coupling is the villain trying to sneak in at every step. Orchestration is a particularly subtle form of coupling, usually detected when it's too late. However, the root cause is somewhere else."
+tags:
+- Architecture
+- Distributed systems
+---
+
 Recently I delivered a distributed systems workshop for an [Italian user group](https://www.craftedsoftware.org). Based on some of the conversations I had with attendees, I wrote, "[There is no such thing as orchestration](link to blog post)." More recently, in the user group Slack workspace, a member asked the following question:
 
 > If a saga operates on multiple microservices, how can we adhere to the autonomy principle and make it so that they are independently deployable?
