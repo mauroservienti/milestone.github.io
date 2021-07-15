@@ -80,3 +80,7 @@ The crucial aspect is the difference between the logical boundaries and the phys
 ## Conclusion 
 
 Distinguishing the physical aspects of a system, also known as the deployment concerns, from the logical ones is critical to determine what is not allowed and what is acceptable. No saga can orchestrate actions happening outside of the logical boundaries it belongs to, and this rule applies to any component in the system. The key takeaway is that we don't want to allow any orchestration to cross logical service boundaries.
+
+---
+
+Photo by <a href="https://unsplash.com/@wyron?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Wyron A</a> on <a href="https://unsplash.com/s/photos/line?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
