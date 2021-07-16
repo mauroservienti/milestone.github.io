@@ -44,3 +44,7 @@ The height at which monitors are don't satisfy me completely. I feel they should
 The other thing I noticed is that, during the day, I use the workstation case, on the floor on the left side, as a support surface where I put my left foot. Sometimes I find myself looking for something similar on the right side. I will probably look for a small dresser, or something similar, to put on the right side.
 
 If something else pops up in my standing desk setup, I'll report back in a future post—hopefully, earlier than eight years.
+
+---
+
+Photo by <a href="https://unsplash.com/@v2osk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">v2osk</a> on <a href="https://unsplash.com/s/photos/standing-desk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
