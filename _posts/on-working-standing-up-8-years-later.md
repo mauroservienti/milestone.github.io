@@ -23,6 +23,9 @@ Absolutely yes. I would never no go back. I work standing up most of the day. I 
 Recently, my setup changed a bit. Until a year ago, my screens setup was a Full HD portrait screen on the left (23"), a landscape 4K in front of me (28"), and another portrait, Full HD, on the right (23"). I was using the 28" 4K screen at 150% DPI scaling. The only disadvantage of that setup is that using different screens at different DPI scaling creates weird effects when dragging windows across the screens.
 
 I'm now using three 4K screens, all of them at 150% DPI scaling. One portrait on the left (28"), one landscape in the center (32"), and another 32" landscape on the right.
+
+![my desk](/img/posts/on-working-standing-up-8-years-later/desk.jpg){:class="img-fluid mx-auto d-block"}
+
 The angle of the left and right screens is still about 40°. The reasons behind the choice didn't change. To look at the left and right screens at lower grades, I only need to rotate my neck slightly. In the long run, that movement leads to pain and eventually strain. With a higher angle, I rotate my shoulders, and given that I'm standing up, I end up turning most of the body without involving the neck in the movement.
 
 ## Ultra-wide curved screens 
