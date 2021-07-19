@@ -151,3 +151,7 @@ Let's analyze step by step what's happening. The first thing the handling code d
 ## Conclusion 
 
 We already have all the tools we need. It's "only" a matter of understanding how to use them to achieve what we need. The crucial aspect is to know how to benefit from the logical boundaries vs. physical deployment differences. Once that's in place, all the pieces of the puzzle will slowly find their homes, and we'll be able to build a straightforward solution for our notifications requirements.
+
+---
+
+Photo by <a href="https://unsplash.com/@markuswinkler?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Markus Winkler</a> on <a href="https://unsplash.com/s/photos/update?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
