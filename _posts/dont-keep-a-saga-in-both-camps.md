@@ -9,7 +9,7 @@ tags:
 - Distributed systems
 ---
 
-Recently I delivered a distributed systems workshop for an [Italian user group](https://www.craftedsoftware.org). Based on some of the conversations I had with attendees, I wrote, "[There is no such thing as orchestration](link to blog post)." More recently, in the user group Slack workspace, a member asked the following question:
+Recently I delivered a distributed systems workshop for an [Italian user group](https://www.craftedsoftware.org). Based on some of the conversations I had with attendees, I wrote, "[There is no such thing as orchestration](https://milestone.topics.it/2021/07/08/no-orchstration.html)." More recently, in the user group Slack workspace, a member asked the following question:
 
 > If a saga operates on multiple microservices, how can we adhere to the autonomy principle and make it so that they are independently deployable?
 > _(adaptation from Italian is mine)_
