@@ -28,7 +28,7 @@ If we were to implement the above architecture using NServiceBus, we would use t
 
 ![choreography with NServiceBus](link to image)
 
-We're using a mix of [sagas](link to documentation) and regular [message handlers](link to documentation). One thing that captures the attention is that some saga communicates using events, and others using commands. The "do something" semantic of commands generates more coupling. Are those sagas, in reality, orchestrators?
+We're using a mix of [sagas](https://docs.particular.net/nservicebus/sagas/) and regular [message handlers](https://docs.particular.net/nservicebus/handlers/). One thing that captures the attention is that some saga communicates using events, and others using commands. The "do something" semantic of commands generates more coupling. Are those sagas, in reality, orchestrators?
 
 ## Transactions, transactions everywhere
 
