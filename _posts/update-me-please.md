@@ -84,17 +84,9 @@ interface INotificationService
 And the `Subscription` and `Notification` types could look like the following:
 
 ```csharp
-public record Subscription
-{
-   public string Id { get; init; }
-   public NotificationFormat Format { get; init; } 
-}
+public record Subscription(string Id, NotificationFormat Format);
 
-public record Notification
-{
-   public Subscription Subscription { get; init; }
-   public string Content { get; init; } 
-}
+public record Notification(Subscription Subscription, string Content);
 ```
 
 > the presented snippets use the new [C# 9 record types](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record). It's not necessary; however, it's a convenient way to define immutable types.
