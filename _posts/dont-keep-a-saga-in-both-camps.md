@@ -22,11 +22,11 @@ For the sake of the discussion, let's rephrase the question a bit by changing on
 
 We're now using only the SOA lingo. Before continuing, an autonomous component is not a microservice. However, if we have to make a theory comparison, that's the best equation we can do. In the orchestration versus choreography post, when talking about the choreography approach, I presented the following diagram:
 
-![choreography](link to image)
+![choreography](/img/posts/dont-keep-a-saga-in-both-camps/choreopgraphy.png){:class="img-fluid mx-auto d-block"}
 
 If we were to implement the above architecture using NServiceBus, we would use the following NServiceBus features:
 
-![choreography with NServiceBus](link to image)
+![choreography with NServiceBus](/img/posts/dont-keep-a-saga-in-both-camps/choreopgraphy-with-nsb.png){:class="img-fluid mx-auto d-block"}
 
 We're using a mix of [sagas](https://docs.particular.net/nservicebus/sagas/) and regular [message handlers](https://docs.particular.net/nservicebus/handlers/). One thing that captures the attention is that some saga communicates using events, and others using commands. The "do something" semantic of commands generates more coupling. Are those sagas, in reality, orchestrators?
 
