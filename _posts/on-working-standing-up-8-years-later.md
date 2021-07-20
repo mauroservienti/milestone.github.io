@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/on-working-standing-up-8-years-later/header.jpg
 title: "On working standing up, 8 years later"
 author: Mauro Servienti
-synopsis: "I started using a standing desk as my default setup eight years ago. It's time for a retrospective, to share some learnings, and to see what options the future reserves."
+synopsis: "I started using a standing desk as my default setup eight years ago. It's time for a retrospective, to share some learnings, and to see what options the future holds."
 tags:
 - Work environment
 - Standing desk
@@ -13,10 +13,10 @@ Six years ago, in July, I [wrote for the first time about my experience as a sta
 
 ## Am I still satisfied?
 
-Absolutely yes. I would never no go back. I work standing up most of the day. I sit down only for two reasons:
+Absolutely yes. I would never go back. I work standing up most of the day. I sit down only for two reasons:
 
 - To read long chunks of text. For some reason, I'm unable to read for a long time standing up.
-- When I'm too tired. For example, the 3yo disrupted the night.
+- When I'm too tired. For example, the 3yo disrupted my sleep last night.
 
 ## Current setup
 
@@ -36,7 +36,7 @@ I tried, and I failed. I bought a [Samsung C49RG90](https://displaysolutions.sam
 
 When I'm in my home office, I usually stand on bare feet: no shoes, no socks, no slippers. In the long run, that's not healthy. Our feet are not anymore designed to stand up that long with no supporting device like a proper pair of shoes. About four years ago, thanks to [Daniel Marbach](https://twitter.com/danielmarbach), I bought a balance pad. It's [this one from Airex](https://shop.my-airex.com/Balance-pad-Cloud/207762.1), but wider, I couldn't find the exact model anymore.
 
-The balance pad comes with two advantages and no side effects, as far as I can tell. The first advantage is that it makes standing up on bare feet much more comfortable. The second, and more important, the balance pad makes so that you cannot stand static. It forces you to move constantly, micro-movements, making so that your back muscles are constantly stimulated.
+The balance pad comes with two advantages and no side effects, as far as I can tell. The first advantage is that it makes standing up on bare feet much more comfortable. The second, and more important, is that the balance pad forces you to move constantly, micro-movements, so that your back muscles are constantly stimulated.
 
 ## What's next?
 
