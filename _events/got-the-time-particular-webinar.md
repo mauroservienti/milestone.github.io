@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Webinar: Got the time?"
 location: "online"
 language: "English"
@@ -11,6 +11,8 @@ calendar:
 sessions:
 - title: "Got the time?"
   abstract: "Real business systems tend to be messy, and the effects of time make them even messier. A command like “check if overdue invoices are paid” has to deal with questions like “are all invoices due on the same day?” And “are invoices due in 30 days or in one month?”. In this webinar, we’ll analyze what appears to be a straightforward billing system that needs to deal with invoices and discounts. How hard can it be? Then we’ll add a few more use-cases that make it more complicated and see how that can negatively impact the overall design. Finally, we’ll focus our attention on the impact of time on the design, and see how it sheds light on the correct approach to designing features. And best of all: No batch jobs!"
+  slides: http://bit.ly/particular-time-slides
+  demos: http://bit.ly/particular-time-demos
 tags:
 - Microservices
 - SOA
