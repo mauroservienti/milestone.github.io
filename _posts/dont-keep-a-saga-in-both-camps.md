@@ -28,13 +28,13 @@ If we were to implement the above architecture using NServiceBus, we would use t
 
 ![choreography with NServiceBus](/img/posts/dont-keep-a-saga-in-both-camps/choreopgraphy-with-nsb.png){:class="img-fluid mx-auto d-block"}
 
-We're using a mix of [sagas](https://docs.particular.net/nservicebus/sagas/) and regular [message handlers](https://docs.particular.net/nservicebus/handlers/). One thing that captures the attention is that some saga communicates using events, and others using commands. The "do something" semantic of commands generates more coupling. Are those sagas, in reality, orchestrators?
+We're using a mix of [sagas](https://docs.particular.net/nservicebus/sagas/) and regular [message handlers](https://docs.particular.net/nservicebus/handlers/). One thing that captures the attention is that some sagas communicate using events, and others using commands. The "do something" semantic of commands generates more coupling. Are those sagas, in reality, orchestrators?
 
 ## Transactions, transactions everywhere
 
-Let's pause for a second the architectural discussion, and let's have a look at the technical implementation. The payment gateway component is part of the payment process. We're deploying it separately and mediating the communication using messages for a technical reason: We cannot enlist any of the payment gateway operations in a transaction. 
+Let's pause the architectural discussion for a second, and let's have a look at the technical implementation. The payment gateway component is part of the payment process. We're deploying it separately and mediating the communication using messages for a technical reason: We cannot enlist any of the payment gateway operations in a transaction. 
 
-The system dialogues with the payment provider through HTTP, and web requests cannot be enlisted in ACID transactions. The finance policy implementation uses an NServiceBus saga. The saga state needs to be stored. The store operation is transactional and includes any outgoing message. For example, the following operations are all in the same transaction:
+The system talks to the payment provider through HTTP, and web requests cannot be enlisted in ACID transactions. The finance policy implementation uses an NServiceBus saga. The saga state needs to be stored. The store operation is transactional and includes any outgoing message. For example, the following operations are all in the same transaction:
 
 ```csharp
 async Task Handle(AMessage msg, IMessageHandlerContex ctx)
@@ -44,7 +44,7 @@ async Task Handle(AMessage msg, IMessageHandlerContex ctx)
 }
 ```
 
-> if the underlying queuing infrastructure doesn't support transactions NServiceBus Outbox feature allows to guarantee an exactly-once message processing behavior.
+> if the underlying queuing infrastructure doesn't support transactions, the NServiceBus [outbox feature](https://docs.particular.net/nservicebus/outbox/) guarantees an exactly-once message processing behavior.
 > For those not used to the NServideBus API, the `Data` property is an instance of the saga state. The state gets serialized and stored to the underlying storage to persist across multiple message processing.
 
 On the other hand, in the following example, the HttpClient web request cannot be enlisted in the same transaction as the other two operations:
@@ -73,7 +73,7 @@ The `PerformHttpRequest` message will be handled in isolation by a message handl
 
 ## Interesting, isn't that orchestration?
 
-uhm...no. If the payment service were to say to the shipping service, now it's time to ship, using a command, that would have been orchestration. In the presented scenario, payment is talking to itself.
+umm...no. If the payment service were to say to the shipping service, now it's time to ship, using a command, that would have been orchestration. In the presented scenario, payment is talking to itself.
 
 The crucial aspect is the difference between the logical boundaries and the physical deployment. If we look at the logical boundaries, the payment gateway is part of the payment service. The sole difference is that the payment gateway is deployed separately from the payment policy for technical reasons. On the other hand, any other service in the system is in a different logical boundary. Each logical service is composed of multiple autonomous components. Each component can be deployed differently depending on the business or technical requirements, but the deployment type doesn't change the logical ownership. For a different perspective about logical vs. physical, my colleague Dennis van der Stelt [recently wrote an excellent piece that touches on logical ownership](https://bloggingabout.net/2021/07/01/distributed-monolith/).
 
