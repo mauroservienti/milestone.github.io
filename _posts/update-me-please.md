@@ -52,7 +52,7 @@ We can leverage the logical boundaries vs. physical deployment difference mentio
 
 Assuming procurement owns and publishes the `IPurchaseOrderCreated` event, it is the best candidate to fulfill steps one and four mentioned above. Procurement can do that by deploying a message handler to the notification service. Procurement is the logical owner, and the notification service is the physical host.
 
-Let's imagine that the system relies on brokered transport like Azure Service Bus, RabbitMQ, or AWS SNS and uses [NServiceBus](https://docs.particular.net/nservicebus/). Procurement can create and deploy a message handler like the following:
+Let's imagine that the system relies on brokered transport like Azure Service Bus, RabbitMQ, or a combination of AWS SQS and SNS, and uses [NServiceBus](https://docs.particular.net/nservicebus/). Procurement can create and deploy a message handler like the following:
 
 ```csharp
 namespace Procurement.Notifications
