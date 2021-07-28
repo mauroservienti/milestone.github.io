@@ -48,7 +48,7 @@ However, there's an issue. By looking at the mentioned steps, it's probably clea
 
 If we were to bake the required knowledge into the notification service, we'd end up coupling the entire system to it. We don't want that.
 
-We can leverage the logical boundaries vs. physical deployment difference mentioned in ["Don't keep a saga in both camps"](link-to-post), to understand better who is responsible for what.
+We can leverage the logical boundaries vs. physical deployment difference mentioned in ["Don't keep a saga in both camps"](https://milestone.topics.it/2021/07/28/dont-keep-a-saga-in-both-camps.html), to understand better who is responsible for what.
 
 Assuming procurement owns and publishes the `IPurchaseOrderCreated` event, it is the best candidate to fulfill steps one and four mentioned above. Procurement can do that by deploying a message handler to the notification service. Procurement is the logical owner, and the notification service is the physical host.
 
