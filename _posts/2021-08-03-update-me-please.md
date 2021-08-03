@@ -12,6 +12,8 @@ tags:
 
 Users are on the system daily. They rely on notifications and a home page that works like a personal dashboard to keep up with what they do and their pending tasks. The home page dashboard and the notification system are good enough tools for users' productivity. However, users are isolated in silos. They have no idea what other users are doing, their tasks, and their status. The lack of visibility is particularly compelling for the organization management, which needs this type of bird-eye view to understand what's happening and how the organization is progressing.
 
+> I talked about the differences between updates, notifications, and dashboards in a recent installment: [Can we predict the future?](https://milestone.topics.it/2021/06/02/can-we-predict-the-future.html)
+
 The system builds on top of an event-driven architecture. Most service-oriented architecture (SOA) concepts are in place, and service boundaries are solidly defined. Such a well-designed system allows the organization to benefit from polyglot technological choices: different services use different technologies to fulfill their requirements. Some of them use relational databases and the Microsoft stack, and some others use no-SQL databases and maybe PHP.
 
 Those polyglot technological choices and the service-oriented architecture come with some challenges. Service boundaries, and the inherent differences in technical preferences, make it harder to define and fulfill a data set that can provide a much-needed bird-eye view.
