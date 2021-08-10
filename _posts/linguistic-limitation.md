@@ -76,3 +76,7 @@ There is no easy way out in this last scenario. No companion word comes to mind 
 ## Conclusion 
 
 In this article, I limited myself to three nebulous concepts: endpoint, event, and sync/async. Since the devil is in the details, it seems evident that we should prefer a more specific term to describe something rather than a more general one that may cover other things as well. We need a more precise language, raising questions about the true nature of things.
+
+---
+
+Photo by <a href="https://unsplash.com/@mrthetrain?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Joshua Hoehne</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
