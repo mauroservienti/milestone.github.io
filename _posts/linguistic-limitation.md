@@ -14,23 +14,15 @@ A couple of weeks ago, I was chatting with a friend, discussing some architectur
 
 As a result, we stopped discussing the initial architectural concern and moved to a completely different topic: the ubiquitous language or the lack of a proper one.
 
-Martin Fowler [defines the ubiquitous language](https://www.martinfowler.com/bliki/UbiquitousLanguage.html) as follows:
+Martin Fowler [defines the ubiquitous language](https://www.martinfowler.com/bliki/UbiquitousLanguage.html) as follows (emphasis is mine):
 
 > Ubiquitous Language is the term Eric Evans uses in Domain Driven Design for the practice of building up a common, *rigorous language between developers and users*. This language should be based on the Domain Model used in the software - hence the need for it to be rigorous, since software doesn't cope well with ambiguity.
-
-(emphasis is mine)
 
 We were not in the context of a discussion between developers and users, and we were not discussing any business concerns. The sentence that triggered the follow-up discussion was more or less the following:
 
 > The endpoint could initiate the process by raising an event. It'll make the background processing asynchronous.
 
-I immediately see three points of confusion. What's an endpoint?
-
-A dictionary [defines an endpoint as](https://www.lexico.com/en/definition/endpoint):
-
-> The final stage of a period or process.
-
-And it provides additional definitions for chemistry and mathematics. There's nothing about IT. So, is the endpoint mentioned above an HTTP endpoint or something else?
+I immediately see three points of confusion. What's an endpoint? Is it an HTTP endpoint, a ReST endpoint, or something else entirely?
 
 The second issue, and it's a worse one, is the word event. Is that a domain event? Or is that a pub/sub kind of event? It's also worth noting that these two questions assume that it's an event on a queue. What if it was a plain old C# event, a simple delegate in a linked list invoked in process on the same thread as the publisher?
 
@@ -42,7 +34,7 @@ It's much better now. We communicate that the publisher is an HTTP endpoint and 
 
 > The HTTP endpoint could initiate the process by raising a pub/sub kind of event.
 
-There is no need to specify that processing will be asynchronous. It's implicit with the decision to use a message on a queue.
+There is no need to specify that processing will be asynchronous. It's implicit with the decision to use a message on a queue (though it doesn't hurt to be explicit either).
 
 Asynchronous, though, is the third concern. To be honest, asynchronous is problematic. What does asynchronous mean? Is it asynchronous as handled by a different thread? Or is it asynchronous as in a new task when using the async/await keywords? Or is it asynchronous because it's an entirely different process on another node?
 
