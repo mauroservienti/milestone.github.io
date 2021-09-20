@@ -4,7 +4,7 @@ header_image: /img/posts/hold-on-your-updates-are-spamming-me/header.jpg
 title: "Hold on! Your updates are spamming me"
 slug: hold-on-your-updates-are-spamming-me
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Sending notifications to users might be easy. Dealing with a lot of messages can result in spamming them. How can we evolve a simple notification infrastructure to avoid delivering too many messages?"
 tags:
 - sagas
 - delayed deliveries
