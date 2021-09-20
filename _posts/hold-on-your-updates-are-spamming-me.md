@@ -174,3 +174,7 @@ The composition API returns a formatted response. What if we wanted a different 
 ## Conclusion
 
 Sagas are a multi-purpose tool. We can use them to build long-running business processes, such as handling the lifecycle of an order, or we can use them for recurring things delivering a digest to subscribers. Sagas are probably a good fit whenever a business process we're designing is long-running or needs to deal with time. If you'd like to know more about the relationship between sagas and the passage of time, [I delivered a webinar on the topic](https://particular.net/webinars/got-the-time).
+
+---
+
+Photo by <a href="https://unsplash.com/@paucasals?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Pau Casals</a> on <a href="https://unsplash.com/s/photos/spam?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
