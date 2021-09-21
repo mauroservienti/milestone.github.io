@@ -3,22 +3,22 @@ layout: post
 header_image: /img/posts/on-non-verbal-communication/header.jpg
 title: "On non-verbal communication for remote workers"
 author: Mauro Servienti
-synopsis: "Communication is hard. Bad communication leads to misunderstandings, stress, and bad things. Remote communication is even harder; what could go wrong? Can we do something about it?"
+synopsis: "Communication is hard. Bad communication leads to misunderstandings, stress, and bad things. Remote communication is even harder. What could go wrong? Can we do something about it?"
 tags:
 - remote working
 - remote teams
 - communication
 ---
 
-We constantly communicate, even if we're not talking. Communication comes in many flavors. There is verbal and non-verbal communication. Verbal communication is pretty straightforward: we say words—maybe words meaning nothing. Still, verbal communication remains :-)
+We constantly communicate, even when we're not talking. Communication can be categorized in many ways but for our purpose, we'll focus on verbal vs. non-verbal communication. Verbal communication is pretty straightforward: we say words—maybe words meaning nothing. Still, verbal communication remains :-)
 
-Non-verbal communication, as the name implies, is the one that doesn't use words coming from our mouths. There are two types of non-verbal communication: There is the psychological side of non-verbal communication, such as, for example, the postures we assume when in a conversation, and, on the other side, all that we communicate using gestures and gesticulating. And trust me, gesticulating, we can share a lot. I'm Italian. We master gesticulations.
+Non-verbal communication, as the name implies, is the one that doesn't use words coming from our mouths. There are two types of non-verbal communication: There is the psychological side of non-verbal communication, such as, for example, the postures we assume when in a conversation, and, on the other side, all that we communicate using gestures and gesticulating. And trust me, gesticulating can share a lot. I'm Italian, I know how to gesticulate.
 
-Let me go straight to the problem. Remote workers can only rely on words. We can only use verbal communication. Postures don't go through during video calls, and the same happens for gesticulating. Usually, the problem is that the camera view angle is too narrow to make so that our body and sometimes even ours hands are visible. And no, increasing the camera view angle doesn't solve any problem. It makes it worse. People on the call will be perceived distant as if they were sitting at an incredibly large table.
+Let me go straight to the problem. Remote workers can only rely on words. We can only use verbal communication. Postures don't go through during video calls, and the same happens for gesticulating. Usually, the problem is that the camera view angle is too narrow to make so that our body and sometimes even ours hands are visible. And no, increasing the camera view angle doesn't solve the problem. In fact it can make it worse because people on the call will be perceived as distant, as if they were sitting at an incredibly large table.
 
 Being allowed to use only verbal communication effectively reduces, by more than 60%, the communication tools in our toolbox.
 
-Gesticulating is a form of communication we can try to avoid. In the end, if we think about it, there are many cultures in which gesticulating is not a thing. And they have no issues in communicating.
+Gesticulating is a form of communication we can try to avoid. In the end, if we think about it, there are many cultures in which gesticulating is not a thing. And they have no issues in communicating. But it has its place. For example, try communicating without gesticulating when your companion doesn't speak the same language as you do.
 
 Posture, and all the communication made by facial expressions, is much harder to replace, though. And my gut feeling tells me we should not try.
 
@@ -40,7 +40,7 @@ No one will notice my posture on a video call. Even if it's communicating discom
 
 ### How can we help to make it explicit?
 
-For example, by soliciting feedback from meeting participants. Start with the quiet ones. During meetings with multiple people, the dynamic is always the same. The vocals tend to override everyone else, in many cases unconsciously, and the quiets end up saying little to nothing. If someone has been silent for most of the time, start with them. A simple question as "what do you think, Mauro?" can lead to an answer similar to "I'm not sure I understand what are we doing here, can you please clarify  what are we trying to achieve and what are we discussing?". Either I've been distracted for the entire meeting, or a meeting nullification is probably the best outcome.
+One way to make communication more explicit is to solicit feedback from meeting participants. Start with the quiet ones. During meetings with multiple people, the dynamic is always the same. The vocal ones tend to override everyone else, usually unconsciously, and the quiet ones end up saying little to nothing. If someone has been silent for most of the time, start with them. A simple question like "what do you think, Mauro?" can lead to an answer similar to "I'm not sure I understand what are we doing here, can you please clarify what we are trying to achieve and what we are discussing?". Either I've been distracted for the entire meeting, or a meeting nullification is probably the best outcome.
 
 It's not always that easy. I've experienced environments where someone asked questions, like the one above, for the only purpose of glorifying themselves, the manager leading the meeting. No way anyone could have provided such an answer.
 
