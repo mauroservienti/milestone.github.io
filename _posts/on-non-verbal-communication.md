@@ -10,11 +10,13 @@ tags:
 - communication
 ---
 
-We constantly communicate, even when we're not talking. Communication can be categorized in many ways but for our purpose, we'll focus on verbal vs. non-verbal communication. Verbal communication is pretty straightforward: we say words—maybe words meaning nothing. Still, verbal communication remains :-)
+We constantly communicate, even when we're not talking. Communication can be categorized in many ways, but for our purpose, we'll focus on verbal vs. non-verbal communication. Verbal communication is pretty straightforward: we say words—maybe words meaning nothing. Still, verbal communication remains :-)
 
 Non-verbal communication, as the name implies, is the one that doesn't use words coming from our mouths. There are two types of non-verbal communication: There is the psychological side of non-verbal communication, such as, for example, the postures we assume when in a conversation, and, on the other side, all that we communicate using gestures and gesticulating. And trust me, gesticulating can share a lot. I'm Italian, I know how to gesticulate.
 
-Let me go straight to the problem. Remote workers can only rely on words. We can only use verbal communication. Postures don't go through during video calls, and the same happens for gesticulating. Usually, the problem is that the camera view angle is too narrow to make so that our body and sometimes even ours hands are visible. And no, increasing the camera view angle doesn't solve the problem. In fact it can make it worse because people on the call will be perceived as distant, as if they were sitting at an incredibly large table.
+We are very good at reading non-verbal cues. We can tell a fake smile from a real one or detect a slight drop in the shoulders to tell if someone isn't interested. These might be harder to read in a video call where everyone is a small rectangle on the screen.
+
+Let me go straight to the problem. Remote workers can only rely on words. We can only use verbal communication. Postures don't go through during video calls, and the same happens for gesticulating. Usually, the problem is that the camera view angle is too narrow to make so that bodies and sometimes even hands are visible. And no, increasing the camera view angle doesn't solve the problem. In fact, it can make it worse because people on the call will be perceived as distant as if they were sitting at an incredibly large table.
 
 Gesticulating is a form of communication we can try to avoid. In the end, if we think about it, there are many cultures in which gesticulating is not a thing. And they have no issues in communicating. But it has its place. For example, try communicating without gesticulating when your companion doesn't speak the same language as you do.
 
@@ -28,7 +30,9 @@ Non-verbal communication can be conscious or unconscious. I can voluntarily smil
 
 All of a sudden, the COVID-19 pandemic catapulted millions of workers to work from home. They became remote workers, but in many, if not most, cases moved from colocated work environments to remote work environments without changing a single bit about the way they were working. They were effectively working remotely and not embracing remote working. They were, and still are, having day-long meetings but now using video calls. They are still supervised by managers looking for ways to monitor their subordinates but now using keyloggers and tools to check if they are in front of their computers (true story from the trenches).
 
-Remote working requires a mind shift in everything we do and involves tweaking non-verbal communication as part of the shift.
+At the same time, people are more easily distracted because they have the entire internet at their fingertips. We've learned to recognize that faraway gaze in people's eyes that shows they are looking at something else instead of the meeting at hand.
+
+In essence, remote working requires a mind shift in everything we do and involves tweaking non-verbal communication as part of the shift.
 
 ## Make it explicit
 
