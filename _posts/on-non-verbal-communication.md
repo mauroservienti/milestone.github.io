@@ -16,8 +16,6 @@ Non-verbal communication, as the name implies, is the one that doesn't use words
 
 Let me go straight to the problem. Remote workers can only rely on words. We can only use verbal communication. Postures don't go through during video calls, and the same happens for gesticulating. Usually, the problem is that the camera view angle is too narrow to make so that our body and sometimes even ours hands are visible. And no, increasing the camera view angle doesn't solve the problem. In fact it can make it worse because people on the call will be perceived as distant, as if they were sitting at an incredibly large table.
 
-Being allowed to use only verbal communication effectively reduces, by more than 60%, the communication tools in our toolbox.
-
 Gesticulating is a form of communication we can try to avoid. In the end, if we think about it, there are many cultures in which gesticulating is not a thing. And they have no issues in communicating. But it has its place. For example, try communicating without gesticulating when your companion doesn't speak the same language as you do.
 
 Posture, and all the communication made by facial expressions, is much harder to replace, though. And my gut feeling tells me we should not try.
