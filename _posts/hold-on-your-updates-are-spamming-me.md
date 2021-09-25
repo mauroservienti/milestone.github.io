@@ -10,17 +10,17 @@ tags:
 - delayed deliveries
 ---
 
-["Update me, please"](https://milestone.topics.it/2021/08/03/update-me-please.html) shows how to design a notification infrastructure in a distributed system. It's a basic design that I've successfully used myself multiple times. It comes with a limitation, though. Let's have a look at the following scenario:
+An earlier article, ["Update me, please"](https://milestone.topics.it/2021/08/03/update-me-please.html), shows how to design notification infrastructure in a distributed system. It's a basic design that I've successfully used myself multiple times. It comes with a limitation, though. Let's have a look at the following scenario:
 
 > An area manager is responsible for a geographical area and all the retail shops in the assigned area. Area managers are interested in receiving notifications. For example, when one retail shop performs one or more actions they care about, or a specific event occurs, e.g., a retail shop runs out of stock or places a fulfillment order for a particular item.
 
-In the presented scenario, an area manager might supervise tens of retail shops. If we were to design the notification infrastructure as explained in the mentioned article, we'd end up spamming the inculpable manager. They subscribed to what they were interested, and nothing more. However, the system design was causing a notification message for every meaningful event. Such a design with tens of shops can easily lead to hundreds if not thousands of notification messages.
+In the presented scenario, an area manager might supervise tens of retail shops. If we were to design the notification infrastructure as explained in "Update me, please", we'd end up spamming the poor manager. They subscribed to what they were interested in, and nothing more. However, the system design was causing a notification message for every meaningful event. Such a design with tens of shops can easily lead to hundreds, if not thousands, of notification messages.
 
 ## Digests
 
 Near real-time notifications might be helpful in some scenarios. In many cases, though, we can get along with summaries. A daily or a weekly digest with a list of things that happened since the last digest is more than enough to satisfy our desire to be updated.
 
-We can design a notification infrastructure supporting digests-type of subscriptions on top of what we already have. Let's start by extending the subscription concept to include what type of grouping we need:
+We can design a notification infrastructure supporting digest-type subscriptions on top of what we already have. Let's start by extending the subscription concept to include the type of grouping we need:
 
 ```csharp
 public record Subscription(string Id, NotificationFormat Format, NotificationFrequency Frequency);
@@ -37,9 +37,9 @@ enum NotificationFrequency
 }
 ```
 
-At this point, things get tricky. In ["Update me, please"](https://milestone.topics.it/2021/08/03/update-me-please.html), we concluded that the responsibility for handling events, through regular message handlers, to turn into notifications belongs to business services. Those handlers use IT/Ops facilities, like the presented `INotificationService`, and are hosted by the notification infrastructure managed by IT/Ops.
+At this point, things get tricky. In ["Update me, please"](https://milestone.topics.it/2021/08/03/update-me-please.html), we concluded that the responsibility for handling events, through regular message handlers, to turn into notifications belongs to business services. Those handlers use IT/Ops facilities, like those presented in `INotificationService`, and are hosted by the notification infrastructure managed by IT/Ops.
 
-Dealing with digests is not the responsibility of a business service. They take care of formatting the notification and nothing else. To minimize the impact of the digest feature on business services, we need to "hide" the feature in the notification infrastructure. Luckily the way we designed allows that. The last bit of the presented notification handler is something like:
+Dealing with digests is not the responsibility of a business service. They take care of formatting the notification and nothing else. To minimize the impact of the digest feature on business services, we need to "hide" the feature in the notification infrastructure. Luckily our design allows that. The last bit of the presented notification handler is something like:
 
 ```csharp
 var notifications = subscriptions.Select(s => new Notification()
@@ -56,7 +56,7 @@ At dispatch time, the notification service will inspect incoming notifications, 
 
 Before looking at the "store for later delivery" details, we need to discuss something we have neglected so far: how does someone subscribe to a notification?
 
-The first thing we need is a notifications database. The system needs to present a list of available notifications. We can build such a database in many ways. One of the many options is by using reflection. The business service that owns the events users can subscribe can decorate those events using something similar to the following:
+The first thing we need is a notifications database. The system needs to present a list of available notifications. We can build such a database in many ways. One of the many options is by using reflection. The business service that owns the events users can subscribe to can decorate those events using something like the following:
 
 ```csharp
 [Notification( 
@@ -72,7 +72,7 @@ interface IPurchaseOrderCreated
 ```
 
 Event classes or interfaces are deployed to the notification infrastructure alongside the notification handler. Notification infrastructure hosts can, at startup time, scan their deployment directories looking for types decorated with the presented attribute. Inspected types and attributes details constitute the notifications database—it's up to the notification infrastructure to decide how to store it. Once the notifications database is ready, the system can present users with a list of subscribable notifications. At subscribe time, users select the frequency for each of the subscribed notifications. When choosing to receive a digest, they can input digest details, if not previously done—for example, a weekly digest, every Friday at 10 AM.
-Saving their subscriptions settings will cause a digest notification saga to start, if not already running.
+Saving their subscriptions settings will cause a digest notification saga to start, if one isn't already running.
 
 > More information about sagas are available in the [official NServiceBus documentation](https://docs.particular.net/nservicebus/sagas/) and the [online saga tutorial](https://docs.particular.net/tutorials/nservicebus-sagas/).
 
@@ -141,9 +141,9 @@ public Task Timeout( DispatchWeeklyDigestFirstOccurrence message, IMessageHandle
 }
 ```
 
-Nothing fancy, the saga when handling the timeout selects and deletes, or marks them as dispatched, notifications to deliver from the database where they were stored previously.
+Nothing fancy, when handling the timeout, the saga selects and deletes, or marks them as dispatched, notifications to deliver from the database where they were stored previously.
 
-It's also worth noticing that the above snippet requires implementing the `IHandleTimeouts<DispatchWeeklyDigest>` interface, whose implementation will be very similar to the one presented above.
+It's also worth noting that the above snippet requires implementing the `IHandleTimeouts<DispatchWeeklyDigest>` interface, whose implementation will be very similar to the one presented above.
 
 ### A note about offloading delivery to a separate handler
 
