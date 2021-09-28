@@ -14,7 +14,7 @@ An earlier article, ["Update me, please"](https://milestone.topics.it/2021/08/03
 
 > An area manager is responsible for a geographical area and all the retail shops in the assigned area. Area managers are interested in receiving notifications. For example, when one retail shop performs one or more actions they care about, or a specific event occurs, e.g., a retail shop runs out of stock or places a fulfillment order for a particular item.
 
-In the presented scenario, an area manager might supervise tens of retail shops. If we were to design the notification infrastructure as explained in "Update me, please", we'd end up spamming the poor manager. They subscribed to what they were interested in, and nothing more. However, the system design was causing a notification message for every meaningful event. Such a design with tens of shops can easily lead to hundreds, if not thousands, of notification messages.
+In the presented scenario, an area manager might supervise tens of retail shops. If we were to design the notification infrastructure as explained in "Update me, please," we'd end up spamming the poor manager. They subscribed to what they were interested in, and nothing more. However, the system design was causing a notification message for every meaningful event. Such a design with tens of shops can easily lead to hundreds, if not thousands, of notification messages.
 
 ## Digests
 
@@ -72,7 +72,7 @@ interface IPurchaseOrderCreated
 ```
 
 Event classes or interfaces are deployed to the notification infrastructure alongside the notification handler. Notification infrastructure hosts can, at startup time, scan their deployment directories looking for types decorated with the presented attribute. Inspected types and attributes details constitute the notifications database—it's up to the notification infrastructure to decide how to store it. Once the notifications database is ready, the system can present users with a list of subscribable notifications. At subscribe time, users select the frequency for each of the subscribed notifications. When choosing to receive a digest, they can input digest details, if not previously done—for example, a weekly digest, every Friday at 10 AM.
-Saving their subscriptions settings will cause a digest notification saga to start, if one isn't already running.
+If one isn't already running, saving their subscriptions settings will start a new digest notification saga.
 
 > More information about sagas are available in the [official NServiceBus documentation](https://docs.particular.net/nservicebus/sagas/) and the [online saga tutorial](https://docs.particular.net/tutorials/nservicebus-sagas/).
 
@@ -82,12 +82,11 @@ The first thing we need is a message to kick off the saga:
 class StartWeeklyDigest
 {
    public string SubscriberId{ get; set; }
-   public DayOfWeek DayOfWeek{ get; set; }
-   public string Time{ get; set; }
+   public DateTime FirstOccurrence{ get; set; }
 }
 ```
 
-When starting a digest, we need the subscriber and the schedule settings. In this case, the day of the week and the time when users like to have the digest delivered. In lack of a better type, for example, a `Time` .NET type, we're using a simple string to represent the time of the day. Your mileage might vary, depending on the scheduling options offered to users.
+When starting a digest, we need the subscriber and the schedule settings. In this case, the first occurrence users like to have the digest delivered. From there it'll be once every week. Your mileage might vary, depending on the scheduling options offered to users.
 
 The required data are stored in the saga data. We keep the scheduling settings too because the system could use a subsequent `StartWeeklyDigest` message to update the digest scheduling. By storing current settings, we can check if the configuration needs to change.
 
@@ -95,8 +94,7 @@ The required data are stored in the saga data. We keep the scheduling settings t
 class WeeklyDigestData : ContainsSagaData
 {
    public string SubscriberId{ get; set; }
-   public DayOfWeek DayOfWeek{ get; set; }
-   public string Time{ get; set; }
+   public DateTime FirstOccurrence{ get; set; }
 }
 
 class WeeklyDigestSaga : 
@@ -111,39 +109,36 @@ class WeeklyDigestSaga :
 
     public Task Handle(StartWeeklyDigest message, IMessageHandlerContext context)
     {
-        var firstOccurrenceDate = ... // calculate first occurrence using message properties
-        Data.FirstOccurrence = firstOccurrenceDate;
-        return RequestTimeout(context, firstOccurrenceDate, new DispatchWeeklyDigestFirstOccurrence());
+        Data.FirstOccurrence = message.FirstOccurrence;
+        return RequestTimeout(context, Data.FirstOccurrence, new DispatchWeeklyDigest(){ WhenDue = Data.FirstOccurrence });
     }
 }
 ```
 
-The `DispatchWeeklyDigestFirstOccurrence` timeout message is an empty class; we don't need to carry any state. To handle a timeout, we need to change the saga definition in the following way:
+The `DispatchWeeklyDigest` timeout message is an elementary class with a `WhenDue` property used to calculate the next due date. To handle a timeout, we need to change the saga definition in the following way:
 
 ```csharp
 class WeeklyDigestSaga : 
    Saga<WeeklyDigestData>,
    IAmStartedBy<StartWeeklyDigest>,
-   IHandleTimeouts<DispatchWeeklyDigestFirstOccurrence>
+   IHandleTimeouts<DispatchWeeklyDigest>
 ```
 
 Which forces the implementation of the following method:
 
 ```csharp
-public Task Timeout( DispatchWeeklyDigestFirstOccurrence message, IMessageHandlerContext context)
+public Task Timeout( DispatchWeeklyDigest message, IMessageHandlerContext context)
 {
     //query the notifications database for notifications to dispatch
     //or send a message to offload the task to a separate handler
 
     //schedule regular weekly deliveries
-    var next = Data.FirstOccurrence.AddDays(7);
-    return return RequestTimeout(context, next, new DispatchWeeklyDigest());
+    var next = message.WhenDue.AddDays(7);
+    return return RequestTimeout(context, next, new DispatchWeeklyDigest(){ WhenDue = next });
 }
 ```
 
-Nothing fancy, when handling the timeout, the saga selects and deletes, or marks them as dispatched, notifications to deliver from the database where they were stored previously.
-
-It's also worth noting that the above snippet requires implementing the `IHandleTimeouts<DispatchWeeklyDigest>` interface, whose implementation will be very similar to the one presented above.
+Nothing fancy, when handling the timeout, the saga selects and deletes, or marks them as dispatched, notifications to deliver from the database where they were stored previously. Finally, a timeout is requested for the next due date.
 
 ### A note about offloading delivery to a separate handler
 
