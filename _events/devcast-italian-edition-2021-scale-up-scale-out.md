@@ -4,7 +4,7 @@ status: 'upcoming'
 title: "DevCast Italian Edition 2021 #3"
 location: "online"
 language: "Italian"
-eventurl: ""
+eventurl: "https://live.codemotion.com/devcast/devcast-italian-edition-28102021"
 calendar:
   start: "2021-10-28T11:00:00"
   end: "2021-10-28T12:00:00"
