@@ -1,7 +1,7 @@
 ---
 layout: post
 header_image: /img/posts/isnt-a-supposed-to-come-before-b/header.jpg
-title: "Isn't A supposed to come before B?"
+title: "Isn't A supposed to come before B? On message ordering in distributed systems."
 slug: isnt-a-supposed-to-come-before-b
 enable_mermaid: true
 author: Mauro Servienti
