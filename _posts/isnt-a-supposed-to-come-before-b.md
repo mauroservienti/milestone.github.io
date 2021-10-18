@@ -108,7 +108,7 @@ So far, we have based all solutions purely on messaging. If introducing a persis
 
 ## Conclusion
 
-As you probably noticed, dear reader, we have two significant options. On the one hand, we could try to brute-force change reality to adapt it to the way we would lie, to design systems. Or, on the other hand, we could bend the business to adapt to the real world. We could move from a "hold on, you cannot order because you haven't paid" approach to a "thanks for your order, we'll take care of the payment details later." The latter scales, the first one doesn't scale so quickly. At the same time, the first one might be easier to implement at first glance.
+As you probably noticed, dear reader, we have two significant options. On the one hand, we could try to brute-force change reality to adapt it to the way we would like to design systems. Or, on the other hand, we could bend the business to adapt to the real world. We could move from a "hold on, you cannot order because you haven't paid" approach to a "thanks for your order, we'll take care of the payment details later." The latter scales, the first one doesn't scale so quickly. At the same time, the first one might be easier to implement at first glance.
 
 There is no right or wrong solution. Instead, we have plenty of options at our disposal. In this article, we analyzed a few. Please, share your experience in the comments below if you're doing something different.
 
