@@ -66,7 +66,7 @@ graph LR
 
 If you add instances to the above diagram, one instance might handle A and B, and another one takes C, the duplicate of A, and the copy of B. From the first instance perspective, the order is guaranteed. From the second one, it's not. Interestingly, the one instance that gets requests in the correct order is missing one of the messages.
 
-Why is that happening? Clusters. Queuing infrastructures are deployed in clusters. Keeping the cluster consistent, for example, to offer an exactly-once delivery guarantee, requires distributed transactions across nodes. Distributed transactions have a high cost. On ASW, when using Amazon SQS (Simple Queuing Service), there is the option to configure a queue as FIFO (First in, first out). They cost more, they are slower, and the deduplication window is limited in time. It reminds me of transactions timeouts, right?
+Why is that happening? Clusters. Queuing infrastructures are deployed in clusters. Keeping the cluster consistent, for example, to offer an exactly-once delivery guarantee, requires distributed transactions across nodes. Distributed transactions have a high cost. On AWS, when using Amazon SQS (Simple Queuing Service), there is the option to configure a queue as FIFO (First in, first out). They cost more, they are slower, and the deduplication window is limited in time. It reminds me of transactions timeouts, right?
 
 ## It's a palliative that leads nowhere
 
@@ -99,7 +99,7 @@ Messages are unordered in the queue but come with an attribute, for example, a v
 
 An approach based on versioning + retries is easy to implement but comes with two significant drawbacks:
 
-1.  Receivers require message ordering, but the requirement virally propagates to senders creating coupling.
+1. Receivers require message ordering, but the requirement virally propagates to senders creating coupling.
 2. Retries are inefficient. The longer the sequence is, the riskier is that retries will take a significant amount of time
 
 ### Sagas
