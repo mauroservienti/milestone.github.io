@@ -66,7 +66,7 @@ graph LR
 
 If you add instances to the above diagram, one instance might handle A and B, and another one takes C, the duplicate of A, and the copy of B. From the first instance perspective, the order is guaranteed. From the second one, it's not. Interestingly, the one instance that gets requests in the correct order is missing one of the messages.
 
-Why is that happening? Clusters. Queuing infrastructures are deployed in clusters. Keeping the cluster consistent, for example, to offer an exactly-once delivery guarantee, requires distributed transactions across nodes. Distributed transactions have a high cost. On AWS, when using Amazon SQS (Simple Queuing Service), there is the option to configure a queue as FIFO (First in, first out). They cost more, they are slower, and the deduplication window is limited in time. It reminds me of transactions timeouts, right?
+Why is that happening? Clusters. Queuing infrastructures are deployed in clusters. Keeping the cluster consistent, for example, to offer an exactly-once delivery guarantee, requires distributed transactions across nodes. Distributed transactions have a high cost. On AWS, when using Amazon SQS (Simple Queuing Service), there is the option to configure a queue as [FIFO (First in, first out)](https://en.wikipedia.org/wiki/FIFO_(computing_and_electronics)). They cost more, they are slower, and the deduplication window is limited in time. It reminds me of transactions timeouts, right?
 
 ## It's a palliative that leads nowhere
 
