@@ -105,7 +105,7 @@ An approach based on versioning + retries is easy to implement but comes with tw
 
 So far, we have based all solutions purely on messaging. If introducing a persistence mechanism is an option, we can leverage sagas to keep track of the processing status and build an in-saga pending queue. The saga knows the business logic and thus knows the expected sequence of messages. If the saga receives an out-of-order message, it can store it in the saga data and [schedule a timeout](https://milestone.topics.it/talks/got-the-time.html) to later evaluate if it can process the previously received out-of-order messages. A basic sample of this type of saga is available in the [official NServiceBus sagas tutorial](https://docs.particular.net/tutorials/nservicebus-sagas/1-saga-basics/). The tutorial handles the out-of-order receive of two messages, and as such, it doesn't need to store any message for later processing. We can model many business use cases using the demonstrated approach.
 
-For more scenarios where sagas are a successful tool to handle message ordering needs, read the ["You don't need ordered delivery"](https://particular.net/blog/you-dont-need-ordered-delivery] article by [Dennis Van Der Stelt](https://twitter.com/dvdstelt).
+For more scenarios where sagas are a successful tool to handle message ordering needs, read the ["You don't need ordered delivery"](https://particular.net/blog/you-dont-need-ordered-delivery) article by [Dennis Van Der Stelt](https://twitter.com/dvdstelt).
 
 ## Conclusion
 
