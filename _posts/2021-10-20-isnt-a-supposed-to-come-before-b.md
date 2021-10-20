@@ -2,7 +2,6 @@
 layout: post
 header_image: /img/posts/isnt-a-supposed-to-come-before-b/header.jpg
 title: "Isn't A supposed to come before B? On message ordering in distributed systems."
-slug: isnt-a-supposed-to-come-before-b
 enable_mermaid: true
 author: Mauro Servienti
 synopsis: "We are used to lists, sequences, and procedural approaches. We are constantly under the impression that what we do is ordered. That's not the case. Why are we trying to replicate into software architectures a non-existent ordering?"
