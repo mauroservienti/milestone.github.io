@@ -26,17 +26,27 @@ With Udi, we discussed the "Slow is Smooth. Smooth is Fast" SEAL and Delta Force
 
 Swimming is an extraordinarily complex and challenging activity. Swimming fast comes with many subtle challenges. Technique is everything; it's much more important than strength. And probably the most difficult part is breathing.
 
-When swimming front crawl or butterfly for the sake of the sample, the breath pace is determined by strokes pace, and swimmers cannot breath when their body needs to or at the rhythm they want. Usually, what happens to amateur swimmers when they start is that they try to swim faster by stroking faster. Stroking faster comes with breathing at a faster pace and with less time for each breath. Less time to breathe means less oxygen exchange which causes hypoxia that eventually leads to less effective muscles. The result is that they go slower instead of faster.
+When swimming front crawl or butterfly for the sake of the sample, the breath pace is determined by strokes pace, and swimmers cannot breath when their body needs or at the rhythm they want. Usually, what happens to amateur swimmers when they start is that they try to swim faster by stroking faster. Stroking faster comes with breathing at a faster pace and with less time for each breath. Less time to breathe means less oxygen exchange which causes hypoxia that eventually leads to less effective muscles. The result is that they go slower instead of faster.
 
-Swimmers, especially beginners, need to slow down to concentrate on breathing and many other essential details. Only by slowing down they can focus on technique and repeat the movements repeatedly until muscle memory kicks in, and they become a natural part of the swimming style. At which point going faster becomes a secondary effect.
+Why is that so complex? Let me use the front crawl stroke as an example. The front crawl stroke is composed of at least five stages:
+
+- The initial part of the stroke is how and where hands and arms get into the water.
+- Then there is the catch when swimmers start pulling water with their hands. How the elbow is positioned is crucial to a good catch.
+- After catching water, the next stage is pulling. In this case, a critical factor is the body angle needed to distribute strength between pectorals and back muscles properly.
+- Then, how the stroke is finished is the next step, needed to squeeze out all possible energy from the previous pulling stage.
+- Finally, getting elbows out of the water with hands nearly touching ears stretching over the surface.
+
+Add to the complex mentioned stages the need to breathe and coordinate with leg movements crucial to strokes and breathing. Even if you never practiced front crawl, you probably got a good enough picture of the complexity.
+
+Swimmers, especially beginners, need to slow down to concentrate on breathing and many other essential details. Only by slowing down can they focus on each step in isolation, on the required technique, and repeat the movements repeatedly until muscle memory kicks in. They become a natural part of the swimming style. At which point going faster becomes a secondary effect. Until you start focusing on legs, but that's another complex story.
 
 ## How can we swim the ocean of thousands of activities?
 
 Can we learn something from swimmers, and many other conceptually similar activities, to improve our efficiency? For example, if we believe we're achieving little to nothing, how can we go "faster"? What would a swimmer do?
 
-We can.
+Sure thing we can.
 
-By slowing down, as swimmers do, we can concentrate on the details of the task. We can improve and master them. More importantly, the act of repeatedly performing an activity creates the same "muscle memory" effect, and the task becomes a habit. Once it's a habit, and trust me, it takes time and energy and perseverance, it won't take its toll anymore. We'll do it.
+By slowing down, as swimmers do, we can concentrate on the details of the task. We can improve and master them. More importantly, the act of repeatedly performing an activity creates the same "muscle memory" effect, and the task becomes a habit. Once it's a habit, and trust me, it takes time and energy and perseverance, it won't take its toll anymore.
 
 Last but not least, do not focus on the final result. Just focus on the improvement itself. Improve for the sake of improving and to improve more tomorrow. Swim today so that tomorrow you can swim more. One day, by chance, you'll try swimming a very long distance, and you'll do it.
 
@@ -44,7 +54,7 @@ Concentrating on the final result might be counterproductive. If you happen to m
 
 ## Conclusion
 
-Getting stuff done is not easy. Getting many things done is even harder. We have two options, become workaholics and quickly get burnout, or gradually change a few little things to achieve more and more in the long run. I already wrote about why and how to improve your schedule by carefully planning:
+Getting stuff done is not easy. Getting many things done is even harder. We have two options, become workaholics and quickly get burnout, or gradually change a few little things to achieve more in the long run. I already wrote about why and how to improve your schedule by carefully planning:
 
 - [I'm a procrastinator. I fail at To-Do lists.](https://milestone.topics.it/2019/01/23/i-m-a-procrastinator-i-fail-at-to-do-lists.html)
 - [Lifehacking 101: I'm bad at to-do lists, now what?](https://milestone.topics.it/2021/02/19/bad-at-to-do-lists-now-what.html)
