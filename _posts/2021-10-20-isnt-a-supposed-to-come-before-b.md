@@ -73,6 +73,12 @@ The truth is that by enabling [FIFO queues](https://docs.aws.amazon.com/AWSSimpl
 
 Being able to guarantee message ordering in the input queue, even if for a limited amount of time and a couple more caveats, is worth nothing if we have multiple competing consumers. Like in the above-presented diagram, where various instances consume messages, there is no way to guarantee message ordering at the instance level.
 
+_[update 2021-10-21]_ As pointed out by Sean's comment below, when using Azure Service Bus:
+
+> "[...] A given session cannot be processed by multiple consumers, only one. And that ensures a session messages are all handled in order.
+
+Which solves the ordering problem leaving us with a single point of failure.
+
 ## What can we do about it?
 
 We need to stop looking at message ordering as a global solution. By carefully analyzing various scenarios, we can group message ordering needs into four macro categories.
