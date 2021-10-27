@@ -154,3 +154,7 @@ The `DelegateHttpClientFactory` allows the test to take full control over the `H
 Invoking an HTTP endpoint in the context of an HTTP invocation might not be a great thing to do, and it's probably an anti-pattern. There are cases, though, in which that's the exact scenario we need to test. HTTP client factory can be a great solution allowing complete control over the `HttpClient` instances creation.
 
 If you are curious about a scenario in which something like what's shown above makes sense, have a look at the [tests to validate ViewModel Composition scenarios results](https://github.com/mauroservienti/designing-a-ui-for-microservices-demos/blob/master/ASP.Net%20Core%20API%20Gateway%20-%2001/Composition.Tests/When_calling_composition_gateway.cs). The tests are part of the [demos](https://github.com/mauroservienti/designing-a-ui-for-microservices-demos/) of my ["Designing a UI for Microservices"](https://milestone.topics.it/talks/designing-ui-for-microservices.html) talk.
+
+---
+
+Photo by <a href="https://unsplash.com/@barnimages?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Barn Images</a> on <a href="https://unsplash.com/s/photos/http?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
