@@ -5,11 +5,8 @@ title: "To API, or not to API. Is this a real problem?"
 author: Mauro Servienti
 synopsis: "Breaking a public API is scary but sometimes unavoidable. Versioning an API is complex and error-prone. In many cases, I observed teams breaking an API that should not have been there to begin with, or fighting with versioning issues. The problem, though, was not the API."
 tags:
-- Design
-- Architecture
-- SOA
-- Coupling
-- Versioning
+- architecture
+- soa
 ---
 
 I'm taking this opportunity to answer another question that got asked during one of my recent presentations:

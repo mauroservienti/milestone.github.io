@@ -8,8 +8,8 @@ author: Mauro Servienti
 synopsis: "Sooner or later the system will fail. Doesn't matter if it'll be for an infrastructure failure or a bug. It'll fail. Dealing with failures can be tricky especially when business failures are handled like if they were infrastructure ones."
 enable_mermaid: true
 tags:
-- NServiceBus
-- Messaging
+- nservicebus
+- messaging
 - Failed messages
 ---
 

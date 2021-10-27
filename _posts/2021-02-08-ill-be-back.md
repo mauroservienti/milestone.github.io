@@ -5,11 +5,10 @@ title: "I'll be back"
 author: Mauro Servienti
 synopsis: "Time from the perspective of systems design has many nuances and complexities. There are clock drift issues and design issues related to modeling the passage of time. Shall we model the passage of time as a clock does?"
 tags:
-- Distributed Systems
-- Timeouts
+- distributed-systems
+- timeouts
 - Long running
-- Sagas
-- Delayed messages
+- sagas
 ---
 
 Time, as a concept, is both elementary and incredibly complex, to the point that physicists like Carlo Rovelli say that [it doesn't exist](https://youtu.be/vgsoI4ZUkUA). If you spend some time (ironically, time exists if you can spend it) diving into the nuances, it's clear that time exists at a particular scale, it's not unique and ubiquitous, and it can be stretched and manipulated. And yes, at the quantum scale, it doesn't exist. Mind-blowing and fascinating.

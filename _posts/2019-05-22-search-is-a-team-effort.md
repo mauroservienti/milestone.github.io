@@ -7,8 +7,8 @@ title: "Search is a Team Effort"
 author: Mauro Servienti
 synopsis: "Designing search functionality for a distributed system is challenging. There is the coupling threat on the one hand, and on the other we cannot sacrifice efficiency. There are a lot of similarities to what happens during a race car pit stop."
 tags:
-- SOA
-- Search
+- soa
+- search
 category: soa-search
 redirect_from: /soa-search/2019/05/22/search-is-a-team-work.html
 ---

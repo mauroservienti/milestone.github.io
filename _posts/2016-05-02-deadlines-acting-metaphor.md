@@ -4,9 +4,8 @@ title: "Deadlines: are they a good thing? The acting and directing metaphor."
 author: Mauro Servienti
 synopsis: "You might already know that for living I work in the software industry. It has been my primary job for the last 16 years or so. You might not know that my secret dream is to be an artist."
 tags:
-- Work
 - management
-- process
+- processes
 ---
 
 You might already know that for living I work in the software industry. It has been my primary job for the last 16 years or so.

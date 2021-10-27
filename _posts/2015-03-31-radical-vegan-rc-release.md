@@ -4,7 +4,7 @@ title: "Radical Vegan (RC) Release"
 date: '2015-03-31T11:09:00.000+01:00'
 author: Mauro Servienti
 tags:
-- Radical
+- radical
 blogger_orig_url: http://milestone.topics.it/2015/03/radical-vegan-rc-release.html
 ---
 

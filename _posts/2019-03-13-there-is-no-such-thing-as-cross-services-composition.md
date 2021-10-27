@@ -7,8 +7,8 @@ title: "There is no such thing as cross-service ViewModel Composition"
 author: Mauro Servienti
 synopsis: "At a first look it might sound reasonable to use ViewModel Composition to allow services to talk to each other. Why not allowing services to share complex data structure composed at runtime? Let me put it simple: you don't want a distributed monolith!"
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from:
 - /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html

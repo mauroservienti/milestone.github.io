@@ -5,8 +5,8 @@ title: "You want to compose emails, right?"
 author: Mauro Servienti
 synopsis: "Composing emails comes with the same issues as composing ViewModels. Data constantly leaves the system for an email, a user interface, or a report, ViewModel Composition techniques help define robust solutions."
 tags:
-- SOA
-- ViewModel Composition
+- soa
+- viewmodel-composition
 ---
 
 One of the e-commerce customers just placed an order. The system needs to email an update with the recent order details and some information about invoicing and shipment.

@@ -3,9 +3,9 @@ layout: post
 title: "Jekyll: A new home for this blog"
 author: Mauro Servienti
 tags:
-- GitHub
-- Jekyll
-- GitHub Pages
+- github
+- jekyll
+- github-pages
 ---
 
 I decided to move this blog from Blogger, where it was hosted, to GitHub pages, the main reason that drove this decision is the [European cookie law](http://www.cookielaw.org/the-cookie-law/) and the absurd way it is applied in Italy, basically forcing me to pay taxes for a thing I am not using but that I cannot disable.

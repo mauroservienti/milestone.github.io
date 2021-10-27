@@ -5,9 +5,9 @@ title: "On ViewModel Composition and UI Composition"
 author: Mauro Servienti
 synopsis: "We often confuse UI and ViewModel Composition. They are not the same thing and they solve different problems. We can use them in isolation but in most cases, they give their best when used in conjunction."
 tags:
- - SOA
- - Services ViewModel Composition
- - UI Composition
+ - soa
+ - viewmodel-composition
+ - ui-composition
  - Micro frontends
 category: view-model-composition
 ---

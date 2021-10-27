@@ -8,8 +8,8 @@ title: "Turn on the motors"
 author: Mauro Servienti
 synopsis: "It's time to discover all the nitty gritty details of the Composition Gateway. It's going to be a roller-coaster ride from ASP.Net Core Routing to the composition engine and back. Fasten your seat belt and enjoy the ride!"
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 ---
 

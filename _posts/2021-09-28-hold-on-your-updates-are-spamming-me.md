@@ -7,7 +7,7 @@ author: Mauro Servienti
 synopsis: "Sending notifications to users might be easy. Dealing with a lot of messages can result in spamming them. How can we evolve a simple notification infrastructure to avoid delivering too many messages?"
 tags:
 - sagas
-- delayed deliveries
+- timeouts
 ---
 
 An earlier article, ["Update me, please"](https://milestone.topics.it/2021/08/03/update-me-please.html), shows how to design notification infrastructure in a distributed system. It's a basic design that I've successfully used myself multiple times. It comes with a limitation, though. Let's have a look at the following scenario:

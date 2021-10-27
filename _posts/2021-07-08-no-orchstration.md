@@ -5,9 +5,9 @@ title: "There is no such thing as orchestration"
 author: Mauro Servienti
 synopsis: "Coupling is subtle and sneaks in from every hole. With long-running business processes, the overall business problem tends to take precedence over what seems to be a minor concern. Unfortunately, those choices might turn against us in the long run."
 tags:
-- SOA
-- Microservices
-- Sagas
+- soa
+- microservices
+- sagas
 ---
 
 > The ticket booking process starts with users selecting events they'd like to attend. Once they're happy with their selections, they proceed to checkout. Once tickets are set for checkout, the booking process locks them for a few minutes. If the process doesn't complete within the allocated timeout, those tickets become available again. When the checkout step ends, the booking process, if needed, creates a new customer and decides how to deliver tickets based on the shipping method of choice.

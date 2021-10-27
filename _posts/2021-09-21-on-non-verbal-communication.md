@@ -5,8 +5,7 @@ title: "On non-verbal communication for remote workers"
 author: Mauro Servienti
 synopsis: "Communication is hard. Bad communication leads to misunderstandings, stress, and bad things. Remote communication is even harder. What could go wrong? Can we do something about it?"
 tags:
-- remote working
-- remote teams
+- remote-work
 - communication
 ---
 

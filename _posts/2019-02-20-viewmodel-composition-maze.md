@@ -7,8 +7,8 @@ title: "The Services ViewModel Composition maze"
 author: Mauro Servienti
 synopsis: "ViewModel Composition can be scary, at a first look. The real world, we deal with every day, is complex as the information we manage are complex. Do we need to manually craft dedicated solutions or can we extract reusable patterns? There is always an exit to the maze."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: /2019/02/20/viewmodel-composition-maze.html
 ---

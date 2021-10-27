@@ -8,8 +8,9 @@ title: "I'm a procrastinator. I fail at To-Do lists."
 author: Mauro Servienti
 synopsis: "I tried to-do lists many many times, and after a while I always failed. Being a procrastinator doesn't really help when it comes to to-do lists. Here is my reasoning on the root causes of the problem and how I decided to fix it."
 tags:
-- Self organization
-- Get things done
+- self-organization
+- get-things-done
+- time-management
 ---
 
 One of the things that probably passed under the radar in my last post, [Once upon a time...](/2019/01/16/once-upon-a-time.html), is the following statement:

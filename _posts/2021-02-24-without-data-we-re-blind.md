@@ -5,10 +5,8 @@ title: "Lifehacking 101: without data we're blind"
 author: Mauro Servienti
 synopsis: "Your day is a mess. By the end of the day, the predominant feeling is that you probably got nothing done. Before trying to address any problem, it's essential to understand which issues we're facing."
 tags:
-- Time management
-- To-Do lists
-- Context switching
-- Jorunaling
+- time-management
+- self-organization
 ---
 
 Your day is a mess. By the end of the day, the predominant feeling is that you probably got nothing done. Or maybe you got nothing done and wasted countless hours on low priority, unimportant tasks.

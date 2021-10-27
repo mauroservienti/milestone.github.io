@@ -5,7 +5,8 @@ title: "Ehi! What's up? Feedback to users' requests in distributed systems"
 author: Mauro Servienti
 synopsis: "The system's design proceeds at full speed; all of a sudden, a thunderbolt hits us: how do we go about providing feedback to users? Request handling is asynchronous, and thus results are eventually consistent. What technique can we use to preserve the user context to get back to them with results?"
 tags:
-- Distributed Systems
+- distributed-systems
+- soa
 - Users feedback
 ---
 

@@ -5,9 +5,9 @@ title: "NServiceBus.IntegrationTesting baby steps"
 author: Mauro Servienti
 synopsis: "NServiceBus.IntegrationTesting started as an exploration activity and recently turned into a stable v1 release. V1 comes with some new features and one limitation that led to brainstorming options for the future."
 tags:
-- NServiceBus
-- Integration testing
-- SOA
+- nservicebus
+- integration-testing
+- soa
 ---
 
 What started as an experiment evolved a month ago into a stable release. [NServiceBus.IntegrationTesting](https://github.com/mauroservienti/NServiceBus.IntegrationTesting) v1 is available on [NuGet](https://www.nuget.org/packages/NServiceBus.IntegrationTesting/).

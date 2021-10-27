@@ -5,11 +5,11 @@ title: "Please welcome Model Binding and Formatters to ServiceComposer"
 author: Mauro Servienti
 synopsis: "Model binding frees the code from dealing with incoming payload content type and deserialization issues. It's a great way to move the attention from infrastructure code to business code. Model binding is now available in ServiceComposer."
 tags:
-- SOA
+- soa
 - Model Binding
 - Output formatters
 - Input formatters
-- Services ViewModel Composition
+- viewmodel-composition
 category: view-model-composition
 ---
 

@@ -5,8 +5,7 @@ title: "On working standing up, 8 years later"
 author: Mauro Servienti
 synopsis: "I started using a standing desk as my default setup eight years ago. It's time for a retrospective, to share some learnings, and to see what options the future holds."
 tags:
-- Work environment
-- Standing desk
+- stand-up-work
 ---
 
 Six years ago, in July, I [wrote for the first time about my experience as a stand-up worker](https://milestone.topics.it/2015/07/01/on-working-standing-up.html) and the reasons behind that decision. A few months later, in a [second article](https://milestone.topics.it/2015/12/08/on-working-standing-up-take-2.html), I provided technical details about my setup.

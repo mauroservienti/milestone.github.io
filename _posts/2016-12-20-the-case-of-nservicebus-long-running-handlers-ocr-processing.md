@@ -7,7 +7,7 @@ title: "The case of NServiceBus long running jobs: OCR Processing."
 author: Mauro Servienti
 synopsis: "Designing systems using a message based architecture is awesome. Messages are a nice way to design human interactions and to model how different components in a domain interact with each other. Unfortunately, technology sometimes causes more headaches than needed. And when it comes to messaging, long running jobs are a interesting headache to deal with."
 tags:
-- NServiceBus
+- nservicebus
 - long running handlers
 - sagas
 ---

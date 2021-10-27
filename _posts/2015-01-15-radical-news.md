@@ -4,7 +4,7 @@ title: Radical news
 date: '2015-01-15T11:13:00.000+01:00'
 author: Mauro Servienti
 tags:
-- Radical
+- radical
 modified_time: '2015-01-15T11:13:00.085+01:00'
 blogger_id: tag:blogger.com,1999:blog-6511237790974218081.post-5431662463005528824
 blogger_orig_url: http://milestone.topics.it/2015/01/radical-news.html

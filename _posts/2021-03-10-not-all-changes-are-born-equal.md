@@ -5,10 +5,8 @@ title: "Not all changes are born equal"
 author: Mauro Servienti
 synopsis: "We should not fear change. There are changes for good and changes for bad. As for change, we should not fear coupling. There is bad coupling and good coupling. The critical aspect is to understand the impact of the changes and the coupling."
 tags:
-- Design
-- Architecture
-- SOA
-- Coupling
+- architecture
+- soa
 ---
 
 I recently gave an online talk titled ["Live long and prosper"](https://milestone.topics.it/talks/live-long-and-prosper.html). The conference session is in Italian and available on [YouTube](https://www.youtube.com/watch?v=YOJ0rQ2gn44). Unfortunately, the only recording of this conference session is in Italian; hopefully, I'll deliver the English version again soon and get the recording published.

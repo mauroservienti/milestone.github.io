@@ -7,8 +7,8 @@ title: "The Quest for better Search"
 author: Mauro Servienti
 synopsis: "There is search and then there is search. And despite having the same name their meaning, and thus their technical implications, is shaped by the business we are in. Let's have a look at what search in a distributed system is and what problems brings to the table."
 tags:
-- SOA
-- Search
+- soa
+- search
 category: soa-search
 redirect_from: /soa-search/2019/05/15/the-quest-for-a-better-search.html
 ---
