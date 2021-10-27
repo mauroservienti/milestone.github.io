@@ -1,8 +1,7 @@
 ---
 layout: page
-title: Talks
+title: Tags
 permalink: /tags/
-show_in_header: ''
 ---
 
 <div class="tags">
@@ -12,9 +11,14 @@ show_in_header: ''
       {% for tag in site.tags %}
       <div class="card">
         <div class="card-body">
-          <h3 class="card-title">
-            <a class="muted-link" href="{{ tag.url | prepend: site.baseurl }}">{{ tag.title }}</a>
-          </h3>
+          {% assign tagged_pages = site.posts | where: 'tags',tag.tag %}
+          {% assign count = 0 %}
+          {% if tagged_pages %}
+            {% assign count = tagged_pages.size %}
+          {% endif %}
+          <h5 class="card-title">
+            <a class="muted-link" href="{{ tag.url | prepend: site.baseurl }}">{{ tag.title }} ({{ count }})</a>
+          </h5>
           <p class="card-text">
             <small class="text-muted">
               <a href="{{ tag.url | prepend: site.baseurl }}">Tag: {{ tag.tag }}</a>
@@ -23,5 +27,6 @@ show_in_header: ''
         </div>
       </div>
       {% endfor %}
+    </div>
   </div>
 </div>
