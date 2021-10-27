@@ -7,9 +7,9 @@ title: "Exploring NServiceBus Integration Testing options"
 author: Mauro Servienti
 synopsis: "Sometimes there is the need to test the full business scenario. Like the full dress rehearsal for a show. When using messaging, business scenario testing is not easy and NServiceBus unit testing capabilities aren't good enough."
 tags:
-- NServiceBus
-- Testing
-- Integration Testing
+- nservicebus
+- testing
+- integration-testing
 ---
 
 NServiceBus comes with a [powerful unit testing framework](https://docs.particular.net/nservicebus/testing/). The unit testing framework is designed to allow users to test components in isolation. Let's take, for example, the following message handler:

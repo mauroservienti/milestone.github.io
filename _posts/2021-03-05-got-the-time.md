@@ -5,10 +5,9 @@ title: "Got the time"
 author: Mauro Servienti
 synopsis: "When modeling time, we can use a batch job-oriented approach, or what I like to call the ticking time bomb model. Or we can flip the responsibilities and use messages for our future selves to achieve the results more efficiently and effectively. Let's see how to model time using NServiceBus sagas and messages."
 tags:
-- Sagas
-- NServiceBus
-- Timeouts
-- Delayed deliveries
+- sagas
+- nservicebus
+- timeouts
 ---
 
 In ["I'll be back"](https://milestone.topics.it/2021/02/08/ill-be-back.html), I described a hypothetical invoicing system and, even if the system is trivial, the problem that arises when the business requirement changes. Let's review it:

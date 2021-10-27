@@ -3,8 +3,7 @@ layout: post
 title: "Moving away from Blogger: comments using Disqus"
 author: Mauro Servienti
 tags:
-- Jekyll
-- Disqus
+- jekyll
 ---
 
 One of the issues that I needed to face when I decided to move my blog from `Blogger` to `GitHub Pages` using `Jekyll` is how to preserve comments on posts.

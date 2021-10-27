@@ -4,7 +4,7 @@ title: "Radical Splash-Screen support for desktop apps"
 date: '2015-04-08T12:32:00.000+01:00'
 author: Mauro Servienti
 tags:
-- Radical
+- radical
 blogger_orig_url: http://milestone.topics.it/2015/04/radical-splash-screen-support-for.html
 ---
 

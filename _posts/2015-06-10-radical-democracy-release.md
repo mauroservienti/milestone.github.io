@@ -3,7 +3,7 @@ layout: post
 title: "Radical Democracy (RTW) Release"
 author: Mauro Servienti
 tags:
-- Radical
+- radical
 ---
 
 We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RTW version of [Radical](https://github.com/RadicalFx/Radical) `Democracy`.

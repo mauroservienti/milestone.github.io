@@ -5,8 +5,8 @@ title: "Paging and sorting in distributed systems, oh my!"
 author: Mauro Servienti
 synopsis: "Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 ---
 Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems.

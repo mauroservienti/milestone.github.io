@@ -5,8 +5,8 @@ title: "Please welcome Attribute Routing to ServiceComposer"
 author: Mauro Servienti
 synopsis: "Attribute routing is a great MVC feature. However, endpoint routing is the game-changer. Library authors can plug in custom route handling and benefit from all the attribute routing goodies. It's easier than ever."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 ---
 

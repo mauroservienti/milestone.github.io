@@ -5,10 +5,11 @@ title: "Transactions? None for me, thanks"
 author: Mauro Servienti
 synopsis: "Queues are designed for reliability. I personally stress a lot about designing message processing to be as transactional as possible. Is there a use case for unreliable message processing?"
 tags:
-- Distributed Systems
+- distributed-systems
 - Transactions
 - Long running
-- Sagas
+- sagas
+- soa
 ---
 
 A few years ago, I wrote about long-running jobs in ["The case of NServiceBus long running jobs: OCR Processing."](https://milestone.topics.it/2016/12/20/the-case-of-nservicebus-long-running-handlers-ocr-processing.html) Please, go and read it.

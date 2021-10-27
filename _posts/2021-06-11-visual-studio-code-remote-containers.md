@@ -5,9 +5,7 @@ title: "Develop like a boss with Visual Studio Code Remote Containers"
 author: Mauro Servienti
 synopsis: "Preparing bulletproof exercises and demos is a painful experience, especially if we need to support multiple OSes. Visual Studio Code Remote Containers expansion pack comes to the rescue and promises to be a game-changer."
 tags:
-- Visual Studio Code
-- Remote Containers
-- Docker
+- development
 ---
 
 You're finalizing a workshop that you plan to deliver in a couple of weeks. You're working on exercises and samples. Attendees will run examples and exercises on their machines. The workshop will be delivered online, giving you near-zero options to help them if something goes badly. To complicate things even more, attendees will join using their own computers, running Windows, macOS, or Linux.

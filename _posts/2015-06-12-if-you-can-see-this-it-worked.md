@@ -3,8 +3,7 @@ layout: post
 title: "If you can see this, it worked"
 author: Mauro Servienti
 tags:
-- Jekyll
-- Scheduling
+- jekyll
 ---
 One of the things that [Jekyll](http://jekyllrb.com/) misses is the ability to schedule future posts, but...
 

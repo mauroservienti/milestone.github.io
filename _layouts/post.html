@@ -40,6 +40,17 @@ layout: default
         {% endif %}
       {% endif %}
     </p>
+    {% if page.tags %}
+    <p class="post-meta post-tags">Tags:&nbsp;
+      {% for tag in page.tags %}
+        {% assign tag_pages = site.tags | where: 'tag',tag %}
+        {% if tag_pages and tag_pages.size > 0 %}
+          {% assign tag_page = tag_pages[0] %}
+          <a href="{{ tag_page.url | prepend: site.baseurl }}"><nobr>{{ tag_page.title }}</nobr></a>&nbsp;
+        {% endif %}
+      {% endfor %}
+    </p>
+    {% endif %}
     <hr class="h-splitter" />
   </header>
 

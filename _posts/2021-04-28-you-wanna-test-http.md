@@ -5,9 +5,8 @@ title: "You wanna test HTTP, right?"
 author: Mauro Servienti
 synopsis: "Tests generate confidence. Awesome. Sometimes we need to test components requiring HTTP, and we risk building complex test infrastructures that only erode confidence. What options do we have?"
 tags:
-- unit test
-- integration test
-- HTTP
+- testing
+- integration-testing
 ---
 
 One of the beauties of testing is that it generates confidence. It's genuinely the essential aspect. Code evolves, needs to be maintained and fixed. We want to be confident that a set of changes will not change the expected behavior; we need to be sure we're not reintroducing bugs or undesirable behaviors that we already fixed.

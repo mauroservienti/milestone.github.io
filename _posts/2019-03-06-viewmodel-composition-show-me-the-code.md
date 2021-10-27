@@ -7,8 +7,8 @@ title: "ViewModel Composition: show me the code!"
 author: Mauro Servienti
 synopsis: "Time was spent discussing ViewModel Composition concepts and their design. It's time for some code. Let's see Single Item Composition in action: how does the code look like?"
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: /2019/03/06/viewmodel-composition-show-me-the-code.html
 ---

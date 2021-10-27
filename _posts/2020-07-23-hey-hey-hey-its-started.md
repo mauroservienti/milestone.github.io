@@ -5,7 +5,7 @@ title: "Hey hey hey it's started"
 author: Mauro Servienti
 synopsis: "When using NServiceBus, sometimes there is a need to perform actions when the endpoint is started. This can become cumbersome when using the .NET Core Generic Host infrastructure. NServiceBus.Extensions.EndpointStarted comes to the rescue, and allows to register a simple callback function during the endpoint configuration phase."
 tags:
-- NServiceBus
+- nservicebus
 - NServiceBus Extensions
 ---
 

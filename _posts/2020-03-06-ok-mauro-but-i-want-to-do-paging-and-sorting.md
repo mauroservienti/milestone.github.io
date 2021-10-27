@@ -5,8 +5,8 @@ title: "OK Mauro, but I want to do paging AND sorting"
 author: Mauro Servienti
 synopsis: "Paging and sorting can be applied in isolation, even in distributed systems. When in need of paging AND sorting, the level of coordination required grows exponentially. It turns out that the problem is not that different from searching in distributed systems, and similar techniques can be used to address the paging and sorting dilemma."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 ---
 

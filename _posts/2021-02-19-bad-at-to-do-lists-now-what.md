@@ -5,9 +5,8 @@ title: "Lifehacking 101: I'm bad at to-do lists, now what?"
 author: Mauro Servienti
 synopsis: "When it comes to to-do lists, I'm terrible. How do I get better at managing my activities and time? Context switching seems to be the real culprit. I'm pretty sure I won't get any better at to-do lists."
 tags:
-- Time management
-- To-Do lists
-- Context switching
+- time-management
+- self-organization
 ---
 
 I already wrote about how bad I am at to-do lists in ["I'm a procrastinator, I fail at to-do lists."](https://milestone.topics.it/2019/01/23/i-m-a-procrastinator-i-fail-at-to-do-lists.html).

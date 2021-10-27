@@ -7,8 +7,8 @@ title: "Read models: a knot to untie"
 author: Mauro Servienti
 synopsis: "Read models can be a tempting solution when it comes to presenting data in a distributed system. Before going down this route it's important to disclose the very nature of the choice we're going to make. It's a knot to untie."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: "/2019/03/26/read-models-a-knot-to-untie.html"
 ---

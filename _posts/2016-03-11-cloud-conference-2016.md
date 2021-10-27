@@ -4,7 +4,7 @@ title: "Cloud Conference 2016"
 author: Mauro Servienti
 synopsis: "Yesterday I had this fantastic opportunity to speak at CloudConf2016 along with a group of amazing speakers and professionals. It was an opportunity to meet new friends, compare and discuss ideas."
 tags:
-- Work
+- conferences
 ---
 
 Yesterday I had this fantastic opportunity to speak at [CloudConf2016](http://2016.cloudconf.it/) along with a group of amazing speakers and professionals.

@@ -4,7 +4,7 @@ title: "Solution Architect @ Particular Software"
 date: '2015-04-01T10:30:00.000+01:00'
 author: Mauro Servienti
 tags:
-- NServiceBus
+- nservicebus
 blogger_orig_url: http://milestone.topics.it/2015/04/solution-architect-particular-software.html
 ---
 

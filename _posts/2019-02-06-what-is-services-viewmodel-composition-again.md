@@ -8,8 +8,8 @@ title: "What is Services ViewModel Composition, again?"
 author: Mauro Servienti
 synopsis: "Building distributed systems requires facing an interesting challenge: there is a dichotomy between the way behaviors and data are decomposed at the backend and the way users expect to consume them from the frontend. Services ViewModel Composition techniques are designed to help us overcoming this dichotomy."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: /2019/02/06/what-is-services-viewmodel-composition-again.html
 ---

@@ -7,8 +7,8 @@ title: "Into the darkness of ViewModels Lists Composition"
 author: Mauro Servienti
 synopsis: "ViewModels Lists composition has an interesting challenge: must be designed in such a way that it doesn't flood servers with tons of requests. Number of requests cannot exceed the number of services involved in the composition process, no matter how many items are composed. There is a light at the end of the tunnel (cit.)"
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: /2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html
 ---

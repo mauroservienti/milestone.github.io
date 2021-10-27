@@ -5,9 +5,8 @@ title: "Can we predict the future?"
 author: Mauro Servienti
 synopsis: "Eventual consistency is everywhere and distributed systems tend to expose consistency issues. Most of the time that's not a problem, except when it comes to the UI. What options do we have?"
 tags:
-- SOA
-- UX
-- ViewModel Composition
+- soa
+- viewmodel-composition
 ---
 
 Eleven years ago, Udi Dahan wrote that ["race conditions don't exist"](http://udidahan.com/2010/08/31/race-conditions-dont-exist/); more recently, he gave a talk saying that [commands don't fail](https://www.youtube.com/watch?v=fWU8ZK0Dmxs).

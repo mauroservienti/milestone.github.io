@@ -5,7 +5,7 @@ title: "A linguistic limitation"
 author: Mauro Servienti
 synopsis: "The language we use is crucial to get the right message through. The words we use have to be as specific as we can to avoid misunderstandings. It seems we have space for improvement, and we should be doing a better job."
 tags:
-- ubiquitous language
+- communication
 ---
 
 I have a feeling this is going to be a short one. I have no answers, only doubts.

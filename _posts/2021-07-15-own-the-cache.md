@@ -6,9 +6,10 @@ slug: own-the-cache
 author: Mauro Servienti
 synopsis: "Caches are everywhere and power the internet. When it comes to distributed systems, they are an essential tool in our tool belt. However, special care needs to be put into defining who owns the cache."
 tags:
-- Architecture
-- Distributed systems
-- ViewModel Composition
+- architecture
+- distributed-systems
+- viewmodel-composition
+- soa
 ---
 
 When an HTTP client invokes a remote resource, it can use the following header to (try to) control the caching logic:

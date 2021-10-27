@@ -5,10 +5,8 @@ title: "Lifehacking 101: journaling as a continuous learning process"
 author: Mauro Servienti
 synopsis: "Brainstorming alone is painful for me. Questions like 'what can I improve?' or 'what's going wrong?' hardly get answered. Journaling is helping me in shaping what's next."
 tags:
-- Time management
-- To-Do lists
-- Context switching
-- Jorunaling
+- time-management
+- self-organization
 ---
 
 In the last two installments, ["Lifehacking 101: I'm bad at to-do lists, now what?"](https://milestone.topics.it/2021/02/19/bad-at-to-do-lists-now-what.html) and ["Lifehacking 101: without data we're blind"](https://milestone.topics.it/2021/02/24/without-data-we-re-blind.html), I described some of the problems and some of the corrections I implemented over the years to alleviate or fix these problems. For example, I stopped using to-do lists except for keeping track of groceries. I turned my to-do list(s) into a backlog that acts as a source of tasks for the Friday planning session. Another implemented solution was to reorganize my schedule to allow for longer time slots dedicated to specific tasks, leading to less context switching throughout the day without reducing the number of things I'm doing.

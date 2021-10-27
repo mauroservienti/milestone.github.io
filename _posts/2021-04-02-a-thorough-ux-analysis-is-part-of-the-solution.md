@@ -7,7 +7,7 @@ synopsis: "Decomposing a monolith is a satisfying exercise. In many cases, the d
 tags:
 - Task-based UI
 - Behavior modeling
-- SOA
+- soa
 ---
 
 Last week I read the excellent ["Decomposing CRUD to a Task Based UI"](https://codeopinion.com/decomposing-crud-to-a-task-based-ui/) by Derek Comartin. Go and read it if you haven't done so yet.

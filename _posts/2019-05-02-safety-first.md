@@ -8,8 +8,8 @@ author: Mauro Servienti
 synopsis: "In a distributed system, communication reliability is a key aspect. Orchestrating multiple HTTP calls is generally a bad idea; it's very hard, if not impossible, to be reliable. This is when messaging and patterns like the Outbox come into play."
 enable_mermaid: true
 tags:
-- SOA
-- Durable messaging
+- soa
+- messaging
 ---
 
 *Today's post will be more about reliable communication than ViewModel Composition, so it won't be part of the [ViewModel Composition category](/categories/view-model-composition).*

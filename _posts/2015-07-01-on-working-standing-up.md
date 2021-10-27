@@ -3,7 +3,7 @@ layout: post
 title: "On working 'standing up'"
 author: Mauro Servienti
 tags:
-- Work
+- stand-up-work
 ---
 
 I have been a stand-up worker for almost 2 years, I started to work standing up due to a couple of really annoying things:

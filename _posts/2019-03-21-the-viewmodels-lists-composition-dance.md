@@ -7,8 +7,8 @@ title: "The ViewModels Lists Composition Dance"
 author: Mauro Servienti
 synopsis: "Composing a list in an efficient way is complex. Multiple components need to interact with each other to produce the final result. It's not that different from a chorus, where each dancer performs the studied choreography so that the end result is an amazing ballet."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 category: view-model-composition
 redirect_from: /2019/03/21/the-viewmodels-lists-composition-dance.html
 ---

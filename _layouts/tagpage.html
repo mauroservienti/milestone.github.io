@@ -1,0 +1,15 @@
+---
+layout: default
+---
+<div class="tag">
+<h1>{{ page.title }}</h1>
+<ul>
+    {% assign taged_posts = site.posts | where: 'tags',page.tag | reverse %}
+      {% for post in taged_posts %}
+          <li><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a> ({{ post.date | date_to_rfc822 | date: "%-d %B %Y" }})<br>
+            {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
+            </li>
+    {% endfor %}
+</ul>
+</div>
+<hr>

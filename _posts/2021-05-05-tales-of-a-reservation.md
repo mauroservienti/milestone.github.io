@@ -5,7 +5,7 @@ title: "Tales of a reservation"
 author: Mauro Servienti
 synopsis: "Are you relying on invariants and assuming trust in business rules? Distributed software systems disrupt most of our beliefs. They require a deep understanding of the business and a shift in the way we think. Let's see how the business affects the system design and what new opportunities come to life."
 tags:
- - SOA
+ - soa
 ---
 
 A talk I gave at [ExploreDDD in Denver in 2018](https://youtu.be/KkzvQSuYd5I) has more than 14,000 views. I'm astonished. It was the first time I was presenting my ["All our aggregates are wrong"](/talks/all-our-aggregates-are-wrong.html) talk at a major conference, and it's been a blast.

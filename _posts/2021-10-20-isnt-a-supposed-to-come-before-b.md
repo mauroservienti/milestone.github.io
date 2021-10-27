@@ -6,8 +6,8 @@ enable_mermaid: true
 author: Mauro Servienti
 synopsis: "We are used to lists, sequences, and procedural approaches. We are constantly under the impression that what we do is ordered. That's not the case. Why are we trying to replicate into software architectures a non-existent ordering?"
 tags:
-- SOA
-- distributed systems
+- soa
+- distributed-systems
 - message ordering
 - FIFO
 ---
