@@ -7,8 +7,8 @@ title: "The fine art of dismantling"
 author: Mauro Servienti
 synopsis: "What happens when there is the need to write data in a distributed system? What if this data needs to go to different services? How do services participate in this process like they do for the Composition part? This is when ViewModel Decomposition comes into play. Let's have a look at what it is and especially when it's really needed."
 tags:
-- SOA
-- Services ViewModel Composition
+- soa
+- viewmodel-composition
 - Services ViewModel Decomposition
 category: view-model-composition
 ---
