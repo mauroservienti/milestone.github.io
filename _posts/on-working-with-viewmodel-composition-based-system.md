@@ -4,7 +4,7 @@ header_image: /img/posts/on-working-with-viewmodel-composition-based-system/head
 title: "On working with a ViewModel Composition based system"
 enable_mermaid: true
 author: Mauro Servienti
-synopsis: "Integration testing can be challenging. If we're also dealing with HTTP, it can be a nightmare. HTTP client factory in combination with the Microsoft.AspNetCore.Mvc.Testing package can come to the rescue and save our day."
+synopsis: "What is it like to work with a ViewModel Composition-based system? And is it always the right choice? So far, we have touched on the architectural part. It's time to answer those fundamental questions."
 tags:
 - soa
 - viewmodel-composition
