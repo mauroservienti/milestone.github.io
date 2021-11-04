@@ -114,7 +114,7 @@ As for the previous approach, let's take a look at the pros and cons:
 
 Sounds like exactly the opposite of a repository for each logical service. 
 
-From the structure perspective, there might be a few other approaches that sit in the middle of what we described so far. I guess that they would also lead to a similar distribution of pros and cons.
+From the structure perspective, a few other approaches might sit in the middle of what we described so far. I guess that they would also lead to a similar distribution of pros and cons.
 
 ## To conclude: Shall we blindly use ViewModel Composition?
 
