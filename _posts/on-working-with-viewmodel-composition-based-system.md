@@ -129,3 +129,7 @@ We tend to think in terms of consequences. The reasoning usually goes like this:
 When it comes to user interfaces, that's not the case. There is no other component that we can break if we revolutionize the user interface or the frontend architecture. A user interface sits at the borders of a system, and no other part depends on it.
 
 More importantly, given the already substantial cognitive load composite UIs carry, they require the least amount of moving parts to reduce the burden created by a system under active development. We want to make sure that we start designing the frontend when the massive changes of a system under heavy development are under control and we see the light at the end of the tunnel.
+
+---
+
+Photo by <a href="https://unsplash.com/@chatelp?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Pierre Châtel-Innocenti</a> on <a href="https://unsplash.com/s/photos/windows?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
