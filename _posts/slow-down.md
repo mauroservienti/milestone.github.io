@@ -31,7 +31,7 @@ When swimming front crawl or butterfly for the sake of the sample, the breath pa
 Why is that so complex? Let me use the front crawl stroke as an example. The front crawl stroke is composed of at least five stages:
 
 - The initial part of the stroke is how and where hands and arms get into the water.
-- Then there is the catch when swimmers start pulling water with their hands. How the elbow is positioned is crucial to a good catch.
+- Then there is the catch when swimmers start pulling water with their hands and forearms. How the elbow is positioned is crucial to a good catch.
 - After catching water, the next stage is pulling. In this case, a critical factor is the body angle needed to distribute strength between pectorals and back muscles properly.
 - Then, how the stroke is finished is the next step, needed to squeeze out all possible energy from the previous pulling stage.
 - Finally, getting elbows out of the water with hands nearly touching ears stretching over the surface.
@@ -62,7 +62,7 @@ Getting stuff done is not easy. Getting many things done is even harder. We have
 - [Lifehacking 101: journaling as a continuous learning process](https://milestone.topics.it/2021/03/01/journaling-as-a-continuous-learning-process.html)
 - [Lifehacking 101: plans disruptions](https://milestone.topics.it/2021/05/20/plans-disruptions.html)
 
-In this article, I touched on something that is less tactical and more strategic: the need to slow down to build habits and master the details of all the activities we want to complete. Only by slowing down we understand how to go faster.
+In this article, I touched on something that is less tactical and more strategic: the need to slow down to build habits and master the details of all the activities we want to complete. Only by slowing down we understand how to go faster. On the same topic there is an excellent article written a few years ago by [Antony Marcano](https://twitter.com/AntonyMarcano): [Slow is Smooth. Smooth is Fast](http://antonymarcano.com/blog/2013/08/slow-is-smooth-smooth-is-fast/).
 
 ---
 
