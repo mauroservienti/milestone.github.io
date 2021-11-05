@@ -116,7 +116,7 @@ Sounds like exactly the opposite of a repository for each logical service.
 
 From the structure perspective, a few other approaches might sit in the middle of what we described so far. I guess that they would also lead to a similar distribution of pros and cons.
 
-## To conclude: Shall we blindly use ViewModel Composition?
+## Shall we blindly use ViewModel Composition?
 
 The quick answer is obviously no. And not only for the technical challenges presented in this article.
 
@@ -129,6 +129,16 @@ We tend to think in terms of consequences. The reasoning usually goes like this:
 When it comes to user interfaces, that's not the case. There is no other component that we can break if we revolutionize the user interface or the frontend architecture. A user interface sits at the borders of a system, and no other part depends on it.
 
 More importantly, given the already substantial cognitive load composite UIs carry, they require the least amount of moving parts to reduce the burden created by a system under active development. We want to make sure that we start designing the frontend when the massive changes of a system under heavy development are under control and we see the light at the end of the tunnel.
+
+## Conclusion
+
+To summarize, I'd suggest the following approach:
+
+- Do not start designing a distributed system and at the same time implement ViewModel Composition or micro-frontends.
+- When implementing ViewModel Composition, start with the "repository per logical service" approach. It's simpler, it comes with fewer moving parts, and wasting version numbers is not that big of a deal.
+If you start experiencing friction at a certain point due to the development style choices, move to a different style only for the services where the clash is.
+
+Keep in mind that all those decisions don't have to monolithically affect the whole system. We can benefit from designing a distributed system and taking advantage of the services' autonomy in many different contexts.
 
 ---
 
