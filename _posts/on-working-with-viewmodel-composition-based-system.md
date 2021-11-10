@@ -69,7 +69,7 @@ graph LR
 
 > I'm intentionally skipping UI Composition/micro-frontends. It can only be more complex. Please, leave a comment below if you think UI Composition aspects need any further in-depth analysis.
 
-In between the logical and physical/process view of the system sits the development view. The development view enables the logical view to get to life. At the same time, it mediates and adapts from the logical view to the runtime needs respecting the non-functional requirements imposed by the tool-chain in use.
+In between the logical and physical/process view of the system sits the development view. The development view enables the logical view to come to life. At the same time, it mediates and adapts from the logical view to the runtime requirements respecting the non-functional requirements imposed by the tool-chain in use.
 
 Let's think about the development phase of service A. It's composed of two components: the restful API mediating the data access. The composition handler allows data to flow from the restful API to the view model owned by branding.
 
@@ -95,9 +95,9 @@ We could have a different repository for each component: A repository for the re
 
 CI/CD pipelines would be much easier. The restful API can be deployed independently from other components, and the same goes for all the components. Composition handlers could be deployed as Nuget packages, consumed by the composition gateway host at deployment time. Composition handlers and the fronted would also depend on the ViewModel package.
 
-By doing so, we'd get fine-grained control over packages deployment and versioning. It would be much easier to set up and customize CI/CD pipelines for each component. And we won't waste any version number because each component would only be released when strictly necessary.
+By doing so, we'd get fine-grained control over package deployment and versioning. It would be much easier to set up and customize CI/CD pipelines for each component. And we won't waste any version numbers because each component would only be released when strictly necessary.
 
-That begin said, it's not gold all that glitters. Setting up integration testing is way more complicated when using different repositories for each component. It's not impossible. However, we'll have to spend time designing custom components and tools specifically aimed at supporting integration tests.
+That being said, all that glitters is not gold. Setting up integration testing is way more complicated when using different repositories for each component. It's not impossible. However, we'll have to spend time designing custom components and tools specifically aimed at supporting integration tests.
 
 Last but not least. Even if it's true that using a repository for each component is a cleaner approach, it'll introduce friction into the development process, especially at the early stages. Let's imagine that we're adding a new restful API. The first step is to change the restful API repository; then, we need to publish the changes so that downstream components can consume them. The development effort then moves onto composition handlers. Update the dependency on the restful API package to have integration tests fail or be able to create the new required tests. Adjust the composition handlers to support the new restful API and publish the package. Apply, if needed, a similar process to the frontend component.
 
@@ -107,8 +107,8 @@ I wouldn't define the described process as smooth.
 
 As for the previous approach, let's take a look at the pros and cons:
 
-- Cons: the overall development process will come with more frictions
-- Cons: multiple components integration testing will be more challenging
+- Cons: the overall development process will have more friction
+- Cons: integration testing for multiple components will be more challenging
 - Pros: simpler CI/CD pipelines
 - Pros: each release will release only the changed components
 
@@ -124,7 +124,7 @@ There are many factors that we should consider before deciding to use ViewModel 
 
 It's probably fair to say that a composite UI is the last of the problems; not necessarily the least important, but the last to address.
 
-We tend to think in terms of consequences. The reasoning usually goes like this: if we design that component in a suboptimal way when we'll fix it, it will hurt all these other components.
+We tend to think in terms of consequences. The reasoning usually goes like this: if we design that component in a suboptimal way, then when we fix it, it will hurt all these other components.
 
 When it comes to user interfaces, that's not the case. There is no other component that we can break if we revolutionize the user interface or the frontend architecture. A user interface sits at the borders of a system, and no other part depends on it.
 
