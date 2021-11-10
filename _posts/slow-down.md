@@ -10,7 +10,7 @@ tags:
 
 At the beginning of summer 2021, I had the pleasure to work remotely for a week from the friend's place pictured in the header of this article.
 
-One of the prominent beauties of the place is the private, 50 meters-long swimming pool the apartment complex has. We swam every day before lunch.
+One of the prominent beauties of the place is the private, 50 meter-long swimming pool the apartment complex has. We swam every day before lunch.
 
 One day, in between lengths, I complained a bit because I was tired. That day's training was more challenging than expected. 
 
@@ -26,7 +26,7 @@ With Udi, we discussed the "Slow is Smooth. Smooth is Fast" SEAL and Delta Force
 
 Swimming is an extraordinarily complex and challenging activity. Swimming fast comes with many subtle challenges. Technique is everything; it's much more important than strength. And probably the most difficult part is breathing.
 
-When swimming front crawl or butterfly for the sake of the sample, the breath pace is determined by strokes pace, and swimmers cannot breath when their body needs or at the rhythm they want. Usually, what happens to amateur swimmers when they start is that they try to swim faster by stroking faster. Stroking faster comes with breathing at a faster pace and with less time for each breath. Less time to breathe means less oxygen exchange which causes hypoxia that eventually leads to less effective muscles. The result is that they go slower instead of faster.
+When swimming front crawl or butterfly for the sake of the sample, the breath pace is determined by the stroke pace, and swimmers cannot breath when their body needs it or at the rhythm they want. Usually, what happens to amateur swimmers when they start is that they try to swim faster by stroking faster. Stroking faster comes with breathing at a faster pace and with less time for each breath. Less time to breathe means less oxygen exchange which causes hypoxia that eventually leads to less effective muscles. The result is that they go slower instead of faster.
 
 Why is that so complex? Let me use the front crawl stroke as an example. The front crawl stroke is composed of at least five stages:
 
