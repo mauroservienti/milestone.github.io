@@ -101,7 +101,7 @@ That being said, all that glitters is not gold. Setting up integration testing i
 
 Last but not least. Even if it's true that using a repository for each component is a cleaner approach, it'll introduce friction into the development process, especially at the early stages. Let's imagine that we're adding a new restful API. The first step is to change the restful API repository; then, we need to publish the changes so that downstream components can consume them. The development effort then moves onto composition handlers. Update the dependency on the restful API package to have integration tests fail or be able to create the new required tests. Adjust the composition handlers to support the new restful API and publish the package. Apply, if needed, a similar process to the frontend component.
 
-> For more details about integration testing when using HTTP endpoints, take a look at ["You wanna test HTTP, right?"](https://milestone.topics.it/2021/04/28/you-wanna-test-http.html) and the latest [HTTP client and HTTP client factory in integration testing](link).
+> For more details about integration testing when using HTTP endpoints, take a look at ["You wanna test HTTP, right?"](https://milestone.topics.it/2021/04/28/you-wanna-test-http.html) and the latest [HTTP client and HTTP client factory in integration testing](https://milestone.topics.it/2021/11/10/http-client-factory-in-integration-testing.html).
 
 I wouldn't define the described process as smooth.
 
