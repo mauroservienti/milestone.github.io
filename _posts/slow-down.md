@@ -44,9 +44,11 @@ Swimmers, especially beginners, need to slow down to concentrate on breathing an
 
 Can we learn something from swimmers, and many other conceptually similar activities, to improve our efficiency? For example, if we believe we're achieving little to nothing, how can we go "faster"? What would a swimmer do?
 
-Sure thing we can.
-
 By slowing down, as swimmers do, we can concentrate on the details of the task. We can improve and master them. More importantly, the act of repeatedly performing an activity creates the same "muscle memory" effect, and the task becomes a habit. Once it's a habit, and trust me, it takes time and energy and perseverance, it won't take its toll anymore.
+
+> I'm using the swimming analogy because I swim three times a week, and I've been doing that for most of my life. The same approach applies to many different activities. For example, practicing a problematic music piece is the same thing. You start slow to work out the notes, fingering, and dynamics until muscle memory kicks in, then you speed it up.
+
+## The journey is more important than the destination
 
 Last but not least, do not focus on the final result. Just focus on the improvement itself. Improve for the sake of improving and to improve more tomorrow. Swim today so that tomorrow you can swim more. One day, by chance, you'll try swimming a very long distance, and you'll do it.
 
