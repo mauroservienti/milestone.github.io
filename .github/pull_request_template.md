@@ -1,6 +1,7 @@
 ## PoA
 
 - [ ] Synopsis
+- [ ] Tags
 - [ ] Header image
 - [ ] Header image credits
 - [ ] Review
