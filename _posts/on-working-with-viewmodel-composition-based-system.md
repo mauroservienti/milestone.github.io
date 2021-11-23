@@ -21,6 +21,8 @@ ViewModel Composition and UI Composition, or micro-frontends if you prefer, are 
 
 Instead of modeling a real-world scenario, I'll use a trivial one that comes with all the challenges anyway. And hopefully, it'll be detailed enough to provide insights on designing a real system using ViewModel Composition techniques.
 
+> As usual, if you have any questions, please, do not hesitate to get in touch. Either using the comments below or the [contact form](https://mauroservienti.typeform.com/to/luuJPw).
+
 ## Architecture view models
 
 Imagine a trivial scenario where we're composing data from two services in one ViewModel to serve the frontend:
