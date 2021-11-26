@@ -53,3 +53,5 @@ However, distributed systems come with their own set of complexity. Monitoring a
 As always, there is no silver bullet. The important message is to try to avoid unnecessary abstraction layers. That is especially true if the only purpose of the abstraction is clean architecture. It's effortless and sometimes satisfying to build abstraction layers for the sake of building abstractions. It's indeed over-engineering, but on the surface, it's a rewarding type of over-engineering. It's like honey for bees.
 
 ---
+
+Photo by <a href="https://unsplash.com/@amenabarladrondeguevara?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ignacio Amenábar</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
