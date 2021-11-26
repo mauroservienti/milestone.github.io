@@ -39,3 +39,5 @@ Do we need pull requests? No. If teams are empowered and trusted, they could be 
 As with many problems, if not all, it's important not to stop at the surface and immediately jump the solution. Instead, deeply investigate the issue looking for its root cause, and try to improve the situation from there.
 
 ---
+
+Photo by <a href="https://unsplash.com/@karim_manjra?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Karim MANJRA</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
