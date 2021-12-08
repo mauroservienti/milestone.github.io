@@ -83,3 +83,7 @@ We can create a separate saga, or more than one, to handle the payment and invoi
 When looking at long-running business processes, it's easy to be overwhelmed by the apparent complexity. In many cases, they are not that complex. It's the way we frame them that creates complexity. Beware that the user's mental model can be a traitor. We must spend time dissecting processes to break them down into their founding components. Once that's done, each part is more straightforward and ready to be implemented. Many of these simpler parts can still be long-running processes. If that's the case, sagas are an excellent solution.
 
 As in many contexts, _It's the single responsibility principle, baby._
+
+---
+
+Photo by <a href="https://unsplash.com/@__itsflores?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Omar Flores</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
