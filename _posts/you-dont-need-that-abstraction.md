@@ -3,7 +3,7 @@ layout: post
 header_image: /img/posts/you-dont-need-that-abstraction/header.jpg
 title: "You don't need that abstraction"
 author: Mauro Servienti
-synopsis: "Abstractions, abstractions everywhere! We're obsessed with clean design and architecture. Do we need that, or the introduced cognitive load comes with more issues than benefits?"
+synopsis: "Abstractions, abstractions everywhere! We're obsessed with clean design and architecture. Do we need that, or does the introduced cognitive load come with more issues than benefits?"
 tags:
 - architecture
 - soa
@@ -15,8 +15,7 @@ One of the beauties of service-oriented architecture (SOA) is simplicity.
 
 Well, yes. But also no. In my experience, overall, a distributed system comes with slight complexity differences compared to a monolithic architecture. It's where the complexity is that is important and dramatically changes the day-to-day experience.
 
-With a monolithic architecture, the entire system is at our disposal. Adding a reference to a project in the solution is trivial, and our preferred IDE IntelliSense will immediately show new types and new members. 
-That is like honey for bees: it's hard to resist temptation. It's effortless to steer away from a well-designed monolithic architecture.
+With a monolithic architecture, the entire system is at our disposal. Adding a reference to a project in the solution is trivial, and our preferred IDE IntelliSense will immediately show new types and new members. That is like honey for bees: it's hard to resist temptation. It's effortless to steer away from a well-designed monolithic architecture.
 
 If that happens, or preemptively in an attempt to prevent that happening, we build abstraction layers. We cannot reference a project and use the defined types because they are internal or private to the package. Instead, we have to use that other package that ships the abstraction as interfaces. Finally, we must introduce dependency injection (DI) and inversion of control (IOC) techniques to resolve the concrete types at runtime.
 
