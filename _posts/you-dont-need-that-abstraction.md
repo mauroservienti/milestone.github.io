@@ -45,7 +45,7 @@ Also, autonomous components drive more adherence to the single responsibility pr
 
 Finally, code simplicity comes with less cognitive load.
 
-However, distributed systems come with their own set of complexity. Monitoring and debugging are representative samples of things that are harder than in monolithic architecture.
+However, one could argue that monitoring and debugging are more challenging in distributed systems. That's a valid point that's worth exploring in a dedicated post. Stay tuned.
 
 ## Conclusion
 
