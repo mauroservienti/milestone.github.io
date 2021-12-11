@@ -22,6 +22,10 @@ However, let's assume that it's impossible.
 
 Pull requests and the inherent need for reviews are a [poka-yoke](https://seths.blog/2021/11/in-search-of-poka-yokes/), and as such, we should treat them.
 
+> Poka-yoke (ポカヨケ, [poka joke]) is a Japanese term that means "mistake-proofing" or "inadvertent error prevention". A poka-yoke is any mechanism in a process that helps an equipment operator avoid (yokeru) mistakes (poka) and defects by preventing, correcting, or drawing attention to human errors as they occur.
+
+_Source: [Poka-yoke, Wikipedia](https://en.wikipedia.org/wiki/Poka-yoke)_
+
 If the above assumption that a team is not doing one thing is correct, what if the group was responsible for its reviews? Different team members could be cross-reviewing their pull requests.
 
 While a subset of the team works on some documentation, they could review the changes related to the feature they are documenting. Those code changes are applied by a different group of people in the same team. Similarly, if a portion of the team is changing the frontend, the other group, updating the backend code, could be requested as reviewers.
