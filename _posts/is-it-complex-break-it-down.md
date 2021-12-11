@@ -13,7 +13,7 @@ tags:
 
 Over time I learned how important words are. We have absolute concepts like color; something is red, yellow, or green. And then we have not such absolute concepts, like weight, size, or complexity. When we say that something is small or micro, it's always compared to something else. The same goes for weight or complexity. Something is not heavy; it's heavier or lighter than something else. On the same line, something else is more complex than another thing.
 
-I often listen to people defining some technology or architecture style as heavy or complex. I'm guilty, too; I did the same things many times.
+I often listen to people defining some technology or architecture style as heavy or complex. I'm guilty, too; I've done the same things many times.
 
 ## But are they complex or heavy?
 
@@ -25,9 +25,9 @@ Let's consider the following business process:
 
 > the system, at checkout, converts a shipping cart into an order. Once converted, the process proceeds to fulfill and prepare the order for shipment. When the order is shipped, an invoice is issued and marked as due based on its payment terms. Later on, the order management system checks for overdue invoices.
 
-In theory, we can have a "ginormous" saga handling all that described so far.
+In theory, we can have a _ginormous_ saga handling all that I've described so far.
 
-If we do that, we'll have a complex implementation of what appears to be a complex business process. And, every time we'll have to tweak it to adapt to change requests, or we'll have to deploy it, we'll perceive it as heavy.
+If we do that, we'll have a complex implementation of what appears to be a complex business process. And every time we'll have to tweak it to adapt to change requests or deploy it, we'll perceive it as heavy.
 
 I'm using complex and heavy because we can have a less complicated, I'd argue simple, and thus lightweight, implementation of the described business process.
 
@@ -76,7 +76,7 @@ All that said applies to finance too. Finance reacts to the order-shipped event,
 
 We can create a separate saga, or more than one, to handle the payment and invoicing procedures. Payment is a different saga than the one needed to generate the invoice. But it doesn't end here. Once the invoice is issued, which turns to be an event published by finance, a third saga is kicked off to keep track of the shipment-returned event to refund the user's credit card eventually. Another option could be if the system allows different payment methods: if customers could buy and pay, upon receiving the goods, using a wire transfer, the system needs to keep track of overdue payments.
 
-> A sample implementation of this last bit is described in [Got the time article](https://milestone.topics.it/2021/03/05/got-the-time.html).
+> A sample implementation of this last bit is described in my [Got the time article](https://milestone.topics.it/2021/03/05/got-the-time.html).
 
 ## Conclusion
 
