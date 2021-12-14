@@ -10,7 +10,7 @@ tags:
 
 Continuous integration (CI) is the practice of continuously pushing code changes to the mainline instead of the established or accepted practice of going through pull requests. CI supporters assume that pull requests slow you down because the review process implies too much waiting time. When waiting time is too much, the assumption is that the people waiting for the code review will shift their attention to something else, first context switch issue, and when the review requested changes come in, they can go back to the pull request to fix them, second context switch issue. The conclusion is that pull requests are bad because they lead to too much context switching.
 
-> Source: https://infrastructure-as-code.com/book/2021/01/02/pull-requests.html
+_Source: https://infrastructure-as-code.com/book/2021/01/02/pull-requests.html_
 
 It might be the case in specific scenarios for sure, but I generally find it hard to point my finger at pull requests as the root cause of the problem. The practice of using pull requests can be for sure something that nudges in the direction of accepting long wait times in reviews, but I fail to see the causation. If anything, it's probably the other way around. When the organization structure pushes in the direction of code reviews that takes a long time and is performed by a different group of people than the one committing the code; the only way to go through this frustrating process is through pull requests and the accompanying context switch. In fact, in most scenarios, this group is referred to as the committee. If this is the case, can we say that pull requests are the culprit? In essence, look for the cause, not the symptoms.
 
