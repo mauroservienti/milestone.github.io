@@ -9,7 +9,8 @@ tags:
 - self-organization
 ---
 
-I'm surrounded by people spending money, as if there is no tomorrow, for things I find completely useless.
+I'm surrounded by people spending money as if there is no tomorrow, for things I find completely useless.
+
 
 Anthropologically the human being is a collector, not a predator. We're designed to buy stuff, and marketing people are extremely good at nudging us in that direction.
 
@@ -22,9 +23,10 @@ One of the things that survived the most on the wish list is an activity trackin
 I use the Forerunner for a similar job. When swimming, I follow a workout made of lengths, pauses, drills, and some drowning too ;-)
 Until last year, the Forerunner was a handy companion. I preload workouts to the device and follow them in the pool.
 
-This year I changed the pool where I go swimming, and in this pool, there are workouts available for free. They are printed, and plastic coated. Swimmers can bring them in the water, and the plastic coat, when wet sticks well to the wall.
+This year I changed the pool where I go swimming, and in this pool, there are workouts available for free. They are printed, and plastic coated. Swimmers can bring them in the water and the plastic coat sticks well to the wall when wet.
 
-At the same time, all decent polls have one of these "clocks":
+At the same time, all decent pools have one of these "clocks":
+
 
 ![pool clock](image to add)
 
@@ -38,11 +40,12 @@ The reality is that I'm looking for a coach. And I've been trying to solve the p
 
 I need someone or something to tell me: do this to improve that. I have a feeling I reached the limits of self-training.
 
-So far, I never realized that was my essential need, and I always watched at devices like cool gadgets that come with tons of features. The thing is that all those features were making me blind. They were like a sugar rush, making me excited for no real good reasons.
+So far, I never realized that was my essential need, and I always looked at devices like cool gadgets that come with tons of features. The thing is that all those features were making me blind. They were like a sugar rush, making me excited for no good reason.
 
 ## Conclusion 
 
-This short post is written from a personal point of view but under the hood, what I'm hinting at is: when designing things, be careful not to hide the important stuff in the "sugar rush," unless the essential element isn't there at all. By the way, when it comes to swimming, it seems that my colleague [Christian](https://twitter.com/cquirosj) is a perfect partner in crime. He has so many ideas for improvements!
+This short post is written from a personal point of view but under the hood, what I'm hinting at is: when designing things, be careful not to hide the important stuff in the "sugar rush," unless the essential element isn't there at all. By the way, when it comes to swimming, it seems that my colleague [Christian](https://twitter.com/cquirosj) is a perfect partner in crime. He has so many ideas for improvements! Sometimes the best technology is just another person that shares your interest :)
+
 
 BTW, I'll probably buy a new [Garmin feinx 6](https://www.garmin.com/en-US/p/641479/pn/010-02158-13) anyway.
 
