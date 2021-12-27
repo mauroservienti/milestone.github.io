@@ -18,7 +18,7 @@ Even if I find most of the stuff people buy useless, I'm not immune to the marke
 
 I regularly go through my list and evaluate items. I use a pros/cons approach to determine if I need them. I remove them from the wish list all the time. The only things that survive are LEGO bricks.
 
-One of the things that survived the most on the wish list is an activity tracking device. In my case, I'm keeping an eye on many different Garmin devices. I'm a happy Garmin Edge 830 and a relatively old Forerunner 920XT owner. They served me well over the years. Being a bike rider, my primary use for the Edge is turn-by-turn navigation. I cannot care less about stats, speed, or other numbers the device spits. I sit down at my desk, use Garmin Connect to plan a ride, upload the ride to the device, and finally ride.
+One of the things that survived the most on the wish list is an activity tracking device. In my case, I'm keeping an eye on many different Garmin devices. I'm a happy [Garmin Edge 830](https://www.garmin.com/en-US/p/621232) and a relatively old [Forerunner 920XT](https://www.garmin.com/en-US/p/137024) owner. They served me well over the years. Being a bike rider, my primary use for the Edge is turn-by-turn navigation. I cannot care less about stats, speed, or other numbers the device spits. I sit down at my desk, use Garmin Connect to plan a ride, upload the ride to the device, and finally ride.
 
 I use the Forerunner for a similar job. When swimming, I follow a workout made of lengths, pauses, drills, and some drowning too ;-)
 Until last year, the Forerunner was a handy companion. I preload workouts to the device and follow them in the pool.
