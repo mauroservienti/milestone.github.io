@@ -28,7 +28,7 @@ This year I changed the pool where I go swimming, and in this pool, there are wo
 At the same time, all decent pools have one of these "clocks":
 
 
-![pool clock](image to add)
+![swimming pool pace timer](/img/posts/do-I-still-need-a-smartwatch/pace-timer.jpg){:class="img-fluid mx-auto d-block"}
 
 The only thing a Forerunner substitute could do more for me is zone-based training. For those of up you unaware of that, it's the possibility of training within a specific heart rate range. The device vibrates if your heart rate goes above or below the defined range, and the swimmer knows that they need to push more or less.
 
