@@ -10,6 +10,7 @@ synopsis: "HTTP is the Microservices way, so it must be used as a communication 
 tags:
 - soa
 - architecture
+- logical-vs-physical
 ---
 
 *Today’s post will be more about KISS and SOA in general rather than ViewModel Composition, so it won’t be part of the [ViewModel Composition category](https://milestone.topics.it/categories/view-model-composition). Even if the inception is something discussed in the ViewModel Composition series.*
