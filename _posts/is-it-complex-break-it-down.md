@@ -4,7 +4,7 @@ header_image: /img/posts/is-it-complex-break-it-down/header.jpg
 title: "Is it complex? Break it down!"
 slug: is-it-complex-break-it-down
 author: Mauro Servienti
-synopsis: "Sometimes, we choose technology based on the perceived complexity or heaviness. We focus our decisions on the technical solutions rather than looking deeper at the problems we hire those solutions. Are we making the right choices?"
+synopsis: "Sometimes, we choose technology based on the perceived complexity or heaviness. We focus our decisions on the technical solutions and rather than looking deeper at the problems, we stick with what we know. Are we making the right choices?"
 tags:
 - sagas
 - soa
