@@ -76,7 +76,7 @@ All that said applies to finance too. Finance reacts to the order-shipped event,
 
 We can create a separate saga, or more than one, to handle the payment and invoicing procedures. Payment is a different saga than the one needed to generate the invoice. But it doesn't end here. Once the invoice is issued, which turns to be an event published by finance, a third saga is kicked off to keep track of the shipment-returned event to refund the user's credit card eventually. Another option could be if the system allows different payment methods: if customers could buy and pay, upon receiving the goods, using a wire transfer, the system needs to keep track of overdue payments.
 
-> A sample implementation of this last bit is described in my [Got the time article](https://milestone.topics.it/2021/03/05/got-the-time.html).
+> A sample implementation of this last bit is described in my [Got the time article](https://milestone.topics.it/2021/03/05/got-the-time.html). If you’re interested in a sample that covers the whole presented scenario, just leave a comment below.
 
 ## Conclusion
 
