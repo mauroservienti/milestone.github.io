@@ -32,6 +32,8 @@ Finally, we'll focus our attention on the impact of time on the design, and see 
 
 (All we want, two, three, go! Time, got the time tick tick tickin' in my head!)
 
+Recording: <https://youtu.be/dXzruf1nYmw>
+
 ## Got the time (Italiano)
 
 "Controllare se le fatture scadute sono saldate." sembra abbastanza semplice. Ma quando scadono le fatture? Scadono tutte lo stesso giorno?
