@@ -46,7 +46,7 @@ layout: default
         {% assign tag_pages = site.tags | where: 'tag',tag %}
         {% if tag_pages and tag_pages.size > 0 %}
           {% assign tag_page = tag_pages[0] %}
-          <a href="{{ tag_page.url | prepend: site.baseurl }}"><nobr>{{ tag_page.title }}</nobr></a>&nbsp;
+          <a href="{{ tag_page.url | prepend: site.baseurl }}"><nobr>{{ tag_page.title }}</nobr></a>{% if forloop.last == false %},&nbsp;{% endif %}
         {% endif %}
       {% endfor %}
     </p>
