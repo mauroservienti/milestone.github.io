@@ -4,7 +4,6 @@ header_image: /img/posts/too-stressed-about-vendor-lock-in/header.jpg
 title: "We're too stressed about vendor lock-in"
 author: Mauro Servienti
 synopsis: "Developers and managers are worried about vendor lock-in. They build castles of cards in a vain attempt to workaround what they perceive as a problem. Is this a different form of over-engineering?"
-
 tags:
 - processes
 ---
@@ -13,17 +12,13 @@ When talking to managers and developers, I often realize they face the vendor lo
 
 Managers and developers fear that they'll be locked in by selecting a specific vendor's technology. It'll be complex to switch to a different solution, e.g., another vendor, to solve the same problem without incurring massive costs.
 
-
 Nowadays, one good example of vendor lock-in is represented by cloud solution providers like Amazon AWS, Microsoft Azure, or Google Cloud, to name a few. The reasoning usually goes like this: If we fully buy into technology X, e.g., AWS Lambda functions, it'll be tremendously expensive to move to a different platform in the future.
-
 
 ## History repeats itself
 
 It reminds me of one of the main selling points of ORMs ([Object-relational mapping](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping)): you can switch the underlying database.
 
-
 In 22 years, not once have I seen a company switch database vendors. I developed many solutions built on that claim but they've never benefited from it. So I'm guilty too!
-
 
 ## (vendor) lock-in
 
