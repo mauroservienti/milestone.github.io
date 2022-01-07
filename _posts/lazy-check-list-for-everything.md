@@ -17,7 +17,7 @@ In such a world, everyone used to memorize a lot of stuff. I still remember home
 
 My digital device life started with a [Philips Velo 1](https://americanhistory.si.edu/collections/search/object/nmah_1827950), followed by a [Compaq iPAQ 3150](http://pencomputing.com/frames/compaq_ipaq_3610.html). Everything changed: no more need to remember phone numbers, no more need to have a paper planner, and more advantages.
 
-Nowadays, everything is different. Devices swamp us. The market offers every sort of option. From smartphones to smart rings, we can buy a device for every possible use. Many of them are indeed a solution in search of a problem, but that's also another story.
+Nowadays, everything is different. Devices swamp us. The market offers every sort of option. From smartphones to smart rings, we can buy a device for every possible use. Many of them are indeed a solution in search of a problem, [but that's also another story](https://milestone.topics.it/2021/12/27/do-I-still-need-a-smartwatch.html).
 
 Regardless of their usefulness, it's fair to say that digital devices have changed our lives for the better. My primary use for digital devices is probably a bit different from most people. I don't have any social account configured on any device. I have very few installed apps, and if I look at [iOS screen time](https://support.apple.com/en-us/HT208982), a friendly iOS features keeping track of time spent using different apps, it tells me that I'm primarily using [Pocket](https://getpocket.com/), [Feedly](https://www.feedly.com), [Todoist](https://todoist.com), and [Paper](https://www.dropbox.com/paper).
 
