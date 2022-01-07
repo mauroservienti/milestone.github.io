@@ -1,7 +1,7 @@
 ---
 layout: post
-header_image: /img/posts/lazy-check-list-for-everything/header.jpg
-title: "I’m lazy, I have a check list for everything"
+header_image: /img/posts/lazy-checklist-for-everything/header.jpg
+title: "I’m lazy, I have a checklist for everything"
 author: Mauro Servienti
 synopsis: "I don't want to waste brain cycles to remember things that aren't worth remembering. To-do lists and checklists are a much better approach. They help me not to forget things, and simultaneously, they free up my brainpower for more important matters."
 tags:
