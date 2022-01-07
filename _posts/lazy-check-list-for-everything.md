@@ -12,7 +12,6 @@ tags:
 
 I'm turning 49 in a few days. I hate aging, but that's food for another story. When I was a kid, there were no digital devices of any sort. We got extremely excited when Sony released the [Walkman](https://en.wikipedia.org/wiki/Walkman). We were used to 45 RPM portable record players.
 
-
 In such a world, everyone used to memorize a lot of stuff. I still remember home and friends' phone numbers from 40 years ago. Adults used the prehistoric edition of a digital device, a paper "agenda" to remember things, but not kids. Using agendas was a terrible experience. I have clear in my mind my mother spending hours at the end of every year copying essential things, like phone numbers, from one planner to the new year's one.
 
 My digital device life started with a [Philips Velo 1](https://americanhistory.si.edu/collections/search/object/nmah_1827950), followed by a [Compaq iPAQ 3150](http://pencomputing.com/frames/compaq_ipaq_3610.html). Everything changed: no more need to remember phone numbers, no more need to have a paper planner, and more advantages.
