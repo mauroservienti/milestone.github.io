@@ -26,7 +26,7 @@ The first two are for reading articles. For books, I have a nine-year-old Kindle
 
 The cat needs a daily pill for its kidney problems. I need to clean the Roomba dust filter every three days. We do waste sorting daily. Not to mention grocery shopping and many other minor and not so minor things that the entire family needs to remember. All that is stored in Todoist. We only need to remember to check Todoist. Easy peasy, lemon squeezy.
 
-Before the pandemic, I used to travel quite a lot. More or less one week away from home every four or five weeks. Traveling requires a lot of preparation, ranging from booking airline tickets and airport car parking to packing stuff and complying with the destination rules (e.g., ESTA when traveling to the United States). There are plenty of details and documents that need to be prepped and brought with you. Not to mention less essential things, but still nice to have, like a toothbrush or gym/swim gear to exercise whole abroad.
+Before the pandemic, I used to travel quite a lot. More or less one week away from home every four or five weeks. Traveling requires a lot of preparation, ranging from booking airline tickets and airport car parking to packing stuff and complying with the destination rules (e.g., ESTA when traveling to the United States). There are plenty of details and documents that need to be prepped and brought with you. Not to mention less essential things, but still nice to have, like a toothbrush or gym/swim gear to exercise while abroad.
 
 I have a Dropbox Paper document template for that and many other things.
 
