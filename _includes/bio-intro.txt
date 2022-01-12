@@ -1,1 +1,1 @@
-Mauro is a Solution Architect in Particular Software, the makers of NServiceBus. He spends his time helping developers building better .NET systems leveraging Service Oriented Architecture (SOA) principles and message-based architectures.
+Mauro is a Solution Architect in Particular Software, the makers of NServiceBus. He spends his time helping developers build better .NET systems leveraging Service Oriented Architecture (SOA) principles and message-based architectures.
