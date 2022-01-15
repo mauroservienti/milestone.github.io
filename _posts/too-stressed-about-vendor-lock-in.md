@@ -46,7 +46,7 @@ I hear you saying that it's impossible—however, the [Rosetta project](https://
 
 ## What can we do about it?
 
-For example, we can select only solutions based on standards. No one is concerned with being locked into HTML or e-mails. They are established standards for which there are several offerings from different vendors. However, one could argue that they are a sort of legacy. That is true; they are not cutting-edge technologies. But for fast-evolving cutting-edge technologies, we cannot expect to find established standards. It's a chicken and egg problem.
+For example, we can select only solutions based on standards. No one is concerned with being locked into HTML or e-mails (or maybe we all are, but there is no way out ;-P). They are established standards for which there are several offerings from different vendors. However, one could argue that they are a sort of legacy. That is true; they are not cutting-edge technologies. But for fast-evolving cutting-edge technologies, we cannot expect to find established standards. It's a chicken and egg problem.
 
 Another approach is componentization, and distributed systems are one way of componentizing complex software systems. Distributed systems can be polyglot by definition. The components and services autonomy enables selecting the best technology for each component. As we used to say, a distributed system is a set of small ugly balls of mud. Being polyglot can also be a set of many minor lock-in problems. Those problems being small and well isolated, can be solved much easily.
 
