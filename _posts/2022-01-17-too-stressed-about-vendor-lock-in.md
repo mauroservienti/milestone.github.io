@@ -43,7 +43,7 @@ Those things happen every day. Can we do something about it? Sure, we could writ
 
 When it comes to uncertainty, there is no way out. There are only mitigation strategies. We can throw money at the problem. For example, we can pay a vendor to extend support beyond the official retirement of the technology. Or we can decide to select a technology and live with it for the rest of our days.
 
-I hear you saying that it's impossible—however, the [Rosetta project](https://www.nasa.gov/rosetta) witness that it's doable. They launched in 2004 to land on a comet ten years later, in 2014. And the engineering work started years in advance. Do you think they could do an OTA (Over The Air) update to the software running on the lander? They landed with something we would not consider worth it nowadays, even for an incredibly cheap smartwatch. Again, it's a matter of priorities. They fixed the uncertainty problem by never changing the selected technology. Inherently, they threw money at the problem.
+I hear you saying that it's impossible—however, the [Rosetta project](https://www.nasa.gov/rosetta) witnesses that it's doable. They launched in 2004 to land on a comet ten years later, in 2014. And the engineering work started years in advance. Do you think they could do an OTA (Over The Air) update to the software running on the lander? They landed with something we would not consider worth it nowadays, even for an incredibly cheap smartwatch. Again, it's a matter of priorities. They fixed the uncertainty problem by never changing the selected technology. Inherently, they threw money at the problem.
 
 ## What can we do about it?
 
