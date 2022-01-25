@@ -1,7 +1,7 @@
 ---
 layout: post
 header_image: /img/posts/lets-get-logical/header.jpg
-title: "Let's get Logical! On logical and physical architectural views"
+title: "Let's get logical! On logical and physical architectural views"
 author: Mauro Servienti
 synopsis: "Having a deep understanding of the differences between physical and logical boundaries can help shed light on the way we architect systems. Usually, it leads to simpler solutions."
 enable_mermaid: true
@@ -31,23 +31,21 @@ flowchart LR
   end
 </div>
 
-> Recordings for both ["All our aggregates are wrong"](https://milestone.topics.it/talks/all-our-aggregates-are-wrong.html) and ["Designing a UI for Microservices"](https://milestone.topics.it/talks/designing-ui-for-microservices.html) talks are available.
+> Recordings for both ["All our aggregates are wrong"](https://milestone.topics.it/talks/all-our-aggregates-are-wrong.html) and ["Designing a UI for Microservices"](https://milestone.topics.it/talks/designing-ui-for-microservices.html) are available.
 
-If all that is new for you, let me briefly describe what we are talking about: We are in the context of distributed systems, and each service stores data in separate storage.
-Clients need to compose data to provide a consistent, unique view to users accessing the system.
-For example, if a product price is owned and stored by Sales and a product description by Marketing, we want to show users accessing the system a page with the product price and description. That is because users think about products, not prices and descriptions. A client application can use ViewModel composition techniques to address the data separation issue.
+If all that is new for you, let me briefly describe what we are talking about: We are in the context of distributed systems, and each service stores data in separate storage. Clients compose data from different services to provide a consistent, unique view to users accessing the system. For example, if a product price is owned and stored by Sales and a product description by Marketing, we want to show users accessing the system a page with the product price and description. That is because users think about products, not prices and descriptions. A client application can use ViewModel composition techniques to address the data separation issue.
 
 The presented diagram is a synthetic view of what ViewModel composition is. Clients interact with a composition gateway that behaves like a reverse proxy. The composition gateway dispatches incoming requests to handlers that in some way retrieve data from backend services.
 
-Today's culprit is that "some way."
+Today's topic is that "some way."
 
 ## So, let's get logical!
 
 [Mark's comment](https://milestone.topics.it/view-model-composition/2021/11/23/on-working-with-viewmodel-composition-based-system.html#comment-5626920802) is a good starting point:
 
-> I opted for logical service per repository, mostly because I also opted to remove the service's rest api and instead allow the composition components to talk directly to the logical service's data components (DB, blob storage, etc).
-> This has a "con" that couples those composition components to the data schema, meaning a change to schema results in a change not only to backend components that would naturally work directly with a data store but also the viewmodel components. Hence, one repository to encapsulate the coupled change dependencies.
-> Side note, I opted for VM component->DB rather than VM component->API->DB for performance (no extra network hop) and security reasons. The latter being that I usually implement token user delegation for API hops so as not to surface downstream oauth "scopes" to users.
+> I opted for logical service per repository, mostly because I also opted to remove the service's REST API and instead allow the composition components to talk directly to the logical service's data components (DB, blob storage, etc).
+> This has a "con" that couples those composition components to the data schema, meaning a change to schema results in a change not only to backend components that would naturally work directly with a data store but also the ViewModel components. Hence, one repository to encapsulate the coupled change dependencies.
+> Side note, I opted for VM component->DB rather than VM component->API->DB for performance (no extra network hop) and security reasons. The latter being that I usually implement token user delegation for API hops so as not to surface downstream OAuth "scopes" to users.
 
 Among other things, Mark decided to use an approach that looks like the following:
 
@@ -65,7 +63,7 @@ Mark solves the composition problem using a shorter, all-in-all better approach.
 
 ## You might ask why am I using a different approach?
 
-For a convenient reason. My code is for demos and samples purposes. Samples and demos are built to be auto-contained, easy to run, and scoped to one topic. They are mono-repo and based on a single Visual Studio solution. In such a scenario, I need to find a way to highlight service boundaries, and the easiest thing to do is build artificial physical ones. The client application is hosted separately from the composition gateway that hosts handlers. And the gateway lives in a different process than backend services that access data.
+For a convenient reason. My code is for demos and sample purposes. Samples and demos are built to be auto-contained, easy to run, and scoped to one topic. They are mono-repo and based on a single Visual Studio solution. In this scenario, I need to find a way to highlight service boundaries, and the easiest thing to do is build artificial physical ones. The client application is hosted separately from the composition gateway that hosts handlers. And the gateway lives in a different process than backend services that access data.
 
 Reality is quite different, though. In a real-world distributed system, services codebases live in their repositories. They know little to nothing about each other. In many cases, one service can be multiple Visual Studio solutions, and developers may store code files in many source code repositories.
 
@@ -79,7 +77,7 @@ In his comment, Mark mentions that his choice comes with coupling as a downside:
 
 That's correct, and that's fine.
 
-### "Whatcha talkin bout Mauro?"
+### "Whatchu talkin' 'bout Mauro?"
 
 All the pieces in my and Mark's architecture belong to the same logical service. Let's apply Mark's approach to the products use case mentioned above:
 
@@ -99,12 +97,12 @@ To understand why this approach is superior, even if it sounds more coupled, we 
 
 ## Use cases
 
-I bet that everyone reading this article bought goods or services from an online store at least once in their lives. You paid for your purchases through a credit card or another payment system like PayPal. In some online stores, we input the payment method every time. In others, we can store the payment details to reuse them later. When doing so, we can select one of the stored payment methods to complete the purchase process.
+I bet that everyone reading this article has bought goods or services from an online store at least once in their lives. You paid for your purchases through a credit card or another payment system like PayPal. In some online stores, we input the payment method every time. In others, we can store the payment details to reuse them later. When doing so, we can select one of the stored payment methods to complete the purchase process.
 
 So far, we've identified at least three different requirements:
 
 1. Users need to be able to pay for what they are buying
-2. Users may want to store the payment method details 
+2. Users need to have the option to store the payment method details 
 3. At checkout, users need to be able to select a stored payment method
 
 There are more that are not visible to users:
@@ -127,11 +125,11 @@ That's not enough. Next time we purchase, we cannot look in the vault to select 
 
 If we look at the presented scenario from the logical perspective, only a component allows storing and retrieving payment details. However, there is a vault to store data securely from a physical standpoint. A separate part keeps human-readable payment details information, and, finally, a composition handler responsible for retrieving those to present to users at payment time. And that doesn't take into account the user interface portion, which is another part of the logical component, or the web API accepting post and patch requests to add and update credit card information.
 
-What is represented by a single component in the logical view becomes multiple components in the physical one. Some of them are coupled in nature. When users store credit card information in the vault, the system's portion that keeps the related human-readable data must be updated.
+What is represented by a single component in the logical view becomes multiple components in the physical one. Some of them are coupled by nature. When users store credit card information in the vault, the system's portion that keeps the related human-readable data must be updated.
 
 Given that "what changes together stays together" and that all the presented physical components belong to the same logical service, there is no point in adding a layer to mediate, for example, between composition handlers and the database. We don't need to protect composition handlers from changes happening in the database.
 
-There are scenarios in which a mediation layer might be beneficial. That's not the point of this article, though. Mastering the distinction between the logical and the physical architecture allows understanding where logical boundaries require a mediation layer (ACL, Anti Corruption Layer, in Domain Driven Design terms).
+There are scenarios in which a mediation layer might be beneficial. That's not the point of this article, though. Mastering the distinction between the logical and the physical architecture allows understanding where logical boundaries require a mediation layer (an Anti-Corruption Layer, or ACL, in Domain Driven Design terms).
 
 ## Conclusion
 
