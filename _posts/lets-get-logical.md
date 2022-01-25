@@ -63,9 +63,9 @@ flowchart LR
 
 Mark solves the composition problem using a shorter, all-in-all better approach. As you can see, instead of having composition handlers calling a remote web API that mediates the communication with the database, in Mark's case, handlers talk directly with the database. There is one less hop, less latency, and less I/O because, for example, there is no need to serialize and deserialize data flowing from web APIs to handlers.
 
-## Why am I using a different approach?
+## You might ask why am I using a different approach?
 
-For a convenient reason. My code is for demos and samples purposes. Samples and demos are built to be auto-contained, easy to run, and scoped to one topic. They are mono-repo and based on a single Visual Studio solution. In such a scenario, I need to find a way to highlight service boundaries, and the easiest thing to do is build artificial physical ones. The client application is hosted separately to the composition gateway that hosts handlers. And the gateway lives in a different process to backend services that access data.
+For a convenient reason. My code is for demos and samples purposes. Samples and demos are built to be auto-contained, easy to run, and scoped to one topic. They are mono-repo and based on a single Visual Studio solution. In such a scenario, I need to find a way to highlight service boundaries, and the easiest thing to do is build artificial physical ones. The client application is hosted separately from the composition gateway that hosts handlers. And the gateway lives in a different process than backend services that access data.
 
 Reality is quite different, though. In a real-world distributed system, services codebases live in their repositories. They know little to nothing about each other. In many cases, one service can be multiple Visual Studio solutions, and developers may store code files in many source code repositories.
 
@@ -81,7 +81,7 @@ That's correct, and that's fine.
 
 ### "Whatcha talkin bout Mauro?"
 
-All the pieces in Mark's and mine architecture belong to the same logical service. Let's apply Mark's approach to the products use case mentioned above:
+All the pieces in my and Mark's architecture belong to the same logical service. Let's apply Mark's approach to the products use case mentioned above:
 
 <div class="mermaid">
 flowchart LR
@@ -135,7 +135,7 @@ There are scenarios in which a mediation layer might be beneficial. That's not t
 
 ## Conclusion
 
-This article scratches the surface of the "4+1 architectural views". Instead, I preferred to focus on the distinction between logical and physical architecture, which I previously touched on in [You don't have to be cool to rule my world, KISS](https://milestone.topics.it/2019/05/08/dont-have-to-be-cool-to-rule-my-world.html). This exercise aims to reduce the overall complexity of the system we develop and manage. Distributed systems already come with many moving parts, and there is no need to complicate things further where it is not needed.
+This article scratches the surface of the "4+1 architectural views". Instead, I preferred to focus on the distinction between logical and physical architecture, which I previously touched on in [You don't have to be cool to rule my world, KISS](https://milestone.topics.it/2019/05/08/dont-have-to-be-cool-to-rule-my-world.html). This exercise aims to reduce the overall complexity of the systems we develop and manage. Distributed systems already come with many moving parts, and there is no need to complicate things further where it is not needed.
 
 ---
 
