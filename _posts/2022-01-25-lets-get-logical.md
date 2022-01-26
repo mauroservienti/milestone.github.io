@@ -14,7 +14,7 @@ tags:
 
 I was born in 1973, and Olivia Newton-John took part in framing my adolescence. Songs like "Let's Get Physical" or "You're The One That I Want," from Grease are part of my background.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/6zwPVU92-XQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/vWz9VN40nCA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Enough talking
 
