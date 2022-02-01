@@ -51,3 +51,7 @@ There is a high chance the meeting gets derailed by fruitless questions connecte
 ## Conclusion 
 
 When designing APIs or defining and presenting design choices, it's essential to avoid creating confusion and fruitless questions for the audience. When it comes to APIs, ask yourself why there is a need for multiple paths to the same result. And when presenting choices, make sure that critical decisions factors stand out. If it's not a crucial decision factor, there are many cases where it might be noise. We might serve our users better by not presenting it at all.
+
+---
+
+Photo by <a href="https://unsplash.com/@itsbrandonlopez?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Brandon Lopez</a> on <a href="https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
