@@ -2,7 +2,7 @@
 layout: post
 author: Mauro Servienti
 title: "When too many choices are harmful"
-header_image: 
+header_image: /img/posts/when-too-many-choices-are-harmful/header.jpg
 synopsis: "I tend to be lazy and pragmatic when it comes to choices. It's also trivial that being exposed to too many options stresses me producing a negative result. I end up refusing to choose."
 tags:
 - personal
