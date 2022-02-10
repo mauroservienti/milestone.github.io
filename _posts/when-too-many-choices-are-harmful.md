@@ -3,20 +3,19 @@ layout: post
 author: Mauro Servienti
 title: "When too many choices are harmful"
 header_image: /img/posts/when-too-many-choices-are-harmful/header.jpg
-synopsis: "I tend to be lazy and pragmatic when it comes to choices. It's also trivial that being exposed to too many options stresses me producing a negative result. I end up refusing to choose."
+synopsis: "I tend to be lazy and pragmatic when it comes to choices. It's also true that being exposed to too many options stresses me producing a negative result. I end up refusing to choose."
 tags:
 - personal
 - processes
 ---
 
-I prefer restaurants with short menus rather than encyclopedic ones. When sitting at a table, faced with pages of choices and the pressure the waiter puts on me, I urge to wake up and escape.
+I prefer restaurants with short menus rather than encyclopedic ones. When sitting at a table, faced with pages of choices and the pressure the waiter puts on me, I have the urge to wake up and escape.
 
-I recently had a similar experience while [looking for a new smartwatch](https://milestone.topics.it/2021/12/27/do-I-still-need-a-smartwatch.html) to track my fitness activities. I'm a Garmin user. If I'll ever buy a new device, there is no point in paying the price of switching to something else. The cost of transferring years of data is too high.
+I recently had a similar experience while [looking for a new smartwatch](https://milestone.topics.it/2021/12/27/do-I-still-need-a-smartwatch.html) to track my fitness activities. I'm a Garmin user. If I ever buy a new device, there is no point in paying the price of switching to something else. The cost of transferring years of data is too high.
 
 Recently Garmin released the Fenix 7. I hear my colleague [Christian](https://twitter.com/cquirosj) whispering, "have a look, Mauro. Have a look..." 😆
 
-But, there is also the new Epix gen 2, the Forerunner 945, 745, 245, or the Swim 2, to name a few. Their menu is so long!
-Garmin offers so many smartwatches that the least guarantee is a headache. And that, only by looking at the plethora of products. If you look at all the different versions each product offers, your head can only explode. All that becomes particularly true if you start comparing them. Most of them (if not the majority) provide the same set of functionalities, and one starts arguing why. For example, take a look at [this comparison](https://buy.garmin.com/en-US/US/catalog/product/compareResult.ep?compareProduct=735611&compareProduct=760778&compareProduct=621922&compareProduct=713363) between four models. It's hard to spot the differences. 
+But, there is also the new Epix gen 2, the Forerunner 945, 745, 245, or the Swim 2, to name a few. Their menu is so long! Garmin offers so many smartwatches that the only guarantee is a headache. And that's only by looking at the plethora of products. If you look at all the different versions each product offers, your head can only explode. All that becomes particularly true if you start comparing them. Most of them provide the same functionality, and one starts arguing why. For example, take a look at [this comparison](https://buy.garmin.com/en-US/US/catalog/product/compareResult.ep?compareProduct=735611&compareProduct=760778&compareProduct=621922&compareProduct=713363) between four models. It's hard to spot the differences. 
 
 Another important factor contributing to the Garmin headache is the price range. Hundreds of models with slight to no differences with incredible differences in prices. That makes it even harder to choose.
 
@@ -38,7 +37,7 @@ Even if we spend hours documenting all the possibilities in a vain attempt to co
 
 ### Slight differences lead to confusion
 
-The second but equally important aspect is how different the available options are. Crispness is crucial to guide users towards the pit of success. Let's imagine the menu offers a few pizzas, and the only difference is the presence of oregano for two of them. Also, They have the same price.
+The second but equally important aspect is how different the available options are. Crispness is crucial to guide users towards the pit of success. Let's imagine the menu offers a few pizzas, and the only difference is the presence of oregano for two of them. Also, they have the same price.
 
 Exact question: why is that?
 
