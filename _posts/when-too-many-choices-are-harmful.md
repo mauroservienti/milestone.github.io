@@ -19,13 +19,19 @@ But, there is also the new Epix gen 2, the Forerunner 945, 745, 245, or the Swim
 
 Another important factor contributing to the Garmin headache is the price range. Hundreds of models with slight to no differences with incredible differences in prices. That makes it even harder to choose.
 
+On the topic of too many choices ["The paradox of choice"](https://www.youtube.com/watch?v=VO6XEQIsCoM) is an enlightening TED talk. Another side effect of too many choices is the unavoidable insecurity "gifted" to choosers. If we present people with three options with crisp differences, it's simpler to make a decision and don't ruminate on it for the rest of their lives. On the other hand, when there are plenty of options with minor differences, people, and I'm a victim too, immediately feel insecure and show an inability to choose.
+
+Then there is Apple. The Apple Watch comes in two versions that differ by size. The rest is just minor details. You can choose the color or the wristband. That's it. Apple applies the same lean approach to most of its products. An even more extreme thing is represented by a famous quote attributed to Henry Ford when asked what color you could get the Model T in: "any color so long as it's black."
+
 ## What has all this in common with software architecture?
 
-At first sight, nothing. And maybe it's just me removing a pebble from my shoe. Yet, there are two critical learnings. Do your best to avoid having many ways to achieve the same result. And, when presenting options, provide crisp differences.
+At first sight, nothing. And maybe it's just me removing a pebble from my shoe. Yet, there are two critical learnings. Do your best to avoid having many ways to achieve the same result. And, when presenting options, provide crisp and meaningful differences.
+
+When given too many options, most people shut down and let others choose for them. On the topic of making decisions when sailing in an ocean of possibilities, [Nudge, by Richard H. Thaler and Cass R. Sunstein](https://www.amazon.com/Nudge-Improving-Decisions-Health-Happiness/dp/014311526X/) is an excellent book.
 
 ### Many ways lead to undesirable questions 
 
-For example, there are [many different ways](https://nodogmablog.bryanhogan.net/2022/01/a-few-ways-of-setting-the-kestrel-ports-in-net-6/) to set the Kestrel web server port. While reading the article, I started asking myself, why is that? And I had the same feelings a long restaurant menu creates. Not to mention that, as Bryan Hogan said in the article, you'll start asking questions like:
+For example, there are [many different ways](https://nodogmablog.bryanhogan.net/2022/01/a-few-ways-of-setting-the-kestrel-ports-in-net-6/) to set the Kestrel webserver port. While reading the article, I started asking myself, why is that? And I had the same feelings a long restaurant menu creates. Not to mention that, as Bryan Hogan said in the article, you'll start asking questions like:
 
 - Is option A better than option B, and why is that?
 - How do I override that setting if set with option A, and will it work the same using option B?
@@ -47,9 +53,11 @@ Now, imagine you are in a meeting, and the group is choosing the architecture to
 
 There is a high chance the meeting gets derailed by fruitless questions connected to the nuances rather than focusing on the critical differences between the various options.
 
+Many people are scared to make decisions and default to "let's just make it configurable" or "let's present all the options and nuances." If you look at the configuration section of some apps, you'll see what I mean. Plenty of knobs and dials to adjust.
+
 ## Conclusion 
 
-When designing APIs or defining and presenting design choices, it's essential to avoid creating confusion and fruitless questions for the audience. When it comes to APIs, ask yourself why there is a need for multiple paths to the same result. And when presenting choices, make sure that critical decisions factors stand out. If it's not a crucial decision factor, there are many cases where it might be noise. We might serve our users better by not presenting it at all.
+When designing APIs or defining and presenting design choices, it's essential to avoid creating confusion and fruitless questions for the audience. When it comes to APIs, ask yourself why there is a need for multiple paths to the same result. And when presenting choices, make sure that critical decisions factors stand out. If it's not a crucial decision factor, it might be noise. We might serve our users better by not presenting it at all.
 
 ---
 
