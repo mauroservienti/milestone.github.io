@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Open a blank issue
+    url: https://github.com/mauroservienti/milestone.github.io/issues/new
+    about: Open a blank issue
