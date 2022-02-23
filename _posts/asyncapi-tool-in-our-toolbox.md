@@ -43,7 +43,7 @@ Publishers can also decide to follow [Semantic Versioning (SemVer)](https://semv
 
 Sharing contracts as NuGet packages containing .NET assemblies comes with a downside, though. It creates platform coupling. Subscribers need to be .NET projects to reference a .NET assembly.
 
-What if one endpoint uses NServiceBus, and another Ruby or Python? [NServiceBus supports cross-platform integration via native message processing](https://particular.net/blog/cross-platform-integration-with-nservicebus-native-message-processing). However, we still need to share contracts in some way. And as said, sharing a .NET assembly between Ruby, or Python, and .NET is not an option.
+What if one endpoint uses NServiceBus, and another Ruby or Python? [NServiceBus supports cross-platform integration via native message processing](https://particular.net/blog/cross-platform-integration-with-nservicebus-native-message-processing). However, we still need to share contracts in some way. And as I said, sharing a .NET assembly between Ruby, or Python, and .NET is not an option.
 
 ## Services share schema and contract, not class
 
