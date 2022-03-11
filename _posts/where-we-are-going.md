@@ -1,7 +1,7 @@
 ---
 layout: post
 author: Mauro Servienti
-title: "Where we’re going, we don’t need service discovery"
+title: "Where we're going, we don't need service discovery"
 synopsis: "Too many times technology is used to solve problems that, to begin with, should not be considered problems. Service discovery, in many occasions, is a solution in search of a problem."
 header_image: /img/posts/where-we-are-going/header.jpg
 tags:
@@ -41,8 +41,11 @@ If the system we're designing requires addressing instances, it suffers from spa
 
 Spatial coupling is a form of coupling that surfaces in a design when two or more components, supposed to be autonomous, need to know "where" they are to operate. For example, connection strings to database servers are a form of spatial coupling. [SQL Server offers aliases](https://docs.microsoft.com/en-us/sql/tools/configuration-manager/aliases-sql-server-configuration-manager?view=sql-server-ver15). In a network of computers [DNS servers A and CNAME records](https://www.namecheap.com/guru-guides/dns-records/) masquerade the machines' physical addresses.
 
-If we take a closer look, they are all a form of service discovery. We need to connect to a database server or request data from a remote HTTP API. We depend on an external service, e.g. the alias mechanism or the DNS server, to reach the designated resource.
+If we take a closer look, they are all a form of service discovery. We need to connect to a database server or request data from a remote HTTP API. To reach the designated resource, we depend on an external service, e.g., the alias mechanism or the DNS server.
 
+### Spacial coupling consequences
+
+Spatial coupling is subtle. It's hard to detect, and it usually surfaces as a problem in production. Imagine that a frontend application depends on a specific backend instance to serve requests. E.g., users to log in will be routed by the frontend to a particular login service. If that login service becomes unavailable or slow, users won't log in even if other login service instances might be running in production. As with many different forms of coupling, spatial coupling creates monolithicness.
 
 ## Why are balancers not enough?
 
