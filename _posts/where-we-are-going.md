@@ -9,7 +9,8 @@ tags:
 - soa
 ---
 
-From where I live to Milan is about 25 kilometers. There is a nice suburban train that runs every 15 minutes. It's a train that more or less behaves like a subway. People buy a ticket, board the train, pick an available seat (or stand up during rush hours), and "enjoy" the ride.
+From where I live to Milan is about 25 kilometers. There is a nice suburban train that runs every 15 minutes. It's a train that more or less behaves like a subway. People buy a ticket, board the train, pick an available seat (or stand up during rush hour), and "enjoy" the ride.
+
 
 On the other hand, I can board a high-speed train from Milan to Rome. It "flies" at about 350 km an hour and can bring me to Rome in under 3 hours. The process is a bit more involved. People usually buy tickets in advance. Tickets are bound to a specific date/time and come with a reserved or system-assigned seat.
 
@@ -40,7 +41,8 @@ If the system we're designing requires addressing instances, it suffers from spa
 
 Spatial coupling is a form of coupling that surfaces in a design when two or more components, supposed to be autonomous, need to know "where" they are to operate. For example, connection strings to database servers are a form of spatial coupling. [SQL Server offers aliases](https://docs.microsoft.com/en-us/sql/tools/configuration-manager/aliases-sql-server-configuration-manager?view=sql-server-ver15). In a network of computers [DNS servers A and CNAME records](https://www.namecheap.com/guru-guides/dns-records/) masquerade the machines' physical addresses.
 
-If we take a closer look, they are all a form of service discovery. We need to connect to a database server or request data from a remote HTTP API. We depend on an external service, the alias mechanism, or the DNS server to reach the designated resource.
+If we take a closer look, they are all a form of service discovery. We need to connect to a database server or request data from a remote HTTP API. We depend on an external service, e.g. the alias mechanism or the DNS server, to reach the designated resource.
+
 
 ## Why are balancers not enough?
 
