@@ -2,9 +2,7 @@
 layout: post
 author: Mauro Servienti
 title: "AsyncAPI, a specification for defining asynchronous APIs"
-header_image: 
 synopsis: "Distributed systems governance is a hot topic. At first, it might feel overwhelming. It's important to understand what we need to govern and which tools can help."
-
 header_image: /img/posts/asyncapi-tool-in-our-toolbox/header.jpg 
 tags:
 - distributed-systems
