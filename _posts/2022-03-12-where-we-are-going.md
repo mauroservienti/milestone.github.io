@@ -2,7 +2,7 @@
 layout: post
 author: Mauro Servienti
 title: "Where we're going, we don't need service discovery"
-synopsis: "Too many times technology is used to solve problems that, to begin with, should not be considered problems. Service discovery, in many occasions, is a solution in search of a problem."
+synopsis: "Too many times technology is used to solve problems that, to begin with, should not be considered problems. Service discovery, on many occasions, is a solution in search of a problem."
 header_image: /img/posts/where-we-are-going/header.jpg
 tags:
 - distributed-systems
