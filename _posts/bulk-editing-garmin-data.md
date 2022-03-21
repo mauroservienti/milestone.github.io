@@ -3,7 +3,7 @@ layout: post
 author: Mauro Servienti
 title: "They'll probably make it anyway: bulk editing Garmin data"
 synopsis: "Users have needs. They want to get things done when using software. If what they have is not satisfactory, they'll get creative."
-header_image: 
+header_image: /img/posts/bulk-editing-garmin-data/header.jpg
 tags:
 - personal
 ---
