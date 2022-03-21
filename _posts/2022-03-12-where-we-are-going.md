@@ -11,7 +11,6 @@ tags:
 
 From where I live to Milan is about 25 kilometers. There is a nice suburban train that runs every 15 minutes. It's a train that more or less behaves like a subway. People buy a ticket, board the train, pick an available seat (or stand up during rush hour), and "enjoy" the ride.
 
-
 On the other hand, I can board a high-speed train from Milan to Rome. It "flies" at about 350 km an hour and can bring me to Rome in under 3 hours. The process is a bit more involved. People usually buy tickets in advance. Tickets are bound to a specific date/time and come with a reserved or system-assigned seat.
 
 If seats were (micro)services, the suburban train is a massive cluster of competing consumers instances, and the high-speed train is a cluster of addressable instances.
