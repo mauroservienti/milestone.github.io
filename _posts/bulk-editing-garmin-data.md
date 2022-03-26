@@ -14,11 +14,11 @@ Enough talking! Garmin Connect, the application used to review all the stats col
 
 Bike riding is my primary activity alongside swimming, and the default gear is my road bike. The issue is that when I'm training indoor using the trainer, activities get associated with the road bike. Garmin should introduce a feature that allows associating default gears to activity types instead of having a generic default gear for every activity. Searching through Garmin public forums, the feature has quite a few requests. The oldest I've found is from 2017. That only confirms that Garmin is sort of deaf to users' feedback.
 
-Let's imagine for a second that it's an incredibly complex feature. In the end, I have no idea what the data and services structure is behind the scene. It could be that it's hard to implement.
+Let's imagine for a second that it's an incredibly complex feature. In the end, I have no idea what the data and services structure is behind the scenes. It could be that it's hard to implement.
 
 A less user-friendly option would enable users to bulk edit recorded activities. It's less user-friendly because it's a technical concept. Non-techies hardly think about bulk editing something. Anyway, it would be a good enough compromise. But no, there is no way to select many activities and change the associated gears in bulk.
 
-At this point, the dormant engineer in me wakes up and states you can write software to solve the problem, Mauro.
+At this point, the dormant engineer in me wakes up and states, "you can write software to solve the problem, Mauro".
 
 We know that writing software usually opens a can of worms, but it's indeed fun!
 
@@ -32,11 +32,14 @@ It turns out that a brilliant solution is to use the browser console and JavaScr
 
 We can use the browser tools network tab to investigate the API calls Garmin Connect issues when talking to the backend and reverse engineer what we can use to solve our problem.
 
-## Requirments
+## Requirements
 
-We need to change the automatically assigned gear for a specific subset of the recorded activities. The first thing is to list activities for particular gear. Once we have the desired activities, we want to filter out all not virtual training activities.
 
-> We could be in a situation where today we're doing a virtual bike ride on the trainer, tomorrow a real bike ride outdoor, and the day after another virtual bike ride. We want to bulk edit gears only for the virtual bike rides.
+We need to change the automatically assigned gear for a specific subset of the recorded activities. The first thing is to list activities for particular gear. Once we have the desired activities, we want to filter out all non-virtual training activities.
+
+
+> We could be in a situation where today we're doing a virtual bike ride on the trainer, tomorrow a real bike ride outdoor, and the day after another virtual bike ride. We want to bulk edit gear only for the virtual bike rides.
+
 
 Finally, we need to remove the pre-assigned gear and assign the trainer.
 
@@ -81,7 +84,8 @@ jQuery.getJSON(
 
 The above snippet retrieves the top 25 activities for a given gear.
 
-> Your mileage may vary with the 25 items limit. I run the above script more or less every couple of weeks. The query returns activities ordered by date, with the latest on top. I assume that there is no way I can record more than 25 activities for a specific gear in two weeks.
+> Your mileage may vary with the 25 item limit. I run the above script more or less every couple of weeks. The query returns activities ordered by date, with the latest on top. I assume that there is no way I can record more than 25 activities for a specific gear in two weeks.
+
 
 The next step is to filter to get only virtual activities:
 
@@ -118,7 +122,8 @@ virtualRides.forEach(function(act){
 
 ## Conclusion
 
-First, if you are a Garmin user and need to bulk edit data, the presented solution might work out of the box or be adjusted to your needs.
+First, if you are a Garmin user and need to bulk edit data, the presented solution might work out of the box or it might need to be adjusted to your needs.
+
 
 Second, and probably more important, don't assume users won't get creative. Using our software solution, they'll find ways to achieve what they need, even if we did not intend to allow that functionality.
 
