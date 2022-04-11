@@ -27,7 +27,7 @@ Second, what Whoop promised, Garmin does.
 
 The following is a screenshot from the Garmin Connect app:
 
-xx
+![Garmin Connect screenshot](/img/posts/we-need-insights-not-data/garmin-screenshot.jpg){:class="img-fluid mx-auto d-block"}
 
 Notice that "Training status: unproductive" thing. That's telling me that I'm doing it wrong.
 
