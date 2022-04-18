@@ -15,7 +15,8 @@ Quoting from their website:
 
 > The latest, most advanced fitness and health wearable available. Monitor your recovery, sleep, training, and health, with personalized recommendations and coaching feedback.
 
-I stopped using it because I got no personalized recommendations and coaching feedback. And if you recall, it's the thing I talked about at the [end of 2021 in "Do I still need a smartwatch?"](https://milestone.topics.it/2021/12/27/do-I-still-need-a-smartwatch.html):
+I stopped using it because I got no personalized recommendations and coaching feedback. I mentioned this at the [end of 2021 in "Do I still need a smartwatch?"](https://milestone.topics.it/2021/12/27/do-I-still-need-a-smartwatch.html):
+
 
 > The reality is that I'm looking for a coach. And I've been trying to solve the problem through a device for a while, and I failed. It was probably expected.
 
@@ -47,11 +48,13 @@ Garmin's training status feature, instead of simply reporting your current statu
 
 The great thing is that the device even comes with suggestions for today's session. It uses the body recovery status to determine what's best, including resting. So, today's advice might be to do nothing and focus on relaxing. Interestingly, the Garmin algorithm uses the same raw data Whoop captures. The Fenix device has a heartbeat and pulse oximeter sensor similar to the Whoop one. It tracks more or less the same raw data, such as resting heartbeats, respiration, sleep, heart rate variability, etc. 
 
-In my specific case, what's reassuring is that Gaming insights are well aligned with the topics I recently discussed with my friend [Daniel](https://twitter.com/danielmarbach). Daniel is not only a brilliant software engineer, but he's also a sportsman that knows a lot about training. I presented him with my issues and gut feelings, and he gave me the same advice Garmin gave me a couple of weeks later.
+In my specific case, what's reassuring is that Garmin insights are well aligned with the topics I recently discussed with my friend [Daniel](https://twitter.com/danielmarbach). Daniel is not only a brilliant software engineer, but he's also a sportsman that knows a lot about training. I presented him with my issues and gut feelings, and he gave me the same advice Garmin gave me a couple of weeks later.
+
 
 ## What about software systems?
 
-For a very long time, I had this gut feeling that monitoring dashboards were useless, if not worse. All those gauges and graphs attract us—bells and whistles of the digital era. If a monitoring dashboard provides only raw data, we need an external coach to understand what actions we need to move forward and improve.
+For a very long time, I had this gut feeling that monitoring dashboards were useless at best. All those gauges and graphs attract us—bells and whistles of the digital era. If a monitoring dashboard provides only raw data, we need an external coach to understand what actions we need to move forward and improve.
+
 
 I'd want a monitoring system to tell me "scale out the system" or do it automatically if elastic scaling capabilities exist. And scale down when the additional power is not needed anymore. If you're thinking, "serverless does that." Yep, that's it.
 
