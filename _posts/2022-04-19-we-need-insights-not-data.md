@@ -1,8 +1,8 @@
 ---
 layout: post
-title: We need insights, not data
 author: Mauro Servienti
-title: "Gauges and graphs attract software engineers like honey for bees. We spend hours implementing distributed logging solutions or monitoring systems, and still we have a hard time understanding what's going on."
+title: "We need insights, not data"
+synopsis: "Gauges and graphs attract software engineers like honey for bees. We spend hours implementing distributed logging solutions or monitoring systems, and still we have a hard time understanding what's going on."
 header_image: /img/posts/we-need-insights-not-data/header.jpg
 tags:
 - personal
