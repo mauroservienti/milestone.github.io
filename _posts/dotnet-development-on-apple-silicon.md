@@ -2,7 +2,8 @@
 layout: post
 author: Mauro Servienti
 title: ".NET development on Apple Silicon"
-synopsis: "I bought a MacStudio, I've been a long-time Windows user, and I'm a .NET developer. What could go wrong? Let's find out how my experience goes in this live-blogging."
+synopsis: "I bought a MacStudio, I've been a long-time Windows user, and I'm a .NET developer. What could go wrong? Let's find out how my experience goes in this live-blogging session."
+
 header_image: /img/posts/dotnet-development-on-apple-silicon/header.jpg
 tags:
 - development
@@ -22,11 +23,13 @@ Before getting into the nitty-gritty details of .NET development using an M1 chi
 
 The MacStudio built-in audio quality is shit. I had never heard something so utterly inadequate. I should have expected it. Apple, during the presentation, never mentioned the audio using their usual style, "The best XYZ feature of all times." And so, there we go. Even for regular Zoom calls, you need external speakers or headphones.
 
-Having a lot of thunderbolt ports, six on my model (four in the back and two on the front), is a huge bonus. Plugging in devices has never been so easy. Except if you want to plugin not-officially supported USB-C screens.
+Having a lot of thunderbolt ports, six on my model (four in the back and two on the front), is a huge bonus. Plugging in devices has never been so easy. Except if you want to plug in not-officially-supported USB-C screens.
+
 
 I have two Dell 32" 4K screens (U3219Q) claiming to support DisplayPort over the USB-C connection. But things are not so easy. I'm not sure why, but it sounds like external screens and projectors are more or less always a source of pain with Apple machines.
 
-The problem manifests itself at boot time. The screen is in standby mode, the machine starts, the screen wakes up and starts the USB-C handshaking process, but that happens too early, and the response from the Mac times out. The screen never retries and never connects. The "easy" workaround is disconnecting and reconnecting the USB-C cable, and the screen immediately starts working. However, if you're using the screen as a USB hub, that causes a mess with USB devices connected to the screen. Dell forums are full of people complaining about this issue, so it's not something new to the MacStudio, and it's not easy to understand who to blame. Anyway, the definitive solution is to use a USB-C to DisplayPort cable. No more problems. The downside is that to use the screens as a USB hub, I had to connect them using the USB-A cable, which is fine because the MacStudio comes with two USB-A ports.
+The problem manifests itself at boot time. The screen is in standby mode, the machine starts, the screen wakes up and starts the USB-C handshaking process. But that happens too early, and the response from the Mac times out. The screen never retries and never connects. The "easy" workaround is disconnecting and reconnecting the USB-C cable, and the screen immediately starts working. However, if you're using the screen as a USB hub, that causes a mess with USB devices connected to the screen. Dell forums are full of people complaining about this issue, so it's not something new to the MacStudio, and it's not easy to understand who to blame. Anyway, the definitive solution is to use a USB-C to DisplayPort cable. No more problems. The downside is that to use the screens as a USB hub, I had to connect them using the USB-A cable, which is fine because the MacStudio comes with two USB-A ports.
+
 
 Enough talking about the hardware.
 
@@ -34,7 +37,8 @@ Enough talking about the hardware.
 
 _2022-04-15 - One week into using macOS and an M1 for .NET Development._
 
-Let's start with the easy stuff. [JetBrains Rider](https://www.jetbrains.com/rider/) is a joy. .NET 6, runtime and SDK, [are supported on AMR64](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). We can build and execute all .NET projects targeting .NET, including .NET Core. Obviously, except for WFP and Windows Forms projects. They require Windows anyway.
+Let's start with the easy stuff. [JetBrains Rider](https://www.jetbrains.com/rider/) is a joy. .NET 6, runtime and SDK, [are supported on ARM64](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). We can build and execute all .NET projects targeting .NET, including .NET Core. Obviously, except for WPF and Windows Forms projects. They require Windows anyway.
+
 
 We can install .NET Core 3.1. There is support only for the [x64 version](https://dotnet.microsoft.com/en-us/download/dotnet/3.1). Not a big deal since it goes out of support soon.
 
@@ -42,13 +46,16 @@ Last but not least, [VS Code](https://code.visualstudio.com) works great. Its su
 
 ### Windows virtualization using Parallels
 
-For everything else, .NET Framework related, we need a virtual machine or some way to use Windows. Forget about Bootcamp. It doesn't exist, and it probably won't ever exist for ARM.
+For everything else, .NET Framework-related, we need a virtual machine or some way to use Windows. Forget about Bootcamp. It doesn't exist, and it probably won't ever exist for ARM.
 
-I installed the trial version of [Parallels](https://www.parallels.com/it/products/desktop/trial/). One caveat for using virtual machines on ARM hosts is that the virtualized operating system needs to be for ARM64. That might open to issues in virtualizing Windows because there is an [agreement between Microsoft and Qualcomm](https://www.theverge.com/2021/11/23/22798231/microsoft-qualcomm-exclusivity-deal-windows-on-arm) that might affect our ability to license Windows for AMR on non-Qualcomm hardware.
+
+I installed the trial version of [Parallels](https://www.parallels.com/it/products/desktop/trial/). One caveat for using virtual machines on ARM hosts is that the virtualized operating system needs to be for ARM64. That might open to issues in virtualizing Windows because there is an [agreement between Microsoft and Qualcomm](https://www.theverge.com/2021/11/23/22798231/microsoft-qualcomm-exclusivity-deal-windows-on-arm) that might affect our ability to license Windows for ARM on non-Qualcomm hardware.
+
 
 That being said, Parallels does an excellent job. Once installed, the virtual machine creation wizard asks a few questions. The first one is what operating system we need, and when I selected Windows 11, it automatically downloaded the required ISO and started the installation. It took a minute, or a little more, to install Windows 11 for ARM.
 
-Windows 11 for AMR, executed in Parallels, is incredibly fast. When used on full screen, it's hard to perceive that it's a virtual machine.
+Windows 11 for ARM, executed in Parallels, is incredibly fast. When used on full screen, it's hard to perceive that it's a virtual machine.
+
 
 Before getting to development, a couple of words about regular, non-development-related applications. I read here and there people complaining about poor performance. For the sake of the experiment, I installed [Adobe Photoshop Elements](https://www.adobe.com/products/photoshop-elements.html) using the 2012 bits, that's the license I own, and [Audacity](https://www.audacityteam.org/). Both are x64 applications that, at runtime, will go through the x64 to ARM emulation. No issues so far; they work. And they are as fast as they were on my Intel Xeon workstation.
 
