@@ -64,7 +64,7 @@ I tried compiling a couple of solutions, intentionally selecting challenging one
 
 All .NET 6 projects, as expected, compile and run fine.
 
-One last (dolent) note: .NET 3.1 is tricky. As said, it comes only with x64 support. Visual Studio asks to install it:
+One last note: .NET 3.1 is tricky. As said, it comes only with x64 support. Visual Studio asks to install it:
 
 ![Visual Studio screenshot](/img/posts/dotnet-development-on-apple-silicon/vs-screenshot.png){:class="img-fluid mx-auto d-block"}
 
