@@ -15,7 +15,7 @@ I wholeheartedly suggest reading it.
 > First, understand the problem
 > My message isn't new, but maybe it's the version that speaks to you, or maybe UNPHAT(1) is memorable enough for you to apply it. If not, you might try [Rich Hickey's talk Hammock Driven Development](https://www.youtube.com/watch?v=f84n5oFoZBc), or the Polya book [How to Solve It](https://www.amazon.com/How-Solve-Mathematical-Princeton-Science/dp/069111966X), or Hamming's course [The Art of Doing Science and Engineering](https://www.youtube.com/playlist?list=PL2FF649D0C4407B30). What we're all imploring you to do is to think! And to actually understand the problem you are trying to solve
 
-1. UNPHAT https://stevenschwenke.de/pragmaticSoftwareEngineeringUNPHAT
+1. _UNPHAT <https://stevenschwenke.de/pragmaticSoftwareEngineeringUNPHAT>_
 
 If you read it, you can probably skip this post. My message isn't new either.
 
