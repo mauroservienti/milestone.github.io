@@ -10,7 +10,9 @@ tags:
 
 Human beings are resistant to change. Simultaneously, we prefer reusing what we already know. That's understandable. By reusing, we apply existing experience to new problems, and we avoid inventing new solutions for what might be the same problem under a new vest.
 
-When we're presented with a distributed system, in its more straightforward form, two different processes communicating over a channel (e.g., HTTP), we apply previous knowledge and ask: "how do we debug that thing?". And we mean it literally: how do we debug, as in how do we set a breakpoint in one process, another one in the second process and observe the flow of the code from one to the other. Exactly like if we were debugging procedural code in a monolithic process.
+When we're presented with a distributed system, in its more straightforward form, two different processes communicating over a channel (e.g., HTTP), we apply previous knowledge and ask: "how do we debug that thing?". And we mean it literally: how do we debug, as in how do we set a breakpoint in one process, another one in the second process and observe the code flow from one to the other. Exactly like if we were debugging procedural code in a monolithic process.
+
+> In this post, I'm referring to debugging in the context of automated debugging tools in an IDE.
 
 Let's pause for a second and discuss why we feel the need to debug. Generally, that's connected to complex design, spaghetti code, or lack of tests. Mind that I'm not saying that the opposite is true. Simple design, simple code, and tests don't eliminate the need for debugging. However, they significantly reduce it.
 
