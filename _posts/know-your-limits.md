@@ -33,8 +33,9 @@ The organization grew and moved to a new larger plant. Warehouse management was 
 
 The following synthetic diagrams summarize the before and after warehouse management architecture:
 
-warehouse-type A diagram
-warehouse-type B diagram
+![First version of the warehouse](/img/posts/know-your-limits/style-a.png){:class="img-fluid mx-auto d-block"}
+
+![Second version of the warehouse](/img/posts/know-your-limits/style-b.png){:class="img-fluid mx-auto d-block"}
 
 The two designs, theoretically, are interchangeable. However, if we swap the approaches, the result is suboptimal. The first doesn't scale up, and the latter doesn't scale down.
 
