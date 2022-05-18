@@ -3,7 +3,7 @@ layout: post
 author: Mauro Servienti
 title: "Know your limits. Infinite scalability doesn't exist"
 synopsis: "There is this myth that we can design today for tomorrow's unknown requirements. Somehow we believe that we can put in place a robust architecture that will scale forever, no matter what. I'm sorry, that's impossible."
-header_image: /img/posts/know-your-bounds-header.jpg
+header_image: /img/posts/know-your-limits/header.jpg
 tags:
 - architecture
 ---
