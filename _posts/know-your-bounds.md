@@ -8,11 +8,11 @@ tags:
 - architecture
 ---
 
-[You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) is one of my all-time favorites.
+[You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) is one of my all-time favorite articles.
 
 I wholeheartedly suggest reading it.
 
-> First, Understand the Problem
+> First, understand the problem
 > My message isn't new, but maybe it's the version that speaks to you, or maybe UNPHAT is memorable enough for you to apply it. If not, you might try Rich Hickey's talk Hammock Driven Development, or the Polya book How to Solve It, or Hamming's course The Art of Doing Science and Engineering. What we're all imploring you to do is to think! And to actually understand the problem you are trying to solve
 
 If you read it, you can probably skip this post. My message isn't new either.
@@ -27,14 +27,14 @@ The organization was far from being significant. And as such, the warehouse wasn
 
 Looking at that setup, with today's eyes, is enlighting. It was a small distributed system. Each manufacturing stage was autonomous in managing the daily warehouse tasks. They were not responsible for fulfillment, though. That was centralized.
 
-The organization grew and moved to a new larger plant. Warehouse management was rebuilt from the ground up. With more than one production line having only distributed warehouses was not sustainable anymore. The warehouse design changed to be a mix of centralized and distributed. Connectivity between the not-anymore autonomous manufacturing stations and the centralized, automated warehouse was implemented.
+The organization grew and moved to a new larger plant. Warehouse management was rebuilt from the ground up. With more than one production line, having only distributed warehouses was not sustainable anymore. The warehouse design changed to be a mix of centralized and distributed. Connectivity between the not-anymore autonomous manufacturing stations and the centralized, automated warehouse was implemented.
 
 The following synthetic diagrams summarize the before and after warehouse management architecture:
 
 warehouse-type A diagram
 warehouse-type B diagram
 
-The two presented designs, theoretically, are interchangeable. However, if we swap the approaches, the result is suboptimal. The first doesn't scale up, and the latter doesn't scale down.
+The two designs, theoretically, are interchangeable. However, if we swap the approaches, the result is suboptimal. The first doesn't scale up, and the latter doesn't scale down.
 
 For the first design to scale up, we have to assume all instances of the production line work the same way. It is unlikely and will result in a requirement to rebalance station-bound warehouses. The second has the opposite problem. It'll cause a chatty warehouse management system that is not worth it if used on a single production line.
 
@@ -48,7 +48,7 @@ We all probably agree with the presented warehouse design choices, but we don't 
 
 ### Hype
 
-I understand nothing about wine. Give me a one Euro wine bottle, and I feel it's terrible. However, I have no way to distinguish between thirty and fifty or more euros wines. I'll probably jump on the hype train. If everyone says that the fifty euros one is better, I'd agree.
+I understand nothing about wine. Give me a one Euro wine bottle, and I feel it's terrible. However, I have no way to distinguish between wines that are thirty euros or fifty euros. I'll probably jump on the hype train. If everyone says that the fifty euro one is better, I'd agree.
 
 Everyone can't be wrong, right?
 
@@ -58,13 +58,13 @@ That is how it starts. Instead of looking at the business problem, we let the te
 
 ### Intangibles come for free
 
-I also believe that human beings can estimate the value of tangibles but not so quickly intangibles. For example, when presented with the cost of a building, we can see the dollar value. When presented with the "cost" of time, we struggle to make the connection. It's trivially easy to observe people investing a tremendous amount of time addressing issues with a low or negative return on the investment (ROI).
+I also believe that human beings can estimate the value of tangibles relatively quickly, but not so much the intangibles. For example, when presented with the cost of a building, we can see the dollar value. When presented with the "cost" of time, we struggle to make the connection. It's trivially easy to observe people investing a tremendous amount of time addressing issues with a low or negative return on the investment (ROI).
 
-> a few years ago, an acquaintance drove 300 kilometers to save a few bucks on a new phone.
+> A few years ago, an acquaintance drove 300 kilometers to save a few bucks on a new phone.
 
 I observed this effect in two different settings in the last twenty years. 
 
-Due to our inability to estimate intangibles, we tend to underestimate the cost of changing when there is no perception of physical change. That manifests itself with the last famous words, "how long could it take" or "how hard can it be." A typical example in the software engineering world is the decision to upgrade a dependency to its latest release, even if we're aware of the many breaking changes and there is no compelling reason. I witnessed teams moving from Entity Framework to Entity Framework Core, assuming it was still Entity Framework, even if the project didn't benefit from the upgrade.
+Due to our inability to estimate intangibles, we tend to underestimate the cost of changing when there is no perception of physical change. That manifests itself with the famous last words, "how long could it take?" or "how hard can it be?" A typical example in the software engineering world is the decision to upgrade a dependency to its latest release, even if we're aware of the many breaking changes and there is no compelling reason. I witnessed teams moving from Entity Framework to Entity Framework Core, assuming it was still Entity Framework, even if the project didn't benefit from the upgrade.
 
 The presented behavior, to some extent, is supported by customers or users. How often have we heard statements like "for you, it's certainly easy"? The assumption here is that software is a toy we play with, and everything is easy. It's another form of the "intangibles come for free" mindset.
 
@@ -78,11 +78,11 @@ That's where the myth of infinite scalability is rooted.
 
 ## About knowing your bounds
 
-You just got out of college, and you're looking for your first car. Would you buy a seven-seat car because maybe you'll have a seven-people family and a dog in ten years or would you go with a small used one because you have no idea where you will be next month?
+You just got out of college, and you're looking for your first car. Would you buy a seven-seat car because maybe you'll have a seven-person family and a dog in ten years or would you go with a small used one because you have no idea where you will be next month?
 
-And even if you're sure you'll have a large family, does it make sense to buy today something that will be obsolete before you genuinely need it? Not to mention that the family might be of eight people.
+And even if you're sure you'll have a large family, does it make sense to buy today something that will be obsolete before you genuinely need it? Not to mention that the family might be eight people.
 
-Predicting the future is hard. Investing money (effort, resources, and time) in designing solutions to accommodate the unknown is a waste. Rarely will those solutions fit future needs, and when they'll do is by chance.
+Predicting the future is hard. Investing money (effort, resources, and time) in designing solutions to accommodate the unknown is a waste. Rarely will those solutions fit future needs, and when they do, it's often by chance.
 
 Does it mean that the only option is to design for what we know today? Not necessarily. We have to define today's requirements and future limits clearly. Knowing what today's design can achieve is crucial to understanding when it's time to change.
 
@@ -92,7 +92,7 @@ Probably the cheapest cloud virtual machine can sustain that load—no need for 
 
 ### Where are we going?
 
-The next question should be: what's the forecast? Similarly to when we leave for a trip and need a destination. When designing a system, we need to know what type of load the system must be able to sustain. For example, 25k visitors a day might lead to different architectural choices depending on how they are concentrated: If all of them visit the website once a day in a short timeframe, we design things differently than if they were distributed over 24 hours.
+The next question should be: what's the forecast? Similar to when we leave for a trip and need a destination. When designing a system, we need to know what type of load the system must be able to sustain. For example, 25k visitors a day might lead to different architectural choices depending on how they are concentrated: If all of them visit the website once a day in a short timeframe, we design things differently than if they were distributed over 24 hours.
 
 Once we have a well-defined destination, we should ask a follow-up question: does the "destination" apply to the whole system or only to a subset?
 
@@ -105,11 +105,11 @@ How do we go about understanding it is a legitimate question. The answer is pret
 
 ### Testing
 
-There is only last outstanding question. How do we know that the system will behave correctly under the forecasted load? And it's not only that. How do we know that the metrics we have in place will provide the information we expect when we need them?
+There is one last outstanding question: How do we know that the system will behave correctly under the forecasted load? And it's not only that. How do we know that the metrics we have in place will provide the information we expect when we need them?
 
 To some extent, it's not that different from a disaster recovery process. We hope never to need it, but we must be sure that it'll work if required.
 
-Testing is the answer to both questions. Precisely, load testing. What we want are load test scenarios aiming at providing the following sets of data:
+Testing is the answer to both questions. Specifically: load testing. What we want are load test scenarios aiming at providing the following sets of data:
 
 - Under known real production scenarios, is the system behaving as expected?
 - Under forecasted future production load, are the metrics in place raising the bells we expect to hear?
