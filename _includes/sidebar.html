@@ -66,7 +66,7 @@
         <header>Recent Posts</header>
         <section>
             <ul>
-                {% for post in site.posts limit:4 %}
+                {% for post in site.posts limit:8 %}
                 <li><small>
                         {% if page.url == post.url %}
                         <span class="font-italic">{{ post.title }}</span>
