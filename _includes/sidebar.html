@@ -42,18 +42,18 @@
     {% endif %}
     {% endif %}
 
-    <div class="sidebar-widget sidebar-categories">
-        <header>Categories</header>
+    <div class="sidebar-widget sidebar-series">
+        <header>Series</header>
         <section>
             <ul>
-                {% assign category_pages = site.pages | where: "layout","category" %}
-                {% for category_page in category_pages %}
+                {% assign series_pages = site.pages | where: "layout","series" %}
+                {% for series_page in series_pages %}
                 <li><small>
-                        {% if page.url == category_page.url %}
-                        <span class="font-italic">{{ category_page.title }}</span>
+                        {% if page.url == series_page.url %}
+                        <span class="font-italic">{{ series_page.title }}</span>
                         {% else %}
-                        <a class="muted-link inherit-color" title="{{ category_page.title }}"
-                            href="{{ category_page.url | prepend: site.baseurl }}">{{ category_page.title }}</a>
+                        <a class="muted-link inherit-color" title="{{ series_page.title }}"
+                            href="{{ series_page.url | prepend: site.baseurl }}">{{ series_page.title }}</a>
                         {% endif %}
                     </small></li>
                 {% endfor %}

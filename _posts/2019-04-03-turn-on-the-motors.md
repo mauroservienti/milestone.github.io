@@ -10,7 +10,7 @@ synopsis: "It's time to discover all the nitty gritty details of the Composition
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 ---
 
 We spent the last seven posts introducing ViewModel Composition and diving into many aspects of it. A detailed list of articles can be found in the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition.html) category.

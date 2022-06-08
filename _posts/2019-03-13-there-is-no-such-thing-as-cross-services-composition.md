@@ -9,7 +9,7 @@ synopsis: "At a first look it might sound reasonable to use ViewModel Compositio
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from:
 - /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
 - /view-model-composition/2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html

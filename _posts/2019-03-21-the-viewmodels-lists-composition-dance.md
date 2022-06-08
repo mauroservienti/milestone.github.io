@@ -9,7 +9,7 @@ synopsis: "Composing a list in an efficient way is complex. Multiple components 
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from: /2019/03/21/the-viewmodels-lists-composition-dance.html
 ---
 

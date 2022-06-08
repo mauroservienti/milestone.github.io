@@ -1,14 +1,14 @@
-.category{
+.series{
 
-	.category-header{
-		.category-title{
+	.series-header{
+		.series-title{
 			margin-top: .8rem;
 			margin-bottom: .8rem;
 		}
 	}
-	.category-content{}
+	.series-content{}
 
-	.category-posts-list{
+	.series-posts-list{
 		.post-details{
 			.post-details-icon{
 				margin-right: 3px;
@@ -17,7 +17,7 @@
 		}
 	}
 	
-	.category-meta{
+	.series-meta{
            font-size: $small-font-size;
            color: $grey-color;
         }

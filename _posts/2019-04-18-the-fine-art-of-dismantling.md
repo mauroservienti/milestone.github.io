@@ -10,7 +10,7 @@ tags:
 - soa
 - viewmodel-composition
 - Services ViewModel Decomposition
-category: view-model-composition
+series: view-model-composition
 ---
 
 The last nine articles in this series were focused on composing ViewModels to present data coming from different services. In all these articles, available in the [ViewModel Composition category](/categories/view-model-composition.html), data flows from the system to users. But this isn't the only direction in which data flows in a system. Users add and edit data all the time.

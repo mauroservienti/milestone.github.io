@@ -7,7 +7,7 @@ synopsis: "Paging and sorting sound like a controversial and complex topic when 
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 ---
 Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems.
 

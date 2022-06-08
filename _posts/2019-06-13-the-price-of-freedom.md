@@ -9,7 +9,7 @@ synopsis: "When designing UIs for a distributed system we're faced with many cho
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 ---
 
 # The Price of Freedom

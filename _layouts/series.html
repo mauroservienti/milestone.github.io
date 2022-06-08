@@ -1,25 +1,25 @@
 ---
 layout: default
 ---
-<div class="category">
+<div class="series">
 
-  <header class="category-header">
+  <header class="series-header">
     {% if page.header_image %}
     <img class="img-fluid rounded" alt="{{ page.title }} header image"
       src="{{ page.header_image | prepend: site.baseurl }}" />
     {% endif %}
-    <h2 class="category-title">{{ page.title }}</h2>
+    <h2 class="series-title">{{ page.title }}</h2>
   </header>
 
-  <article class="category-content">
+  <article class="series-content">
     {{ content }}
   </article>
 
-  <h5>Articles in this category:</h5>
+  <h5>Articles in this series:</h5>
 
-  <div class="card-columns category-posts-list">
-      {% assign category_posts = site.posts | where: 'category',page.category | reverse %}
-      {% for post in category_posts %}
+  <div class="card-columns series-posts-list">
+      {% assign series_posts = site.posts | where: 'series',page.series | reverse %}
+      {% for post in series_posts %}
       <div class="card">
         <div class="card-header">
           <div class="post-details">
@@ -47,8 +47,8 @@ layout: default
       {% endfor %}
     </div>
   
-  <footer class="category-footer">
-        <p class="category-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this category</a></p>
+  <footer class="series-footer">
+        <p class="series-meta"><a href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve this series</a></p>
     </footer>
 
 </div>

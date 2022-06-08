@@ -9,7 +9,7 @@ synopsis: "Read models can be a tempting solution when it comes to presenting da
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from: "/2019/03/26/read-models-a-knot-to-untie.html"
 ---
 

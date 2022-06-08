@@ -31,12 +31,12 @@ layout: default
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
         this post</a> • <a
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>
-      {% if page.category %}
-      {% assign pages_with_same_category = site.pages | where: 'category',page.category %}
-        {% if pages_with_same_category and pages_with_same_category.size > 0 %}
-        {% assign category_page = pages_with_same_category[0] %}
+      {% if page.series %}
+      {% assign pages_with_same_series = site.pages | where: 'series',page.series %}
+        {% if pages_with_same_series and pages_with_same_series.size > 0 %}
+        {% assign series_page = pages_with_same_series[0] %}
         <br />
-        Category: <a href="/categories/{{ category_page.category | prepend: site.baseurl }}">{{ category_page.title }}</a>
+        Series: <a href="/series/{{ series_page.series | prepend: site.baseurl }}">{{ series_page.title }}</a>
         {% endif %}
       {% endif %}
     </p>
