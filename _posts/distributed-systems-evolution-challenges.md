@@ -5,7 +5,7 @@ title: "Distributed systems evolution challenges"
 synopsis: "What are the challenges posed by evolving distributed systems architecture? In this short series of articles, we'll understand the critical factors we should be keeping an eye on and how to address them."
 header_image: /img/posts/distributed-systems-evolution-challenges/header.jpg
 enable_mermaid: true
-category: distributed-systems-evolution
+series: distributed-systems-evolution
 tags:
 - distributed-systems
 ---
