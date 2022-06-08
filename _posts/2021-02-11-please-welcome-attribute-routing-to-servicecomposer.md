@@ -7,7 +7,7 @@ synopsis: "Attribute routing is a great MVC feature. However, endpoint routing i
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 ---
 
 With .NET Core 3, Microsoft introduced a long-waited feature in ASP.Net: Endpoint routing. Thanks to endpoint routing, it's finally possible to customize the target of an incoming HTTP request.

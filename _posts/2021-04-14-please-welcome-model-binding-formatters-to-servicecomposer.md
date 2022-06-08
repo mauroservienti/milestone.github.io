@@ -10,7 +10,7 @@ tags:
 - Output formatters
 - Input formatters
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 ---
 
 The ServiceComposer API has been historically pretty low level. Users can access the incoming `HttpRequest` and the outgoing `HttpResponse` to read and manipulate content.

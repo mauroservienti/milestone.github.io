@@ -9,7 +9,7 @@ synopsis: "Time was spent discussing ViewModel Composition concepts and their de
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from: /2019/03/06/viewmodel-composition-show-me-the-code.html
 ---
 

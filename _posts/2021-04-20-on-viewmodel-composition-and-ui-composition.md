@@ -9,7 +9,7 @@ tags:
  - viewmodel-composition
  - ui-composition
  - Micro frontends
-category: view-model-composition
+series: view-model-composition
 ---
  
 They're not the same thing. They're not orthogonal. They can be used in conjunction or isolation, depending on the scenario.

@@ -9,7 +9,7 @@ synopsis: "ViewModels Lists composition has an interesting challenge: must be de
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from: /2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html
 ---
 

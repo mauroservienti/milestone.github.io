@@ -9,7 +9,7 @@ synopsis: "ViewModel Composition can be scary, at a first look. The real world, 
 tags:
 - soa
 - viewmodel-composition
-category: view-model-composition
+series: view-model-composition
 redirect_from: /2019/02/20/viewmodel-composition-maze.html
 ---
 
