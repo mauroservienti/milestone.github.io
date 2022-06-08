@@ -116,5 +116,6 @@ The last topic, but no less critical, is how we need or can deploy changes. We l
 
 Stay tuned for future articles. They'll be grouped in the [Distributed systems evolution series](). If you feel I missed something, do not hesitate to leave a comment.
 
-Photo by Steven Lelham on Unsplash
+---
 
+Photo by [Steven Lelham on Unsplash](https://unsplash.com/photos/atSaEOeE8Nk?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink)
