@@ -16,11 +16,11 @@ That shouldn't come with headaches. We designed everything keeping an eye on ser
 
 > This website is primarily about service-oriented architecture. I dissect autonomous services and their benefits in [Not all changes are born equal](https://milestone.topics.it/2021/03/10/not-all-changes-are-born-equal.html) and [Is it complex? Break it down.](https://milestone.topics.it/2022/01/03/is-it-complex-break-it-down.html)
 
-## Not so quickly
+## Not so fast
 
 Before proceeding with the changes, the team analyzes the requirements and the current situation in production. The idea is to lay out all the steps required to move from where we stand today to the new desired state.
 
-The service in question is responsible for a long-running task; imagine something like image OCR processing. Clients through an API submit processing requests and wait, asynchronously, for responses on a WebSocket connection.
+The service in question is responsible for a long-running task; imagine something like image OCR processing. Clients submit processing requests through an API and wait, asynchronously, for responses on a WebSocket connection.
 
 > If you're interested in understanding how to implement long-running processes in a distributed system architecture, check out ["The case of NServiceBus long running jobs: OCR Processing."](https://milestone.topics.it/2016/12/20/the-case-of-nservicebus-long-running-handlers-ocr-processing.html)
 
@@ -41,21 +41,21 @@ The changes requested by the business affect most of the above structure. The ne
 
 What's immediately apparent to the team is that some of the changes are breaking and others are not. The team is mainly concerned about the upgrade process that must deal with currently ongoing operations. When the upgrade happens, there will be in-flight messages flowing from the public-facing API to the backend, and more importantly, there will be backend processing instances running. Both in-flight messages and instances of running processes are handling the previous messages and data format.
 
-It sounds like one of those cumbersome problems that can only give rise to a headache. If we try to address it in its entirety, that's a given. However, we can chop it up and analyze each piece in isolation to see if we can solve them one by one. As said, we want the break it down and solve more straightforward problems one by one.
+It sounds like one of those cumbersome problems that can only give rise to a headache. If we try to address it in its entirety, that's a given. However, we can chop it up and analyze each piece in isolation to see if we can solve them one by one. As said, we want to break it down and solve more straightforward problems one by one.
 
 ## What does evolution mean?
 
 When we require evolving a system, we generally need to apply changes to the following things:
 
--  Messages: messages flow from one endpoint to another, carrying information. When processes change, they might need different data. In such cases, it's likely messages need to evolve.
-- Data structures: as processes change, so do the supporting data structures. In distributed systems, when using tools like NServiceBus, [saga](https://docs.particular.net/nservicebus/sagas/) data instances are an instance of those structures.
-- Supporting input/output devices: when the system change, to operate with different data, it needs other input forms, visualization, and reporting structures.
+- Messages: messages flow from one endpoint to another, carrying information. When processes change, they might need different data. In such cases, it's likely messages need to evolve.
+- Data structures: as processes change, so do the supporting data structures. In distributed systems, when using tools like NServiceBus, [saga](https://docs.particular.net/nservicebus/sagas/) data instances are an example of those structures.
+- Supporting input/output devices: when the system changes, to operate with different data, it needs other input forms, visualization, and reporting structures.
 
 Those are the three main areas we'll have to deal with when evolving distributed systems. Those are not the only challenges, though. For each area presented, we have to understand the direction of the change, the change type, and the deployment requirements.
 
 ## What's the change direction?
 
-For monolithic architecture, the change direction is irrelevant. For the sake of the sample, let's imagine a system that is well-componentized and deployed monolithically in production. To deploy, we stop the current version, deploy the new one, and start again. From the development point of view, if we change the database schema before the user interface or the other way around doesn't matter that much.
+For monolithic architecture, the change direction is irrelevant. For the sake of the sample, let's imagine a system that is well-componentized and deployed monolithically in production. To deploy, we stop the current version, deploy the new one, and start again. From the development point of view, changing the database schema before the user interface or the other way around doesn't matter that much.
 
 The reality is a bit different when we're dealing with a distributed architecture, and we need to be able to deploy changes with little to no downtime.
 
@@ -104,7 +104,7 @@ class SampleMessage
 }
 ```
 
-Technically speaking, it's not a breaking change. However, receivers need to adapt to the new incoming data to fulfill the business requirements connected to the additional information. This second one doesn't qualify as a breaking change, though. It could be that a publisher updates the information it publishes, adding a few more data. One of the many subscribers corrects its behavior to handle the new data structure. All the others don't. They are not interested in the additional attributes. They'll continue to work even though additional data are coming in because the changes don't break the messages wire compatibility.
+Technically speaking, it's not a breaking change. However, receivers need to adapt to the new incoming data to fulfill the business requirements connected to the additional information. This second one doesn't qualify as a breaking change, though. It could be that a publisher updates the information it publishes, adding a few more data. One of the many subscribers corrects its behavior to handle the new data structure. All the others don't. They are not interested in the additional attributes. They'll continue to work even though additional data are coming in because the changes don't break the message's wire compatibility.
 
 ### Retroactive vs. non-retroactive changes
 
