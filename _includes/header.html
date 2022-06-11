@@ -26,7 +26,10 @@
             Series
           </a>
           <div class="dropdown-menu" aria-labelledby="seriesDropdownMenuLink">
-            <a class="dropdown-item" href="{{ '/series/view-model-composition' | prepend: site.baseurl }}">ViewModel Composition</a>
+            {% assign series_pages = site.pages | where: "layout","series" %}
+            {% for series_page in series_pages %}
+            <a class="dropdown-item" href="{{ series_page.url | prepend: site.baseurl }}">{{ series_page.title }}</a>
+            {% endfor %}
           </div>
         </li>
 
