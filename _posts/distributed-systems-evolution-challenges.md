@@ -114,7 +114,7 @@ The second type of change is more subtle and, I'd argue, less frequent. It's wor
 
 The last topic, but no less critical, is how we need or can deploy changes. We laid out all the steps to apply the necessary changes; it's time to deploy. Can we shut down the service that needs updating, or do we need to keep it running while the upgrade occurs? That's a crucial question. Looking at it from a different point of view, it's asking: will we have different versions of the same service running simultaneously in production or not? We don't need to deal with the so-called side-by-side deployment in most cases. However, in the rare instance we need, it's essential to understand the challenges.
 
-Stay tuned for future articles. They'll be grouped in the [Distributed systems evolution series](). If you feel I missed something, do not hesitate to leave a comment.
+Stay tuned for future articles. They'll be grouped in the [Distributed systems evolution series](/series/distributed-systems-evolution). If you feel I missed something, do not hesitate to leave a comment.
 
 ---
 
