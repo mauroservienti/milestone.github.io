@@ -70,6 +70,16 @@ One last note: .NET 3.1 is tricky. As said, it comes only with x64 support. Visu
 
 I downloaded the SDK installer based on my previous experience with the developers' pack. It fails. The error is that ARM is not a supported platform, which is an interesting error because we can install the same x64 SDK on the M1 Mac. The .NET Core 3.1 SDK installs fine using the Visual Studio Installer. But then I started getting all sorts of weird errors from Visual Studio. I suppose a lot of the Visual Studio tooling depends on .NET Core that tries to load other assemblies compiled for ARM, causing many operations to fail. Removing .NET Core 3.1 solved my problems. I assume that Visual Studio uses the latest runtime, .NET 6, in my case, if the expected one is not available. I have no idea how many latent problems are waiting for me around the corner.
 
+_2022-06-27 - A couple of months into using macOS and an M1 for .NET Development._
+
+The following section is only about .NET development, specifically WPF, using the Parallels Windows for ARM virtual machine. I have no issues with .NET 6 or .NET 7 development using macOS. Everything  I need works as expected.
+
+When using the Windows for ARM virtual machine, Visual Studio 2022 is extremely slow when developing WPF code, regardless of editing XMAL files of regular C# ones. JetBrains Rider helps a lot. It's much more performant and an excellent Visual Studio replacement for most workloads.
+
+There is no way, or at least no way I know to debug WPF applications using Visual Studio 2022. The application starts, the debugger is attached, and the WPF LivePreview tools work as expected. However, no breakpoint is hit. All of them result disabled with the "no symbols loaded" error. Again, debugging works flawlessly in JetBrains Rider.
+
+Microsoft recently released the [Visual Studio 2022 Preview 2 for ARM](https://devblogs.microsoft.com/visualstudio/arm64-visual-studio/). It's a game-changer. It's fast, faster than JetBrains Rider, and despite being the first preview, it's pretty stable. I have had no issues so far. Breakpoints don't work, though. I have a feeling that the culprit is the target framework. The application I'm working on targets .NET 4.8, which doesn't come with ARM support. There will be a .NET 4.8.1 targeting the ARM platform, which probably also addresses the debugging issue I'm facing.
+
 To be continued.
 
 ---
