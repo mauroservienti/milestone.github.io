@@ -31,9 +31,7 @@ The problem manifests itself at boot time. The screen is in standby mode, the ma
 
 Enough talking about the hardware.
 
-## .NET development
-
-_2022-04-15 - One week into using macOS and an M1 for .NET Development._
+## _2022-04-15 - One week into using macOS and an M1 for .NET Development._
 
 Let's start with the easy stuff. [JetBrains Rider](https://www.jetbrains.com/rider/) is a joy. .NET 6, runtime and SDK, [are supported on ARM64](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). We can build and execute all .NET projects targeting .NET, including .NET Core. Obviously, except for WPF and Windows Forms projects. They require Windows anyway.
 
@@ -70,7 +68,7 @@ One last note: .NET 3.1 is tricky. As said, it comes only with x64 support. Visu
 
 I downloaded the SDK installer based on my previous experience with the developers' pack. It fails. The error is that ARM is not a supported platform, which is an interesting error because we can install the same x64 SDK on the M1 Mac. The .NET Core 3.1 SDK installs fine using the Visual Studio Installer. But then I started getting all sorts of weird errors from Visual Studio. I suppose a lot of the Visual Studio tooling depends on .NET Core that tries to load other assemblies compiled for ARM, causing many operations to fail. Removing .NET Core 3.1 solved my problems. I assume that Visual Studio uses the latest runtime, .NET 6, in my case, if the expected one is not available. I have no idea how many latent problems are waiting for me around the corner.
 
-_2022-06-27 - A couple of months into using macOS and an M1 for .NET Development._
+## _2022-06-27 - A couple of months into using macOS and an M1 for .NET Development._
 
 The following section is only about .NET development, specifically WPF, using the Parallels Windows for ARM virtual machine. I have no issues with .NET 6 or .NET 7 development using macOS. Everything  I need works as expected.
 
