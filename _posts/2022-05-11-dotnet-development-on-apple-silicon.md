@@ -74,9 +74,11 @@ _2022-06-27 - A couple of months into using macOS and an M1 for .NET Development
 
 The following section is only about .NET development, specifically WPF, using the Parallels Windows for ARM virtual machine. I have no issues with .NET 6 or .NET 7 development using macOS. Everything  I need works as expected.
 
-When using the Windows for ARM virtual machine, Visual Studio 2022 is extremely slow when developing WPF code, regardless of editing XMAL files of regular C# ones. JetBrains Rider helps a lot. It's much more performant and an excellent Visual Studio replacement for most workloads.
+When using the Windows for ARM virtual machine, Visual Studio 2022 is extremely slow when developing WPF code, regardless of editing XAML files or regular C# ones. JetBrains Rider helps a lot. It's much more performant and an excellent Visual Studio replacement for most workloads.
 
-There is no way, or at least no way I know to debug WPF applications using Visual Studio 2022. The application starts, the debugger is attached, and the WPF LivePreview tools work as expected. However, no breakpoint is hit. All of them result disabled with the "no symbols loaded" error. Again, debugging works flawlessly in JetBrains Rider.
+
+There is no way, or at least no way I know to debug WPF applications using Visual Studio 2022. The application starts, the debugger is attached, and the WPF LivePreview tools work as expected. However, no breakpoint is hit. All of them show as disabled with the "no symbols loaded" error. Again, debugging works flawlessly in JetBrains Rider.
+
 
 Microsoft recently released the [Visual Studio 2022 Preview 2 for ARM](https://devblogs.microsoft.com/visualstudio/arm64-visual-studio/). It's a game-changer. It's fast, faster than JetBrains Rider, and despite being the first preview, it's pretty stable. I have had no issues so far. Breakpoints don't work, though. I have a feeling that the culprit is the target framework. The application I'm working on targets .NET 4.8, which doesn't come with ARM support. There will be a .NET 4.8.1 targeting the ARM platform, which probably also addresses the debugging issue I'm facing.
 
