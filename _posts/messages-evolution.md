@@ -14,13 +14,13 @@ In [Distributed systems evolution challenges](https://milestone.topics.it/2022/0
 
 As I said, I work for [Particular Software](https://particular.net), the makers of [NServiceBus](https://docs.particular.net/tutorials/quickstart/), a messaging middleware aiming to ease the usage of messaging and queues when designing distributed systems.
 
-I'll assume the system we need to evolve is a message-based one. It's indeed true that many of the discussed techniques apply to other technologies like HTTP or gRPC, where the exchanged payload is assimilable to messages.
+I'll assume the system we need to evolve is a message-based one. It's indeed true that many of the discussed techniques apply to other technologies like HTTP or gRPC, where the exchanged payload is similar to messages.
 
 ## Evolving messages
 
 In the [previous article](https://milestone.topics.it/2022/06/11/distributed-systems-evolution-challenges.html), we discussed the direction of the changes. We mentioned that it's generally better to start applying changes from the inside and then gradually move to the outside.
 
-Applying the inside-to-outside technique to message evolution means changing receivers before publishers/senders. Let's take into account a subset of the scenario outlined above:
+Applying the inside-out technique to message evolution means changing receivers before publishers/senders. Let's take into account a subset of the scenario outlined above:
 
 <div class="mermaid">
 sequenceDiagram
@@ -31,7 +31,7 @@ We want to update the Backend endpoint first, and once that's in production, we 
 
 ### Message exchange and contracts sharing
 
-At this point, we need a little digression and dive a bit into how messages are exchanged between endpoints. In the .NET world, there is a preference for strong typing. Developers prefer using C# classes, as presented above, to define messages. Those classes, which effectively are contracts, are generally shared across endpoints as NuGet packages. The `SubmitRequest` type is built into an assembly, packaged into a NuGet package, and referenced by the different endpoints using it to communicate.
+At this point, we need a little digression to dive a bit into how messages are exchanged between endpoints. In the .NET world, there is a preference for strong typing. Developers prefer using C# classes, as presented above, to define messages. Those classes, which effectively are contracts, are generally shared across endpoints as NuGet packages. The `SubmitRequest` type is built into an assembly, packaged into a NuGet package, and referenced by the different endpoints using it to communicate.
 
 When evolving systems requires evolving contracts, we face the messages update dilemma. In the above-presented scenario, if we change the contract and package it, both senders and receivers can (and probably will) upgrade. However, we don't want that; we want to ensure we upgrade receivers first and senders after that. The easiest but fragile option is to use a policy like "hey sender, please, refrain from updating until we say you can." As you can imagine, it might not be a solid choice.
 
@@ -97,7 +97,7 @@ The last thing to address is how to handle situations like: we stopped supportin
 
 _Source: <https://github.com/Particular/NServiceBus/blob/master/src/NServiceBus.Core/Pipeline/Incoming/LoadHandlersConnector.cs#L27>_
 
-That means not all senders have been updated to use the new message version. Or there are still in-flight messages. Even though we removed the `SubmitRequest` from the NuGet package, there are no guarantees that other teams will update sender endpoints and stop using the old message type.
+That means not all senders have been updated to use the new message version. Or there are still in-flight messages. Even though we removed `SubmitRequest` from the NuGet package, there are no guarantees that other teams will update sender endpoints and stop using the old message type.
 
 Let's acknowledge that we're safe using a tool like NServiceBus. Failed messages will be moved to the error queue and not lost. However, if we retry them, they'll end up in the same receiver queue and fail again.
 
