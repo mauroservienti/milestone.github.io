@@ -31,7 +31,7 @@ sequenceDiagram
    Web client ->> Rest API: HTTP request
    Rest API ->> Backend: Queue message
    Backend ->> Long-running process: Trigger long-running process
-   Long-running process ->> Database: Manipulate date
+   Long-running process ->> Database: Manipulate data
    Long-running process ->> Backend: Process completed
    Backend ->> Rest API: Topic event
    Rest API ->> Web client: WebSocket message
