@@ -15,7 +15,7 @@ It always starts well. At first glance, the requirements seem straightforward, a
 Recordings:
 
  - ExploreDDD <https://youtu.be/KkzvQSuYd5I>
- - NDC Oslo <https://youtu.be/hev65ozmYPI>
+ - NDC Copenhagen <https://youtu.be/hev65ozmYPI>
  - Oredev <https://youtu.be/sHDtAddvV0c>
 
 ## Tutti i nostri aggregati sono sbagliati
