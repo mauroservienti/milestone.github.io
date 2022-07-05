@@ -95,7 +95,7 @@ The last thing to address is how to handle situations like: we stopped supportin
 
 > No handlers could be found for message type: _message type_
 
-_Source: <https://github.com/Particular/NServiceBus/blob/master/src/NServiceBus.Core/Pipeline/Incoming/LoadHandlersConnector.cs#L27>_
+_Source: [NServiceBus repository](https://github.com/Particular/NServiceBus/blob/master/src/NServiceBus.Core/Pipeline/Incoming/LoadHandlersConnector.cs#L27)_
 
 That means not all senders have been updated to use the new message version. Or there are still in-flight messages. Even though we removed `SubmitRequest` from the NuGet package, there are no guarantees that other teams will update sender endpoints and stop using the old message type.
 
