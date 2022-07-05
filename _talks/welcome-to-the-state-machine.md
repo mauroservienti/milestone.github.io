@@ -12,6 +12,12 @@ languages:
 - English
 ---
 
+Recordings:
+
+- NDC Oslo <https://www.youtube.com/watch?v=8wYWTTfKjUU>
+- ExploreDDD <https://www.youtube.com/watch?v=26xrX113KZc>
+- Crafted Software (ITA) <https://www.youtube.com/watch?v=fjCVH_ZZy5o>
+
 ## Welcome to the (state) machine
 
 Stateless all the thing, they say. In the last few years we’ve been brainwashed: design stateless systems, otherwise they cannot scale, they cannot be highly available, and they are hard to maintain and evolve. In a nutshell stateful is bad. However complex software systems need to do collaborative processing, that is stateful by definition. Stateless myth busted! Collaborative domains deal with long running business transactions and need to interact with distributed resources. The traditional distributed transactions approach, even if tempting, is a time bomb.
