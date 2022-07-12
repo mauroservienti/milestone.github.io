@@ -2,7 +2,7 @@
 layout: post
 author: Mauro Servienti
 title: "Distributed systems evolution: processes state"
-synopsis: "Evolving distributed systems architecture is challenging. Addressing messages evolution is one aspect. Another one is evolving existing processes and their persisted status."
+synopsis: "Evolving distributed systems architecture is challenging. Addressing message evolution is one aspect. Another one is evolving existing processes and their persisted status."
 header_image: /img/posts/processes-state-evolution/header.jpg
 enable_mermaid: true
 series: distributed-systems-evolution
@@ -18,7 +18,7 @@ Hold on, Mauro. That's too fast.
 
 ## What's a long-running process, again?
 
-I wrote extensively about [long-running processes and sagas](https://milestone.topics.it/tags/sagas.html). In a nutshell, a long-running process is a process that spans multiple invocations, triggered by different triggers, and whose state is persistent across the many requests. It's crucial to highlight that long-running has nothing to with the time it takes to execute.
+I've written extensively about [long-running processes and sagas](https://milestone.topics.it/tags/sagas.html) before. In a nutshell, a long-running process is a process that spans multiple invocations, triggered by different events, and whose state is persistent across the various requests. It's crucial to highlight that long-running has nothing to with the time it takes to execute. It could be 2 minutes or 10 years. It's just something that doesn't happen _right now_.
 
 For example, an image optical character recognition (OCR) process is long-running. It's initially triggered by uploading the image to process. Then the image is queued for processing. When processing starts, the process state is changed to indicate that and the subsequent processing progress. Finally, the processing completes, and the process state is updated accordingly. The following is the visual representation of the process:
 
@@ -49,9 +49,9 @@ I guess you see the problem. As we implement new requirements, the code becomes 
 
 > To be precise, the problem doesn't arise because of the rigid nature of relational databases. The same situation applies to any storage type. The problem manifests in code if we use a key-value store or a document database.
 
-## Is there any reason to store everything in the same table?
+## Do we have to store everything in the same table?
 
-The quick answer is no. We tend to do that because we're used to it and because requirements usually dictate processes' evolution or extensions. Those words are tricky and lead us to think there is an excellent reason to extend the current process instead of creating a brand new one. The object-orientated programming mindset also kicks in, telling us that inheritance is an excellent technique to evolve something. Extension, again.
+The quick answer is no. We tend to do that because we're used to it and because requirements usually dictate processes' evolution or extensions. Those words are tricky and lead us to think there is an excellent reason to extend the current process instead of creating a brand new one. The object-oriented programming mindset also kicks in, telling us that inheritance is an excellent technique to evolve something. Extension, again.
 
 As for messages, I advise creating a new process that handles the new requirements. Sooner or later, all the instances of the old process will be complete enabling us to remove the handling code and set a timebomb on the data based on the applied retention policy.
 
@@ -61,7 +61,7 @@ If you're using [NServiceBus sagas](https://docs.particular.net/nservicebus/saga
 
 Let's start by saying that in the last twenty years, it happened to me a handful of times to witness the requirement for retroactive changes. It happened primarily in the context of the Italian tax system, which is a mess on its own, and in the context of fixing errors introduced by previous requirements, which was rare.
 
-What we outlined so far helps in dealing with non-retroactive changes. There is a new requirement, and a new process is created o handle that. Old instances will continue using the old method.
+What we outlined so far helps in dealing with non-retroactive changes. There is a new requirement, and a new process is created to handle that. Old instances will continue using the old method.
 
 Dealing with retroactive changes requires at least one of the following approaches:
 
@@ -72,7 +72,7 @@ The first is the simplest one. A retroactive change requires changing running pr
 
 The latter is a bit more involved and comes with some technical prerequisites. Let's imagine we're using a document database or a key-value store.
 
-We could change our code to intercept data load operations and alter the data on the fly before they are available to the service needing them. It's a powerful advanced technique that allows to gradually change data schema retroactively as the system touches them with no big upfront, downtime prone, data altering effort. Unfortunately, that technique depends too much on the storage technology, the SDK access, and the data retrieval pattern.
+We could change our code to intercept data load operations and alter the data on the fly before they are available to the service needing them. It's a powerful advanced technique that allows to gradually change data schema retroactively as the system touches them with no big upfront, downtime-prone, data-altering effort. Unfortunately, that technique depends too much on the storage technology, the SDK access, and the data retrieval pattern.
 
 ### Can we use a similar technique for message retroactive changes?
 
