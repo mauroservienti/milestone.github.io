@@ -42,9 +42,9 @@ The second option is designed to be temporary. We will modify senders to properl
 
 ### Publish/subscribe caveats
 
-All that presented so far applies well to message sending. Pub/sub is a bit trickier and what we do depends more on the underlying infrastructure. Let's say that we're deploying on AWS (Amazon Web Services), and we are using SQS (Simple Queue Service) and SNS (Simple Notification Service).
+Everything presented so far applies well to message sending. Pub/sub is a bit trickier and what we do depends more on the underlying infrastructure. Let's say that we're deploying on AWS (Amazon Web Services), and we are using SQS (Simple Queue Service) and SNS (Simple Notification Service).
 
-Let's imagine that an event is responsible for triggering post-payment operations. Once users pay, the payment processor publishes a `PaymentCompleted` event. Based on that, Salles subscribed to the event and started the post-payment operations. Visually, it's like the following diagram:
+Let's imagine that an event is responsible for triggering post-payment operations. Once users pay, the payment processor publishes a `PaymentCompleted` event. Based on that, Sales subscribed to the event and started the post-payment operations. Visually, it's like the following diagram:
 
 <div class="mermaid">
 graph LR
