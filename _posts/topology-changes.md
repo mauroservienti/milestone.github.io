@@ -74,7 +74,9 @@ Note that if you use NServiceBus, it will recreate the deleted subscription ever
 
 ## Conclusion
 
-Evolving a system, it's not only a matter of updating contracts and interfaces or upgrading data structures. Changes, like the topology once, can break the system's backward compatibility or alter the system's behaviors. As with all things distributed systems, it's essential to start by analyzing the desired changes impact on message senders and publishers, recipients and subscribers, and the infrastructure.
+Evolving a system, it's not only a matter of updating contracts and interfaces or upgrading data structures. Topology changes can break the system's backward compatibility or alter the system's behaviors.
+
+As with all things distributed systems, it's essential to start by analyzing the desired changes impact on message senders and publishers, recipients and subscribers, and the infrastructure.
 
 ---
 
