@@ -3,7 +3,7 @@ layout: post
 author: Mauro Servienti
 title: "Distributed systems evolution: topology changes"
 synopsis: "Evolving distributed systems architecture is challenging. It's not only a matter of evolving message contracts or processes state. Surprisingly, deployments can play a role in creating more challenges."
-header_image: /img/topology-changes/header.jpg
+header_image: /img/posts/topology-changes/header.jpg
 enable_mermaid: true
 series: distributed-systems-evolution
 tags:
