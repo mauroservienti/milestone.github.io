@@ -30,7 +30,7 @@ Finally, the overall UX was tremendously poor, especially when using the browser
 
 LastPass comes with a desktop application. I tried that:
 
-1. stopped sharing the accounts.
+1. I stopped sharing the accounts.
 1. I signed in to the browser extension using my account (the one I use the most).
 1. I signed in to the desktop application with work credentials.
 
@@ -43,7 +43,7 @@ It's horrid, and it's missing features. Unusable.
 
 ## What's next?
 
-I planned for a future switch when I upgraded my account to premium. I set a reminder for me nine months ahead to start looking for alternatives with a significant enough buffer time before the LastPass renewal.
+I planned for a future switch when I upgraded my account to premium. I set a reminder for myself nine months ahead to start looking for alternatives with a significant enough buffer time before the LastPass renewal.
 
 When the time came, based on the early cost of a password management solution, I decided not to go through the pain of other password manager trials. I didn't want to update all my devices to new software with a trial license. Import all my passwords, play with the bits, and switch to a different trial.
 
