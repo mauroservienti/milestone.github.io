@@ -2,7 +2,7 @@
 layout: post
 author: Mauro Servienti
 title: "I moved from LastPass to 1Password. I'm not happier"
-synopsis: "I've been a LastPass long-time client. I recently switched to 1Password in an attempt to overcome a few LastPass cons. I solved them, but I'm not sure the situation improved."
+synopsis: "I've been a long-time LastPass client. I recently switched to 1Password in an attempt to overcome a few LastPass cons. I solved them, but I'm not sure the situation improved."
 header_image: /img/posts/one-password/header.jpg
 tags:
 - personal
