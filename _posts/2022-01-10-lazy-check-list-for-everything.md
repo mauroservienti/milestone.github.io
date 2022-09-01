@@ -8,6 +8,7 @@ tags:
 - processes
 - self-organization
 - get-things-done
+- time-management
 ---
 
 I'm turning 49 in a few days. I hate aging, but that's food for another story. When I was a kid, there were no digital devices of any sort. We got extremely excited when Sony released the [Walkman](https://en.wikipedia.org/wiki/Walkman). We were used to 45 RPM portable record players.
