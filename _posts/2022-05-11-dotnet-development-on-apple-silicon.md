@@ -9,6 +9,11 @@ tags:
 - development
 ---
 
+_TL;DR_
+
+_Apple Silicon devices are great. My MacStudio is powerful, and I have difficulty using all the available resources. The machine, for most of the workloads, is simply outstanding. When it comes to .NET development, The scenario is twofold. On the one hand, there is .NET 6 (and onward) development which works excellently on macOS and Apple Silicon. I'm a JetBrains Rider user; however, both Visual Studio Code and Visual Studio for Mac work great._
+_On the other hand, there is .NET Framework development. It requires a virtual machine, and I have a Parallels one. The virtual machine OS must be ARM which poses a set of limitations to developers—most of the .NET development tools for Windows don't play nicely with an ARM architecture. Currently, the best option is to use Visual Studio 2022 Preview 2 (and onward), which comes with ARM support, and update the target framework to .NET 4.8.1. If that's not possible, get ready to spend time troubleshooting subtle errors._
+
 I've used a Dell Precision Tower 5810 workstation (8 core Xeon, 32GB of RAM, and 1TB SSD) for the last seven years and Windows as my primary OS for most of my career. I had an experience with macOS for a couple of years around 2010.
 
 I recently (April 2022) bought a MacStudio (M1 Ultra, 64GB of RAM, 1TB SSD).
