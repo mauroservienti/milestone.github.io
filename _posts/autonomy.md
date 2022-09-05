@@ -41,7 +41,7 @@ Is that a problem? It depends. That's why we define service boundaries. If two o
 
 The assumption is that autonomous components are easier to maintain and evolve. They are also easier to deploy because they won't affect other parts of the system. Based on business concerns, we can group components into services: Components dealing with similar business requirements will live in the same service boundary (it's probably simplistic, but it's good enough for today's discussion).
 
-Services inherit components' autonomy making them autonomous too. If coupling surfaces within service boundaries across components, that service will be more complex to maintain, evolve, and deploy. If coupling surfaces across services, the entire system will.
+Services inherit components' autonomy making them autonomous too. If you’re coupling components within service boundaries, that service will be more complex to maintain, evolve, and deploy. If you’re coupling services, the entire system will.
 
 ## What about the business?
 
