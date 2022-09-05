@@ -83,7 +83,7 @@ Usually, nothing else. That event type reduces coupling to its minimum. It's imp
 
 ## Alarm bells
 
-How do we determine if something shared across service boundaries hurts autonomy? My general approach is to look at the request using the open/closed principle lenses. Does the request imply sharing internals of service? Does the request cause data to leak? Does the demanding service request data that is not interesting for the owing service?
+How do we determine if something shared across service boundaries hurts autonomy? My general approach is to look at the request through the lens of the open/closed principle. Does the request imply sharing internals of service? Does the request cause data to leak? Does the demanding service request data that is not interesting for the owing service?
 
 ## Conclusion
 
