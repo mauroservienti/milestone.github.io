@@ -30,7 +30,7 @@ In the presented process, Slack was my Achilles' heel. Turning Slack messages I 
 
 Too much friction in creating a to-do list item.
 
-As a workaround, I used the Slack saved items feature to keep track of things: if I needed to follow up on something in Slack, I saved the Slack message, and the saved items were my things to do. That lacked an important thing. There is no way to add context to what was saved. Not only that, the only way to mark an item as done is to _unsave_ it. As soon as you do that, there is no way to undo the action and no easy way to find the message again. Over time, I lost many messages. I needed to find a better solution.
+As a workaround, I used the Slack saved items feature to keep track of things: if I needed to follow up on something in Slack, I saved the Slack message, and the saved items were my things to do. That lacked an important thing. There is no way to add context to what was saved. Not only that, the only way to mark an item as done is to _unsave_ it. As soon as you do that, there is no way to undo the action and no easy way to find the message again (_undo_ is now supported). Over time, I lost many messages. I needed to find a better solution.
 
 Last year I started using [Zapier](https://zapier.com) to automatically turn a saved Slack message into an email in my inbox. And that was quite an improvement. It works amazingly well, and it's cheap. I can use the free tier with the number of messages I save monthly.
 
