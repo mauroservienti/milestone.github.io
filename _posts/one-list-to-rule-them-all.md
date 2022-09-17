@@ -49,7 +49,7 @@ One of the disadvantages of the many to-do list Apps is that they don't have goo
 
 Gmail and many other email systems come with excellent support for multiple accounts. That allows me to have a clear separation between personal and work to-dos, which is also a nice-to-have if, like me, you don't have any work-related accounts on the phone or the tabled.
 
-Let me give you an example of a tool that doesn't come with a good enough separation of work and personal stuff and ends up being a source of frustration for me: GitHub Notifications (or the GitHub app for mobile devices). GitHub combines all issues and pull requests in a single place and provides little to no support to separate work-related things from personal ones, e.g., open source work. If one dedicates some time to open source activities during the weekend, they are also distracted by work-related issues and pull requests.
+Let me give you an example of a tool that doesn't come with a good enough separation of work and personal stuff and ends up being a source of frustration for me: GitHub Notifications (or the GitHub app for mobile devices). GitHub combines all issues and pull requests in a single place and provides little to no support to separate work-related things from personal ones, e.g., open source work. If one dedicates some time to open source activities during the weekend, they are also distracted by work-related issues and pull requests. Sure, I could be using two separate accounts, instead of one. The downside is that switching accounts requires logging off and logging in with a different one. Thanks, no, thanks.
 
 ## What's next?
 
