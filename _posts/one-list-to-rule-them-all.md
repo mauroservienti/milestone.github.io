@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Lifehacking 101: One to-do list to rule'em all"
+title: "Lifehacking 101: One to-do list to rule 'em all"
 author: Mauro Servienti
-synopsis: "I'm so bad at to-do lists, at the same time if I don't write down things, I forget everything. So what? It turns out that with a bit of inventive I can make to-do lists mostly work for me."
+synopsis: "I'm so bad at to-do lists, at the same time if I don't write things down, I forget everything. So what? It turns out that with a bit of inventiveness I can make to-do lists mostly work for me."
 header_image: /img/posts/one-list-to-rule-them-all/header.jpg
 tags:
 - time-management
@@ -15,11 +15,11 @@ I think I've found the light at the end of the tunnel. Until the next tunnel, ob
 
 In my last article on the topic of [time management](https://milestone.topics.it/tags/time-management.html), ["I'm lazy, I have a checklist for everything"](https://milestone.topics.it/2022/01/10/lazy-check-list-for-everything.html), I provided an overview of how I keep track of all the things that I do.
 
-One thing I've been doing for at least three years is that I turned my Gmail inbox into a to-do list, using an [inbox-zero approach](https://www.howtogeek.com/413507/what-is-inbox-zero-and-how-can-you-achieve-it/). When I need to do something, I send a Gmail message to myself, setting up a simple rule/filter in Gmail that labels self-sent messages as `To-Do` and mark them as read automatically. When the to-do is completed, I archive the mail message. If I need to add something (e.g., more context) to the do-to, I reply to the mail message (I reply to myself). Easy peasy.
+One thing I've been doing for at least three years is that I turned my Gmail inbox into a to-do list, using an [inbox-zero approach](https://www.howtogeek.com/413507/what-is-inbox-zero-and-how-can-you-achieve-it/). When I need to do something, I send a Gmail message to myself, setting up a simple rule/filter in Gmail that labels self-sent messages as `To-Do` and mark them as read automatically. When the to-do is completed, I archive the mail message. If I need to add something (e.g., more context) to the to-do, I reply to the mail message (that is, I reply to myself). Easy peasy.
 
 I was [terrible at to-do lists](https://milestone.topics.it/2019/01/23/i-m-a-procrastinator-i-fail-at-to-do-lists.html), and the situation improved quite a lot. It's far from optimal, though.
 
-In the presented process, Slack was my Achilles' heel. Turning Slack messages I needed to follow up into to-do list items was cumbersome:
+In the presented process, Slack was my Achilles' heel. Turning Slack messages I needed to follow up on into to-do list items was cumbersome:
 
 1. Copy the Slack message link.
 2. Create a new email.
@@ -30,7 +30,7 @@ In the presented process, Slack was my Achilles' heel. Turning Slack messages I 
 
 Too much friction in creating a to-do list item.
 
-As a workaround, I used the Slack saved items feature to keep track of things: if I needed to follow up on something in Slack, I saved the Slack message, and the saved items were my things to do. That lacked an important thing. There is no way to add context to what was saved. And it's not only that, the only way to mark an item as done is to _unsave_ it. As soon as you do it, there is no way to undo the action and no easy way to find the message again. Over time, I lost many messages I needed to find a better solution.
+As a workaround, I used the Slack saved items feature to keep track of things: if I needed to follow up on something in Slack, I saved the Slack message, and the saved items were my things to do. That lacked an important thing. There is no way to add context to what was saved. Not only that, the only way to mark an item as done is to _unsave_ it. As soon as you do that, there is no way to undo the action and no easy way to find the message again. Over time, I lost many messages. I needed to find a better solution.
 
 Last year I started using [Zapier](https://zapier.com) to automatically turn a saved Slack message into an email in my inbox. And that was quite an improvement. It works amazingly well, and it's cheap. I can use the free tier with the number of messages I save monthly.
 
@@ -45,7 +45,7 @@ There are two main reasons:
 
 Contradicting reasons, they seem! Somewhat :-)
 
-One of the disadvantages of the many to-do list Apps is that they don't have good multi-account support. One that comes with a good multi-account is Google Tasks, which also integrates very nicely with Gmail. However, I can't see any advantage over what I'm doing today. I tried Tasks twice for the records and returned to my trusted email twice.
+One of the disadvantages of the many to-do list Apps is that they don't have good multi-account support. One that comes with a good multi-account is Google Tasks, which also integrates very nicely with Gmail. However, I can't see any advantage over what I'm doing today. I tried Tasks twice and returned to my trusted email twice.
 
 Gmail and many other email systems come with excellent support for multiple accounts. That allows me to have a clear separation between personal and work to-dos, which is also a nice-to-have if, like me, you don't have any work-related accounts on the phone or the tabled.
 
@@ -63,7 +63,7 @@ Having everything in a single place is only the beginning. Now I need to get bet
 
 "Long and complex tasks" get a dedicated slot, or more than one, in my schedule. That happens on Fridays. I scroll through my to-dos, identify the long tasks and schedule them.
 
-The "back-and-forth type of interaction" is my new Achilles' heel. An example of back-and-forth is when I receive an email with a question, for example, a support case from a customer. In many cases, it's clear that a response will lead to new questions prolonging the interaction. It's not bad per se. But it's incredibly hard, if ever possible, to plan. One issue is that I don't want them to wait too much, but at the same time, I cannot let those interactions take over my schedule. At the end of the week, it's trivially easy to look back and realize that those types of interactions have sucked up all your time. I'm currently bad at managing these, and if you wrote me, you probably realized it yourself. I'm sorry, I'm working on it.
+The "back-and-forth type of interaction" is my new Achilles' heel. An example of back-and-forth is when I receive an email with a question, for example, a support case from a customer. In many cases, it's clear that a response will lead to new questions prolonging the interaction. It's not bad per se. But it's incredibly hard, if impossible, to plan. One issue is that I don't want them to wait too much, but at the same time, I cannot let those interactions take over my schedule. At the end of the week, it's trivially easy to look back and realize that those types of interactions have sucked up all your time. I'm currently bad at managing these, and if you wrote me, you probably realized it yourself. I'm sorry, I'm working on it.
 
 ## Conclusion
 
