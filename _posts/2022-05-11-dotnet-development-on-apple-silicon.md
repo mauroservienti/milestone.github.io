@@ -92,7 +92,7 @@ A remark: I probably write code 30% of my time in my current role. In the vast m
 
 If the project multi-targets .NET and .NET Framework, and you know what to do (e.g., there is no need for full IntelliSense support to detect that a member is unavailable in one of the targeted frameworks), then macOS is again more than enough. The production build artifacts are a CI concern.
 
-I recently upgraded Visual Studio 2022 for ARM to the latest preview bits, and none of the test-related things work. That effectively breaks .NET Framework development using the Windows for ARM virtual machine. I created an Azure virtual machine and used that for my little .NET Framework development needs.
+I recently upgraded Visual Studio 2022 for ARM to the latest preview bits, and none of the test-related things work. That effectively breaks .NET Framework development using the Windows for ARM virtual machine. I created an Azure virtual machine and use that for the few .NET Framework development needs I still have.
 
 I will check if newer Visual Studio bits improve the situation from time to time, but that's a dead end for now.
 
