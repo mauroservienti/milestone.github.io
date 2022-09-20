@@ -88,7 +88,7 @@ Microsoft recently released the [Visual Studio 2022 Preview 2 for ARM](https://d
 
 ## 2022-09-19 I'm ready to give up — .NET Framework development is a PITA
 
-A remark: I probably write code 30% of my time in my current role. In the vast majority of the cases, the development stack is C# and .NET 6. It doesn't need Windows and works flawlessly on macOS using the excellent JetBrains Rider.
+A remark: I probably spent 30% of my time writing code in my current role. In the vast majority of the cases, the development stack is C# and .NET 6. It doesn't need Windows and works flawlessly on macOS using the excellent JetBrains Rider.
 
 If the project multi-targets .NET and .NET Framework, and you know what to do (e.g., there is no need for full IntelliSense support to detect that a member is unavailable in one of the targeted frameworks), then macOS is again more than enough. The production build artifacts are a CI concern.
 
