@@ -25,7 +25,7 @@ In the presented process, Slack was my Achilles' heel. Turning Slack messages I 
 2. Create a new email.
 3. Paste the link.
 4. Go back to Slack and copy the message text.
-5. Past it in the mail body.
+5. Paste it in the mail body.
 6. Send the message to me.
 
 Too much friction in creating a to-do list item.
