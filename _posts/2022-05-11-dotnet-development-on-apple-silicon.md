@@ -86,6 +86,16 @@ There is no way, or at least no way I know to debug WPF applications using Visua
 
 Microsoft recently released the [Visual Studio 2022 Preview 2 for ARM](https://devblogs.microsoft.com/visualstudio/arm64-visual-studio/). It's a game-changer. It's fast, faster than JetBrains Rider, and despite being the first preview, it's pretty stable. I have had no issues so far. Breakpoints don't work, though. I have a feeling that the culprit is the target framework. The application I'm working on targets .NET 4.8, which doesn't come with ARM support. There will be a .NET 4.8.1 targeting the ARM platform, which probably also addresses the debugging issue I'm facing.
 
+## 2022-09-19 I'm ready to give up — .NET Framework development is a PITA
+
+A remark: I probably spent 30% of my time writing code in my current role. In the vast majority of the cases, the development stack is C# and .NET 6. It doesn't need Windows and works flawlessly on macOS using the excellent JetBrains Rider.
+
+If the project multi-targets .NET and .NET Framework, and you know what to do (e.g., there is no need for full IntelliSense support to detect that a member is unavailable in one of the targeted frameworks), then macOS is again more than enough. The production build artifacts are a CI concern.
+
+I recently upgraded Visual Studio 2022 for ARM to the latest preview bits, and none of the test-related things work. That effectively breaks .NET Framework development using the Windows for ARM virtual machine. I created an Azure virtual machine and use that for the few .NET Framework development needs I still have.
+
+I will check if newer Visual Studio bits improve the situation from time to time, but that's a dead end for now.
+
 To be continued.
 
 ---
