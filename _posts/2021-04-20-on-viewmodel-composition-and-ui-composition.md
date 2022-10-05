@@ -16,6 +16,8 @@ They're not the same thing. They're not orthogonal. They can be used in conjunct
 
 I briefly touched on UI and ViewModel Composition in ["The Price of Freedom"](https://milestone.topics.it/view-model-composition/2019/06/13/the-price-of-freedom.html). This post details the responsibilities of two architectural approaches.
 
+{% include link-to-service-composer.html %}
+
 ## What are they?
 
 UI Composition, often referred to as micro frontends, is the practice (or pattern maybe) of splitting the UI into multiple autonomous components that evolve independently. A framework is then responsible for bringing all the parts together to display a meaningful UI to users. The composition can happen at runtime or build-time, depending on the technology of choice or the toolchain. For example, the following is a rough and trivial UI Composition option:
