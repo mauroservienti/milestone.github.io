@@ -15,6 +15,8 @@ redirect_from: /2019/02/06/what-is-services-viewmodel-composition-again.html
 ---
 Building distributed systems requires facing an interesting challenge: there is a dichotomy between the way behaviors and data are decomposed at the backend and the way users expect to consume them from the frontend.
 
+{% include link-to-service-composer.html %}
+
 ## Backend meanderings
 
 When designing a distributed system backend it's usually decomposed into services, and data are segregated into services by ownership, or if you will by transactional boundaries: what changes together stays together.
