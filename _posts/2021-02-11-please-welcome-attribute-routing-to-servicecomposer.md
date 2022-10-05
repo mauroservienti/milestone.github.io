@@ -12,6 +12,8 @@ series: view-model-composition
 
 With .NET Core 3, Microsoft introduced a long-waited feature in ASP.Net: Endpoint routing. Thanks to endpoint routing, it's finally possible to customize the target of an incoming HTTP request.
 
+{% include link-to-service-composer.html %}
+
 A bit of history might be helpful. In the .NET Framework version of ASP.NET, routing is part of MVC. That is, there is no way to use routing without using MVC. With the introduction of ".NET Core," Microsoft split routing into a separate `Microsoft.AspNetCore.Routing` package. The ability to use the routing feature in isolation was the thing that allowed [ServiceComposer](https://github.com/ServiceComposer) to see the light.
 
 > What's ServiceComposer? ServiceComposer is a view model composition gateway designed to compose data owned by different (micro)services and transparently serve users' requests with a single response view model. More information about the overall architectural problem and the many nuances are available in the [ViewModel Composition series](https://milestone.topics.it/categories/view-model-composition) of articles on this blog.
