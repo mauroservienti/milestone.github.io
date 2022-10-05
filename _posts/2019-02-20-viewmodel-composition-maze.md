@@ -15,6 +15,8 @@ redirect_from: /2019/02/20/viewmodel-composition-maze.html
 
 In [last instalment](/2019/02/06/what-is-services-viewmodel-composition-again.html) we had a first look at what ViewModel Composition is and what problem it is designed to solve. A product was used as a sample user mental model to show the dichotomy between its server side representation, in a distributed system, and its front-end representation when in need of showing information to users.
 
+{% include link-to-service-composer.html %}
+
 ## Can be scary, at a first look
 
 ![a-product](/img/posts/viewmodel-composition-maze/a-product.jpg){:class="img-fluid mx-auto d-block"}
