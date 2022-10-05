@@ -19,6 +19,8 @@ We recently [looked at some pseudo code showing how Single Item Composition coul
 
 The diagram is a bird-eye view of the composition flow, and misses details about list composition whose [darkness we've already investigated](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html). But now it's time to see how it looks in code.
 
+{% include link-to-service-composer.html %}
+
 ## Let's dance
 
 In the above articles, _Marketing_ is identified as the one owning the *Product* concept, and as such is responsible to return the **list** of *Products*:
