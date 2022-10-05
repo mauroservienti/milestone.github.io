@@ -151,6 +151,8 @@ With model binding and input and output formatters, ServiceComposer is moving fr
 
 Last but not least, credit where it's due. Thanks to [Mark Phillips](https://github.com/markphillips100) for the ideas, the brainstorming, and the support in developing the mentioned features.
 
+{% include link-to-service-composer.html %}
+
 ---
 
 Photo by <a href="https://unsplash.com/@brett_jordan?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Brett Jordan</a> on <a href="https://unsplash.com/s/photos/binder?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
