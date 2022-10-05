@@ -9,6 +9,8 @@ redirect_from: [/view-model-composition/, /categories/view-model-composition/, /
 
 Designing a UI when the back-end system consists of dozens (or more) of (micro)services is a challenge. We have separation and autonomy on the back end, but on the front-end this all needs to come back together. ViewModel Composition stops it from turning into a mess of spaghetti code, and prevents simple actions from causing an inefficient torrent of web requests.
 
+{% include link-to-service-composer.html %}
+
 When building systems based on SOA principles service boundaries are a key aspect, if not THE key aspect. If we get service boundaries wrong the end result has the risk to be, in the best case, a distributed monolith, and in the worst one, a complete failure.
 
 > Service boundaries identification is a challenge on its own, it requires a lot of business domain knowledge and a lot of confidence with high level design techniques. Other than that there are technical challenges that might drive the solution design in the wrong direction due to the lack of technical solutions to problems foreseen while defining service boundaries.
