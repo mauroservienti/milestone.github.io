@@ -19,6 +19,8 @@ The ViewModel Composition discovery journey is progressing nicely, so far we've 
 * How is Single Item Composition designed in [The Services ViewModel Composition maze](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html)
 * How is ViewModels Lists Composition designed in [Into the darkness of ViewModels Lists Composition](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html)
 
+{% include link-to-service-composer.html %}
+
 ## Show me the code!
 
 It's probably the right time to start looking at some code, maybe still some theoretical and pseudo code, but at least something that explains how to put in practice what we've discovered so far.
