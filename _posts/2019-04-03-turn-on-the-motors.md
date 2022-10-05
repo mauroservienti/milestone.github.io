@@ -17,6 +17,8 @@ We spent the last seven posts introducing ViewModel Composition and diving into 
 
 In a few occasions I mentioned either `the infrastructure` or `the engine` and always said: "there will be a post about it". Time has come.
 
+{% include link-to-service-composer.html %}
+
 ## Composition Gateway
 
 To make sure that data can be aggregated we need to make clients interact with a third party and not directly with endpoints owned by services. Still using our services sample clients don't directly talk to *Marketing*, *Sales*, *Warehouse*, and *Shipping*. They connect to a service that sits between them and business services to run the composition logic.
