@@ -13,6 +13,8 @@ series: view-model-composition
 
 One of the frequently asked questions is what it is like to work on a system that implements a frontend based on ViewModel Composition techniques. I covered the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition) theory and the technical part from A to Z, but I never touched on what it means to do it effectively.
 
+{% include link-to-service-composer.html %}
+
 > This article won't be one of those "real world" kinds of articles that usually have nothing to do with the real world. It's near to impossible to represent the real world in an article. Maybe a book can aim to do it. Maybe.
 
 ViewModel Composition and UI Composition, or micro-frontends if you prefer, are challenging. They require a deep understanding of the architectural concepts, underlying technologies and technical stacks, and deployment pipelines and tools.
