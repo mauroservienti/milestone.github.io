@@ -15,6 +15,8 @@ redirect_from: /2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html
 
 We had [a first look at what problem ViewModel Composition is](https://milestone.topics.it/2019/02/06/what-is-services-viewmodel-composition-again.html) designed to solve, then we analyzed what it means to [compose a single item](https://milestone.topics.it/2019/02/20/viewmodel-composition-maze.html), using a Product as sample model. It's now time to start exploring what it means to compose a list of Product ViewModels.
 
+{% include link-to-service-composer.html %}
+
 ## Why can't we just...?
 
 The trap of composing lists of ViewModels is that we cannot apply the same technique used for single items. If we have a list of items, where each item in the list is composed by data coming from multiple services, we cannot compose each item. Composing each item one by one means that our list will turn into a scary `SELECT N+1` type of thing, but worse since it'll be over `HTTP`.
