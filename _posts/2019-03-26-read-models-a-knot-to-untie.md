@@ -17,6 +17,8 @@ When dealing with distributed systems it's very tempting, and apparently easy an
 
 > This series of articles is not focused on CQRS. There are amazing resources available out there about the topic.
 
+{% include link-to-service-composer.html %}
+
 ## Choices
 
 Traditionally read models are presented in a very fancy way. I performed a [Google Images search](https://www.google.com/search?q=read+model&source=lnms&tbm=isch&sa=X&ved=0ahUKEwii7OfopJ_hAhVKsaQKHT3rCc0Q_AUIDigB&biw=1707&bih=818) and picked one:
