@@ -11,6 +11,8 @@ series: view-model-composition
 ---
 Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems.
 
+{% include link-to-service-composer.html %}
+
 In the [blog posts series about ViewModel Composition](/categories/view-model-composition) we used as a sample domain model a list of products composed by the following services:
 
 * *Marketing* owns name and description
