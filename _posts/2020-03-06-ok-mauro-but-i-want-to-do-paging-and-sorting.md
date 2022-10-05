@@ -12,6 +12,8 @@ series: view-model-composition
 
 It's a kind of [tornado of souls](https://www.youtube.com/watch?v=K-HzFACAedk) here. Coronavirus is all around where I live, and _smart working_, as Italians call remote working, is all the rage. Articles, posts, and twitter threads are all about how to be great at remote working. One way or the other, I've been working remotely for the last ten years or so, and in the last six years, I've been 100% remote working. Don't worry. I don't want to talk "remote working," at least not today.
 
+{% include link-to-service-composer.html %}
+
 This post assumes that you've read ["Paging and sorting in distributed systems, oh my!"](/view-model-composition/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html) article. If this is not the case, go and read it. I'll wait here.
 
 As you probably noticed, the approaches described to page data and sort data work in isolation, but immediately fall apart if we need to use them together. If the need is to apply "paging and sorting" in the same request, then the proposed solutions cannot be applied. Or, if implemented, can only result in a very chatty and non-performant design.
