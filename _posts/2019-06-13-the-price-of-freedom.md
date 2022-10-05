@@ -22,6 +22,8 @@ Although, we probably need to spend a few words about user interfaces, the micro
 
 We can divide the UI world into two macro categories, whose separation is not really clear as there are possibly much more than 50 shades of gray between the white "Branding" and the black "Magic".
 
+{% include link-to-service-composer.html %}
+
 ## Branding
 
 On the one hand there is really nothing wrong in having a monolithic user interface. We can call it the Branding-style approach, Branding acts like a service defining contracts that other services needs to implement and respect if they want their data displayed on a UI they don't own. Services own the data, not the way they are displayed.
