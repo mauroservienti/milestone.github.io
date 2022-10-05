@@ -22,6 +22,8 @@ In fact there isn't such thing as cross-service data sharing at all. Lately I st
 - How ViewModel Lists Composition is designed in [Into the darkness of ViewModels Lists Composition](https://milestone.topics.it/2019/02/28/into-the-darkness-of-viewmodel-lists-composition.html)
 - Introduced some coding in [ViewModel Composition: show me the code!](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html)
 
+{% include link-to-service-composer.html %}
+
 ## Share all the things!
 
 At a first look it might sound reasonable to use the ViewModel Composition approach to allow services to talk to each other. If `Service X` needs some information that are stored in `Service B` and `Service H` why not allow `X` to go to some sort of internal `Composition Engine` where request handlers from `B` and `H` could be deployed to solve the exact problem `X` has...? Thank you, but no, thank you.
