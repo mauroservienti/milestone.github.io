@@ -19,7 +19,7 @@ Isolation comes with some headaches. Typically we start facing troubles when the
 
 HTTP resources pose a similar issue. Let's imagine that you want to use [approval testing](https://approvaltests.com) techniques to validate that an HTTP endpoint returns the expected result. The test exercises the client of the HTTP resource, that is, the system under test. In this scenario, the HTTP resource is not different from the database required by the repository mentioned above. But unlike databases, we cannot mock HTTP resources. At the same time, hosting a webserver in a test is not straightforward.
 
-## Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory
+## WebApplicationFactory
 
 With ASP.NET Core comes a testing package, `Microsoft.AspNetCore.Mvc.Testing`, that allows piloting a webserver hosted in a test:
 
