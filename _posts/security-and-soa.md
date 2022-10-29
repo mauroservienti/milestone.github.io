@@ -22,9 +22,11 @@ My answer usually starts with "Security is not a service."
 ## Wait, what?
 
 Security, as a term, is too generic in this context. At least, we want to distinguish between authentication, authorization, and users & rights management. Here is a quick recap of what they are:
- Authentication verifies that the account trying to access the system is who they claim to be. For example, credentials verification is a form of authentication. Another one is biometric checks.
-Authorization verifies that users can do what they are trying to do. For example, can the current user visualize a specific resource?
-Users & Rights management is the set of processes related to managing user accounts and what they can do in the system — for example, roles assignment.
+
+- Authentication verifies that the account trying to access the system is who they claim to be. For example, credentials verification is a form of authentication. Another one is biometric checks.
+- Authorization verifies that users can do what they are trying to do. For example, can the current user visualize a specific resource?
+- Users & Rights management is the set of processes related to managing user accounts and what they can do in the system — for example, roles assignment.
+
 Users & rights management is a good candidate for being a service. It's a set of processes well isolated from other services. It comes with its policies, and it's unlikely there is a need to couple it with other components in the system.
 
 Authentication is two-fold. On the one hand, it is one of the Users & Rights management components. Unauthenticated users accessing the system will be redirected to the authentication component to validate their credentials. The component will query the Users & Rights management storage to check credentials or use the configured technology to authenticate them. Upon successful validation, users receive an authentication token they can spend when accessing other services.
