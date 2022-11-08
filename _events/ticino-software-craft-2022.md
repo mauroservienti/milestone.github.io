@@ -1,6 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
+count: 281
 title: "Ticino Software Craft Meetup"
 location: "online"
 language: "English"
