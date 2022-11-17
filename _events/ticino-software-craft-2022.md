@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 count: 281
 title: "Ticino Software Craft Meetup"
 location: "online"
@@ -13,6 +13,8 @@ sessions:
 - title: "Amazon SQS and SNS for .NET developers"
   abstract: "One of the mantras of distributed systems is decoupling. A great way to decouple applications or parts of a single application is to use a queue to exchange messages. AWS offers two options, SQS and SNS, which apparently have a lot in common.
 We will analyze why to use a queue, we will understand what SQS and SNS are, and when to use one, the other, or both. All with examples in C#."
+  slides: https://bit.ly/ticino-sqs-sns
+  recording: https://www.youtube.com/watch?v=wKB7AO03Itg
 tags:
 - Microservices
 - SOA
