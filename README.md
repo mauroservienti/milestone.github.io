@@ -2,7 +2,11 @@
 
 My personal blog available @ [https://milestone.topics.it](https://milestone.topics.it)
 
-Start with:  `jekyll serve --force_polling [--incremental] [--drafts]` on BashOnWindows to enable live rebuild, aka `--watch`
+Either install Jekyll locally or use VS Code Dev Containers. Once installed, start with:
+
+```
+jekyll serve --watch --force_polling --verbose --livereload --incremental [--drafts]
+```
 
 ## How to run locally using Jekyll on Windows Linux Subsystem (Ubuntu)
 
