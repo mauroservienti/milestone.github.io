@@ -2,7 +2,11 @@
 
 My personal blog available @ [https://milestone.topics.it](https://milestone.topics.it)
 
-Start with:  `jekyll serve --force_polling [--incremental] [--drafts]` on BashOnWindows to enable live rebuild, aka `--watch`
+Either install Jekyll locally or use VS Code Dev Containers. Once installed, start with:
+
+```
+jekyll serve --watch --force_polling --verbose --livereload --incremental [--drafts]
+```
 
 ## How to run locally using Jekyll on Windows Linux Subsystem (Ubuntu)
 
@@ -20,20 +24,4 @@ sudo gem update –-system
 sudo gem install jekyll bundler
 sudo gem install jekyll-sitemap
 sudo gem install jekyll-redirect-from
-```
-
-## How to run locally using Jekyll Docker container
-
-Use the following docker compose in the root directory:
-
-```
-services:
-  jekyll:
-    # can be moved to latest as soon as 4.3.0 is out. It fixes https://github.com/jekyll/jekyll/issues/9066
-    image: jekyll/jekyll:4.2.0
-    command: jekyll serve --watch --force_polling --verbose --livereload --incremental
-    ports:
-      - 4000:4000
-    volumes:
-      - .:/srv/jekyll
 ```
