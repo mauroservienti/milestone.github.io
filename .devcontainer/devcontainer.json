@@ -7,7 +7,7 @@
 		"args": {
 			// Update 'VARIANT' to pick a Debian OS version: bullseye, buster
 			// Use bullseye when on local arm64/Apple Silicon.
-			"VARIANT": "buster",
+			"VARIANT": "bullseye",
 			// Enable Node.js: pick the latest LTS version
 			"NODE_VERSION": "none"
 		}	
