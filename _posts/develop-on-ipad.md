@@ -48,7 +48,7 @@ The great thing is that keyboard shortcuts and trackpad behaviors are what I'm u
 
 ## Conclusion
 
-If it's your only option, then a 10 inches iPad can be used as a development machine. Otherwise, a bigger screen is beneficial, if not mandatory. Everything else works fine, making me think that a MacBook Air is a better compromise.
+If it's your only option, then a 10-inch iPad can be used as a development machine. Otherwise, a bigger screen is beneficial, if not mandatory. Everything else works fine, making me think that a MacBook Air is a better compromise.
 
 ---
 
