@@ -49,7 +49,7 @@ Similarly, the authentication request is synchronous when a user logs in to the 
 
 ## Once upon a time, there were two generals
 
-Sending a message to a remote service for asynchronous processing is appealing. However, we must be careful. [Only the famous lady is sure that all that glitters is gold](https://youtu.be/Ly6ZhQVnVow). In the distributed system world, proof of receiving is a renowned problem, hard, if possible, to solve. The following story represents it well:
+Sending a message to a remote service for asynchronous processing is appealing. However, we must be careful. [Only the famous lady is sure that all that glitters is gold](https://youtu.be/Ly6ZhQVnVow). In the distributed system world, proof of receiving is a renowned problem, hard, if not impossible, to solve. The following story represents it well:
 
 > Two generals are only able to communicate with one another by sending a messenger through enemy territory. They need to reach an agreement on the time to launch an attack, while knowing that any messenger they send could be captured.
 >
@@ -71,7 +71,7 @@ Watcha talkin' bout, Mauro? (Cit. — <https://youtu.be/Le6qeMe7-vM>)
 
 > I'm sorry, that's another overloaded term, another instance of the [linguistic limitations](https://milestone.topics.it/2021/09/15/linguistic-limitation.html) we're facing.
 
-We use to refer to reliable messaging in contrast to unreliable ones. That's usually in the context of queuing systems. For example, RabbitMQ has the concept of [Publisher Confirms](https://www.rabbitmq.com/confirms.html#publisher-confirms). If they are off, the broker acknowledges the send operation upon it receives the message. It makes the broker extremely fast, with the risk that if it fails to write the sent message to disk, it's lost. That's unreliable messaging. There are scenarios in which it makes sense. To turn it into reliable messaging, we enable publisher confirms. The broker will acknowledge requests only upon successfully processing them.
+We use to refer to reliable messaging in contrast to unreliable ones. That's usually in the context of queuing systems. For example, RabbitMQ has the concept of [Publisher Confirms](https://www.rabbitmq.com/confirms.html#publisher-confirms). If they are off, the broker acknowledges the send operation when it receives the message. It makes the broker extremely fast, with the risk that if it fails to write the sent message to disk, it's lost. That's unreliable messaging. There are scenarios in which it makes sense. To turn it into reliable messaging, we enable publisher confirms. The broker will acknowledge requests only upon successfully processing them.
 
 If we move one step up and try to include the destination in the reliable messaging concept, we'll need distributed transactions. The message receiver lives in a different process. That means we must coordinate three resources: the sender, the queue/broker, and the receiver. However, distributed transactions are one of the things we're trying to avoid by moving to messages and queues. In essence, we cannot solve the two generals' problem.
 
