@@ -8,7 +8,7 @@ tags:
 - development
 ---
 
-When my 5-year-old iPad Pro fell on the floor for the third time (not accidentally, one could argue when you have 5-year-old kids. Coincidence? I don't think so!), I decided it was time for a new iPad rather than spending a lot to fix it due to an expired warranty.
+When my 5-year-old iPad Pro fell on the floor for the third time (not accidentally, one could argue when you have a 5-year-old kid. Coincidence? I don't think so!), I decided it was time for a new iPad rather than spending a lot to fix it due to an expired warranty.
 
 I bought a new iPad Air with the M1 CPU and a Magic Keyboard. No pencil, I still have the first-generation Apple Pencil, and I need to find out where it is, given that I never really used it.
 
