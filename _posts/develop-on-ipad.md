@@ -2,7 +2,7 @@
 layout: post
 title: "An iPad as a developer box. Pros and cons"
 author: Mauro Servienti
-synopsis: "Can we use a 10-inches iPad Air as a development device? Let's find out what was my recent."
+synopsis: "Can we use a 10-inch iPad Air as a development device? Let's find out."
 header_image: /img/posts/develop-on-ipad/header.jpg
 tags:
 - development
