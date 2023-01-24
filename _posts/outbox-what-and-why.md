@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "What's an Outbox and why do we need it?"
+title: "What's an Outbox and why do we need it? Hint: it's about data integrity"
 author: Mauro Servienti
 synopsis: "Distributed systems are ugly beasts sometimes. They hide subtle tricks that can lead to data loss and system corruption. The Outbox pattern helps address a couple of them."
 enable_mermaid: true
