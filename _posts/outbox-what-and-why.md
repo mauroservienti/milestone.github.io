@@ -24,7 +24,7 @@ The presented endpoint needs to store some data and send a message. It uses MSMQ
 
 It comes at a cost, though. Transactions are expensive, and distributed transactions are even more costly. They have a performance impact because getting all the participants into an agreement takes time. As you can imagine, the more participants, the greater the effect. Last but not least, transaction protocols rely on high network stability. Poor network connectivity hinders participants' ability to participate in the distributed transaction coordination process. That means it's unlikely cloud environments support distributed transaction protocols.
 
-All that means the above-shown diagram only works in a cloud environment if the database server is local to the same machine where the MSMQ is. This sounds illogical because that means the only option to use distributed transactions is to have all participants on the same box, which is precisely what we don't want.
+All this means that the above diagram only works in a cloud environment if the database server runs on the same machine where the MSMQ is installed. This sounds illogical because that means the only option to use distributed transactions is to have all participants on the same box, which is precisely what we don't want in the cloud.
 
 ## Back to the drawing board
 
