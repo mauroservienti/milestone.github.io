@@ -38,7 +38,7 @@ graph LR
     E -- send messages --> Q[Queuing system]
 </div>
 
-In this first one, there isn't an incoming message. For example, an HTTP request could trigger the endpoint to send out the message.
+In the first one, there isn't an incoming message. For example, an HTTP request could trigger the endpoint to send out the message.
 
 Instead, in the second scenario, we are in the context of an incoming message. The trigger is a message:
 
@@ -118,7 +118,7 @@ We could be doing the same thing for the "regular" inbox/outbox scenario with an
 4. Send messages we want to send and mark them as sent (outside the original local transaction).
 5. Acknowledge the incoming message, deleting it from the queue.
 
-Not having an incoming message changes things a bit. We need a way to start a local transaction to store data and dispatch intentions. If we cannot use the incoming message to trigger the local transaction, we could use an ASP.Net middleware that begins the local transaction when the HTTP request starts. We can use the same middleware to decide when to commit the transaction, and that is when the HTTP request finishes. With that set, we can tweak the endpoint steps in the following way:
+Not having an incoming message changes things a bit. We need a way to start a local transaction to store data and dispatch intentions. If we cannot use the incoming message to trigger the local transaction, we could use an ASP.NET middleware that begins the local transaction when the HTTP request starts. We can use the same middleware to decide when to commit the transaction, and that is when the HTTP request finishes. With that set, we can tweak the endpoint steps in the following way:
 
 1. When the HTTP request starts, start a local transaction.
 2. Handle the request and store any message dispatch intent.
@@ -140,12 +140,12 @@ In step three, the endpoint sends a control message to itself. When received, th
 Now, let's look again at failure scenarios for other steps of the process:
 
 - Step one, two, or three fail: We do nothing; the HTTP request's endpoint allows the exception to bubble up to the HTTP client, for example, with an HTTP 500. It's a common synchronous request/response failing scenario. Since it happens inside a transaction, the endpoint rolls back every change, and the system remains consistent and will dispatch no messages.
-- Step four fails: Similarly to the previous scenario, if the endpoint fails in committing the local transaction, everything is left unchanged, and an error will bubble up to the client. However, the control message will arrive at the local queue. It'll find nothing because there were no changes. It'll retry a few times and eventually end up in the error queue, where it can be safely discarded.
-- Step five fails: The control message will retry dispatching outgoing messages. As said, it's a regular outbox at this point.
+- Step four fails: Similar to the previous scenario, if the endpoint fails in committing the local transaction, everything is left unchanged, and an error will bubble up to the client. However, the control message will arrive at the local queue. It'll find nothing because there were no changes. It'll retry a few times and eventually end up in the error queue, where it can be safely discarded.
+- Step five fails: The control message will retry dispatching outgoing messages. As we saw earlier, it's a regular outbox at this point.
 
 ## Conclusion
 
-When using a queueing system and at the same time storing data, we need to guarantee consistency. We don't want to store data and fail in dispatching messages, nor do we wish to deliver messages and fail in storing data. We relied on distributed transactions for a long time to achieve the desired goal. However, most queuing infrastructures and cloud-enabled storages don't support distributed transactions. It takes a lot of work to implement, especially if there is a need to support multiple storage options and queuing systems. That's one of the reasons to rely upon a dedicated toolkit. For more information, please refer to the following articles:
+When using a queueing system and at the same time storing data, sometimes we need to guarantee consistency. We don't want to store data and fail in dispatching messages, nor do we wish to deliver messages and fail in storing data. We relied on distributed transactions for a long time to achieve the desired goal. However, most queuing infrastructures and cloud-enabled storages don't support distributed transactions. It takes a lot of work to implement, especially if there is a need to support multiple storage options and queuing systems. That's one of the reasons to rely upon a dedicated toolkit. For more information, please refer to the following articles:
 
 - [NServiceBus Outbox](https://docs.particular.net/nservicebus/outbox/)
 - [NServiceBus Transactional session](https://docs.particular.net/nservicebus/transactional-session/)
