@@ -83,7 +83,7 @@ With an incoming message when the endpoint receives it, we could perform the fol
 
 If anything between 1 and 3 fails, the local transaction gets rolled back, no changes are applied, and the endpoint will retry the incoming message.
 
-If what fails are either steps 4 or 5, the endpoint picks up the message again. The outbox already contains the message identifier, stored at the first step and committed at step three. The outbox treats it as an "already processed message for which something went wrong." In this mode, the endpoint skips processing the message and jumps to step 4, sending outgoing messages, marking them as sent, and finally acknowledging the incoming message.
+If what fails are either steps 4 or 5, the endpoint picks up the message again. The outbox already contains the message identifier, stored at the first step and committed at step three. The outbox treats it as an "already processed message for which something went wrong." In this mode, the endpoint skips invoking the users' business logic and jumps to step 4, sending outgoing messages, marking them as sent, and finally acknowledging the incoming message.
 
 As you can imagine, this can happen repeatedly—the outbox guarantees, in most scenarios, an exactly once processing behavior. The same message can be delivered multiple times, no matter the reason, and the outbox protects the endpoint from processing it more than once.
 
