@@ -1,7 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
-title: "An AWS journey from SQS and SNS to architecture...and back"
+title: ".NET Usergroup Zentralschweiz"
 location: "Luzern"
 language: "English"
 eventurl: "https://www.meetup.com/net-usergroup-zentralschweiz/events/290901093/"
