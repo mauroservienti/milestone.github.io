@@ -1,7 +1,7 @@
 ---
 layout: event
 status: 'upcoming'
-title: "An AWS journey from SQS and SNS to architecture...and back"
+title: ".NET User Group Bern"
 location: "Bern"
 language: "English"
 eventurl: "https://www.meetup.com/net-user-group-bern/events/290984778/"
