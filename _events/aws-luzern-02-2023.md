@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: ".NET Usergroup Zentralschweiz"
 location: "Luzern"
 language: "English"
