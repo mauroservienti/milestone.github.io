@@ -28,7 +28,7 @@ Let's try with an example. The system provides information about hotel bookings 
 
 A different request handler manages each request, regardless of how the request reaches the system. There is a handler to get the status of a room, a handler to cancel bookings, one to update the status, etc.
 
-Moving into the physical space, we could expose an HTTP endpoint that handles requests. If we implement the solution using ASP.Net, the endpoint is a controller., e.g., `BookingsController`, and handlers are controller actions. An action to respond to HTTP requests trying to retrieve the booking status, and so on. If we're using messages and queues, an endpoint is a process that sends and receives messages, and handlers are classes or methods responsible for handling incoming messages.
+Moving into the physical space, we could expose an HTTP endpoint that handles requests. If we implement the solution using ASP.NET, the endpoint is a controller., e.g., `BookingsController`, and handlers are controller actions. An action to respond to HTTP requests trying to retrieve the booking status, and so on. If we're using messages and queues, an endpoint is a process that sends and receives messages, and handlers are classes or methods responsible for handling incoming messages.
 
 Handlers belonging to the same endpoint share the same business concerns. Similarly, handlers deployed in the same endpoint instance share a few attributes. For example, controller actions share the same base route address. Message handlers in an endpoint instance share the same queue.
 
@@ -38,13 +38,13 @@ For the impatient like me, the minimum number of endpoints should match the [ide
 
 Users can search for vacant rooms within a date range and location. Once they've found the desired destination, they can book it by inputting their credit card number and customer's details, such as name and address. Upon booking, the system authorizes the required amount on the credit card to hold the money. And at hotel check-in time, it'll charge the final amount.
 
-Without diving too deeply into the whys, we could identify Reservations, Finance, Customers Management, and Check-in/Check-out as logical services. Good, four logical endpoints, and to begin with four distinct endpoint instances.
+Without diving too deeply into the whys, we could identify Reservations, Finance, Customers Management, and Check-in/Check-out as logical services. Good, four logical endpoints, and to begin with, four distinct endpoint instances.
 
 ### Into the physical world
 
 It's fair to assume that each identified logical endpoint contains business logic and a way to interact with the endpoint. For example, Reservations has:
 
-- Web pages to show hotels, rooms, amenities, and availabilities.
+- Web pages to show hotels, rooms, amenities, and availability.
 - Business logic to handle bookings, unavailable rooms, and cancellations.
 - An HTTP API to query data. For example, to perform room searches.
 - A queue to receive messages from the rest of the system. For example, the information that a payment method has been denied and a room reservation canceled.
@@ -63,7 +63,7 @@ Using the same approach, if the endpoint handling messages gets big enough to ca
 
 It's worth spending a few words on performance issues. Let's imagine an endpoint with ten handlers. Some of them do CPU-intensive work. At a certain point, the team realizes that the system throughput suffers because the handlers are battling for CPU resources.
 
-The easiest option at this point could be to scale out the endpoint. The CPU remains a shared precious resource by having multiple instances of the same endpoint on different nodes, but we've split the load into various nodes/CPUs. And that can be a way to kick the can for a while.
+The easiest option at this point could be to scale out the endpoint. The CPU remains a shared precious resource by having multiple instances of the same endpoint on different nodes, but we've split the load into various nodes/CPUs. And that can be a way to kick the can down the road for a while.
 
 A proper solution could be to split handlers into different endpoints. That results in sharding the handlers rather than scaling them out. For example, if there are four CPU-intensive handlers, each could be deployed separately in a different endpoint to remove any possible battling on resources.
 
@@ -143,7 +143,7 @@ graph LR
 
 So far, the reason for splitting endpoints has been performance-related. A different reason leading to similar needs are endpoint configuration differences making handlers incompatible.
 
-As far as I can tell, in an ASP.Net Core web application, there can be only one inversion of control (IOC) container. One shared base address and one HTTP pipeline handle all incoming requests.
+As far as I can tell, in an ASP.NET Core web application, there can be only one inversion of control (IOC) container. One shared base address and one HTTP pipeline handle all incoming requests.
 
 The same applies to messaging endpoints; some characteristics are endpoint-defined, and all handlers share them in the same endpoint. For example, the transaction settings are endpoint-defined. If the endpoint is configured to receive messages using [`sends with atomic receive`](https://docs.particular.net/transports/transactions) and, for [some reason](https://milestone.topics.it/2021/01/30/transactions-none-for-me-thanks.html), one handler needs a different setting, that handler cannot be deployed in the same endpoint, and a different one is required.
 
