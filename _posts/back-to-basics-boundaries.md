@@ -3,7 +3,7 @@ layout: post
 title: "Back to Basics: service boundaries, autonomous components, and coupling"
 author: Mauro Servienti
 synopsis: "When you're involved with something for a very long time, it's easy to fall into the trap of taking many concepts for granted. Let's go back to the basics and build a common foundation. Today's topics are service boundaries, autonomous components, and coupling."
-header_image: 
+header_image: /img/posts/back-to-basics-boundaries/header.jpg
 tags:
 - soa
 - architecture
