@@ -70,3 +70,5 @@ I discussed services, components, and coupling from various perspectives in the 
 ## Conclusion
 
 When designing software systems, we have many tools at our disposal. They range from practical ones, like programming languages or integrated development environments (IDE), to more meta types of tools, like the architectural constructs discussed in this article. All of them are critical for success. Architectural constructs like autonomous and business components, or services and service boundaries, are particularly helpful in defining virtual fences to avoid concepts belonging to different business concerns from leaking and melting into each other, creating a spaghetti mess.
+
+Photo by <a href="https://unsplash.com/@benhershey?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Ben Hershey</a> on <a href="https://unsplash.com/photos/8KaU5I4SBIw?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
