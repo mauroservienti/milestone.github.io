@@ -24,7 +24,7 @@ HTTP doesn't support transactions. However we need some sort of transactional be
 
 ## Not all failures are born equal
 
-I like to distinguish between a business failure and an infrastructure failure. A business failure is not really a failure, it's a scenario. When *something* happens, and *something else* is in specific state, then the attempted operation cannot be performed: exception!
+I like to distinguish between a business failure and an infrastructure failure. [A business failure is not really a failure, it's a scenario](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html). When *something* happens, and *something else* is in specific state, then the attempted operation cannot be performed: exception!
 
 Such an exception should never surface as-is to users; there should be a human-readable error message instead, making the scenario a business use case.
 
