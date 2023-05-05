@@ -65,6 +65,7 @@ I discussed services, components, and coupling from various perspectives in the 
 - The focus is on cache misuse leading to cumbersome implementations in [Own the cache!](https://milestone.topics.it/2021/07/15/own-the-cache.html).
 - [Update me, please](https://milestone.topics.it/2021/08/03/update-me-please.html) takes an entirely different point of view and looks at a notification system and what's its relationship with coupling.
 - [Distributed systems evolution challenges](https://milestone.topics.it/2022/06/11/distributed-systems-evolution-challenges.html) is a short series of articles detailing the challenges and options to evolve a live distributed system and the role played by coupling.
+- [How many (micro)services do I need?](https://milestone.topics.it/2023/03/15/how-many-services.html) discusses what happens when we go crazy and end up with too many autonomous and business components and too many services.
 - Last but not least, [Autonomy probably doesn't mean what you think it means](https://milestone.topics.it/2022/09/05/autonomy.html) discusses the autonomy concept as the other side of the medal of coupling.
 
 ## Conclusion
