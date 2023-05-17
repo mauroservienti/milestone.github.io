@@ -70,7 +70,7 @@ We can use ownership to determine who drives changes in the system. For example,
 
 Events are, by definition, immutable. They represent something that happened in the past. And the past cannot be changed. Events are good candidates for cross-boundary communication.
 
-> For an introduction to services, boundaries, and components, please, refer to "[Back to Basics: service boundaries, autonomous components, and coupling](TODO-add-link)."
+> For an introduction to services, boundaries, and components, please, refer to "[Back to Basics: service boundaries, autonomous components, and coupling](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html)."
 
 When crossing a boundary, we're leaving a well-known territory to explore somewhere under someone else's control, a different service. We want to ensure they trust we won't move around the cheese. The second important aspect is that we have no control over someone else's lawn. A service cannot tell another service, "Do this for me," it can only broadcast to those interested that something happened.
 
