@@ -14,7 +14,7 @@ I often find myself talking about distributed systems and message-based architec
 
 In the long term, a lack of clarity can lead to misunderstandings and suboptimal implementations that might be hard to fix.
 
-People used to dirt their hands with message-based architecture, and distributed systems often refer to commands and events. But what are they, and why are they so important?
+People used to dirty their hands with message-based architecture, and distributed systems often refer to commands and events. But what are they, and why are they so important?
 
 When it comes to commands and events, it's all about semantics and logical concepts.
 
@@ -22,11 +22,11 @@ When it comes to commands and events, it's all about semantics and logical conce
 
 Let's start with the first essential concept. Everything on the wire is a message. From the queueing system perspective, they are all messages. There is no distinction between commands and events. And that's true regardless of the infrastructure we're using. For example, Amazon Simple Notification Service (SNS) is a broadcasting service dealing with topics and subscriptions. Still, what travels on the wire are messages.
 
-Messages are some form of representation of a higher-level concept. They can be text messages, for example, a json or xml string, or binary messages, like a byte array. There might be restrictions, but generally, the underlying infrastructure cares very little about message format.
+Messages are some form of representation of a higher-level concept. They can be text messages, for example, or a JSON or XML string, or binary messages, like a byte array. There might be restrictions, but generally, the underlying infrastructure cares very little about message format.
 
 ## With messages come message headers
 
-More than messages alone is required. Like when we send a message in the real world, we need some surrounding metadata. For example, a text message from a mobile phone requires the recipient's phone number. A letter requires the recipient's postal address. And in both cases, the recipient receives the sender's address. The mobile phone sends it automatically, and we write our address on the envelope.
+More than messages alone is required. When we send a message in the real world, we need some surrounding metadata. For example, a text message from a mobile phone requires the recipient's phone number. A letter requires the recipient's postal address. And in both cases, the recipient receives the sender's address. The mobile phone sends it automatically, and we write our address on the envelope.
 
 The same concept applies to messages in a queueing system. In reality, messages are composed of two pieces: message bodies and message headers. The body is the message content. Headers are the additional metadata the infrastructure or our system requires to function correctly.
 
@@ -68,11 +68,11 @@ We can use ownership to determine who drives changes in the system. For example,
 
 ## Events cross service boundaries. Commands don't.
 
-Events are, by definition, immutable. They represent something that happened in the past. And the past cannot be changed. Events are good candidates for cross-boundaries communication.
+Events are, by definition, immutable. They represent something that happened in the past. And the past cannot be changed. Events are good candidates for cross-boundary communication.
 
 > For an introduction to services, boundaries, and components, please, refer to "[Back to Basics: service boundaries, autonomous components, and coupling](TODO-add-link)."
 
-When crossing a boundary, we're leaving a well-known territory to explore somewhere under someone else's control, a different service. We want to ensure they trust we won't move around the cheese. The second important aspect is that we have no control over someone else lawn. A service cannot tell another service, "Do this for me," it can only broadcast to those interested that something happened.
+When crossing a boundary, we're leaving a well-known territory to explore somewhere under someone else's control, a different service. We want to ensure they trust we won't move around the cheese. The second important aspect is that we have no control over someone else's lawn. A service cannot tell another service, "Do this for me," it can only broadcast to those interested that something happened.
 
 ### Messages
 
