@@ -7,6 +7,7 @@ enable_mermaid: true
 header_image: /img/posts/reject-commands/header.jpg
 tags:
 - soa
+- architecture
 - messaging
 ---
 
