@@ -14,6 +14,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
+        config-file: '/.github/mlc_config.json'
         # Quiet mode only shows errors in output not successful links too
         use-quiet-mode: 'yes'
         # Specify yes to show detailed HTTP status for checked links.
