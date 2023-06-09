@@ -1,0 +1,12 @@
+{
+    "ignorePatterns": [
+        {
+            "pattern": "^(http|https)://twitter.com"
+        },
+        {
+            "pattern": "^(http|https)://www.linkedin.com"
+        }
+    ],
+  "retryOn429": true,
+  "aliveStatusCodes": [200, 206]
+}
