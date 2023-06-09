@@ -12,3 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        # Quiet mode only shows errors in output not successful links too
+        use-quiet-mode: 'yes'
+        # Specify yes to show detailed HTTP status for checked links.
+        use-verbose-mode: 'yes'
