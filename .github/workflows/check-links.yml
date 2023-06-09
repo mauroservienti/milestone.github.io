@@ -4,7 +4,8 @@ on:
   # push:
   workflow_dispatch:
   # schedule:
-  #  - cron: "0 9 * * 1"
+  #    At 01:00 on Thursday
+  #  - cron: "0 1 * * 4"
 
 jobs:
   markdown-link-check:
