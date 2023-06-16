@@ -2,7 +2,7 @@
 layout: post
 title: "What if my command was rejected?"
 author: Mauro Servienti
-synopsis: "Distributed systems are different and require a different mindset. That's particularly true when dealing with async processes and failures. We need new tools and a new toolbox. And in the end,  at e we can avoid rejecting that command."
+synopsis: "Distributed systems are different and require a different mindset. That's particularly true when dealing with async processes and failures. We need new tools and a new toolbox. And in the end, we can avoid rejecting that command."
 enable_mermaid: true
 header_image: /img/posts/reject-commands/header.jpg
 tags:
