@@ -47,7 +47,7 @@ One could argue that it primarily concerns user experience and information archi
 
 ## Ooops. Let me retry that for you
 
-Surprisingly, the first technique is retrying as if the system was synchronous and the user was still there. We can categorize a whole set of errors as temporary or transient.
+Surprisingly, the first technique is retrying as if the system was synchronous and the user was still there. We can [categorize a whole set of errors as temporary or transient](https://particular.net/blog/but-all-my-errors-are-severe).
 
 We're trying to reserve a hotel room. The web front-end sends a message to the booking back-end service. Something goes wrong while processing the message; for example, the request to the CRM to retrieve the customer's details fails with an HTTP 503 (server too busy). The user might have already closed the browser page.
 
