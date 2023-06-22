@@ -31,7 +31,7 @@ Before ~~continuing~~ bracing, it's worth reading and watching a few resources o
 - "[I caught an exception. Now what?](https://particular.net/blog/but-all-my-errors-are-severe)," from Particular's blog.
 - "[If (domain logic) then CQRS, or Saga?](https://youtu.be/fWU8ZK0Dmxs)," DDD Europe talk by Udi Dahan.
 
-## Bird eye view
+## Bird's eye view
 
 [Tales of a Reservation](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html) answers some of the mentioned concerns. It uses a simplified hotel booking scenario and some techniques to deal with business failures. Let's start from there and provide some general guidance.
 
