@@ -11,7 +11,7 @@ tags:
 
 I've been working remotely for [Particular Software](https://www.particular.net) for the last ten years. To this day, I still feel guilty for taking time off during regular working hours, even though we don't have working hours at all.
 
-Society is built around working hours. Schools start before we go to work, and often, the school day ends after we finish work, for example, in Italy we have pre and post-school making it so that primary school ends at 6 PM. Retail and grocery shops are still open when we stop working, and so on.
+Society is built around working hours. Schools start before we go to work, and often, the school day ends after we finish work, for example, in Italy, we have pre and post-school making it so that primary school ends at 6 PM. Retail and grocery shops are still open when we stop working, and so on.
 
 Initially, having fixed working hours made sense and still does for many jobs. The Industrial Revolution brought mass production, and productivity became a significant concern. Working hours were a way to determine/guarantee/measure productivity. It's as if _the_ metric for my job was how many lines of code I could write per minute—oh gosh, don't make me think about that.
 
