@@ -130,7 +130,7 @@ IEnumerable<dynamic> ApplySort(IEnumerable<dynamic> data, bool executedFirst)
 
 ## Conclusion
 
-The composition process and the composition engine [are transparent to the way data are composed](/view-model-composition/2019/04/09/slice-it.html), so they have to be the way paging and sorting affect the composed data.
+The composition process and the composition engine [are transparent to the way data are composed](/2019/04/09/slice-it.html), so they have to be the way paging and sorting affect the composed data.
 
 As we've seen, it's easy to implement paging by looking for the logical owner of the incoming request.
 
