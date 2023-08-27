@@ -1,10 +1,10 @@
 # Site settings
 
-title: Milestone
+title: Milestone — Mauro and the sustainable development
 
 description: > # this means to ignore newlines until "baseurl:"
   The journey is the most important thing, not the destination.
-  Find your next destination and start travelling again.
+  Find your next destination and start traveling again.
 
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "https://milestone.topics.it" # the base hostname & protocol for your site
