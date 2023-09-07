@@ -44,9 +44,9 @@ Readers and writers are different personas. The reader is unaware of when the wr
 
 Eventual consistency causes headaches, primarily if not only in the "read your own writes" scenario.
 
-## A note: Eventual consistency is with us
+## A note: Eventual consistency is with us...
 
-And has always been unless pessimistic locking was in place. Let's look at another example: in the previously mentioned e-commerce, there is a strange rule, also known as invariant—[which is evil](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html), stating that customers cannot buy any out-of-stock product. The only possible way to enforce the rule is to serialize requests to the database using the highest possible transaction level. If that's not the case, there's always a chance of [phantom reads](https://sqlsolutionsgroup.com/dodging-phantom-reads/) leading to more than one customer ordering the last-in-stock [lightsaber](https://en.wikipedia.org/wiki/Lightsaber).
+...and has always been unless pessimistic locking was in place. Let's look at another example: in the previously mentioned e-commerce scenario, there is a strange rule, also known as invariant—[which is evil](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html), stating that customers cannot buy any out-of-stock product. The only possible way to enforce the rule is to serialize requests to the database using the highest possible transaction level. If that's not the case, there's always a chance of [phantom reads](https://sqlsolutionsgroup.com/dodging-phantom-reads/) leading to more than one customer ordering the last-in-stock [lightsaber](https://en.wikipedia.org/wiki/Lightsaber).
 
 That is to demonstrate that unless we explicitly design to prevent eventual consistency from happening, the system has a chance of being affected. Sure, it might be a rare scenario, but still, it needs to be protected from the lack of complete consistency. I'd even argue it could be a worse scenario; it's subtle and hard to detect.
 
@@ -70,7 +70,7 @@ What could possibly go wrong?
 
 ## The cloud changed everything
 
-Transactions were so engraved that for some, it was hard, if ever possible, to think about a world without transactions. But "recently," something changed. The cloud became an affordable and available option to the masses. And the cloud, primarily for the vendors' benefit, decided that (distributed) transactions were to be banned in disgrace. The underlying reason is that infrastructure in the cloud is flaky in nature, and transaction protocols were thought and designed under the assumption that [the network is reliable](https://particular.net/blog/the-network-is-reliable), the number one fallacy of distributed computing.
+Transactions were so engraved that for some, it was hard, even impossible, to think about a world without transactions. But "recently," something changed. The cloud became an affordable and available option to the masses. And the cloud, primarily for the vendors' benefit, decided that (distributed) transactions were to be banned in disgrace. The underlying reason is that infrastructure in the cloud is flaky in nature, and transaction protocols were thought and designed under the assumption that [the network is reliable](https://particular.net/blog/the-network-is-reliable), the number one fallacy of distributed computing.
 
 ## A new hope (cit.)
 
@@ -80,13 +80,13 @@ Messaging allows splitting significant processes into smaller chunks and connect
 
 Messaging is a way to trade consistency for availability.
 
-The proposed exchange brings eventual consistency into the mix. Because what previously was a monolithic process governed by transactions locking the requestor and forcing them to wait, it's now a set of smaller steps independent of each other with no control over consistency, making it hard for requestors to wait for completion.
+The proposed exchange brings eventual consistency into the mix. Because what previously was a monolithic process governed by transactions locking the requestor and forcing them to wait, is now a set of smaller steps independent of each other with no control over consistency, making it hard for requestors to wait for completion.
 
 ## So what?
 
-Not all hope is lost, and there are a few things we can do to solve, alleviate, or workaround any eventual consistency-related issue.
+Not all hope is lost, and there are a few things we can do to solve, alleviate, or work around any eventual consistency-related issues.
 
-### The one architecture to rule'em all fallacy
+### The "one architecture to rule them all" fallacy
 
 The first and probably most important thing is to stop using the same architectural style everywhere in the system.
 
