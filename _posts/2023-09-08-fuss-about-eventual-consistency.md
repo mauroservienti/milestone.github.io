@@ -3,7 +3,7 @@ layout: post
 title: "Why all this fuss about eventual consistency? It's everywhere!"
 author: Mauro Servienti
 synopsis: "Our industry seems to worry A LOT about eventual consistency. The real world is eventually consistent by definition. Still, we continuously try to fit a square peg into a round hole. Why is that, and what can we do about it?"
-header_image: /posts/fuss-about-eventual-consistency/header.jpeg
+header_image: /img/posts/fuss-about-eventual-consistency/header.jpeg
 Tags:
 - soa
 - distributed-systems
