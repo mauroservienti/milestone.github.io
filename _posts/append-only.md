@@ -93,7 +93,11 @@ I'm sure all this might generate more and more questions. Some of them can find 
 
 ## Conclusion
 
-Append-only models are a powerful way to store data. They enable system designers to implement requirements otherwise impossible. As with many things, all that glitters is not necessarily gold. They introduce complexity, and we need to weigh against the value they bring carefully. As with other architectural concepts, it's crucial to remember that we don't have to use them everywhere; there is no "one architecture to rule them all." Instead, we want to select where and when to implement an append-only model precisely.
+Append-only models are a powerful way to store data. They enable system designers to implement requirements otherwise impossible. As with many things, all that glitters is not necessarily gold. They introduce complexity, and we need to weigh against the value they bring carefully. 
+
+For example, they make sense when auditing every change is required or, like in the presented example when there is the need to compensate for errors and transactions are not an option. Considering the side effects of using such a data schema is also essential. For example, querying data becomes more complex, and "read models" or projections become a must-have.
+
+As with other architectural concepts, it's crucial to remember that we don't have to use them everywhere; there is no "one architecture to rule them all." Instead, we want to select where and when to implement an append-only model precisely.
 
 ---
 
