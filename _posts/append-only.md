@@ -22,7 +22,7 @@ Append-only models are more complex to manage. In fact, in most cases, projectio
 
 ## Mauro, what are you talking about?
 
-Let's start by trying to define what append-only means. Generally speaking, an append-only model or approach is a scenario in which storing data is never achieved using `update` statements but only `insert` ones.
+Let's start by trying to define what append-only means. Generally speaking, an append-only model or approach is a scenario in which persisting data is never achieved using `update` statements but only `insert` ones.
 
 A bank statement is something we have seen at least once. Banks never update statements; instead, they add data to represent money transactions or compensations.
 
@@ -32,17 +32,17 @@ Let's imagine a warehouse management system. To store data, we could use a schem
 
 | PK | Description | Quantity | Purchase price |
 |----|-------------|----------|----------------|
-|abc|  Something  |  32  |               123.00 |
+|abc |  Something  |       32 |         123.00 |
 
 If you have ever dealt with an accounting system, you probably already see the issue. One of the requirements is to run an inventory using a method like LIFO to calculate warehouse value. Ah, crap! We don't have any of the needed information.
 
 The above-presented model is straightforward and answers the "How many ABCs do we have in stock" question smoothly. We cannot use it to answer any inventory-type question. Instead, we need something more complex:
 
 | PK | SKU | Description | Quantity | Purchase price | Purchase date |
-|----|-------------|----------|----------------|----------------|
-|123|  abc | Something  |  32  |               123.00 | date... |
-|567|  abc | Something  |  12  |               96.00 | date... |
-|987|  abc | Something  |  1  |               157.00 | date... |
+|----|-----|-------------|----------|----------------|---------------|
+|123 | abc | Something   |       32 |         123.00 | \[date]       |
+|567 | abc | Something   |       12 |          96.00 | \[date]       |
+|987 | abc | Something   |        1 |         157.00 | \[date]       |
 
 We stop updating the single row representing a warehouse item; instead, the system inserts a new row whenever stocks are replenished. The append-only model complicates answering the "how many" question while simplifying the inventory one.
 
@@ -69,8 +69,8 @@ The diagram shows (highlighted in green) an interesting requirement. All service
 If services were using an update-based model, they would have tables similar to the following:
 
 | ItemID | Quantity |
-|---------|-- -------|
-|  123  |  10  |
+|--------|----------|
+|    123 |       10 |
 
 Suppose users try to update the quantity by changing it from 10 to 12. If the decomposition process fails to communicate with the shipping service, we're in a situation where things are misaligned. All services but shipping have the new quantity. The only way to roll back to a consistent state is for the client to remember the amount before the change and ask services to return to that value or to have some orchestration across services, but [that shouldn't exist](https://milestone.topics.it/2021/07/08/no-orchstration.html)!
 
@@ -78,9 +78,9 @@ Considering that the same problem could apply to many different data types, we'r
 
 We could take advantage of the append-only model and change the shopping cart data structures in services to be something like the following:
 
-| PK | ItemID | Quantity | RequestID |
-|----|---------|-- -------|------------|
-|abc|  123  |  10  | unique identifier |
+| PK | ItemID  | Quantity | RequestID            |
+|----|---------|----------|----------------------|
+|abc |     123 |       10 | \[unique identifier] |
 
 The database uses a new row to represent cart state changes whenever the client needs to operate the shopping cart. Each change is uniquely identifiable (`RequestID`) through a client-generated ID. If something goes wrong with any of the services, it's enough for the client to issue a request to roll back a specific operation to restore the prior cart status. The client knows little to nothing about services schema or topology. It knows that it can undo an operation by remembering its request identifier.
 
