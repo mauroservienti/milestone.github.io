@@ -18,7 +18,7 @@ During the talk, I also mentioned [ViewModel Decomposition](https://milestone.to
 
 Recently, [Domenic](https://www.linkedin.com/in/domenic-cassisi/) shared the observation that append-only models are a rarity, and he sees updates used everywhere every day. And he's right!
 
-Append-only models are more complex to manage. In fact, in most cases, projections are a must-have to satisfy read requirements. That's to say, I'm not surprised there isn't widespread adoption. And that's just fine; it doesn't need to be.
+Append-only models are more complex to manage. In fact, in most cases, projections are a must-have to satisfy read requirements. That's to say, I'm not surprised there isn't widespread adoption. And that's just fine; there doesn't need to be.
 
 ## Mauro, what are you talking about?
 
@@ -34,9 +34,9 @@ Let's imagine a warehouse management system. To store data, we could use a schem
 |----|-------------|----------|----------------|
 |abc |  Something  |       32 |         123.00 |
 
-If you have ever dealt with an accounting system, you probably already see the issue. One of the requirements is to run an inventory using a method like LIFO to calculate warehouse value. Ah, crap! We don't have any of the needed information.
+If you have ever dealt with an accounting system, you probably already see the issue. One of the requirements is to run an inventory using a method like LIFO ([last-in-first-out](https://www.forbes.com/advisor/business/lifo-inventory-method/)) to calculate warehouse value. I.e., we want the most recently purchased items that were added to our inventory to be the first ones out when an order comes in. Ah, crap! We don't have any of the needed information.
 
-The above-presented model is straightforward and answers the "How many ABCs do we have in stock" question smoothly. We cannot use it to answer any inventory-type question. Instead, we need something more complex:
+The above-presented model is straightforward and answers the "How many ABCs do we have in stock" question smoothly. We cannot use it to answer any inventory-type question, like an [inventory aging report](https://www.ansarada.com/business-readiness/financials/aged-inventory-report). Instead, we need something more complex:
 
 | PK | SKU | Description | Quantity | Purchase price | Purchase date |
 |----|-----|-------------|----------|----------------|---------------|
