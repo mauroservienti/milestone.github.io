@@ -143,3 +143,20 @@
 		}
 	}
 }
+
+table, th, td {
+	border: 1px solid rgb(180, 180, 180);
+}
+
+table{
+	text-align: center;
+	margin-bottom: 15px;
+}
+
+th, td{
+	padding: 5px;
+}
+
+th{
+	background-color: gainsboro;
+}
