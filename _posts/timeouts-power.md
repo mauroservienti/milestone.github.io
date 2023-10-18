@@ -2,7 +2,7 @@
 layout: post
 title: "The power of timeouts to compensate for failures and other tales"
 author: Mauro Servienti
-synopsis: "The are scenarios when a chatty services' relationship seems the only option, with the results of coupling quickly becoming our best friends. Not all hope is lost, we can try to ask different questions to untangle the knot."
+synopsis: "There are scenarios when a chatty services relationship seems the only option, with the results of coupling quickly becoming our best friend. Not all hope is lost, we can try to ask different questions to untangle the knot."
 header_image: /img/posts/timeouts-power/header.jpg
 tags:
 - sagas
@@ -10,7 +10,7 @@ tags:
 - distributed-systems
 ---
 
-The design of the new system proceeds swiftly and with little to no hiccups. A couple of times, one team asked another if they could publish a new event to signal something happening. Teams were in a "_what could possibly go wrong_" mood. They didn't pay much attention, considered those requests harmless, and implemented them straight away.
+The design of the new system proceeds swiftly and with few hiccups. A couple of times, one team asked another if they could publish a new event to signal something happening. Teams were in a "_what could possibly go wrong_" mood. They didn't pay much attention, considered those requests harmless, and implemented them straight away.
 
 After a few months in production, support people started noticing some unexpected behavior. Customers were complaining that, occasionally, they couldn't complete an order, but the amount authorized on the card was not released as promised.
 
@@ -18,7 +18,7 @@ Everything else seemed fine. Customers could cancel the failed orders, and when 
 
 Everyone's attention was on failed orders. After quite some investigation time, it turned out the checkout process had a subtle bug. A number of things needed to happen to surface the problem, and reproducing it was not trivial at all. The bug got its deserved fix, and once deployed to production, everything got back under control.
 
-## The diagnose
+## The diagnosis
 
 The [postmortem](https://en.wikipedia.org/wiki/Postmortem_documentation) discussion focused on why the service initiating the order checkout process failed. Once that was settled, the attention moved to the payment service, and coupling entered the scene. 
 
@@ -26,7 +26,7 @@ The team started wondering why Payments did not cancel the card authorization. T
 
 It took a couple of seconds to realize the colossal mistake at play. All those requests to other teams to publish non-business-related events to signal failures and errors caused an intricated spaghetti-style web of cross-service relationships.
 
-The Payment service depends on the Order checkout to revert the card authorization. They were coupled instead of being autonomous. [It was one of those instances where the team's interpretation of the word autonomous led in the wrong direction](https://milestone.topics.it/2022/09/05/autonomy.html).
+The Payment service depends on the Order checkout to revert the card authorization. They were coupled instead of being autonomous. [It was one of those instances where the team's interpretation of the word _autonomous_ led in the wrong direction](https://milestone.topics.it/2022/09/05/autonomy.html).
 
 Customers failed to proceed with the checkout process because the bug was causing an outage in the Order checkout service. The service couldn't publish any message, including those meant to signal the process failure. From the Payments service perspective, no news was good news, and it kept the card authorization in place.
 
@@ -42,7 +42,7 @@ If the Order checkout process fails, the Payments service wants to retract the c
 
 We can look at it from the perspective of what's _not_ happening. The Payments service wants to retract the cart authorization if _it doesn't receive any signal from the Orders checkout within a particular time from the approval_.
 
-For example, if on average (and be aware of the [risk of using averages](https://towardsdatascience.com/why-averages-are-often-wrong-1ff08e409a5b)) the Order checkout process publishes an even to signal its completion in 10 minutes, we could say that if within a day we heard nothing it's fair to assume that something went so wrong that it's better to cancel the card authorization rather than insiting on holding the money.
+For example, if on average (and be aware of the [risk of using averages](https://towardsdatascience.com/why-averages-are-often-wrong-1ff08e409a5b)) the Order checkout process publishes an event to signal its completion in 10 minutes, we could say that if within a day we heard nothing it's fair to assume that something went wrong and it's better to cancel the card authorization rather than holding the money.
 
 In [Welcome to the (State) Machine](https://youtu.be/26xrX113KZc), I present a ticket-ordering scenario highlighting the issues discussed so far and how to address them using timeouts. I also crafted a [demo](https://github.com/mauroservienti/welcome-to-the-state-machine-demos) showing how to implement it using [NServiceBus](https://docs.particular.net/nservicebus/) (spoiler: I work for [Particular Software](https://www.particular.net/), the makers of NServiceBus).
 
@@ -52,7 +52,7 @@ Reacting to things _not_ happening belongs to the larger "making decisions in th
 
 We had a batch job to check for unpaid invoices. The scheduled task was running monthly on the tenth day. Everything worked perfectly until the business changed. The company changed the invoicing process from issuing them monthly to daily.
 
-Previously, a 30-day due invoice would have expired at the end of the following month. Checking for overdue payments on the ten was just fine. Invoice payments are due within 30 days, but with the change in the issuing frequency, they can become overdue daily.
+Previously, a 30-day due invoice would have expired at the end of the following month. Checking for overdue payments on the tenth was just fine. Invoice payments are due within 30 days, but with the change in the issuing frequency, they can become overdue daily.
 
 The batch job became an issue. Running it daily put too much pressure on the infrastructure; unfortunately, the data schema was not as simple as "here is a bit column whose value is 1 for paid and 0 for unpaid invoices," and we had no authority over it.
 
