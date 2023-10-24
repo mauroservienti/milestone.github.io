@@ -43,6 +43,20 @@
             <a class="dropdown-item" href="{{ '/archive/events/' | prepend: site.baseurl }}">Past events</a>
           </div>
         </li>
+        <li class="nav-item">
+          <form method="get" id="ddgSearch" action="https://duckduckgo.com/">
+            <input type="hidden" name="sites" value="milestone.topics.it"/>
+            <input type="hidden" name="kt" value="p"/>
+            <div class="row">
+              <div class="col">
+                <input type="text" class="form-control" name="q" placeholder="Search…" aria-label="Search milestone.topics.it on DuckDuckGo"/>
+              </div>
+              <div class="col">
+                <button class="btn btn-success" type="submit">Search</button>
+              </div>
+            </div>
+        </form>
+        </li>
       </ul>
     </div><!-- /.navbar-collapse -->
 </nav>
