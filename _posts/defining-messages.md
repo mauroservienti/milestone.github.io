@@ -2,19 +2,19 @@
 layout: post
 title: "Define messages as POCO, interfaces, or records. Does it really matter?"
 author: Mauro Servienti
-synopsis: ".NET developers, dealing with message-based systems, seem to give serialization and surrounding concerns more importance than needed. Let's try to dissect the topic"
+synopsis: ".NET developers building message-based systems seem to give serialization and surrounding concerns more importance than needed. Let's try to dissect the topic"
 header_image: /img/posts/defining-messages/header.jpg
 tags:
 - messaging
 ---
 
-Let me get this straight: There are design dilemmas that are mass distraction weapons. Or, if you prefer, they are honey, attracting developers like the sirens did with Ulysses.
+Let me get this straight: There are design dilemmas that are weapons of mass distraction. Or, if you prefer, they are honey, attracting developers like the sirens did with Ulysses.
 
 Now that I said what I wanted let me try to articulate that better. In the context of distributed systems and messaging, serialization enters the stage to handle the transformation of object instances into something that can be transferred on the wire.
 
 > More details about messages in [Back to basics: Commands, events, and messages](https://milestone.topics.it/2023/05/25/back-to-basics-messages.html).
 
-For example, take into account the following JavaScript object:
+For example, take the following JavaScript object:
 
 ```javascript
 var person = {
@@ -36,13 +36,13 @@ The result in the JavaScript case is similar to the source object and can be obt
 
 Serialization and its counterpart deserialization are pretty straightforward. We start from an object instance and get some text representation in the case of JSON. Through deserialization, we can reverse the process. From the text representation, we obtain an object instance.
 
-> There are plenty of serialization formats, all with pros and cons. They are not the topic of this article. Even if, sometimes, I feel they are also mass distraction weapons 🤪
+> There are plenty of serialization formats, all with pros and cons. They are not the topic of this article. Even if, sometimes, I feel they are also weapons of mass distraction 🤪
 
 ## What should we use to define messages?
 
 When dealing with message-based systems and .NET, the problem is finding the best coding structure to define messages and later serialize and transfer them on the wire.
 
-Shall we define messages as regular C# classes (aka [POCO, plain old CLR objects](https://en.wikipedia.org/wiki/Plain_old_CLR_object))? Are interfaces better? Or the recently introduced records obsolete everything else, and we should rewrite our systems?
+Shall we define messages as regular C# classes (aka [POCO, plain old CLR objects](https://en.wikipedia.org/wiki/Plain_old_CLR_object))? Are interfaces better? Or do the recently introduced records obsolete everything else, and we should rewrite our systems?
 
 > I've witnessed people breaking friendships over those discussions. It's as hot as tabs vs spaces. It's spaces, obviously! 🤪
 
@@ -57,13 +57,12 @@ public class OrderAccepted
 }
 ```
 
-The presented class represents an event in a system dealing with orders. 
-The presented class comes with a few potential flaws that are worth listing (in no particular order):
+The presented class represents an event in a system dealing with orders. It comes with a few potential flaws that are worth listing (in no particular order):
 
 1. The `OrderAccepted` type is mutable. After deserializing the message, a receiver can change the `OrderNumber` property value. And that might even be worse because an event must be immutable (for the purists), considering it represents the past.
-2. [Contracts evolution](https://milestone.topics.it/2022/07/04/messages-evolution.html) might be tricky because using classes makes adopting a multiple inheritance approach difficult if not impossible.
+2. [Contracts evolution](https://milestone.topics.it/2022/07/04/messages-evolution.html) might be tricky because using classes makes adopting a multiple inheritance approach difficult, if not impossible.
 
-A quick solution to the first problem could be to use a private setter for the public properties, or similar approaches, and a constructor that allows setting those property values once at initialization time:
+A quick solution to the first problem could be to use a private setter for the public properties, or some similar approach, and a constructor that allows setting those property values once at initialization time:
 
 ```csharp
 public class OrderAccepted
@@ -79,7 +78,7 @@ That's neat, even if it's more verbose and might limit the serializer choice: We
 
 What sounds like a better way to define the `OrderAccepted` event is by using an interface.
 
-Messaging libraries like [NServiceBus support sending messages as interfaces](https://docs.particular.net/nservicebus/messaging/messages-as-interfaces) primarily to support multiple inheritance. At runtime, the library creates a dynamic proxy class that implements the interface, allowing to have code like the following:
+Messaging libraries like [NServiceBus support sending messages as interfaces](https://docs.particular.net/nservicebus/messaging/messages-as-interfaces) primarily to support multiple inheritance. At runtime, the library creates a dynamic proxy class that implements the interface, allowing code like the following:
 
 ```csharp
 await endpoint.Send<IMyMessage>(message =>
@@ -108,7 +107,7 @@ await endpoint.Publish<OrderAccepted>(message =>
 }).ConfigureAwait(false);
 ```
 
-The `OrderNumber` property is "get" only. It cannot be set. The interface works well for the message receiver rather than for the sender. The solution is to void creating the dynamic proxy class at the sender and instead have an explicit implementation:
+The `OrderNumber` property is "get" only. It cannot be set. The interface works well for the message receiver rather than for the sender. The solution is to avoid creating the dynamic proxy class at the sender and instead have an explicit implementation:
 
 ```csharp
 internal class ConcreteOrderAccepted : OrderAccepted
