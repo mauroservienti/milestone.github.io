@@ -26,7 +26,7 @@ var person = {
 To transfer it on the wire as the body of a message on a queue, we need to transform it into something like this:
 
 ```json
- {
+{
   "firstName": "Mauro",
   "lastName": "Servienti"
 }
