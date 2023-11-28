@@ -14,9 +14,9 @@ A few months ago, I got a [follow-up question from Alisher](https://milestone.to
 
 > The more I think of write part of this whole approach (and microservices in general), the more questions arise - like, ok, I can probably compensate database mutations, but what about events that were already propagated downstream? I can't really send compensating event like "actually, it didn't happen".
 
-Last weekend, we planned to go to [Turin for the chocolate fest](https://cioccola-to.events/2023-eventi/). Our daughter got sick a few days before, and we had to rearrange our plans. In the end, we canceled the trip. Rearrange turned out to be an understatement or wishful thinking, if you will.
+Let's look at a non-technological example of compensation. Last weekend, we planned to go to [Turin for the chocolate fest](https://cioccola-to.events/2023-eventi/). Our daughter got sick a few days before, and we had to rearrange our plans. In the end, we canceled the trip. Rearranging plans turned out to be an understatement or wishful thinking, if you will.
 
-It all started with a few [messages](https://milestone.topics.it/2023/05/25/back-to-basics-messages.html) across [autonomous](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html) family members to agree on what to do. Then, a command to book what needed to be booked. Finally, a [timeout](https://milestone.topics.it/2023/10/18/timeouts-power.html) to signal we needed to go. Later, an even signaled the daughter's illness. And a series of follow-up messages and commands led to canceling the trip.
+It all started with a few [messages](https://milestone.topics.it/2023/05/25/back-to-basics-messages.html) across [autonomous](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html) family members to agree on what to do. Then, a command to book what needed to be booked. Finally, a [timeout](https://milestone.topics.it/2023/10/18/timeouts-power.html) to signal we needed to go. Later, an event signaled the daughter's illness. And a series of follow-up messages and commands led to canceling the trip.
 
 That's compensation at play.
 
