@@ -2,7 +2,7 @@
 layout: post
 title: "Compensation is all around us"
 author: Mauro Servienti
-synopsis: "In a message-based system we might feel lack of control, especially when in need of compensating changes spread across the system. Fear not! Real life deals with compesation every day! And it's better than rolling back a transaction or deleting some data in the database."
+synopsis: "In a message-based system, we might feel a lack of control, especially when in need of compensating changes spread across the system. Fear not! Real life deals with compensation every day! And it's better than rolling back a transaction or deleting some data in the database."
 header_image: /img/posts/compensation/header.jpg
 tags:
 - architecture
