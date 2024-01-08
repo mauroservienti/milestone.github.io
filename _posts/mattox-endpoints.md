@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Mattox, simple and pre-configured NServiceBus endpoints"
+title: "Mattox: simple, pre-configured NServiceBus endpoints"
 author: Mauro Servienti
-synopsis: "NServiceBus endpoints support only code-based configuration, which is handy and not always friendly at the same time. Not all hope is lost, though. What if we could plugin the superb Microsoft configuration extension to configure NServiceBus endpoints?"
+synopsis: "NServiceBus endpoints support only code-based configuration, which is handy and not always friendly at the same time. But what if we could plug in the superb Microsoft configuration extensions to configure NServiceBus endpoints?"
 header_image: /img/posts/mattox-endpoints/header.jpg
 tags:
 - nservicebus
@@ -28,7 +28,7 @@ Host.CreateDefaultBuilder()
 
 At runtime, the [Mattox.NServiceBus.AmazonSQS](https://github.com/mauroservienti/Mattox.NServiceBus.AmazonSQS) endpoint will look for configuration settings through the provided [`IConfiguration` object instance](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration).
 
-For example, we can express the endpoint configuration using a json file similar to the  following:
+For example, we can express the endpoint configuration using a JSON file similar to the  following:
 
 ```json
 {
@@ -52,7 +52,7 @@ For example, we can express the endpoint configuration using a json file similar
 }
 ```
 
-With the above configuration, the endpoint name will be "my-endpoint," it'll have auditing enabled using the default "audit" queue, installers will configure the required infrastructure at runtime, and delayed retries will retry messages two times instead of the default three, with 25 seconds time increase.
+With the above configuration, the endpoint name will be "my-endpoint," it'll have auditing enabled using the default "audit" queue, installers will configure the required infrastructure at runtime, and delayed retries will retry messages two times instead of the default three, with a 25 second time increase between them.
 
 Given that the Microsoft configuration engine supports a variety of sources, we can use the above configuration via environment variables in a Docker container by defining the following variables in the Dockerfile:
 
@@ -64,7 +64,7 @@ env NServiceBus:EndpointConfiguration:Recoverability:Delayed:NumberOfRetries=Tru
 env NServiceBus:EndpointConfiguration:Recoverability:Delayed:TimeIncrease="00:00:25"
 ```
 
-> I never remember if, in Linux, the `:` (colon) must be replaced with `__` (double underscores)—the above works in macOS, FWIW.
+> I never remember if, in Linux, the `:` (colon) must be replaced with `__` (double underscores)—the above works in macOS, FWIW. I think Microsoft recommends `__` these days as it works in MacOS, Windows, and Linux.
 
 We can also mix and match various configuration sources to take advantage of the flexibility of the configuration engine.
 
@@ -92,7 +92,7 @@ The above JSON configuration file configures the RabbitMQ endpoint to use the co
 
 Not everything can be configured through string values, though. If that's the case, Mattox allows accessing the usual NServiceBus code-based configuration in a couple of ways.
 
-For specific customizations, the endpoint API exposes several options. For example, the following snippet allows replacing the default serializer with the JSON.Net one:
+For specific customizations, the endpoint API exposes several options. For example, the following snippet allows replacing the default serializer with the Json.NET one:
 
 ```c#
 var endpoint = new AmazonSqsEndpoint("my-endpoint");
@@ -174,7 +174,7 @@ A good reason to offer only a code-based configuration option is that it's way e
 
 However, code-based configuration comes with a few downsides too:
 
-- Changing the code is the only way to change a configuration value. That means some production-context-dependant values require developers' intervention.
+- Changing the code is the only way to change a configuration value. That means some production-context-dependent values require developers' intervention.
 - The above leads users and organizations to craft their mechanism to map file-based configuration to a code-based one.
 
 Mattox endpoints present themselves as the best of both worlds! They use the de facto standard Microsoft Configuration extension to create the mapping that bridges all the supported configuration sources to the NServiceBus endpoint code-based configuration.
