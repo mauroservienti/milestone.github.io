@@ -6,7 +6,6 @@ author: Mauro Servienti
 synopsis: "I feel misplaced sometimes. People around me, apparently, happily buy a lot of things I find completely useless. Every time I look at my wish list I only find good reasons to not buy something. Am I missing something crucial? What do I really need?"
 tags:
 - personal
-- self-organization
 ---
 
 I'm surrounded by people spending money as if there is no tomorrow, for things I find completely useless.
