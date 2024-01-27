@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "I gotta tell you: CQRS doesn't imply event sourcing"
+title: "I gotta tell you: CQRS doesn't imply Event Sourcing"
 author: Mauro Servienti
 synopsis: "Too many times, Event Sourcing is presented as the natural companion to CQRS. That's not the case. CQRS doesn't dictate using event sourcing. Let's see why."
 header_image: /img/posts/cqrs-and-es/header.jpg
