@@ -8,7 +8,7 @@ tags:
 - architecture
 ---
 
-For the _N_th time (where N > 4), I read a post describing the beauty and benefits of [Command Query Responsibility Segregation (CQRS)](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation). As on many other occasions, it made me cringe: The post assumed that [Event Sourcing (ES)](https://en.wikipedia.org/wiki/Domain-driven_design#Event_sourcing) is part of the equation.
+For the _N_ th time (where N > 4), I read a post describing the beauty and benefits of [Command Query Responsibility Segregation (CQRS)](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation). As on many other occasions, it made me cringe: The post assumed that [Event Sourcing (ES)](https://en.wikipedia.org/wiki/Domain-driven_design#Event_sourcing) is part of the equation.
 
 I'm sorry, it's not.
 
