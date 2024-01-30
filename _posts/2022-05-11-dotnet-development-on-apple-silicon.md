@@ -96,6 +96,42 @@ I recently upgraded Visual Studio 2022 for ARM to the latest preview bits, and n
 
 I will check if newer Visual Studio bits improve the situation from time to time, but that's a dead end for now.
 
+## 2024-02 — .NET development is excellent, but not all that glitters is gold. One thing bothers me a lot!
+
+JetBrains Rider, .NET 6, .NET 7, and the recent .NET 8 are great. .NET development on macOS (and Linux, for what it matters) is a first-class citizen. Finally!
+
+I don't miss Windows at all. Being it general-purpose usage or development, my experience with macOS has been superior so far.
+
+If there is one thing I want to complain about, it is the experience of uninstalling .NET SDKs and Runtimes, particularly previews.
+
+The essence of the story is that you're left groping in the dark. On Windows, we use MSI packages to perform the installation and uninstallation. On macOS, there are installers, but there are no uninstallers.
+
+Microsoft offers a `dotnet-core-uninstall` command line utility for all the supported operating systems—more details in the [official documentation](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/uninstall-tool). The problem is that the tool is in maintenance mode, according to [this GitHub comment](https://github.com/dotnet/cli-lab/issues/160#issuecomment-871729221), and thus it cannot uninstall anything newer than .NET 6. Weird, to say the least.
+
+.NET is available through [Home Brew](https://formulae.brew.sh/formula/dotnet), which would be perfect if there were preview bits. Also, it was outdated when I looked at it a while back.
+
+Continuing my quest, I then found a [script that supposedly allows uninstalling .NET](https://github.com/MicrosoftDocs/visualstudio-docs/blob/main/mac/uninstall-net-2022.md):
+
+```bash
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dotnet/sdk/main/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh)"
+sudo rm -r /etc/dotnet
+```
+
+In fine print, the caveat is that it removes all the installed versions. Useful...weird.
+
+Finally, a [good article describing how to remove .NET installations manually](https://devkimchi.com/2021/11/24/removing-dotnet-sdks-from-macos-manually/) and [Dots](https://github.com/nor0x/Dots) a handy application for managing .NET installations on macOS.
+
+Dots is still under development; there is space for improvements, but it does what it promises. At the time of this writing, it needs to be manually compiled because the released version is too old. It does the job pretty well:
+
+- Lists installed .NET versions
+- Lists available but not installed versions
+- Allows to uninstall installed versions
+- Allows to install new versions
+
+More important than anything, it supports previews!
+
+To recap. Installing .NET bits on macOS is simple, thanks to the Microsoft-provided packages. The drama starts when we want to remove them. That's particularly painful if, for some reason, we need to deal with .NET preview bits. Without a good uninstall story, we left machines cluttered with junk. Microsoft is no help. [Dots](https://github.com/nor0x/Dots) could be your best friend.
+
 To be continued.
 
 ---
