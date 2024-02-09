@@ -108,6 +108,8 @@ The essence of the story is that you're left groping in the dark. On Windows, we
 
 Microsoft offers a `dotnet-core-uninstall` command line utility for all the supported operating systems—more details in the [official documentation](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/uninstall-tool). The problem is that the tool is in maintenance mode, according to [this GitHub comment](https://github.com/dotnet/cli-lab/issues/160#issuecomment-871729221), and thus it cannot uninstall anything newer than .NET 6. Weird, to say the least.
 
+![dotnet-core-uninstall output](/img/posts/dotnet-development-on-apple-silicon/dotnet-uninstall-list-output.png)
+
 .NET is available through [Home Brew](https://formulae.brew.sh/formula/dotnet), which would be perfect if there were preview bits. Also, it was outdated when I looked at it a while back.
 
 Continuing my quest, I then found a [script that supposedly allows uninstalling .NET](https://github.com/MicrosoftDocs/visualstudio-docs/blob/main/mac/uninstall-net-2022.md):
