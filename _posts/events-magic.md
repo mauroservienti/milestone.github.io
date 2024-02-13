@@ -14,7 +14,7 @@ The [Mongo DB Is Web Scale](https://youtu.be/b2F-DItXtZs?si=7oZfEm0udIHCrGZZ) ca
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/b2F-DItXtZs?si=WES0g_W1kT0GFY7K" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-It's twelve years old. MongoDB may not be the main character anymore, and maybe it wasn't even then. It's more about stubbornness and the conviction that tools blindly put to work can solve any problem. The same applies to many other concepts back in the day and nowadays, too.
+It's twelve years old. MongoDB may not be the main character anymore, and maybe it wasn't even then. It's more about stubbornness and the conviction that tools blindly put to work can solve any problem. The same applies to many other concepts back in the day and nowadays, too. Tools are not, and can't be, [silver bullets](https://en.wikipedia.org/wiki/No_Silver_Bullet).
 
 Recently, I was chatting with my dear friend [Weronika Łabaj](https://twitter.com/weralabaj), and she said what then became the title of this article and also something that can easily replace the word MongoDB in the presented meme/cartoon:
 
