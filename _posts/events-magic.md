@@ -24,6 +24,8 @@ We discussed this ongoing trend: There is this belief that introducing events in
 
 Paraphrasing the meme: events are web-scale.
 
+One could argue what it is that makes people freak out when thinking about coupling. That's an appropriate and to-the-point question. Coupling, per se, is neither good nor bad. It's a metric measuring how much two components are "connected." Before trying to eliminate as much coupling as possible blindly, we should understand the context because [not all changes are born equal, and the same is true for coupling; not all coupling is bad coupling](https://milestone.topics.it/2021/03/10/not-all-changes-are-born-equal.html).
+
 ## Events are not "web-scale"
 
 Let's start by disambiguating what kind of events we are talking about. In the software architecture world, the word event [means too many things](https://milestone.topics.it/2021/09/15/linguistic-limitation.html).
