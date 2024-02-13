@@ -58,7 +58,7 @@ If we start from the end by introducing events first when the service boundaries
 - Let's share the needed data using the events and messages we're already sending or publishing.
 - Maybe our service boundaries are wrong.
 
-It's tough to accept the truth presented by the third answer, and it's much easier to go with one of the other two, with a predominance for the first.
+It's tough to accept the truth that service boundaries are wrong. It's much more tempting to conclude that we can expose an API to allow querying for the needed data or replicate it across services using events the system is already publishing.
 
 Unfortunately, not recognizing that the boundaries are wrong leads to designing a distributed monolith affected by schema and temporal coupling to begin with.
 
