@@ -2,13 +2,13 @@
 layout: post
 title: "Someone says event, and magically, coupling goes away"
 author: Mauro Servienti
-synopsis: "I feel events are used too many times as hammer to dismantle coupling. Unfortunately, it's gold plating. It might look better, but it'll fire back in the long term and costs more."
+synopsis: "I feel events are used too many times as a hammer to dismantle coupling. Unfortunately, it's gold plating. It might look better, but it'll fire back in the long term and cost more."
 header_image: /img/posts/events-magic/header.jpg
 tags:
 - architecture
 ---
 
-I know... I'm grumpy, and [I've been ranting lately](https://milestone.topics.it/2024/01/27/cqrs-and-es.html). I promise it's the last time—last famous words 😬
+I know... I'm grumpy, and [I've been ranting lately](https://milestone.topics.it/2024/01/27/cqrs-and-es.html). I promise it's the last time—famous last words 😬
 
 The [Mongo DB Is Web Scale](https://youtu.be/b2F-DItXtZs?si=7oZfEm0udIHCrGZZ) cartoon always makes me roll on the floor laughing. If you have never seen it, those are 5 minutes well spent. Take a look:
 
@@ -36,11 +36,11 @@ We're not discussing C# events, like delegates or Event Sourcing events. We're e
 
 Asynchronicity and independence rule out C# delegates and, at the same time, don't impose any technology. For example, we don't want to state that those events must be messages on a queue.
 
-## Believes
+## Beliefs
 
 In chatting with many people, the belief goes along the lines of: It's the communication protocol that causes coupling.
 
-That means that swapping the communication protocol for something that, on paper, promises less or no coupling is the solution to all the coupling-related issues.
+That means that swapping the communication protocol for something that, on paper, promises less or no coupling is the solution to all coupling-related issues.
 
 Let me use a couple of examples. Two components, A and B, communicate by storing data in a database table. A writes some data, which B then reads to continue the business process.
 
@@ -62,7 +62,7 @@ It's tough to accept the truth that service boundaries are wrong. It's much more
 
 Unfortunately, not recognizing that the boundaries are wrong leads to designing a distributed monolith affected by schema and temporal coupling to begin with.
 
-It's also crucial to understand that It's not a monolithic process. We don't need to sort out all boundaries perfectly. Then, define all the autonomous components. And finally, determine who publishes what and who subscribes. It's a messy process that leads to rough boundaries or isolates one or more services from the rest of the system. By looking at the relationships between the identified services and components, it's possible to start crafting some events. We're ready to return to the drawing board and address another portion of the system. The other critical part is that we should not fear any rework of previously identified boundaries and components, which might lead to reshaping events.
+It's also crucial to understand that it's not a monolithic process. We don't need to sort out all boundaries perfectly. Then, define all the autonomous components. And finally, determine who publishes what and who subscribes. It's a messy process that leads to rough boundaries or isolates one or more services from the rest of the system. By looking at the relationships between the identified services and components, it's possible to start crafting some events. We're ready to return to the drawing board and address another portion of the system. The other critical part is that we should not fear any rework of previously identified boundaries and components, which might lead to reshaping events.
 
 It's a difficult task. That's one of the reasons we need to work in a stable domain; otherwise, it's like building on the sand. Identifying solid boundaries is nearly impossible if the ground moves under our feet, and we cannot count on solid foundations.
 
