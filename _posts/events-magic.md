@@ -63,7 +63,13 @@ It's tough to accept the truth that service boundaries are wrong. It's much more
 
 Unfortunately, not recognizing that the boundaries are wrong leads to designing a distributed monolith affected by schema and temporal coupling to begin with.
 
-It's also crucial to understand that it's not a monolithic process. We don't need to sort out all boundaries perfectly. Then, define all the autonomous components. And finally, determine who publishes what and who subscribes. It's a messy process that leads to rough boundaries or isolates one or more services from the rest of the system. By looking at the relationships between the identified services and components, it's possible to start crafting some events. We're ready to return to the drawing board and address another portion of the system. The other critical part is that we should not fear any rework of previously identified boundaries and components, which might lead to reshaping events.
+It's also crucial to understand that it's not a straightforward process. It's probably impossible to get it right from the beginning. It's a continuous improvement effort, making things better repeatedly.
+
+We don't need to sort out all boundaries perfectly. Then, define all the autonomous components. And finally, determine who publishes what and who subscribes. It's a messy process that leads to rough boundaries or isolates one or more services from the rest of the system. By looking at the relationships between the identified services and components, it's possible to start crafting some events. 
+
+At that point, we're ready to return to the drawing board and address another portion of the system.
+
+The other critical part is that we should not fear any rework of previously identified boundaries and components, which might lead to reshaping events.
 
 It's a difficult task. That's one of the reasons we need to work in a stable domain; otherwise, it's like building on the sand. Identifying solid boundaries is nearly impossible if the ground moves under our feet, and we cannot count on solid foundations.
 
