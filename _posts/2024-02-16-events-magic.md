@@ -54,8 +54,7 @@ Events should be the natural consequence of something else, not the primary goal
 
 If we start from the end by introducing events first when the service boundaries are ill-defined, we're destined to face the dreaded "how do I get the data stored in that other service that I need here now to perform my task" question. There can only be three answers:
 
-- Let's expose a RESTful API to allow querying for the needed data.
-- Let's set up a GraphQL endpoint to allow clients to query data using the schema _they_ want freely.  
+- Let's expose a RESTful API to allow querying for the needed data. Or the let's set up a GraphQL endpoint to allow clients to query data using the schema _they_ want freely, variation.  
 - Let's share the needed data using the events and messages we're already sending or publishing.
 - Maybe our service boundaries are wrong.
 
