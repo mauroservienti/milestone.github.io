@@ -119,7 +119,7 @@ sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dotnet/sdk/mai
 sudo rm -r /etc/dotnet
 ```
 
-In fine print, the caveat is that it removes all the installed versions. Useful...weird.
+In fine print, the caveat is that it removes all the installed versions. Useful...weird. And now the circus starts again with .NET 9 previews, please save me!
 
 Finally, a [good article describing how to remove .NET installations manually](https://devkimchi.com/2021/11/24/removing-dotnet-sdks-from-macos-manually/) and [Dots](https://github.com/nor0x/Dots) a handy application for managing .NET installations on macOS.
 
