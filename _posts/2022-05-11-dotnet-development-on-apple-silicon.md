@@ -74,7 +74,7 @@ One last note: .NET 3.1 is tricky. As said, it comes only with x64 support. Visu
 
 Based on my experience with the developers' pack, I downloaded the SDK installer. It fails. The error is that ARM is not a supported platform, which is interesting because we can install the same x64 SDK on the M1 Mac. The .NET Core 3.1 SDK installs fine using the Visual Studio Installer. But then I started getting all sorts of weird errors from Visual Studio. I suppose a lot of the Visual Studio tooling depends on .NET Core that tries to load other assemblies compiled for ARM, causing many operations to fail. Removing .NET Core 3.1 solved my problems. I assume that Visual Studio uses the latest runtime, .NET 6, in my case, if the expected one is not available. I have no idea how many latent problems are waiting for me around the corner.
 
-## 2022-06-27 — A couple of months into using macOS and an M1 for .NET Development.
+## 2022-06-27 — A couple of months into using macOS and an M1 for .NET Development
 
 The following section is only about .NET development, specifically WPF, using the Parallels Windows for ARM virtual machine. I have no issues with .NET 6 or .NET 7 development using macOS. Everything  I need works as expected.
 
@@ -108,7 +108,7 @@ The essence of the story is that you're left groping in the dark. On Windows, we
 
 Microsoft offers a `dotnet-core-uninstall` command line utility for all the supported operating systems—more details in the [official documentation](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/uninstall-tool). The problem is that the tool is in maintenance mode, according to [this GitHub comment](https://github.com/dotnet/cli-lab/issues/160#issuecomment-871729221), and thus it cannot uninstall anything newer than .NET 6. Weird, to say the least.
 
-![dotnet-core-uninstall output](/img/posts/dotnet-development-on-apple-silicon/dotnet-uninstall-list-output.png)
+![dotnet-core-uninstall output](/img/posts/dotnet-development-on-apple-silicon/dotnet-uninstall-list-output.png){:class="img-fluid mx-auto d-block"}
 
 .NET is available through [Home Brew](https://formulae.brew.sh/formula/dotnet), which would be perfect if there were preview bits. Also, it was outdated when I looked at it a while back.
 
