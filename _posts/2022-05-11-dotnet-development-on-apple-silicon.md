@@ -121,7 +121,7 @@ sudo rm -r /etc/dotnet
 
 In fine print, the caveat is that it removes all the installed versions. Useful...weird.
 
-Finally, a [good article describing how to remove .NET installations manually](https://devkimchi.com/2021/11/24/removing-dotnet-sdks-from-macos-manually/) and [Dots](https://github.com/nor0x/Dots) a handy application for managing .NET installations on macOS.
+Finally, a [good article describing how to remove .NET installations manually](https://devkimchi.com/2021/11/24/removing-dotnet-sdks-from-macos-manually/) and [Dots](https://github.com/nor0x/Dots) a handy application for managing .NET installations on macOS. There is also a [Microsoft Learn page providing information on manual uninstallation](https://learn.microsoft.com/en-us/dotnet/core/install/remove-runtime-sdk-versions?pivots=os-macos).
 
 Dots is still under development; there is space for improvements, but it does what it promises. At the time of this writing, it needs to be manually compiled because the released version is too old. It does the job pretty well:
 
