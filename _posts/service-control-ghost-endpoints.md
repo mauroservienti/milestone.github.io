@@ -4,8 +4,8 @@ title: "A small ServiceControl maintenance utility"
 author: Mauro Servienti
 synopsis: "From time to time, I enjoy writing code on the side, like an open-source project. This time, the opportunity came from a support case and the need to ease the customer's life in their daily maintenance tasks."
 header_image: /img/posts/service-control-ghost-endpoints/header.jpg
-tags: https://milestone.topics.it/tags/ (remove the link after setting tags)
-- 
+tags:
+- development
 ---
 As I said multiple times, I work for [Particular Software](https://particular.net/), the makers of [NServiceBus](https://particular.net/nservicebus).
 
