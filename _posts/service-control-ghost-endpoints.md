@@ -22,7 +22,7 @@ One of the Platform's features is the visualization and monitoring of the system
 
 ### Heartbeats
 
-Messaging endpoints built using NServiceBus can be configured to send  [heartbeats](https://docs.particular.net/monitoring/heartbeats/) to ServiceControl. ServiceControl stores heartbeat data and keeps track of the last received one. If it stops receiving heartbeats from one or more endpoints for a specific time, it marks the endpoints inactive and raises a warning event.
+Messaging endpoints built using NServiceBus can be configured to send [heartbeats](https://docs.particular.net/monitoring/heartbeats/) to ServiceControl. ServiceControl stores heartbeat data and keeps track of the last received one. If it stops receiving heartbeats from one or more endpoints for a specific time, it marks the endpoints inactive and raises a warning event.
 
 ### Monitoring and metrics data
 
