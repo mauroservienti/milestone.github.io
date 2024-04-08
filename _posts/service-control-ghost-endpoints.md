@@ -26,7 +26,7 @@ Messaging endpoints built using NServiceBus can be configured to send [heartbeat
 
 ### Monitoring and metrics data
 
-Similarly, endpoints can send [monitoring and metrics data](https://docs.particular.net/monitoring/metrics/definitions) to ServiceControl. Metrics data contains things like queue length and critical time, to name a few. Queue length is the number of messages in the endpoint input queue waiting to be processed. Critical time is the total time a message takes from when it's sent to when it is successfully processed.
+Similarly, endpoints can send [monitoring and metrics data](https://docs.particular.net/monitoring/metrics/definitions) to ServiceControl. Metrics data contains things like queue length and critical time, to name two. Queue length is the number of messages in the endpoint input queue waiting to be processed. Critical time is the total time a message takes from when it's sent to when it is successfully processed.
 
 ### Audit-derived endpoints
 
