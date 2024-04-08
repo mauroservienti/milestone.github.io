@@ -30,7 +30,7 @@ Similarly, endpoints can send [monitoring and metrics data](https://docs.particu
 
 ### Audit-derived endpoints
 
-ServiceControl can deduct existing endpoints from [audited messages](https://docs.particular.net/nservicebus/operations/auditing) if none of the above is enabled. We can configure each endpoint to audit successfully processed messages to an audit queue. ServiceControl consumes and stores messages from that queue and deduces existing system endpoints.
+ServiceControl can deduce the existence of endpoints from [audited messages](https://docs.particular.net/nservicebus/operations/auditing) if none of the above is enabled. We can configure each endpoint to audit successfully processed messages to an audit queue. ServiceControl consumes and stores messages from that queue and deduces existing system endpoints.
 
 ## Scaled-out endpoints
 
