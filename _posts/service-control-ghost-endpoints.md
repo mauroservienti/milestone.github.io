@@ -53,7 +53,7 @@ The load increases again, and more instances get deployed; however, those new in
 
 ## Why is that a problem?
 
-Ghost instances per se are not an issue. We get an alarm on one of the ServicePulse pages, and we can mute it. The problem starts when the number of ghost instances increases, or the fluctuation is fast. When that's the case, keeping up with manually muting alarms in ServicePulse can be challenging, making the user interface clunky and difficult to navigate.
+Ghost instances per se are not an issue. We get an alert on one of the ServicePulse pages, and we can mute it. The problem starts when the number of ghost instances increases, or the fluctuation is fast. When that's the case, keeping up with manually muting alarms in ServicePulse can be challenging, making the user interface clunky and difficult to navigate.
 
 We're investigating ways to mute ghost instances automatically. However, we don't know your system, and it's challenging to identify automated rules for doing so.
 
