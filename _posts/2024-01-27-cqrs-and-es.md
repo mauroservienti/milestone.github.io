@@ -24,7 +24,7 @@ In this case, however, the confusion starts from needing to pay more attention t
 
 From there, jumping to horrendous models like the following is tremendously easy:
 
-![Horrendous model](https://i.stack.imgur.com/eKU6r.png)
+![Horrendous model](https://i.stack.imgur.com/eKU6r.png){:class="img-fluid mx-auto d-block"}
 
 I'm not saying that implementing a CQRS architecture using ES is wrong. I'm saying that it's not mandatory—like too many times is presented—and if done without using the right tools, it comes with more downsides than benefits.
 
