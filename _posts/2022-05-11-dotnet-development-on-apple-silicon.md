@@ -136,6 +136,12 @@ To recap. Installing .NET bits on macOS is simple, thanks to the Microsoft-provi
 
 Now the circus starts again with .NET 9 previews, so please save me!
 
+## 2024-04 — The uninstall tool supports .NET 8
+
+On April 22, Microsoft released a new version of the .NET uninstall tool. It finally supports .NET 8. Here is a link to the release notes: <https://github.com/dotnet/cli-lab/releases/tag/1.7.521001>
+
+That's good news. However, it's clear that the .NET uninstall tool is not a viable long-term solution. The tool depends on .NET, making it challenging to work with previews. With the current state of the art, they would have to release a version of the tool for every preview to make it so that it could manage that preview. It doesn't look like it's what's planned.
+
 To be continued.
 
 ---
