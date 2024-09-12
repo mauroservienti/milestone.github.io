@@ -8,8 +8,10 @@ id: 'home'
   <div class="card mb-3">
     {% assign first = site.posts[0] %}
     {% if first.header_image %}
+    <div class="img-crop">
     <img class="img-fluid card-img-top" alt=" {{ first.title }} header image"
       src="{{ first.header_image | prepend: site.baseurl }}" />
+    </div>
     {% endif %}
     <div class="card-body">
       <p class="card-text first-post-details">
