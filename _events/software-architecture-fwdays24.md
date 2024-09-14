@@ -1,6 +1,6 @@
 ---
 layout: event
-status: 'upcoming'
+status: 'done'
 title: "Software Architecture fwdays’24"
 location: "Online"
 language: "English"
@@ -14,6 +14,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  slides: http://bit.ly/sa24-choreography
 tags:
 - SOA
 - Microservices
