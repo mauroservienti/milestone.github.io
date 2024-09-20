@@ -143,7 +143,7 @@ To dive into ViewModel Composition's details [there are 16 articles, including t
 
 ## Are you saying the same logic applies to writes, Mauro?
 
-You bet! In distributed systems, it's pretty common to have a form that needs to post data to multiple services. I specifically wrote on the topic in ["The fine art of dismantling"](https://milestone.topics.it/view-model-composition/2019/04/18/the-fine-art-of-dismantling.html) and in ["Safety first."](https://milestone.topics.it/2019/05/02/safety-first.html)
+You bet! In distributed systems, it's pretty common to have a form that needs to post data to multiple services. I specifically wrote on the topic in ["The fine art of dismantling"](https://milestone.topics.it/2019/04/18/the-fine-art-of-dismantling.html) and in ["Safety first."](https://milestone.topics.it/2019/05/02/safety-first.html)
 
 ## Conclusion
 
