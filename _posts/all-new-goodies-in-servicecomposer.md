@@ -21,11 +21,11 @@ Let's look at what's new in ServiceComposer versions [3.0](https://github.com/Se
 
 ### Endpoint filters
 
-Version 3.x introduced support for [endpoint filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/endpoint-filters.md) using the standard ASP.Net minimal API filters syntax. This feature allows for more granular control over the request pipeline, enhancing the flexibility and power of ServiceComposer. The decision to use the minimal API syntax and programming model is to avoid introducing yet another programming style. Overall, ServiceComposer is leaning towards being a citizen in the ASP.Net ecosystem. As such, its API should be aligned as much as possible with the Microsoft one to maintain the 'feel at home' feeling. More on this later.
+Version 3.x introduced support for [endpoint filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/endpoint-filters.md) using the standard ASP.Net minimal API filters syntax. This feature allows more granular control over the request pipeline, enhancing the flexibility and power of ServiceComposer. The decision to use the minimal API syntax and programming model is to avoid introducing yet another programming style. Overall, ServiceComposer is leaning towards being a citizen in the ASP.Net ecosystem. As such, its API should be aligned as much as possible with the Microsoft one to maintain the 'feel at home' feeling. More on this later.
 
 ### Simplified event handling using generic event handlers
 
-In the realm of ViewModel Composition, [events](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/events.md) play a role when composing lists or complex graphs made of complex data hierarchy.
+In the realm of ViewModel Composition, [events](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/events.md) play a role when composing lists or graphs from a complex data hierarchy.
 
 For an introduction to the list composition problem and its relevance in the context of ServiceComposer, you can read [The ViewModel Lists Composition dance](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html). The code snippets are outdated, but all the concepts are still valid today.
 
@@ -63,7 +63,7 @@ public class AnEventHandler : ICompositionEventsHandler<AnEvent>
 
 No attributes are required, and the interface implementation guides toward the correct class design to handle events.
 
-However, the old design still has good reasons to exist and will be supported. Generic event handlers, classes implementing `ICompositionEventsHandler<TEvent>`, are invoked every time an event they subscribe to is published, regardless of the currently handled route. If the same event is used in multiple scenarios, e.g., when doing an HTTP GET and a POST, and different behaviors are required, it's better to implement a route-based event handler that can easily, through the route attribute, differentiate to which type of request it reacts to.
+However, the old design still has good reasons to exist and will be supported. Generic event handlers, classes implementing `ICompositionEventsHandler<TEvent>`, are invoked every time an event they subscribe to is published, regardless of the currently handled route. If the same event is used in multiple scenarios, e.g., when doing an HTTP GET and a POST, and different behaviors are required, it's better to implement a route-based event handler that can easily differentiate (through the route attribute) the type of request it reacts to.
 
 ### Initial support for composition filters
 
@@ -71,7 +71,7 @@ Endpoint filters are at the ASP.Net endpoint level. They can intercept all incom
 
 For those reasons, version 3.x added support for [composition filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/composition-filters.md). Their API matches the endpoint filters one, and the main difference is that their pipeline is after the endpoint filters and before invoking composition handlers. We can define composition filters as either an attribute to decorate composition components or as a class implementing the `ICompositionRequestFilter<T>,` where `T` is the component to filter.
 
-*Caveat*: They are still immature, and their API will evolve in future releases.
+*Caveat*: Composition filters are still immature, and their API will evolve in future releases.
 
 ### Targeting .NET 8 only breaking change
 
@@ -112,7 +112,7 @@ public async Task Handle(HttpRequest request)
 }
 ```
 
-The above code is nothing wrong, but unfortunately, it doesn't play nicely with endpoint filters. The endpoint filters API exposes an arguments list representing the binding results performed by ASP.Net before invoking the HTTP handling pipeline. The need to populate arguments means binding must happen earlier in the process and cannot be performed in the composition handler if users also want to use endpoint filters.
+The above code is not wrong, but it doesn't play nicely with endpoint filters. The endpoint filters API exposes an arguments list representing the binding results performed by ASP.Net before invoking the HTTP handling pipeline. The need to populate arguments means binding must happen earlier in the process and cannot be performed in the composition handler if users also want to use endpoint filters.
 
 With [declarative model binding](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/model-binding.md#declarative-model-binding), the above composition handler looks like the following:
 
@@ -130,7 +130,7 @@ public Task Handle(HttpRequest request)
 }
 ```
 
-The `RequestModel` wrapper class is no longer needed. The code declares the models for binding, using attributes, and later, it can access them via the arguments collection exposed by the composition context. There are attributes for all the supported binding sources, such as the query string or request headers. 
+The `RequestModel` wrapper class is no longer needed. The code declares the models for binding using attributes and later, it can access them via the arguments collection exposed by the composition context. There are attributes for all the supported binding sources, such as the query string or request headers. 
 
 The attribute declarations allow the ServiceComposer composition pipeline to determine which model to bind earlier, providing a much nicer user experience.
 
@@ -170,7 +170,7 @@ class MyCompositionHandler
 
 That looks syntactically identical to an ASP.Net controller action, doesn't it?
 
-I'm working to get there and having fun with source generators. For whatever definition of fun ;-).
+I'm working to get there and having fun with source generators. For certain definitions of fun ;-).
 
 Stay tuned!
 
