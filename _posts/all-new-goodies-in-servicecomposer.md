@@ -2,7 +2,7 @@
 layout: post
 title: "All the new goodies in ServiceComposer"
 author: Mauro Servienti
-synopsis: ""
+synopsis: "Thanks to users’ feedback, I enjoyed working on some new cool ServiceComposer features, namely endpoint filters, a greatly improved event handling API, and declarative model binding, which paves the way for a new cool feature in the works"
 header_image: /img/posts/all-new-goodies-in-servicecomposer/header.jpg
 tags:
 - viewmodel-composition
