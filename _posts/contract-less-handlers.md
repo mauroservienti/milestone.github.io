@@ -53,7 +53,7 @@ In the end, if you think about it, ServiceComposer handles incoming HTTP request
 
 The "feeling-at-home" principle also led to a couple more functionalities.
 
-Similarly to ASP.NET, ServiceComposer now supports [endpoint filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/endpoint-filters.md), using the same semantics, types, and syntax as ASP.NET. Last but not least, [composition request filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/composition-filters.md) are a long-standing feature that provides a similar experience to ASP.NET action filters.
+Similar to ASP.NET, ServiceComposer now supports [endpoint filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/endpoint-filters.md), using the same semantics, types, and syntax as ASP.NET. Last but not least, [composition request filters](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/composition-filters.md) are a long-standing feature that provides a similar experience to ASP.NET action filters.
 
 ## Source generators for the win
 
@@ -113,7 +113,7 @@ namespace Snippets.Contractless.CompositionHandlers.Generated
 #pragma warning restore SC0001
 ```
 
-The generated and user one classes are registered in the _Inversion of Control_ container, enabling dependency injection in the user contract-less composition requests handler.
+The generated and user classes are registered in the _Inversion of Control_ container, enabling dependency injection in the user contract-less composition requests handler.
 
 The advantage is clear. The code is less verbose and, as such, easier to read and maintain.
 
