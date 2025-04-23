@@ -133,6 +133,8 @@ Last but not least, there are some pending design decisions. For example, the in
 
 It’s not the end of the world, but are there better options? Sure thing. For example, ServiceComposer contract-less request handlers could support the `[FromServices]` to make the design even more in line with ASP or support a convention-based approach. If the handler has a non-private HttpContex property, the source generator will emit code to set it.
 
+It's critical to mention that `4.2.0.-alpha.1` includes other changes. That means it's safe to update, as all existing functionalities are unchanged, and using the new syntax to define contract-less composition request handlers is opt-in.
+
 ## Conclusion
 
 Without source generators, implementing such a feature would have required a great deal of reflection at startup to discover user contract-less handlers, followed by some magic to generate and compile some expression trees to avoid the performance penalties of reflection-based invocation. Source generators are not straightforward but are indeed better than the alternatives.
