@@ -24,7 +24,7 @@ class MyCompositionHandler
 }
 ```
 
-It's not an ASP.NET controller. It's a ServiceComposer composition handler (requires ServiceComposer 4.2.0-alpha.1); to be more precise, it's a [contract-less composition requests handler](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/contract-less-composition-requests-handlers.md). Syntax-wise, it's so much better than the current way of declaring composition handlers:
+It's not an ASP.NET controller. It's a ServiceComposer composition handler (requires [ServiceComposer 4.2.0-alpha.1](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/4.2.0-alpha.1)); to be more precise, it's a [contract-less composition requests handler](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/contract-less-composition-requests-handlers.md). Syntax-wise, it's so much better than the current way of declaring composition handlers:
 
 ```csharp
 namespace CompositionHandlers;
