@@ -2,7 +2,7 @@
 layout: post
 title: "ServiceComposer contract-less composition request handlers"
 author: Mauro Servienti
-synopsis: "The feel-at-home ServiceComposer principle led me to introduce a new syntax to define composition handlers. The syntax mimics ASP.NET controllers, helping users to reduce the learning and adoption curve. Let's have a look, shall we?"
+synopsis: "Recently, I started thinking about evolving the ServiceComposer user-facing API. I was faced with many options, leading me to analysis paralysis. I decided to start with a principle first: The feel-at-home ServiceComposer principle. This principle led me to introduce a new syntax that mimics ASP.NET controllers for defining composition handlers. This syntax helps users reduce the learning and adoption curve. Let's take a look, shall we?"
 header_image: /img/posts/contract-less-handlers/header.jpg
 tags:
 - viewmodel-composition
