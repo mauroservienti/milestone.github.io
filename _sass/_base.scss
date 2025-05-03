@@ -88,3 +88,13 @@ pre {
 .mermaid{
     margin-bottom: 1rem;
 }
+
+.img-crop{
+    max-height: 700px;
+    overflow: hidden;
+    margin-top: -150px;
+}
+
+.img-crop img{
+    max-height: initial;
+}
