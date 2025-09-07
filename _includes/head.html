@@ -33,7 +33,7 @@
 {% if page.og_image or page.header_image %}
   <meta property="og:image" content="{% if page.og_image %}{{ page.og_image | prepend: site.baseurl | prepend: site.url }}{% elsif page.header_image %}{{ page.header_image | prepend: site.baseurl | prepend: site.url }}{% endif %}" />
 {% endif %}
-  
+  <meta name="theme-color" content="#ed3c0b">
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   {% if page.enable_mermaid %}
