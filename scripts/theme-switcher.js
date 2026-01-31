@@ -24,7 +24,6 @@
   function setTheme(theme) {
     document.documentElement.setAttribute('data-bs-theme', theme);
     updateToggleIcon(theme);
-    updateNavbarTheme(theme);
   }
 
   function updateToggleIcon(theme) {
@@ -41,19 +40,6 @@
     }
   }
 
-  function updateNavbarTheme(theme) {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-      if (theme === THEME_DARK) {
-        navbar.classList.remove('navbar-light', 'bg-light');
-        navbar.classList.add('navbar-dark', 'bg-dark');
-      } else {
-        navbar.classList.remove('navbar-dark', 'bg-dark');
-        navbar.classList.add('navbar-light', 'bg-light');
-      }
-    }
-  }
-
   // Apply theme immediately to prevent flash
   setTheme(getPreferredTheme());
 
@@ -66,12 +52,8 @@
 
   // Initialize toggle button when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
-    const currentTheme = getPreferredTheme();
-
-    // Update navbar theme now that DOM is available
-    updateNavbarTheme(currentTheme);
     // Ensure icons are correctly set after DOM load
-    updateToggleIcon(currentTheme);
+    updateToggleIcon(getPreferredTheme());
 
     const toggle = document.getElementById('theme-toggle');
     if (toggle) {

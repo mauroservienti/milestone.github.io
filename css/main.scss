@@ -45,6 +45,17 @@ $grey-color-dark:  darken($grey-color, 25%);
   --site-grey-color-dark: #c0c0c0;
   --site-code-background: #2d2d2d;
   --site-code-border: #4a4a4a;
+
+  // Override navbar colors via CSS instead of JS class toggling to prevent flicker
+  .navbar {
+    --bs-navbar-color: rgba(255, 255, 255, 0.85);
+    --bs-navbar-hover-color: rgba(255, 255, 255, 1);
+    --bs-navbar-active-color: #fff;
+    --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--bs-dark) !important;
+  }
 }
 
 // Import partials from `sass_dir` (defaults to `_sass`)
