@@ -3,6 +3,28 @@
   width: 100%;
 }
 
+// Ensure card text is visible in dark mode
+[data-bs-theme="dark"] {
+  .card {
+    .card-title,
+    .card-text,
+    .card-body {
+      color: var(--site-text-color, #e0e0e0);
+    }
+    
+    // Ensure muted-link class works correctly in cards
+    .card-title .muted-link,
+    .card-body .muted-link {
+      color: var(--site-text-color, #e0e0e0);
+    }
+    
+    // Override Bootstrap's text-muted to use our lighter color
+    .text-muted {
+      color: var(--site-text-color-light, #b0b0b0);
+    }
+  }
+}
+
 .border-none{
 	border-width: 0 !important;
 }
