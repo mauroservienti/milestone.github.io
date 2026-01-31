@@ -12,11 +12,6 @@
       color: var(--site-text-color, #e0e0e0);
     }
     
-    .card-title a,
-    .card-text a {
-      color: var(--site-text-color, #e0e0e0);
-    }
-    
     // Ensure muted-link class works correctly in cards
     .card-title .muted-link,
     .card-body .muted-link {
@@ -25,7 +20,7 @@
     
     // Override Bootstrap's text-muted to use our lighter color
     .text-muted {
-      color: var(--site-text-color-light, #b0b0b0) !important;
+      color: var(--site-text-color-light, #b0b0b0);
     }
   }
 }
