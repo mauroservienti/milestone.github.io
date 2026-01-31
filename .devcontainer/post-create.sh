@@ -10,3 +10,7 @@ fi
 if [ -f Gemfile ]; then
     bundle install
 fi
+
+# Install Claude Code CLI globally
+echo "Installing Claude Code CLI..."
+npm install -g @anthropic-ai/claude-code

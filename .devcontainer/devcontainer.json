@@ -8,16 +8,19 @@
 			// Update 'VARIANT' to pick a Debian OS version: bullseye, buster
 			// Use bullseye when on local arm64/Apple Silicon.
 			"VARIANT": "bullseye",
-			// Enable Node.js: pick the latest LTS version
-			"NODE_VERSION": "none"
-		}	
+			// Enable Node.js: pick LTS version for Claude Code CLI
+			"NODE_VERSION": "lts/*"
+		}
 	},
 
-	// Set *default* container specific settings.json values on container create.
-	"settings": {},
-
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [],
+	// VS Code customizations
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"anthropic.claude-code"
+			]
+		}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
