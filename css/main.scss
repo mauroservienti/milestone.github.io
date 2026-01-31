@@ -22,6 +22,31 @@ $grey-color:       #828282;
 $grey-color-light: lighten($grey-color, 25%);
 $grey-color-dark:  darken($grey-color, 25%);
 
+// CSS Custom Properties for dark mode support
+:root {
+  --site-text-color: #111;
+  --site-text-color-light: #{lighten(#111, 25%)};
+  --site-background-color: #fdfdfd;
+  --site-brand-color: #2a7ae2;
+  --site-grey-color: #828282;
+  --site-grey-color-light: #{lighten(#828282, 25%)};
+  --site-grey-color-dark: #{darken(#828282, 25%)};
+  --site-code-background: #eef;
+  --site-code-border: #{lighten(#828282, 25%)};
+}
+
+[data-bs-theme="dark"] {
+  --site-text-color: #e0e0e0;
+  --site-text-color-light: #b0b0b0;
+  --site-background-color: #1a1a1a;
+  --site-brand-color: #5a9cf0;
+  --site-grey-color: #a0a0a0;
+  --site-grey-color-light: #6a6a6a;
+  --site-grey-color-dark: #c0c0c0;
+  --site-code-background: #2d2d2d;
+  --site-code-border: #4a4a4a;
+}
+
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
         "base",

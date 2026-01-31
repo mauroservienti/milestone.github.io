@@ -7,23 +7,25 @@ permalink: /tags/
 <div class="tags">
   <h3 class="page-heading">Tags</h3>
   <div class="tags-list">
-    <div class="card-columns">
+    <div class="row" data-masonry='{"percentPosition": true}'>
       {% for tag in site.tags %}
-      <div class="card">
-        <div class="card-body">
-          {% assign tagged_pages = site.posts | where: 'tags',tag.tag %}
-          {% assign count = 0 %}
-          {% if tagged_pages %}
-            {% assign count = tagged_pages.size %}
-          {% endif %}
-          <h5 class="card-title">
-            <a class="muted-link" href="{{ tag.url | prepend: site.baseurl }}">{{ tag.title }} ({{ count }})</a>
-          </h5>
-          <p class="card-text">
-            <small class="text-muted">
-              <a href="{{ tag.url | prepend: site.baseurl }}">Tag: {{ tag.tag }}</a>
-            </small>
-          </p>
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="card">
+          <div class="card-body">
+            {% assign tagged_pages = site.posts | where: 'tags',tag.tag %}
+            {% assign count = 0 %}
+            {% if tagged_pages %}
+              {% assign count = tagged_pages.size %}
+            {% endif %}
+            <h5 class="card-title">
+              <a class="muted-link" href="{{ tag.url | prepend: site.baseurl }}">{{ tag.title }} ({{ count }})</a>
+            </h5>
+            <p class="card-text">
+              <small class="text-muted">
+                <a href="{{ tag.url | prepend: site.baseurl }}">Tag: {{ tag.tag }}</a>
+              </small>
+            </p>
+          </div>
         </div>
       </div>
       {% endfor %}

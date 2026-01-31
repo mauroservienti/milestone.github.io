@@ -50,7 +50,7 @@
                 {% for series_page in series_pages %}
                 <li><small>
                         {% if page.url == series_page.url %}
-                        <span class="font-italic">{{ series_page.title }}</span>
+                        <span class="fst-italic">{{ series_page.title }}</span>
                         {% else %}
                         <a class="muted-link inherit-color" title="{{ series_page.title }}"
                             href="{{ series_page.url | prepend: site.baseurl }}">{{ series_page.title }}</a>
@@ -69,7 +69,7 @@
                 {% for post in site.posts limit:8 %}
                 <li><small>
                         {% if page.url == post.url %}
-                        <span class="font-italic">{{ post.title }}</span>
+                        <span class="fst-italic">{{ post.title }}</span>
                         {% else %}
                         <a class="muted-link inherit-color" title="{{ post.title }}"
                             href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
@@ -96,7 +96,7 @@
                 {% for event in archived_events limit:4 %}
                 <li><small>
                         {% if page.url == event.url %}
-                        <span class="font-italic">{{ event.title }}</span>
+                        <span class="fst-italic">{{ event.title }}</span>
                         {% else %}
                         <a class="muted-link inherit-color" title="{{ event.title }}"
                             href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>

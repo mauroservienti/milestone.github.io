@@ -49,10 +49,10 @@ hr.h-splitter{
 }
 
 a.muted-link{
-    
+
     text-decoration: none;
-    color: $text-color;
-    
+    color: var(--site-text-color, $text-color);
+
     &:hover{
         text-decoration: underline;
     }
@@ -64,9 +64,9 @@ a.muted-link{
 pre,
 code {
     font-size: 15px;
-    border: 1px solid $grey-color-light;
+    border: 1px solid var(--site-code-border, $grey-color-light);
     border-radius: 3px;
-    background-color: #eef;
+    background-color: var(--site-code-background, #eef);
 }
 
 code {

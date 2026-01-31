@@ -12,29 +12,31 @@ show_in_header: ''
 
   <div class="talks-list">
 
-    <div class="card-columns">
+    <div class="row" data-masonry='{"percentPosition": true}'>
       {% for talk in site.talks %}
-      <div class="card">
-        {% if talk.header_image %}
-        <img class="img-fluid card-img-top" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
-        {% endif %}
-        <div class="card-body">
-          <h3 class="card-title">
-            <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
-          </h3>
-          <hr class="h-splitter" />
-          <p class="card-text talk-synopsis">{{ talk.synopsis }}</p>
-          <p class="card-text">
-            <small class="text-muted">
-              <a href="{{ talk.url | prepend: site.baseurl }}">More information...</a>
-            </small>
-          </p>
-          <hr class="h-splitter" />
-          <p class="card-text talk-languages">Available in:
-            {% for lang in talk.languages %}
-            <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
-            {% endfor %}
-          </p>
+      <div class="col-sm-6 col-lg-4 mb-4">
+        <div class="card">
+          {% if talk.header_image %}
+          <img class="img-fluid card-img-top" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
+          {% endif %}
+          <div class="card-body">
+            <h3 class="card-title">
+              <a class="muted-link" href="{{ talk.url | prepend: site.baseurl }}">{{ talk.title }}</a>
+            </h3>
+            <hr class="h-splitter" />
+            <p class="card-text talk-synopsis">{{ talk.synopsis }}</p>
+            <p class="card-text">
+              <small class="text-muted">
+                <a href="{{ talk.url | prepend: site.baseurl }}">More information...</a>
+              </small>
+            </p>
+            <hr class="h-splitter" />
+            <p class="card-text talk-languages">Available in:
+              {% for lang in talk.languages %}
+              <span> {{ lang }}{% unless forloop.last %} |{% endunless %}</span>
+              {% endfor %}
+            </p>
+          </div>
         </div>
       </div>
       {% endfor %}
