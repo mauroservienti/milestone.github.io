@@ -1,21 +1,21 @@
 .sidebar{
-	
+
 }
 
 .sidebar-widget{
-    border-left: $grey-color-light 1px solid;
+    border-left: var(--site-grey-color-light, $grey-color-light) 1px solid;
     margin-bottom: 1rem;
-    color: $grey-color-dark;
+    color: var(--site-grey-color-dark, $grey-color-dark);
 
     header{
-        border-bottom: $grey-color-light 1px solid;
+        border-bottom: var(--site-grey-color-light, $grey-color-light) 1px solid;
         padding: .3rem;
         padding-left: .5rem;
-        color: $grey-color-dark;
+        color: var(--site-grey-color-dark, $grey-color-dark);
     }
 
     section{
-        color: $grey-color-dark;
+        color: var(--site-grey-color-dark, $grey-color-dark);
         padding: .3rem;
 
         ul{

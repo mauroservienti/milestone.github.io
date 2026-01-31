@@ -26,7 +26,7 @@
 
 .event-meta{
     font-size: $small-font-size;
-    color: $grey-color;
+    color: var(--site-grey-color, $grey-color);
 }
 
 .link-icon{
@@ -80,7 +80,7 @@
     }
 
     .session-abstract{
-        color: $text-color-light;
+        color: var(--site-text-color-light, $text-color-light);
     }
 
     .session-details-icon{
@@ -98,17 +98,17 @@
 
     .session-details{
         margin-right: 3px;
-        color: $text-color-light;
+        color: var(--site-text-color-light, $text-color-light);
     }
 
     .session-resources{
         padding: 3px;
         border-top-style: none;
-        border-top-color: gainsboro;
+        border-top-color: var(--site-grey-color-light, gainsboro);
         border-top-width: 1px;
-        
+
         border-bottom-style: solid;
-        border-bottom-color: gainsboro;
+        border-bottom-color: var(--site-grey-color-light, gainsboro);
         border-bottom-width: 1px;
     }
 }

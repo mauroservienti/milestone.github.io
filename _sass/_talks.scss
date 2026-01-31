@@ -7,7 +7,7 @@
 
 .talk-meta{
     font-size: $small-font-size;
-    color: $grey-color;
+    color: var(--site-grey-color, $grey-color);
 }
 
 .talk-content{
@@ -34,7 +34,7 @@
 
 .talk-languages{
     font-size: $small-font-size;
-    color: $grey-color;
+    color: var(--site-grey-color, $grey-color);
     text-align: center;
 }
 

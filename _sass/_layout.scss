@@ -54,32 +54,32 @@
 	margin-bottom: 20px;
 	margin-left: 5%;
 	margin-right: 5%;
-	
+
 	border-top-style: solid;
 	border-top-width: 1px;
-	border-top-color: $grey-color-dark;
-	
+	border-top-color: var(--site-grey-color-dark, $grey-color-dark);
+
 	ul.links-list{
 		margin: 0;
 		padding: 0;
 		list-style-type: none;
 	}
-	
+
 	ul.right-links-list{
 		text-align: right;
 	}
-	
+
 	ul.left-links-list{
 
 	}
-	
+
 	.footer-heading{
-        	color: $grey-color-light;
+        	color: var(--site-grey-color-light, $grey-color-light);
 	}
-	
+
 	.wrapper{
     		.text{
-      			color: $grey-color-light;
+      			color: var(--site-grey-color-light, $grey-color-light);
       			font-style: italic;
     		}
 	}
@@ -88,13 +88,13 @@
 
 
 .page{
-	
+
 	.page-content{}
 
 	.page-footer{
 		.page-meta{
 			font-size: $small-font-size;
-			color: $grey-color;
+			color: var(--site-grey-color, $grey-color);
 		}
 	}
 }

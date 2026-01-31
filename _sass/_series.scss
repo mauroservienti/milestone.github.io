@@ -18,6 +18,6 @@
 	
 	.series-meta{
            font-size: $small-font-size;
-           color: $grey-color;
+           color: var(--site-grey-color, $grey-color);
         }
 }

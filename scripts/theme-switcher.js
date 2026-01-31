@@ -66,16 +66,21 @@
 
   // Initialize toggle button when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
+    const currentTheme = getPreferredTheme();
+
+    // Update navbar theme now that DOM is available
+    updateNavbarTheme(currentTheme);
+    // Ensure icons are correctly set after DOM load
+    updateToggleIcon(currentTheme);
+
     const toggle = document.getElementById('theme-toggle');
     if (toggle) {
       toggle.addEventListener('click', function() {
-        const currentTheme = document.documentElement.getAttribute('data-bs-theme');
-        const newTheme = currentTheme === THEME_DARK ? THEME_LIGHT : THEME_DARK;
+        const current = document.documentElement.getAttribute('data-bs-theme');
+        const newTheme = current === THEME_DARK ? THEME_LIGHT : THEME_DARK;
         setTheme(newTheme);
         setStoredTheme(newTheme);
       });
     }
-    // Ensure icons are correctly set after DOM load
-    updateToggleIcon(getPreferredTheme());
   });
 })();

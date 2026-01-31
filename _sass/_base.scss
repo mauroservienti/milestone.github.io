@@ -6,8 +6,8 @@ body {
     font-size: $base-font-size;
     line-height: $base-line-height;
     font-weight: 300;
-    color: $text-color;
-    background-color: $background-color;
+    color: var(--site-text-color, $text-color);
+    background-color: var(--site-background-color, $background-color);
     -webkit-text-size-adjust: 100%;
     padding-top: 50px;
 }
@@ -16,8 +16,8 @@ body {
  * Blockquotes
  */
 blockquote {
-    color: $grey-color;
-    border-left: 2px solid $grey-color-light;
+    color: var(--site-grey-color, $grey-color);
+    border-left: 2px solid var(--site-grey-color-light, $grey-color-light);
     padding-left: $spacing-unit / 2;
 
     > :last-child {
@@ -34,7 +34,7 @@ blockquote {
         vertical-align: middle;
 
         path {
-            fill: $grey-color;
+            fill: var(--site-grey-color, $grey-color);
         }
     }
 }

@@ -96,7 +96,7 @@ Successfully upgraded from Bootstrap 4.3.1 to Bootstrap 5.3.3 and implemented da
 | Create theme-switcher.js | Done | `scripts/theme-switcher.js` (new) |
 | Add CSS custom properties | Done | `css/main.scss` |
 | Add dark syntax highlighting | Done | `_sass/_syntax-highlighting.scss` |
-| Add dark mode component styles | Done | `_sass/_layout.scss`, `_sass/_base.scss` |
+| Add dark mode component styles | Done | `_sass/_layout.scss`, `_sass/_base.scss`, `_sass/_sidebar.scss`, `_sass/_posts.scss`, `_sass/_events.scss`, `_sass/_series.scss`, `_sass/_talks.scss` |
 
 ### Changes Detail
 
@@ -110,6 +110,7 @@ Successfully upgraded from Bootstrap 4.3.1 to Bootstrap 5.3.3 and implemented da
 - Real-time system preference change listener
 - Navbar theme class switching (navbar-light/dark, bg-light/dark)
 - Toggle icon switching (sun shown in dark, moon shown in light)
+- Navbar update deferred to DOMContentLoaded to ensure element exists
 
 **`css/main.scss`:**
 - Added CSS custom properties in `:root` for light mode
@@ -126,8 +127,28 @@ Successfully upgraded from Bootstrap 4.3.1 to Bootstrap 5.3.3 and implemented da
 - Added dark mode for `th` background (#3a3a3a)
 
 **`_sass/_base.scss`:**
+- Updated `body` to use CSS custom properties for text color and background
+- Updated `blockquote` to use CSS custom properties for color and border
+- Updated `.icon svg path` to use CSS custom property for fill color
 - Updated `pre, code` to use CSS custom properties for background/border
 - Updated `a.muted-link` to use CSS custom property for color
+
+**`_sass/_sidebar.scss`:**
+- Updated `.sidebar-widget` border and text colors to use CSS custom properties
+
+**`_sass/_posts.scss`:**
+- Updated `.post-meta` color to use CSS custom property
+
+**`_sass/_events.scss`:**
+- Updated `.event-meta` color to use CSS custom property
+- Updated `.session-abstract` and `.session-details` colors to use CSS custom properties
+- Updated `.session-resources` border colors to use CSS custom properties
+
+**`_sass/_series.scss`:**
+- Updated `.series-meta` color to use CSS custom property
+
+**`_sass/_talks.scss`:**
+- Updated `.talk-meta` and `.talk-languages` colors to use CSS custom properties
 
 ---
 
@@ -145,8 +166,13 @@ Successfully upgraded from Bootstrap 4.3.1 to Bootstrap 5.3.3 and implemented da
 | `_layouts/post.html` | 1 | Removed jQuery readingTime call |
 | `_layouts/series.html` | 3 | Masonry layout |
 | `css/main.scss` | 4 | CSS custom properties |
-| `_sass/_base.scss` | 4 | Dark mode code/link styles |
+| `_sass/_base.scss` | 4 | Body colors, blockquote, icons, code/link styles using CSS custom properties |
 | `_sass/_layout.scss` | 3, 4 | Masonry styles, dark mode overrides |
+| `_sass/_sidebar.scss` | 4 | Border and text colors using CSS custom properties |
+| `_sass/_posts.scss` | 4 | Post meta color using CSS custom property |
+| `_sass/_events.scss` | 4 | Event meta, session colors using CSS custom properties |
+| `_sass/_series.scss` | 4 | Series meta color using CSS custom property |
+| `_sass/_talks.scss` | 4 | Talk meta and languages colors using CSS custom properties |
 | `_sass/_syntax-highlighting.scss` | 4 | Dark theme colors |
 | `index.html` | 3 | Masonry layout |
 | `talks.html` | 3 | Masonry layout |
@@ -165,12 +191,12 @@ Successfully upgraded from Bootstrap 4.3.1 to Bootstrap 5.3.3 and implemented da
 
 Per the plan's verification section:
 
-- [ ] **Build:** `bundle exec jekyll serve` - no errors
+- [x] **Build:** `bundle exec jekyll serve` - no errors
 - [ ] **Navbar:** Mobile toggle works, dropdowns function
 - [ ] **Grid:** Card layouts display correctly at all breakpoints
-- [ ] **Dark mode toggle:** Clicking switches theme
+- [x] **Dark mode toggle:** Clicking switches theme
 - [ ] **Persistence:** Theme persists after page refresh
-- [ ] **System preference:** Respects OS dark/light setting when no stored preference
+- [x] **System preference:** Respects OS dark/light setting when no stored preference
 - [ ] **Syntax highlighting:** Code blocks readable in both themes
 - [ ] **Cross-browser:** Test Chrome, Firefox, Safari
 
@@ -178,10 +204,12 @@ Per the plan's verification section:
 
 ## Notes
 
-1. The theme-switcher.js is loaded in `<head>` to apply theme immediately and prevent flash of wrong theme on page load.
+1. The theme-switcher.js is loaded in `<head>` to apply the `data-bs-theme` attribute immediately and prevent flash of wrong theme on page load. However, navbar class updates are deferred to `DOMContentLoaded` since the navbar element doesn't exist when the script first runs.
 
 2. Bootstrap 5.3's built-in color mode support (`data-bs-theme`) handles most component theming automatically. Custom CSS properties were added for site-specific elements.
 
 3. Masonry library loads asynchronously to avoid blocking page render.
 
 4. The navbar theme classes are toggled programmatically since Bootstrap's color modes don't automatically update legacy navbar classes.
+
+5. All SCSS files were updated to use CSS custom properties (`var(--site-*)`) instead of static SCSS variables (`$variable`) to enable dynamic theme switching.
