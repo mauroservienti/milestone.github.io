@@ -1,0 +1,95 @@
+name: Optimize Images
+
+on:
+  push:
+    paths:
+      - 'img/**'
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+
+    # Don't run on commits made by this action
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Need to fetch all history for proper git operations
+          fetch-depth: 0
+
+      - name: Install optimization tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jpegoptim optipng webp imagemagick
+
+      - name: Get changed image files
+        id: changed
+        run: |
+          # Get list of added/modified images in this push
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'img/*.jpg' 'img/*.jpeg' 'img/*.png' 'img/**/*.jpg' 'img/**/*.jpeg' 'img/**/*.png' 2>/dev/null || echo "")
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGED" ]; then
+            echo "has_images=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_images=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Optimize images
+        if: steps.changed.outputs.has_images == 'true'
+        run: |
+          echo "=== Processing changed images ==="
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            [ ! -f "$file" ] && continue
+
+            echo "Processing: $file"
+
+            # Get file extension
+            ext="${file##*.}"
+            ext_lower=$(echo "$ext" | tr '[:upper:]' '[:lower:]')
+
+            # Resize if wider than 1600px
+            width=$(identify -format "%w" "$file" 2>/dev/null || echo "0")
+            if [ "$width" -gt 1600 ] 2>/dev/null; then
+              echo "  Resizing from ${width}px to 1600px"
+              convert "$file" -resize "1600>" -quality 85 "$file"
+            fi
+
+            # Optimize based on type
+            if [ "$ext_lower" = "jpg" ] || [ "$ext_lower" = "jpeg" ]; then
+              echo "  Optimizing JPEG"
+              jpegoptim --max=85 --strip-all --quiet "$file"
+            elif [ "$ext_lower" = "png" ]; then
+              echo "  Optimizing PNG"
+              optipng -o2 -quiet "$file"
+            fi
+
+            # Generate WebP version
+            webp_file="${file%.*}.webp"
+            echo "  Creating WebP: $webp_file"
+            cwebp -q 80 -quiet "$file" -o "$webp_file"
+
+          done <<< "${{ steps.changed.outputs.files }}"
+
+      - name: Commit optimized images
+        if: steps.changed.outputs.has_images == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage all changes in img/
+          git add img/
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Optimize images [skip ci]"
+            git push
+            echo "Committed and pushed optimized images"
+          fi
