@@ -6,7 +6,7 @@ show_in_header: ''
 ---
 
 <div class="talks">
-  <h3 class="page-heading">Get Mauro speaking at your event.</h3>
+  <h2 class="page-heading">Get Mauro speaking at your event.</h2>
   <p>Here is the list of talks ready to be delivered. <a href="https://mauroservienti.typeform.com/to/luuJPw">Get in
       touch</a> to arrange details.</p>
 
@@ -17,7 +17,7 @@ show_in_header: ''
       <div class="col-sm-6 col-lg-4 mb-4">
         <div class="card">
           {% if talk.header_image %}
-          <img class="img-fluid card-img-top" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" />
+          <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" loading="lazy" />
           {% endif %}
           <div class="card-body">
             <h3 class="card-title">
@@ -27,7 +27,7 @@ show_in_header: ''
             <p class="card-text talk-synopsis">{{ talk.synopsis }}</p>
             <p class="card-text">
               <small class="text-muted">
-                <a href="{{ talk.url | prepend: site.baseurl }}">More information...</a>
+                <a href="{{ talk.url | prepend: site.baseurl }}" aria-label="More information about: {{ talk.title }}">More information...</a>
               </small>
             </p>
             <hr class="h-splitter" />

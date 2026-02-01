@@ -10,8 +10,8 @@ show_in_header: ''
   {% assign upcomingevents = site.events | where: 'status', 'upcoming' | sort: 'calendar.start' %}
   {% assign len = upcomingevents | size %}
 
-  <h3 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the
-    coming weeks.</h3>
+  <h2 class="page-heading">I'll be speaking at the following {% if len > 1 %}events{% else %}event{% endif %} in the
+    coming weeks.</h2>
 
   {% if len > 0 %}
 
@@ -19,7 +19,7 @@ show_in_header: ''
     {% assign nearest = upcomingevents[0] %}
     <div class="card-header">
       <div class="event-details">
-        <img class="event-details-icon" src="/img/calendar.png" />
+        <img class="event-details-icon" src="/img/calendar.png" width="16" height="16" alt="" />
         <span class="event-date">
           {% if nearest.calendar.display %}
           {{ nearest.calendar.display }}
@@ -31,23 +31,23 @@ show_in_header: ''
           {% endif %}
           {% endif %}
         </span>
-        <img class="event-details-icon" src="/img/location.png" />
+        <img class="event-details-icon" src="/img/location.png" width="16" height="16" alt="" />
         <span class="event-location">{{ nearest.location }}</span>
-        <img class="event-details-icon" src="/img/language.png" />
+        <img class="event-details-icon" src="/img/language.png" width="16" height="16" alt="" />
         <span class="event-language">{{ nearest.language }}</span>
       </div>
     </div>
 
     {% if nearest.header_image %}
-    <img class="img-fluid" alt=" {{ nearest.title }} header image" src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    <img class="img-fluid" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ nearest.header_image | prepend: site.baseurl }}" />
     {% else %}
-    <img class="img-fluid rounded" alt="{{ nearest.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
+    <img class="img-fluid rounded" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
     {% endif %}
 
     <div class="card-body">
-      <h2 class="card-title">
+      <h3 class="card-title">
         <a class="muted-link" href="{{ nearest.url | prepend: site.baseurl }}">{{ nearest.title }}</a>
-      </h2>
+      </h3>
 
       <hr class="h-splitter" />
       <p class="card-text">
@@ -62,7 +62,7 @@ show_in_header: ''
       </p>
       <p class="card-text">
         <small class="text-muted">
-          <a href="{{ nearest.url | prepend: site.baseurl }}">More information...</a>
+          <a href="{{ nearest.url | prepend: site.baseurl }}" aria-label="More information about: {{ nearest.title }}">More information...</a>
         </small>
       </p>
     </div>
@@ -74,7 +74,7 @@ show_in_header: ''
     <div class="card event mb-3">
       <div class="card-header">
         <div class="event-details">
-          <img class="event-details-icon" src="/img/calendar.png" />
+          <img class="event-details-icon" src="/img/calendar.png" width="16" height="16" alt="" />
           <span class="event-date">
             {% if event.calendar.display %}
             {{ event.calendar.display }}
@@ -86,16 +86,16 @@ show_in_header: ''
             {% endif %}
             {% endif %}
           </span>
-          <img class="event-details-icon" src="/img/location.png" />
+          <img class="event-details-icon" src="/img/location.png" width="16" height="16" alt="" />
           <span class="event-location">{{ event.location }}</span>
-          <img class="event-details-icon" src="/img/language.png" />
+          <img class="event-details-icon" src="/img/language.png" width="16" height="16" alt="" />
           <span class="event-language">{{ event.language }}</span>
         </div>
       </div>
       <div class="card-body">
-        <h4 class="card-title">
+        <h3 class="card-title">
           <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
-        </h4>
+        </h3>
         <hr class="h-splitter" />
         <p class="card-text">
           <ul class="sessions-list">
@@ -108,7 +108,7 @@ show_in_header: ''
         </p>
         <p class="card-text">
           <small class="text-muted">
-            <a href="{{ event.url | prepend: site.baseurl }}">More information...</a>
+            <a href="{{ event.url | prepend: site.baseurl }}" aria-label="More information about: {{ event.title }}">More information...</a>
           </small>
         </p>
       </div>

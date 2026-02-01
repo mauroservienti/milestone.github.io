@@ -5,9 +5,9 @@ layout: default
   
   <header class="event-header">
 {% if page.header_image %}
-  <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+  <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
 {% else %}
-  <img class="img-fluid rounded" alt="{{ page.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
+  <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
 {% endif %}
     <h2 class="event-title">
   {{ page.title }}
@@ -15,7 +15,7 @@ layout: default
   </header>
   
 <div class="event-details">
-  <img class="event-details-icon" src="/img/calendar.png" />
+  <img class="event-details-icon" src="/img/calendar.png" width="16" height="16" alt="" loading="lazy" />
   <span class="event-date">
     {% if page.calendar.display %}
       {{ page.calendar.display }}
@@ -27,9 +27,9 @@ layout: default
       {% endif %}
     {% endif %}
   </span>
-  <img class="event-details-icon" src="/img/location.png" />
+  <img class="event-details-icon" src="/img/location.png" width="16" height="16" alt="" loading="lazy" />
   <span class="event-location">{{ page.location }}</span>
-  <img class="event-details-icon" src="/img/language.png" />
+  <img class="event-details-icon" src="/img/language.png" width="16" height="16" alt="" loading="lazy" />
   <span class="event-language">{{ page.language }}</span>
 </div>
 
@@ -39,7 +39,7 @@ layout: default
     <h3 class="session-title">{{ session.title }}</h3>
     {% if session.language %}
     <div class="session-language">
-      <img class="session-details-icon" src="/img/language.png" />
+      <img class="session-details-icon" src="/img/language.png" width="16" height="16" alt="" loading="lazy" />
       <span class="session-language">{{ session.language }}</span>
     </div>
     {% endif %}
@@ -51,7 +51,7 @@ layout: default
       {% if session.speakers %}
         {% for speaker in session.speakers %}
           <div class="profile-url">
-            <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker:
+            <img src="/img/profile.png" class="event-details-icon" width="16" height="16" alt="" loading="lazy" /> Speaker:
             {% if speaker.profileurl %}
             <a href="{{ speaker.profileurl }}" target="_blank" class="muted-link">{{ speaker.name }}</a>
             {% else %}
@@ -62,24 +62,24 @@ layout: default
       {% endif %}
       {% if session.url %}
       <div class="session-url">
-        <img src="/img/link.png" border="0" class="session-details-icon" /> More info: <a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
+        <img src="/img/link.png" class="session-details-icon" width="16" height="16" alt="" loading="lazy" /> More info: <a href="{{ session.url }}" target="_blank" class="muted-link">{{ session.url }}</a>
       </div>
       {% endif %}
       {% if session.slides %}
       <a href="{{ session.slides }}" target="_blank" class="muted-link">
-        <img class="session-details-icon" border=0 src="/img/presentation.png" />
+        <img class="session-details-icon" src="/img/presentation.png" width="16" height="16" alt="" loading="lazy" />
         <span class="session-details">Slides</span>
       </a>
       {% endif %}
       {% if session.demos  %}
       <a href="{{ session.demos }}" target="_blank" class="muted-link">
-        <img class="session-details-icon" border=0 src="/img/folder.png" />
+        <img class="session-details-icon" src="/img/folder.png" width="16" height="16" alt="" loading="lazy" />
         <span class="session-details">Demos</span>
       </a>
       {% endif %}
       {% if session.recording %}
       <a href="{{ session.recording }}" target="_blank" class="muted-link">
-        <img class="session-details-icon" border=0 src="/img/recording.png" />
+        <img class="session-details-icon" src="/img/recording.png" width="16" height="16" alt="" loading="lazy" />
         <span class="session-details">Recording</span>
       </a>
       {% endif %}
@@ -98,12 +98,12 @@ layout: default
   <hr />
 {% if page.eventurl %}
 <div class="event-url">
-  <img src="/img/link.png" border="0" class="event-details-icon" /> Event details: <a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
+  <img src="/img/link.png" class="event-details-icon" width="16" height="16" alt="" loading="lazy" /> Event details: <a href="{{ page.eventurl }}" target="_blank" class="muted-link">{{ page.eventurl }}</a>
 </div>
 {% endif %}
 {% if page.profileurl %}
 <div class="profile-url">
-  <img src="/img/profile.png" border="0" class="event-details-icon" /> Speaker info: <a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
+  <img src="/img/profile.png" class="event-details-icon" width="16" height="16" alt="" loading="lazy" /> Speaker info: <a href="{{ page.profileurl }}" target="_blank" class="muted-link">{{ page.profileurl }}</a>
 </div>
 {% endif %}
 </div>

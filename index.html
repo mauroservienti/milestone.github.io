@@ -8,7 +8,7 @@ id: 'home'
   <div class="card mb-3">
     {% assign first = site.posts[0] %}
     {% if first.header_image %}
-    <img class="img-fluid card-img-top" alt=" {{ first.title }} header image"
+    <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ first.title }} header image"
       src="{{ first.header_image | prepend: site.baseurl }}" />
     {% endif %}
     <div class="card-body">
@@ -27,7 +27,7 @@ id: 'home'
       </p>
       <p class="card-text">
         <small class="text-muted">
-          <a class="card-link" href="{{ first.url | prepend: site.baseurl }}">Continue reading...</a>
+          <a class="card-link" href="{{ first.url | prepend: site.baseurl }}" aria-label="Continue reading: {{ first.title }}">Continue reading...</a>
         </small>
       </p>
     </div>
@@ -56,7 +56,7 @@ id: 'home'
   <div class="card-body">
     <div class="row">
       <div class="d-none d-sm-none d-md-block col-md-2">
-        <img src="img/speak.jpg" class="img-fluid rounded" alt="Speaker">
+        <img src="img/speak.jpg" class="img-fluid rounded" width="150" height="150" alt="Speaker">
       </div>
       <div class="col-12 col-sm-12 col-md-10 upcoming-event-details">
           <p>I'll be at <a class="upcoming-event-title"
@@ -94,16 +94,16 @@ id: 'home'
            </div>
         </div>
         <div class="card-body">
-          <h4 class="card-title">
+          <h2 class="card-title">
             <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-          </h4>
+          </h2>
           <hr class="h-splitter" />
           <p class="card-text">
             {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
           </p>
           <p class="card-text">
             <small class="text-muted">
-              <a href="{{ post.url | prepend: site.baseurl }}">Continue reading...</a>
+              <a href="{{ post.url | prepend: site.baseurl }}" aria-label="Continue reading: {{ post.title }}">Continue reading...</a>
             </small>
           </p>
         </div>

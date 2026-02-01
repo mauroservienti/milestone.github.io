@@ -1,5 +1,5 @@
 <!doctype html>
-<html data-bs-theme="light">
+<html lang="en" data-bs-theme="light">
 
 {% include head.html %}
 
@@ -19,14 +19,14 @@
 
   <div class="container-fluid">
     <div class="row content">
-      <div class="col-12 col-sm-12 col-md-12 col-lg-9 main-column">{{ content }}</div>
+      <main class="col-12 col-sm-12 col-md-12 col-lg-9 main-column">{{ content }}</main>
       <div class="d-none d-sm-none d-md-none d-lg-block col-lg-3 sidebar-column">{% include sidebar.html %}</div>
     </div>
   </div>
 
   {% include footer.html %}
 
-  <script type="text/javascript" id="cookiebanner" src="{{ "/scripts/cookiebanner.min.js" | prepend: site.baseurl }}"
+  <script defer type="text/javascript" id="cookiebanner" src="{{ "/scripts/cookiebanner.min.js" | prepend: site.baseurl }}"
     data-moreinfo="/privacy"></script>
 </body>
 
