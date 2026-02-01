@@ -8,8 +8,11 @@ id: 'home'
   <div class="card mb-3">
     {% assign first = site.posts[0] %}
     {% if first.header_image %}
-    <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ first.title }} header image"
-      src="{{ first.header_image | prepend: site.baseurl }}" />
+    <picture>
+      <source srcset="{{ first.header_image | replace: '.jpg', '.webp' | replace: '.png', '.webp' | prepend: site.baseurl }}" type="image/webp">
+      <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ first.title }} header image"
+        src="{{ first.header_image | prepend: site.baseurl }}" />
+    </picture>
     {% endif %}
     <div class="card-body">
       <p class="card-text first-post-details">
@@ -56,7 +59,10 @@ id: 'home'
   <div class="card-body">
     <div class="row">
       <div class="d-none d-sm-none d-md-block col-md-2">
-        <img src="img/speak.jpg" class="img-fluid rounded" width="150" height="150" alt="Speaker">
+        <picture>
+          <source srcset="img/speak.webp" type="image/webp">
+          <img src="img/speak.jpg" class="img-fluid rounded" width="150" height="150" alt="Speaker">
+        </picture>
       </div>
       <div class="col-12 col-sm-12 col-md-10 upcoming-event-details">
           <p>I'll be at <a class="upcoming-event-title"

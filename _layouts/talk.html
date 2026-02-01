@@ -5,7 +5,10 @@ layout: default
 
     <header>
     {% if page.header_image %}
-      <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+      <picture>
+        <source srcset="{{ page.header_image | replace: '.jpg', '.webp' | replace: '.png', '.webp' | prepend: site.baseurl }}" type="image/webp">
+        <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+      </picture>
     {% endif %}
   </header>
     

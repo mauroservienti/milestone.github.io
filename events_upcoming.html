@@ -39,9 +39,15 @@ show_in_header: ''
     </div>
 
     {% if nearest.header_image %}
-    <img class="img-fluid" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    <picture>
+      <source srcset="{{ nearest.header_image | replace: '.jpg', '.webp' | replace: '.png', '.webp' | prepend: site.baseurl }}" type="image/webp">
+      <img class="img-fluid" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ nearest.header_image | prepend: site.baseurl }}" />
+    </picture>
     {% else %}
-    <img class="img-fluid rounded" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
+    <picture>
+      <source srcset="{{ '/img/events/default-header.webp' | prepend: site.baseurl }}" type="image/webp">
+      <img class="img-fluid rounded" width="1200" height="630" alt="{{ nearest.title }} header image" src="{{ '/img/events/default-header.jpg' | prepend: site.baseurl }}" />
+    </picture>
     {% endif %}
 
     <div class="card-body">

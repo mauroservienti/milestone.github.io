@@ -17,7 +17,10 @@ show_in_header: ''
       <div class="col-sm-6 col-lg-4 mb-4">
         <div class="card">
           {% if talk.header_image %}
-          <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" loading="lazy" />
+          <picture>
+            <source srcset="{{ talk.header_image | replace: '.jpg', '.webp' | replace: '.png', '.webp' | prepend: site.baseurl }}" type="image/webp">
+            <img class="img-fluid card-img-top" width="1200" height="630" alt="{{ talk.title }} header image" src="{{ talk.header_image | prepend: site.baseurl }}" loading="lazy" />
+          </picture>
           {% endif %}
           <div class="card-body">
             <h3 class="card-title">
