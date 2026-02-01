@@ -17,7 +17,7 @@ github_repository:  milestone.github.io
 
 highlighter: rouge
 markdown: kramdown
-exclude: ['README.md', 'LICENSE', 'CNAME']
+exclude: ['README.md', 'LICENSE', 'CNAME', 'docs']
 encoding: utf-8
 plugins:
   - jekyll-sitemap
