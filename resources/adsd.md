@@ -23,8 +23,18 @@ A curated collection of resources aligned with the concepts and paradigms taught
 The ADSD course opens with the fallacies of distributed and enterprise computing — the false assumptions developers make about networks, latency, bandwidth, and system maintainability.
 
 - [Understanding the 8 Fallacies of Distributed Systems – Simple Oriented Architecture](https://simpleorientedarchitecture.com/8-fallacies-of-distributed-systems/) — A thorough walkthrough of each fallacy with practical implications and solutions, including aggregates, CQRS, and bounded contexts.
-- [Fallacy #8: The Network is Homogeneous – Particular Software](https://particular.net/blog/the-network-is-homogeneous) — From the free DSDF course. Explores semantic interoperability: the real challenge isn't protocols but whether two systems truly understand each other's data.
 - [Fallacies of Distributed Computing Explained – Arnon Rotem-Gal-Oz (PDF)](https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf) — The classic paper expanding on each of the original eight fallacies with real-world examples and consequences.
+
+Fallacies of Distributed Computing series – Particular Software:
+
+- [Fallacy #1: The network is reliable](https://particular.net/blog/the-network-is-reliable)
+- [Fallacy #2: Latency is zero](https://particular.net/blog/latency-is-zero)
+- [Fallacy #3: Bandwidth is infinite](https://particular.net/blog/bandwidth-is-infinite)
+- [Fallacy #4: The network is secure](https://particular.net/blog/the-network-is-secure)
+- [Fallacy #5: Topology doesn't change](https://particular.net/blog/topology-doesnt-change)
+- [Fallacy #6: There is one administrator](https://particular.net/blog/there-is-one-administrator)
+- [Fallacy #7: Transport cost is zero](https://particular.net/blog/transport-cost-is-zero)
+- [Fallacy #8: The Network is Homogeneous](https://particular.net/blog/the-network-is-homogeneous)
 
 ---
 
