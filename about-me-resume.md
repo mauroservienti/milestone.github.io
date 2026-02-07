@@ -6,7 +6,7 @@ permalink: /about-me/resume
 
 # MAURO SERVIENTI
 
-**Solution Architect | Distributed Systems Specialist | Technical Speaker**
+## Solution Architect | Distributed Systems Specialist | Technical Speaker
 
 📧 Contact: Available on GitHub (@mauroservienti) and LinkedIn  
 🌐 Blog: https://milestone.topics.it  
