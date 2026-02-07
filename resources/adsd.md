@@ -8,12 +8,16 @@ title: ADSD – Resources & Further Reading
 
 A curated collection of resources aligned with the concepts and paradigms taught in Udi Dahan's **Advanced Distributed Systems Design** course. Organized by topic area for easy reference and deeper exploration. Each section includes external resources and related articles from [milestone.topics.it](https://milestone.topics.it).
 
+---
+
 ## The Course Itself
 
 - [Advanced Distributed Systems Design – Particular Software](https://particular.net/adsd) — The official ADSD course page with module descriptions and registration for both in-person and online formats.
 - [ADSD Online Course](https://learn.particular.net/courses/adsd-online) — The full 33-hour online video course covering all modules.
 - [Distributed Systems Design Fundamentals (Free)](https://learn.particular.net/courses/distributed-systems-design-fundamentals-online) — A free introductory course by Udi Dahan covering the foundational ideas (fallacies, coupling, messaging basics) that the full ADSD course expands upon.
 - [Udi Dahan's Training Page](https://udidahan.com/training/) — Overview of all available training options from Udi.
+
+---
 
 ## 1. Fallacies of Distributed Computing
 
@@ -22,6 +26,8 @@ The ADSD course opens with the fallacies of distributed and enterprise computing
 - [Understanding the 8 Fallacies of Distributed Systems – Simple Oriented Architecture](https://simpleorientedarchitecture.com/8-fallacies-of-distributed-systems/) — A thorough walkthrough of each fallacy with practical implications and solutions, including aggregates, CQRS, and bounded contexts.
 - [Fallacy #8: The Network is Homogeneous – Particular Software](https://particular.net/blog/the-network-is-homogeneous) — From the free DSDF course. Explores semantic interoperability: the real challenge isn't protocols but whether two systems truly understand each other's data.
 - [Fallacies of Distributed Computing Explained – Arnon Rotem-Gal-Oz (PDF)](https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf) — The classic paper expanding on each of the original eight fallacies with real-world examples and consequences.
+
+---
 
 ## 2. Coupling: Platform, Temporal & Spatial
 
@@ -36,6 +42,8 @@ Understanding the multiple dimensions of coupling is fundamental to ADSD. Udi id
 - [Back to Basics: service boundaries, autonomous components, and coupling](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html) (2023-05-17) — Foundation-building on what coupling means across service boundaries. *(Also relevant to §4 SOA and §5 Finding Service Boundaries.)*
 - [Not all changes are born equal](https://milestone.topics.it/2021/03/10/not-all-changes-are-born-equal.html) (2021-03-10) — Good coupling vs. bad coupling, and understanding the impact of changes.
 - [You don't need that abstraction](https://milestone.topics.it/2021/12/20/you-dont-need-that-abstraction.html) (2021-12-20) — Over-abstraction as a source of cognitive load and unnecessary coupling.
+
+---
 
 ## 3. Messaging: Bus vs. Broker
 
@@ -54,6 +62,8 @@ The distinction between Bus and Broker architectural styles, and why "smart endp
 - [You don't have to be cool to rule my world, KISS](https://milestone.topics.it/2019/05/08/dont-have-to-be-cool-to-rule-my-world.html) (2019-05-08) — HTTP vs. messaging: shedding light on the system's logical architecture.
 - [AsyncAPI, a specification for defining asynchronous APIs](https://milestone.topics.it/2022/02/23/asyncapi-tool-in-our-toolbox.html) (2022-02-23) — Governance for events that cross service boundaries; not all events are born equal.
 - [Distributed systems evolution: message contracts](https://milestone.topics.it/2022/07/04/messages-evolution.html) (2022-07-04) — Evolving message contracts: inside-out approach, receivers before senders, strong typing vs. flexibility. *(Also relevant to §10 Evolving from a Big Ball of Mud.)*
+
+---
 
 ## 4. Service-Oriented Architecture (SOA)
 
@@ -75,6 +85,8 @@ The core of ADSD: services as "the technical authority for a specific business c
 - [There is no such thing as orchestration](https://milestone.topics.it/2021/07/08/no-orchstration.html) (2021-07-08) — Orchestration as a subtle form of coupling in long-running processes. *(Also relevant to §8 Sagas.)*
 - [Let's get logical! On logical and physical architectural views](https://milestone.topics.it/2022/01/25/lets-get-logical.html) (2022-01-25) — Logical vs. physical boundaries; understanding leads to simpler solutions.
 
+---
+
 ## 5. Finding Service Boundaries
 
 One of the hardest and most valuable skills taught in ADSD: identifying the correct service boundaries by looking at data volatility, business capabilities, and what changes together.
@@ -90,6 +102,8 @@ One of the hardest and most valuable skills taught in ADSD: identifying the corr
 - [Tales of a reservation](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html) (2021-05-05) — How business requirements shape system design; invariants and trust in distributed systems. *(Also relevant to §9 Domain Modeling.)*
 - [Own the cache!](https://milestone.topics.it/2021/07/15/own-the-cache.html) (2021-07-15) — Data ownership extends to caches; who owns the cache matters for boundaries.
 - [A thorough UX analysis is part of the solution](https://milestone.topics.it/2021/04/02/a-thorough-ux-analysis-is-part-of-the-solution.html) (2021-04-02) — Decomposing a monolith leads to task-based UIs; UX analysis, not technology, is the answer.
+
+---
 
 ## 6. UI Composition
 
@@ -129,6 +143,8 @@ In ADSD, each service owns its slice of the UI. Screens are composed from multip
 - [Please welcome Attribute Routing to ServiceComposer](https://milestone.topics.it/2021/02/11/please-welcome-attribute-routing-to-servicecomposer.html) (2021-02-11) — Attribute routing via ASP.NET Endpoints; decentralized route configuration.
 - [Please welcome Model Binding and Formatters to ServiceComposer](https://milestone.topics.it/2021/04/14/please-welcome-model-binding-formatters-to-servicecomposer.html) (2021-04-14) — Model binding support to reduce infrastructure code.
 
+---
+
 ## 7. CQRS (Command Query Responsibility Segregation)
 
 ADSD connects CQRS to collaborative domains, task-based UIs, and the saga pattern. CQRS isn't about separate databases — it's about recognizing that reads and writes have fundamentally different needs.
@@ -144,6 +160,8 @@ ADSD connects CQRS to collaborative domains, task-based UIs, and the saga patter
 - [Ehi! What's up? Feedback to users' requests in distributed systems](https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html) (2021-01-12) — How to provide feedback when request handling is async and results are eventually consistent.
 - [What if my command was rejected?](https://milestone.topics.it/2023/06/27/reject-commands.html) (2023-06-27) — A different mindset for dealing with async processes and failures; maybe we can avoid rejecting that command. *(Also relevant to §8 Sagas.)*
 - [Append-only models: The why, the when, and the how](https://milestone.topics.it/2023/09/22/append-only.html) (2023-09-22) — When to use insert-only persistence; relationship with projections and read models. *(Also relevant to §9 Domain Modeling.)*
+
+---
 
 ## 8. Long-Running Processes & Sagas
 
@@ -164,6 +182,8 @@ Sagas in ADSD are not just a database pattern — they are the domain model. Bus
 - [I'll be back](https://milestone.topics.it/2021/02/08/ill-be-back.html) (2021-02-08) — Modeling the passage of time: clock drift, design choices, and saga timeouts.
 - [Ooops, can I try again, please?](https://milestone.topics.it/2021/01/21/ooops-can-I-try-again-please.html) (2021-01-21) — Retrying subsets of a process; not all failures are born equal.
 
+---
+
 ## 9. Domain Modeling in SOA Context
 
 ADSD reframes domain modeling: model processes, not entities. Find the smallest possible consistency boundaries and let behaviors define how data is grouped.
@@ -177,6 +197,8 @@ ADSD reframes domain modeling: model processes, not entities. Find the smallest 
 - [Do not trust the user mental model: Model behaviors, not data](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html) (2021-02-02) — The user mental model isn't always the right guide for decomposition; model behaviors instead. *(Primary listing under §5.)*
 - [Tales of a reservation](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html) (2021-05-05) — How business requirements shape system design; invariants and trust in distributed systems. *(Primary listing under §5.)*
 - [Append-only models: The why, the when, and the how](https://milestone.topics.it/2023/09/22/append-only.html) (2023-09-22) — When to use insert-only persistence; deeply tied to modeling persistence for distributed domains. *(Primary listing under §7.)*
+
+---
 
 ## 10. Evolving from a Big Ball of Mud
 
@@ -192,6 +214,8 @@ ADSD devotes significant time to the practical transition from a monolithic "big
 - [Distributed systems evolution: processes state](https://milestone.topics.it/2022/07/12/processes-state-evolution.html) (2022-07-12) — Evolving persisted saga state and running processes.
 - [Distributed systems evolution: topology changes](https://milestone.topics.it/2022/07/25/topology-changes.html) (2022-07-25) — Deployments as a source of evolution challenges: endpoint splitting, routing changes, competing consumers.
 
+---
+
 ## 11. Cross-Cutting: Observability & Governance
 
 These resources relate to operational concerns discussed across the ADSD course.
@@ -200,6 +224,8 @@ These resources relate to operational concerns discussed across the ADSD course.
 
 - [We need insights, not data](https://milestone.topics.it/2022/04/19/we-need-insights-not-data.html) (2022-04-19) — Raw data vs. actionable insights; monitoring belongs to vendors, analysis belongs to the business.
 - [Do we need to debug distributed systems?](https://milestone.topics.it/2022/05/23/do-we-need-to-debug-distributed-systems.html) (2022-05-23) — Challenging the instinct to debug distributed systems the way we debug monoliths.
+
+---
 
 ## 12. NServiceBus Tooling & Implementation
 
@@ -211,6 +237,8 @@ Practical resources on the NServiceBus stack that support ADSD concepts in code.
 - [A small ServiceControl maintenance utility](https://milestone.topics.it/2024/04/09/service-control-ghost-endpoints.html) (2024-04-09) — Open-source tool for ServiceControl maintenance tasks.
 - [NServiceBus.IntegrationTesting baby steps](https://milestone.topics.it/2021/04/07/nservicebus-integrationtesting-baby-steps.html) (2021-04-07) — Integration testing for NServiceBus endpoints.
 - [I built a thing, well...two](https://milestone.topics.it/2019/06/19/i-built-a-thing-well-two.html) (2019-06-19) — NServiceBus routing engine tooling.
+
+---
 
 ## 13. Foundational Papers & Books
 
@@ -230,13 +258,56 @@ These complement the ADSD curriculum and are frequently referenced by Udi and th
 - **Implementing Domain-Driven Design** – Vaughn Vernon — Provides practical implementation guidance that bridges DDD and messaging/event-driven architectures.
 - **Designing Data-Intensive Applications** – Martin Kleppmann — Covers distributed systems fundamentals (replication, partitioning, consistency, transactions) with exceptional clarity. Excellent technical companion to ADSD's more architectural focus.
 
+---
+
 ## 14. Talks, Webinars & Videos
+
+### Udi Dahan
 
 - [Q&A on Advanced Distributed Systems with Udi Dahan (2021)](https://particular.net/videos/ndeva-qa-with-udi) — 85-minute Q&A covering service boundaries, distributed monoliths, data ownership, and front-end composition.
 - [Fireside Chat with Udi Dahan (2021)](https://particular.net/videos/fireside-chat-with-udi-dahan) — Wide-ranging discussion on DDD, SOA, CQRS, sagas, event sourcing, microservices, and the historical context of the saga pattern from its 1987 origins.
-- [DSDF Course Q&A – Dennis van der Stelt (Particular Software)](https://particular.net/webinars/dsdf-course-questions-answered-live) — Follow-up Q&A for the free Distributed Systems Design Fundamentals course, covering practical questions on messaging, sagas, and adoption strategies.
-- [Particular Software Videos & Presentations](https://particular.net/videos) — Full archive of talks from Udi Dahan, Laila Bougria, Adam Ralph, and other Particular team members on distributed systems topics.
 - [Udi Dahan – DDD Europe 2017 Speaker Page](https://2017.dddeurope.com/speakers/udi-dahan/) — Links to Udi's DDD Europe talks on race conditions, CQRS, long-running processes, and microservices workshops.
+
+### Mauro Servienti
+
+- [Mauro Servienti — Conference Talks (YouTube Playlist)](https://www.youtube.com/playlist?list=PLhm595Y7ah_E42m_EwnSvqeMLVCD2EMb5) — Collection of conference presentations covering service boundaries, UI composition, and sagas.
+- [All Our Aggregates Are Wrong (NDC)](https://www.youtube.com/watch?v=KkzvQSuYd5I) — Analyzes a seemingly straightforward e-commerce shopping cart, showing how evolving requirements expose incorrect aggregate boundaries and how decomposing by business need leads to better design. *(See also §5.)*
+- [Designing a UI for Microservices](https://particular.net/videos/designing-a-ui-for-microservices) — Building a .NET Core composite UI from scratch: ViewModel Composition, the composition gateway, and how services each contribute their own slice of the front-end. *(See also §6.)*
+- [Welcome to the (State) Machine](https://particular.net/videos/welcome-to-the-state-machine) — Busts the "stateless is always better" myth. Covers sagas as the way to model collaborative domains, compensating actions, timeouts, and distributed business processes without orchestration. *(See also §8.)*
+- [Tales from the Trenches: Creating Complex Distributed Systems](https://particular.net/webinars/tales-from-the-trenches-creating-complex-distributed-systems) — Interview with Neel Shah (Strasz Assessment Systems) about real-world challenges applying ADSD principles with NServiceBus.
+
+### Adam Ralph
+
+- [Finding Your Service Boundaries: A Practical Guide](https://www.youtube.com/watch?v=9ix0vVL34-M) — Practical advice on discovering hidden boundaries in your systems. Adam teases out the natural separation of concerns in a sample business domain, covering fat events, what a service is (and isn't), and how to avoid the path to "the big rewrite." *(See also §5.)*
+- [Finding Your Service Boundaries: A Practical Guide (Webinar)](https://www.youtube.com/watch?v=jdliXz70NtM) — Particular Software webinar version of the same topic with live Q&A, hosted by Mauro Servienti. Includes audience questions on UI composition, team organization, and adopting ADSD concepts incrementally.
+
+### Dennis van der Stelt
+
+- [Death of the Batch Job](https://youtu.be/jTz74m1KbBs) — How NServiceBus sagas replace fragile nightly batch jobs with event-driven, saga-based workflows using durable timeouts, compensation, and the saga pattern for preferred-customer-status scenarios. *(See also §8.)*
+- [Autonomous Microservices Don't Share Data. Period. (NDC Porto 2023)](https://www.youtube.com/watch?v=_UN50hNZlx4) — A journey through the evolution of software architecture — from procedural to SOA to microservices — landing on why data ownership and clear service boundaries are non-negotiable. Covers composite UIs, event-driven communication, and vertical service pillars. *(See also §4 and §5.)*
+- [Autonomous Microservices Don't Share Data. Period. (Øredev 2023)](https://www.youtube.com/watch?v=Zkj7R4Q1thw) — Conference version of the same talk at Øredev, with Dennis's signature Lessig-style 400+ slide presentation.
+- [DSDF Course Q&A (Particular Software)](https://particular.net/webinars/dsdf-course-questions-answered-live) — Follow-up Q&A for the free Distributed Systems Design Fundamentals course, covering practical questions on messaging, sagas, priority queues, and adoption strategies.
+
+### Tomer Gabel
+
+- [Microservices: A Retrospective (Øredev 2019)](https://youtu.be/7kHnuO7JzoE) — Now that the microservices hype has settled, what have we actually learned? Tomer analyzes the lessons hammered into us through adoption, and takes a hard look at the challenges we still struggle with as an industry. A thoughtful complement to the ADSD perspective on service decomposition. *(See also §4.)*
+
+### Laila Bougria
+
+- [Orchestration vs. Choreography: The Good, the Bad, and the Trade-offs](https://www.youtube.com/watch?v=U8Aame0akl4) — Uses a mortgage-application analogy to explore when to orchestrate vs. choreograph, hidden assumptions in the "orchestrate within, choreograph across" rule of thumb, and why getting service boundaries right matters more than picking a pattern. *(See also §8.)*
+- [Messaging: The Fine Line Between Awesome and Awful](https://www.youtube.com/watch?v=pImwOEsQkQo) — The real-world challenges of adopting messaging: structuring code for messaging, duplicate messages, ordering issues, communication patterns (commands, events, pub/sub), and techniques for system consistency. *(See also §3.)*
+- [Message Processing Failed... But What's the Root Cause?](https://www.youtube.com/watch?v=nWPk7rellM0) — Debugging distributed systems when there's no single call stack. Covers OpenTelemetry instrumentation, distributed tracing, modeling techniques, and integration testing to find the proverbial needle in a haystack. *(See also §11.)*
+- [Fireside Chat: Orchestration and Choreography with Laila Bougria & Udi Dahan](https://particular.net/webinars/2023-orchestration-choreography-qa) — Virtual DDD panel exploring how orchestration and choreography relate to bounded contexts, maintainability, and the trade-offs involved in choosing between them.
+
+### Caitie McCaffrey
+
+- [Applying the Saga Pattern](https://www.youtube.com/watch?v=ZMbqbXxRthE) — Fundamentals of the saga pattern for long-lived transactions and distributed coordination without 2PC. Includes how Halo 4 services used sagas for processing game statistics in production. A highly recommended complement to the 1987 Sagas paper (§13). *(See also §8.)*
+
+### General
+
+- [Particular Software Videos & Presentations](https://particular.net/videos) — Full archive of talks from Udi Dahan, Laila Bougria, Adam Ralph, Dennis van der Stelt, and other Particular team members on distributed systems topics.
+
+---
 
 ## 15. Course Reviews & Community Notes
 
@@ -249,8 +320,14 @@ These provide different perspectives on the ADSD material and can help reinforce
 - [ADSD Part 4: Go Forth and Make Things Simple – Tom Cabanski](https://tom.cabanski.com/2012/01/28/advanced-distributed-system-design-with-udi-dahan-part-4-go-forth-and-make-things-simple/) — A four-part series covering the in-person course experience, including the hotel service boundary exercise and web-tier scalability discussion.
 - [What I Learned from the $2500 Udi Dahan Course – Michał Białecki](https://www.michalbialecki.com/2020/06/23/what-i-learned-from-2500-udi-dahan-course/) — Key lessons: messaging over RPC, don't use one approach for everything, service boundaries matter, and domain models shouldn't mimic the real world.
 
+---
+
 ## 16. Udi Dahan's Blog
 
 Udi's blog is a treasure trove of articles that expand on and complement the ADSD material.
 
 - [udidahan.com/blog](https://udidahan.com/?blog=true) — The full blog archive. Key posts include topics on service boundaries, entity ownership, the problems with layered architectures, and why services are not remotely callable components.
+
+---
+
+*Last updated: February 2026*
