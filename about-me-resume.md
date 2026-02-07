@@ -57,7 +57,7 @@ The key insight: effective organization isn't about doing more things faster—i
 
 - Q3-2024 -> Today:
   - Head of Customer Success
-  - Career Coaching and Mentorship
+  - Career Coaching and Mentoring
 - 2021 -> Q2-2024: Head of Strategy
 - 2017 -> Q4-2020: Head of Platform Development & Developer Experience
 - 2015 -> 2017: Head of Internal Collaboration & Communication
@@ -65,7 +65,7 @@ The key insight: effective organization isn't about doing more things faster—i
 
 ### 2010 — 2013: Guess Europe Sagl
 
-- Design and architect distributed B2B systems to manage global retail shops network and supply chains
+- Designed and architected distributed B2B systems to manage the global retail shop network and supply chains
 
 ---
 
@@ -174,7 +174,7 @@ The key insight: effective organization isn't about doing more things faster—i
 - GitFlow and version control strategies
 - Cloud-native application design
 - Container-based deployment strategies
-- Unit, intergration, and acceptance testing
+- Unit, integration, and acceptance testing
 
 ---
 
