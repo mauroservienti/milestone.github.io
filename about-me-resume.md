@@ -8,10 +8,10 @@ permalink: /about-me/resume
 
 ## Solution Architect | Distributed Systems Specialist | Technical Speaker
 
-📧 Contact: Available on GitHub (@mauroservienti) and LinkedIn  
-🌐 Blog: https://milestone.topics.it  
-💻 GitHub: https://github.com/mauroservienti 
-📍 Location: Italy
+- 📧 Contact: Available on GitHub ([@mauroservienti](https://github.com/mauroservienti)) and [LinkedIn](https://www.linkedin.com/in/mauroservienti/)  
+- 🌐 Blog: <https://milestone.topics.it>
+- 💻 GitHub: <https://github.com/mauroservienti> 
+- 📍 Location: Italy
 
 ---
 
@@ -35,7 +35,7 @@ My approach to productivity follows a simple principle: "Slow is smooth. Smooth 
 
 I'm a firm believer in checklists and templates. As I often say, "I'm lazy—I have a checklist for everything." By offloading routine processes to well-designed workflows (using tools like Todoist and Dropbox Paper), I preserve mental bandwidth for architectural challenges and creative work. Whether preparing for international travel, deploying to production, or managing daily responsibilities, template-based systems ensure nothing falls through the cracks.
 
-My methodology emphasizes continuous improvement through data collection and reflection. I regularly analyze time usage, identify inefficiencies, and refine processes—documenting this evolution in my "Lifehacking 101" blog series where I've openly shared struggles with procrastination and the practical solutions I've developed.
+My methodology emphasizes continuous improvement through data collection and reflection. I regularly analyze time usage, identify inefficiencies, and refine processes—documenting this evolution in my "Lifehacking 101" blog series, where I've openly shared struggles with procrastination and the practical solutions I've developed.
 
 The key insight: effective organization isn't about doing more things faster—it's about mastering fundamentals until they become automatic. This approach enables me to manage complex projects, coordinate across time zones in a distributed organization, and deliver consistent results without burnout. I embrace the journey over the destination, maintaining sustainable productivity while preserving energy for the next challenge.
 
