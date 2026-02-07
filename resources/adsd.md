@@ -322,11 +322,48 @@ These provide different perspectives on the ADSD material and can help reinforce
 
 ---
 
-## 16. Udi Dahan's Blog
+## 16. Related Blogs
 
-Udi's blog is a treasure trove of articles that expand on and complement the ADSD material.
+- [Udi Dahan's blog](https://udidahan.com/?blog=true) — The full blog archive from the ADSD course creator. Key posts include topics on service boundaries, entity ownership, the problems with layered architectures, and why services are not remotely callable components.
+- [Daniel Marbach's blog](https://www.planetgeek.ch/author/danielmarbach/) — Daniel Marbach (Particular Software) writes in-depth technical content focused on Azure Service Bus and NServiceBus internals. His standout series is the *Azure Service Bus .NET SDK Deep Dive*, covering topics like message deduplication, sessions, dead-letter queues, send-via transactions, sender-side batching, atomic sends, pub/sub with topics, forwarding, topologies, and runtime information. Earlier posts explored NServiceBus transport comparisons (MSMQ vs. RabbitMQ vs. ActiveMQ), dependency injection integration (Ninject), unit of work patterns, and high-throughput message processing optimizations. The blog is particularly valuable for understanding the low-level mechanics of Azure Service Bus and how NServiceBus leverages them.
+- [Dennis van der Stelt's blog](https://bloggingabout.net/) — Dennis van der Stelt (Particular Software) blogs about distributed systems, messaging, and software architecture. Recent posts include an explanation of the Two Generals' Problem using a Star Wars analogy, a piece on why shared databases are problematic with microservices, and thoughts on AI pair programming. Earlier content includes NServiceBus tutorials on publish/subscribe, an explanation of what a service bus is, message priority handling strategies, and his *Death of the Batch Job* saga presentation. The blog has been active since 2004 (originally a community blogging platform) and blends practical NServiceBus guidance with architectural thinking and the occasional fun cultural tangent.
 
-- [udidahan.com/blog](https://udidahan.com/?blog=true) — The full blog archive. Key posts include topics on service boundaries, entity ownership, the problems with layered architectures, and why services are not remotely callable components.
+---
+
+## 17. Samples & Demos
+
+- [distributed-systems-101](https://github.com/mauroservienti/distributed-systems-101) — A progressive, hands-on workshop that teaches distributed systems fundamentals using RabbitMQ. It walks through 12 incremental demos in a Dev Container environment: basic send, request/response, request with multiple responses, basic pub/sub, pub/sub with multiple subscribers, commands and events, recoverability, sagas, timeouts, composition, decomposition, and a shopping cart lifecycle. Also includes JavaScript versions of the demos. *(See also §3 and §8.)*
+- [all-our-aggregates-are-wrong-demos](https://github.com/mauroservienti/all-our-aggregates-are-wrong-demos) — Companion demos for the "All Our Aggregates Are Wrong" talk. Implements a microservices-powered e-commerce shopping cart built on SOA principles, demonstrating how traditional aggregate design leads to coupling and how proper service boundary decomposition results in each service owning its slice of the data independently. *(See also §5 and §14.)*
+- [welcome-to-the-state-machine-demos](https://github.com/mauroservienti/welcome-to-the-state-machine-demos) — Companion demos for the "Welcome to the (State) Machine" talk. Demonstrates how to model long-running business processes using sagas as state machines, including timeout handling, compensating actions, and coordination across service boundaries without introducing coupling. *(See also §8 and §14.)*
+- [designing-a-ui-for-microservices-demos](https://github.com/mauroservienti/designing-a-ui-for-microservices-demos) — Companion demos for the "Designing a UI for Microservices" talk. Shows how to build composite UIs where each service owns its piece of the user interface, using ViewModel Composition to assemble data from multiple autonomous services into a single view without creating a shared API or monolithic frontend. *(See also §6 and §14.)*
+
+---
+
+## 18. Dynamic Consistency Boundaries (DCB)
+
+Dynamic Consistency Boundary (DCB) is a pattern introduced by Sara Pellegrini (during her time @ AxonIQ, later she joined Particular Software) in her "Kill Aggregate!" talk and blog series. The core idea is to move away from fixed aggregate-to-stream mappings in event-sourced systems. Instead, each command handler dynamically selects only the events it needs (via tagging/filtering) to enforce its invariants, making consistency boundaries flexible and per-operation rather than per-entity. While DCB originates in the event sourcing community, its thinking about consistency, boundaries, and aggregate design connects directly to ADSD themes around service decomposition and data ownership.
+
+### Talks
+
+- [Kill Aggregate! — Sara Pellegrini (Avanscoperta, April 2023)](https://www.youtube.com/watch?v=DhhxKoOpJe0) — The original presentation introducing DCB, in Italian with English subtitles starting at 2:38. Sara and Milan Savic subsequently presented English variations at DDD FR, JAX Mainz, Spring I/O Barcelona, Voxxed Days Brussels, AxonIQ Conference 2023, and KanDDDinsky.
+
+### Blog posts & articles
+
+- [Chapter 10 — The Aggregate is dead (sara.event-thinking.io)](https://sara.event-thinking.io/2023/04/kill-aggregate-chapter-10-the-aggregate-is-dead.html) — The culminating chapter of Sara's multi-part "Kill Aggregate" blog series, walking through the course subscription example and demonstrating how command handlers build ad-hoc models on the fly from a tagged event store without needing isolated aggregates.
+- [Dynamic Consistency Boundaries — Milan Savic (milan.event-thinking.io)](https://milan.event-thinking.io/2025/05/dynamic-consistency-boundaries.html) — Detailed writeup explaining DCB as moving consistency granularity from event streams (aggregates) to individual events, with code samples and a companion [GitHub repository](https://github.com/m1l4n54v1c/event-store). Broadens DCB applicability to any append-only messaging system.
+- [Kill Aggregate? An Interview on Dynamic Consistency Boundaries (EventSourcingDB)](https://docs.eventsourcingdb.io/blog/2025/12/15/kill-aggregate-an-interview-on-dynamic-consistency-boundaries/) — Interview with Bastian Waidelich on the practical implementation, ecosystem, misconceptions, and technical requirements of DCB-compliant event stores.
+- [Rethinking microservices architecture through Dynamic Consistency Boundaries (AxonIQ)](https://www.axoniq.io/blog/rethinking-microservices-architecture-through-dynamic-consistency-boundaries) — Contextualizes DCB within microservices and bounded contexts, explaining how flexible transactional consistency within a single bounded context improves performance and scalability.
+- [Dynamic consistency boundaries (JAVAPRO)](https://javapro.io/2025/10/28/dynamic-consistency-boundaries/) — Article by Milan Savic with code samples exploring how DCB redefines consistency granularity for event stores, moving from streams to individual events.
+
+### Specification & community
+
+- [dcb.events](https://dcb.events/) — The official DCB hub maintained by Bastian Waidelich and Sara Pellegrini. Includes the [specification](https://dcb.events/specification/), [examples](https://dcb.events/examples/) (course subscriptions, unique username, sequential invoice numbering, idempotency), and a [FAQ](https://dcb.events/faq/).
+
+### Implementations
+
+- [bwaidelich/dcb-eventstore](https://github.com/bwaidelich/dcb-eventstore) — PHP implementation of a DCB-compliant event store, with a [course subscription example](https://github.com/bwaidelich/dcb-example-courses).
+- [umadb-io/umadb](https://github.com/umadb-io/umadb) — High-performance open-source event store built to the DCB specification (co-authored by Bastian Waidelich, Sara Pellegrini, and Paul Grimshaw).
+- [Disintegrate](https://lib.rs/crates/disintegrate) — A Rust library inspired by Kill Aggregate! for building event-sourced applications with flexible consistency boundaries.
 
 ---
 
