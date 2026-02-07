@@ -15,7 +15,6 @@ A curated collection of resources aligned with the concepts and paradigms taught
 - [Advanced Distributed Systems Design – Particular Software](https://particular.net/adsd) — The official ADSD course page with module descriptions and registration for both in-person and online formats.
 - [ADSD Online Course](https://learn.particular.net/courses/adsd-online) — The full 33-hour online video course covering all modules.
 - [Distributed Systems Design Fundamentals (Free)](https://learn.particular.net/courses/distributed-systems-design-fundamentals-online) — A free introductory course by Udi Dahan covering the foundational ideas (fallacies, coupling, messaging basics) that the full ADSD course expands upon.
-- [Udi Dahan's Training Page](https://udidahan.com/training/) — Overview of all available training options from Udi.
 
 ---
 
