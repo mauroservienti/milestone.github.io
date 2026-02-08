@@ -9,34 +9,34 @@ title: Events archive
   {% assign archived = site.events | where: 'status', 'done' | sort: 'calendar.start' | reverse %}
 
   <h2 class="page-heading">Events archive</h2>
-  <ul>
+  <hr />
+
   {% for event in archived %}
-  <div class="panel event panel-default">
-      <div class="panel-body">
-        <div class="event-details">
-          <img class="event-details-icon" src="/img/calendar.png" width="16" height="16" alt="" />
-          <span class="event-date">
-            {% if event.calendar.display %}
-              {{ event.calendar.display }}
-            {% else %}
-              {% if event.calendar.start contains "T" %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y - %H:%M" }}
-              {% else %}
-                {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
-              {% endif %}
-            {% endif %}  
-          </span>
-          <img class="event-details-icon" src="/img/location.png" width="16" height="16" alt="" />
-          <span class="event-location">{{ event.location }}</span>
-          <img class="event-details-icon" src="/img/language.png" width="16" height="16" alt="" />
-          <span class="event-language">{{ event.language }}</span>
-        </div>
-        <h3 class="event-title">
-          <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
-        </h3>
-      </div>          
-    </div>
+    {% assign currentyear = event.calendar.start | date: "%Y" %}
+    {% if currentyear != year %}
+      {% unless forloop.first %}</ul>{% endunless %}
+      <h3 id="y{{ currentyear }}">{{ currentyear }}</h3>
+      <ul class="events-list">
+      {% assign year = currentyear %}
+    {% endif %}
+    <li class="mb-2">
+      <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
+      <span class="event-meta ms-1">
+        —
+        {% if event.calendar.display %}
+          {{ event.calendar.display }}
+        {% else %}
+          {% if event.calendar.start contains "T" %}
+            {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
+          {% else %}
+            {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
+          {% endif %}
+        {% endif %}
+        · {{ event.location }}
+        · {{ event.language }}
+      </span>
+    </li>
+    {% if forloop.last %}</ul>{% endif %}
   {% endfor %}
-  </ul>
-  
+
 </div>
