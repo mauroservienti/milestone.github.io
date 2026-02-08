@@ -9,34 +9,51 @@ title: Events archive
   {% assign archived = site.events | where: 'status', 'done' | sort: 'calendar.start' | reverse %}
 
   <h2 class="page-heading">Events archive</h2>
-  <hr />
 
+  {% comment %} Collect distinct years {% endcomment %}
+  {% assign years = "" %}
   {% for event in archived %}
-    {% assign currentyear = event.calendar.start | date: "%Y" %}
-    {% if currentyear != year %}
-      {% unless forloop.first %}</ul>{% endunless %}
-      <h3 id="y{{ currentyear }}">{{ currentyear }}</h3>
-      <ul class="events-list">
-      {% assign year = currentyear %}
-    {% endif %}
-    <li class="mb-2">
-      <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
-      <span class="event-meta ms-1">
-        —
-        {% if event.calendar.display %}
-          {{ event.calendar.display }}
-        {% else %}
-          {% if event.calendar.start contains "T" %}
-            {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
+    {% assign y = event.calendar.start | date: "%Y" %}
+    {% unless years contains y %}
+      {% if years != "" %}{% assign years = years | append: "," %}{% endif %}
+      {% assign years = years | append: y %}
+    {% endunless %}
+  {% endfor %}
+  {% assign year_list = years | split: "," %}
+
+  {% comment %} Jump nav {% endcomment %}
+  <nav class="timeline-nav" aria-label="Jump to year">
+    {% for y in year_list %}
+      {% unless forloop.first %} · {% endunless %}
+      <a href="#y{{ y }}" class="muted-link">{{ y }}</a>
+    {% endfor %}
+  </nav>
+
+  {% comment %} Timeline {% endcomment %}
+  <div class="timeline">
+    {% assign currentyear = "" %}
+    {% for event in archived %}
+      {% assign y = event.calendar.start | date: "%Y" %}
+      {% if y != currentyear %}
+        {% unless forloop.first %}</ul>{% endunless %}
+        {% assign currentyear = y %}
+        <div class="timeline-year" id="y{{ y }}">{{ y }}</div>
+        <ul class="timeline-events">
+      {% endif %}
+      <li class="timeline-event">
+        <a class="muted-link" href="{{ event.url | prepend: site.baseurl }}">{{ event.title }}</a>
+        <span class="event-meta d-block">
+          {% if event.calendar.display %}
+            {{ event.calendar.display }}
           {% else %}
             {{ event.calendar.start | date_to_rfc822 | date: "%B %-d, %Y" }}
           {% endif %}
-        {% endif %}
-        · {{ event.location }}
-        · {{ event.language }}
-      </span>
-    </li>
-    {% if forloop.last %}</ul>{% endif %}
-  {% endfor %}
+          · {{ event.location }}
+          · {{ event.language }}
+        </span>
+      </li>
+      {% if forloop.last %}</ul>{% endif %}
+    {% endfor %}
+  </div>
 
 </div>

@@ -7,6 +7,84 @@
     list-style-type: none;
 }
 
+// Timeline - events archive
+
+.timeline-nav {
+    margin-bottom: 1.5rem;
+    font-size: $small-font-size;
+}
+
+.timeline {
+    position: relative;
+    padding-left: 28px;
+    margin-top: 1rem;
+
+    // the vertical line
+    &::before {
+        content: "";
+        position: absolute;
+        left: 6px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: var(--site-grey-color-light, $grey-color-light);
+    }
+}
+
+.timeline-year {
+    position: relative;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    scroll-margin-top: 1rem;
+
+    // year dot on the line
+    &::before {
+        content: "";
+        position: absolute;
+        left: -28px;
+        top: 0.35em;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background-color: var(--site-brand-color, $brand-color);
+    }
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.timeline-events {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.timeline-event {
+    position: relative;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--site-grey-color-light, $grey-color-light);
+
+    // event dot on the line
+    &::before {
+        content: "";
+        position: absolute;
+        left: -24px;
+        top: 0.45em;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: var(--site-grey-color, $grey-color);
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
 .event-content{
 
     padding-top: 10px;
