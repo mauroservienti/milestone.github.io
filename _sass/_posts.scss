@@ -37,3 +37,27 @@
     font-size: $small-font-size;
     color: var(--site-grey-color, $grey-color);
 }
+
+// Timeline - posts archive
+
+.timeline-year-posts {
+    margin-bottom: 0.5rem;
+}
+
+.timeline-month {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--site-grey-color-dark, $grey-color-dark);
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-post-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        padding: 0.15rem 0;
+    }
+}

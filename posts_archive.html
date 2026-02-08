@@ -7,21 +7,57 @@ permalink: /archive/posts/
 <div class="posts-archive">
 
   <h2 class="page-heading">Posts Archive</h2>
-<hr />
+
+  {% comment %} Collect distinct years {% endcomment %}
+  {% assign years = "" %}
   {% for post in site.posts %}
-  {% assign currentdate = post.date | date: "%B %Y" %}
-    {% if currentdate != date %}
-      {% unless forloop.first %}</ul>{% endunless %}
-        <h3 id="y{{post.date | date: "%B %Y"}}">{{ currentdate }}</h3>
-        <ul class="post-list">
-          {% assign date = currentdate %}
-    {% endif %}
-      <li>
-        <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-      </li>
-    {% if forloop.last %}
-    </ul>
-    {% endif %}
+    {% assign y = post.date | date: "%Y" %}
+    {% unless years contains y %}
+      {% if years != "" %}{% assign years = years | append: "," %}{% endif %}
+      {% assign years = years | append: y %}
+    {% endunless %}
   {% endfor %}
+  {% assign year_list = years | split: "," %}
+
+  {% comment %} Jump nav {% endcomment %}
+  <nav class="timeline-nav" aria-label="Jump to year">
+    {% for y in year_list %}
+      {% unless forloop.first %} · {% endunless %}
+      <a href="#y{{ y }}" class="muted-link">{{ y }}</a>
+    {% endfor %}
+  </nav>
+
+  {% comment %} Timeline {% endcomment %}
+  <div class="timeline">
+    {% assign currentyear = "" %}
+    {% assign currentmonth = "" %}
+    {% for post in site.posts %}
+      {% assign y = post.date | date: "%Y" %}
+      {% assign m = post.date | date: "%B" %}
+      {% if y != currentyear %}
+        {% unless forloop.first %}
+            </ul>
+          </div>
+        {% endunless %}
+        {% assign currentyear = y %}
+        {% assign currentmonth = "" %}
+        <div class="timeline-year" id="y{{ y }}">{{ y }}</div>
+        <div class="timeline-year-posts">
+      {% endif %}
+      {% if m != currentmonth %}
+        {% unless currentmonth == "" %}</ul>{% endunless %}
+        {% assign currentmonth = m %}
+        <h4 class="timeline-month">{{ m }}</h4>
+        <ul class="timeline-post-list">
+      {% endif %}
+          <li>
+            <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          </li>
+      {% if forloop.last %}
+        </ul>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
 
 </div>
