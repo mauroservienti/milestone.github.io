@@ -81,6 +81,28 @@
     </div>
     {% endif %}
 
+    {% assign updated_posts = site.posts | where_exp: "post", "post.update_date" | sort: 'update_date' | reverse %}
+    {% assign updated_len = updated_posts | size %}
+    {% if updated_len > 0 %}
+    <div class="sidebar-widget sidebar-recently-updated">
+        <header>Recently Updated</header>
+        <section>
+            <ul>
+                {% for post in updated_posts limit:5 %}
+                <li><small>
+                        {% if page.url == post.url %}
+                        <span class="fst-italic">{{ post.title }}</span>
+                        {% else %}
+                        <a class="muted-link inherit-color" title="{{ post.title }}"
+                            href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+                        {% endif %}
+                    </small></li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+    {% endif %}
+
     {% if page.id != 'archived-events' %}
     {% assign archived_events = site.events | where: 'status', 'done' | sort: 'calendar.start' | reverse %}
     {% assign len = archived_events | size %}
