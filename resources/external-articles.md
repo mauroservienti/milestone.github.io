@@ -12,7 +12,7 @@ Articles published on other platforms and publications.
 
 {% assign articles = site.external-articles | sort: "date" | reverse %}
 {% for article in articles %}
-### [{{ article.title }}]({{ article.url }})
+### [{{ article.title }}]({{ article.articleUrl }})
 
 <small>{{ article.date | date: "%B %d, %Y" }} — {{ article.publisher }}</small>
 
