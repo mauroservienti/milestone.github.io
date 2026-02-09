@@ -6,6 +6,8 @@ synopsis: "There are scenarios where updating data is either forbidden by polici
 header_image: /img/posts/append-only/header.jpg
 tags:
 - architecture
+update_date: 2026-02-09
+update_note: Added a note about NServiceBus Transactional Session support.
 ---
 
 In ["All our aggregates are wrong,"](https://youtu.be/KkzvQSuYd5I), I present a distributed system architecture for a sample shopping cart.
@@ -61,6 +63,8 @@ That's right, and that is why context matters a lot. Let's first recap the desig
 ![Decomposed shopping cart diagram](/img/posts/append-only/view-model-decomposition-diagram.png){:class="img-fluid mx-auto d-block"}
 
 In the distributed system example, each service owns a shopping cart piece. Those services are autonomous and independent. Each time users manipulate the cart content, each service does whatever it needs to fulfill its request. Data end up in services through the decomposition process. But things can go wrong, and we cannot [rely on distributed transactions](https://milestone.topics.it/2023/09/08/fuss-about-eventual-consistency.html).
+
+> While we cannot have distributed transactions across services, within each service we can ensure that data persistence and message operations are atomic. NServiceBus supports the [Transactional Session](https://docs.particular.net/nservicebus/transactional-session/) to guarantee that database operations and message dispatches are part of the same atomic operation, reducing the failure modes each service needs to handle.
 
 > More details on why that shopping cart design is an option in ["All our aggregates are wrong"](https://youtu.be/KkzvQSuYd5I).
 

@@ -10,6 +10,8 @@ tags:
 - Retries
 - Errors
 - Failures
+update_date: 2026-02-09
+update_note: Added a note about NServiceBus Transactional Session support.
 ---
 
 Systems fail all the time: Bugs, unavailability of required resources, hardware failures, and many more reasons cause systems to fail. When the system uses messages and queues to exchange information and drive behaviors, one of the advantages is that we can retry messages. A message comes in, and the message handling process fails. Once the root cause of the problem is fixed, the message can be returned to the queue and tried again. If message processing logic changes some data, it can rollback the corresponding database transaction. So far, so good, in many scenarios, we can retry messages.
@@ -53,6 +55,8 @@ public Task<HttpResponse> ProcessOrder(int orderId)
 ```
 
 > Sending the message is not the only thing that can fail; as discussed in my last article ["Ehi! What's up? Feedback to users' requests in distributed systems"](https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html), in a complex system, there are many moving parts. In case we need to track the user request to provide feedback, the HTTP request handling code will be more complex, and more things can fail and are worth retrying.
+
+> NServiceBus supports the [Transactional Session](https://docs.particular.net/nservicebus/transactional-session/) to atomically handle database operations and message dispatches from an HTTP context, significantly reducing the failure modes that need to be handled with manual retry logic.
 
 The above pseudo-code can become quite complicated; think about the need to design an exponential back-off policy. At each retry cycle, we wait a little more to increase the chances that the transient failure resolves itself. Tools like [Polly](https://github.com/App-vNext/Polly) solve this exact problem elegantly.
 

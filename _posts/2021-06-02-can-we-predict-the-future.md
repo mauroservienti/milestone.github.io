@@ -7,6 +7,8 @@ synopsis: "Eventual consistency is everywhere and distributed systems tend to ex
 tags:
 - soa
 - viewmodel-composition
+update_date: 2026-02-09
+update_note: Added a note about NServiceBus Transactional Session support.
 ---
 
 Eleven years ago, Udi Dahan wrote that ["race conditions don't exist"](http://udidahan.com/2010/08/31/race-conditions-dont-exist/); more recently, he gave a talk saying that [commands don't fail](https://www.youtube.com/watch?v=fWU8ZK0Dmxs).
@@ -89,6 +91,8 @@ Whenever a request comes in, the receiving endpoint performs two operations:
 
 1. A denormalizer takes care of building and storing the expected/predicted ViewModel; the generated ViewModel will have a `pending` status.
 2. A message gets dispatched to kickoff the processing of the incoming request.
+
+> These two operations need to be atomic. If the ViewModel is stored but the message is not dispatched, or vice versa, the system ends up in an inconsistent state. NServiceBus supports the [Transactional Session](https://docs.particular.net/nservicebus/transactional-session/) to guarantee that database operations and message dispatches from an HTTP context are part of the same atomic operation.
 
 For example, processing orders is a complex matter composed of multiple event-driven sagas. The process can take hours or even days. Each saga will perform some steps and publish events that a Predictive ViewModel denormalizer will consume to update the corresponding ViewModel, for example, changing the status from `pending` to `accepted`.
 

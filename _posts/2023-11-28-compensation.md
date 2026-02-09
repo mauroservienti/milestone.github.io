@@ -8,6 +8,8 @@ tags:
 - architecture
 - soa
 - distributed-systems
+update_date: 2026-02-09
+update_note: Added a note about NServiceBus Transactional Session support.
 ---
 
 A few months ago, I got a [follow-up question from Alisher](https://milestone.topics.it/2019/05/02/safety-first.html#comment-6166203046) on my ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-first.html) article. The question is about compensation and downstream events:
@@ -33,6 +35,8 @@ A user is trying to achieve their goal using the system at play. The press of a 
 In that context, service A might receive some bits of the request and process it successfully. Simultaneously, service B receives another portion of the requests, but it fails to process it. The "Safety first!" article presents some options to mitigate the possible disruption from something like that. However, we need to prepare to handle the disruption. Chances are it'll happen.
 
 We could use compensation techniques between services A and B to resolve the situation. Some of those options are described in ["What if my command was rejected?"](https://milestone.topics.it/2023/06/27/reject-commands.html).
+
+> Within each service, we can reduce the compensation surface by ensuring that database mutations and outgoing messages are part of the same atomic operation. NServiceBus supports the [Transactional Session](https://docs.particular.net/nservicebus/transactional-session/) to achieve exactly that, preventing scenarios where data is persisted but the event is not published, or vice versa.
 
 ## It could be worse, it could be like in real life
 

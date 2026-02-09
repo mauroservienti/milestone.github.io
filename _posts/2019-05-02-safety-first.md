@@ -10,6 +10,8 @@ enable_mermaid: true
 tags:
 - soa
 - messaging
+update_date: 2026-02-09
+update_note: Added a note about NServiceBus Transactional Session support.
 ---
 
 *Today's post will be more about reliable communication than ViewModel Composition, so it won't be part of the [ViewModel Composition category](/categories/view-model-composition).*
@@ -111,6 +113,8 @@ This operation is known as send-local. What we have now is a 1-to-1 relationship
   - Handler B sends a second message
 
 If one of the two handlers fails, the incoming message is retried, both handlers will be invoked once again, and eventually they succeed. However if the first one succeeds and then there is a catastrophic failure then they'll both be retried (on a different node) and *Handler A* will send a duplicate message. This is when patterns like the [Outbox](https://docs.particular.net/nservicebus/outbox/) come into play to provide *exactly-once-processing* (note: processing, not delivery).
+
+> NServiceBus supports the [Transactional Session](https://docs.particular.net/nservicebus/transactional-session/) to atomically handle the HTTP request-to-message transition, ensuring that database operations and message dispatches from an HTTP context are part of the same atomic operation.
 
 ## Conclusion
 
