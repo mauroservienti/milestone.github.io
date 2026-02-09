@@ -28,6 +28,19 @@
     }
 }
 
+.post-update-banner{
+    font-size: $small-font-size;
+    color: var(--site-grey-color-dark, $grey-color-dark);
+    background-color: var(--site-code-background, #eef);
+    border-left: 3px solid var(--site-brand-color, $brand-color);
+    padding: 0.5rem 0.75rem;
+    margin-bottom: 10px;
+
+    .post-update-date{
+        font-weight: 600;
+    }
+}
+
 .post-content{
     padding-top: 10px;
     padding-bottom: 10px;

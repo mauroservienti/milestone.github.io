@@ -60,6 +60,12 @@ layout: default
     <hr class="h-splitter" />
   </header>
 
+  {% if page.update_date %}
+  <div class="post-update-banner">
+    <span class="post-update-date">Updated on {{ page.update_date | date: "%b %-d, %Y" }}</span>{% if page.update_note %} — {{ page.update_note }}{% endif %}
+  </div>
+  {% endif %}
+
   <article class="post-content">
     {{ content }}
   </article>
