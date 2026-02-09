@@ -30,3 +30,5 @@ collections:
     output: true
   tags:
     output: true
+  external-articles:
+    output: false
