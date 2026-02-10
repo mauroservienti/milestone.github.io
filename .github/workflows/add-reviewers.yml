@@ -123,9 +123,7 @@ jobs:
             fi
 
             # Insert reviewers line before the closing --- of frontmatter
-            sed -i "0,/^---$/! { /^---$/i\\
-$REVIEWER_YAML
-            }" "$file"
+            awk -v rev="$REVIEWER_YAML" 'BEGIN{n=0} /^---$/{n++; if(n==2){print rev}} {print}' "$file" > "${file}.tmp" && mv "${file}.tmp" "$file"
 
           done <<< "${{ steps.changed.outputs.files }}"
 
