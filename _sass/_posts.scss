@@ -84,6 +84,19 @@
     }
 }
 
+.post-series-list {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--site-grey-color-light, $grey-color-light);
+    border-radius: 0.5rem;
+
+    h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+    ol { margin-bottom: 0; }
+    li { margin-bottom: 0.3rem; }
+    .post-series-current { font-weight: bold; }
+}
+
 // Timeline - posts archive
 
 .timeline-year-posts {
