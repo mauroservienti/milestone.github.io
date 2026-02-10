@@ -8,6 +8,7 @@ tags:
 - architecture
 update_date: 2026-02-09
 update_note: Added a note about NServiceBus Transactional Session support.
+reviewed-by: [kbaley]
 ---
 
 In ["All our aggregates are wrong,"](https://youtu.be/KkzvQSuYd5I), I present a distributed system architecture for a sample shopping cart.

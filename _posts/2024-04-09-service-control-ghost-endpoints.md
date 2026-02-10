@@ -6,6 +6,7 @@ synopsis: "From time to time, I enjoy writing code on the side, like an open-sou
 header_image: /img/posts/service-control-ghost-endpoints/header.jpg
 tags:
 - development
+reviewed-by: [kbaley]
 ---
 As I said multiple times, I work for [Particular Software](https://particular.net/), the makers of [NServiceBus](https://particular.net/nservicebus).
 

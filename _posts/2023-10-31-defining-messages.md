@@ -6,6 +6,7 @@ synopsis: ".NET developers building message-based systems seem to give serializa
 header_image: /img/posts/defining-messages/header.jpg
 tags:
 - messaging
+reviewed-by: [kbaley]
 ---
 
 Let me get this straight: There are design dilemmas that are weapons of mass distraction. Or, if you prefer, they are honey, attracting developers like the sirens did with Ulysses.

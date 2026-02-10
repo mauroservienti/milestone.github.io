@@ -7,6 +7,7 @@ header_image: /img/posts/mattox-endpoints/header.jpg
 tags:
 - nservicebus
 - messaging
+reviewed-by: [kbaley, tmasternak]
 ---
 
 [Matt Mattox](https://en.wikipedia.org/wiki/Matt_Mattox) was one of my favorite modern jazz ballet teachers. In the early 90s, I had the pleasure to spend a week at one of his workshops in Venice. One of the critical aspects of his dance style was isolation. I still remember this short exercise/choreography that finished with everyone screaming "Stop!" in a particular position. It was about isolating movements of body parts, stripping away all the gimmicks, and reducing it to its minimalist essence.

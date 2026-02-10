@@ -10,6 +10,7 @@ tags:
 - distributed-systems
 update_date: 2026-02-09
 update_note: Added a note about NServiceBus Transactional Session support.
+reviewed-by: [kbaley]
 ---
 
 A few months ago, I got a [follow-up question from Alisher](https://milestone.topics.it/2019/05/02/safety-first.html#comment-6166203046) on my ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-first.html) article. The question is about compensation and downstream events:

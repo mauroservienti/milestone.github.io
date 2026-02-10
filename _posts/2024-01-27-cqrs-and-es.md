@@ -6,6 +6,7 @@ synopsis: "Too many times, Event Sourcing is presented as the natural companion 
 header_image: /img/posts/cqrs-and-es/header.jpg
 tags:
 - architecture
+reviewed-by: [kbaley]
 ---
 
 For the _N_ th time (where N > 4), I read a post describing the beauty and benefits of [Command Query Responsibility Segregation (CQRS)](https://en.wikipedia.org/wiki/Command_Query_Responsibility_Segregation). As on many other occasions, it made me cringe: The post assumed that [Event Sourcing (ES)](https://en.wikipedia.org/wiki/Domain-driven_design#Event_sourcing) is part of the equation.

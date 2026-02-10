@@ -51,6 +51,39 @@
     color: var(--site-grey-color, $grey-color);
 }
 
+.post-reviewers {
+    display: inline;
+    vertical-align: baseline;
+}
+
+.reviewer-stack {
+    display: inline;
+
+    .reviewer-link {
+        display: inline;
+        transition: margin-left 0.3s ease;
+
+        &:not(:first-child) {
+            margin-left: -8px;
+        }
+    }
+
+    &:hover .reviewer-link:not(:first-child) {
+        margin-left: 4px;
+    }
+}
+
+.reviewer-avatar {
+    border-radius: 50%;
+    border: 2px solid var(--site-background-color, #fff);
+    vertical-align: -8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: scale(1.15);
+    }
+}
+
 // Timeline - posts archive
 
 .timeline-year-posts {

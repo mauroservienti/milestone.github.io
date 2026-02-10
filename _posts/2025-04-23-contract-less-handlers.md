@@ -7,6 +7,7 @@ header_image: /img/posts/contract-less-handlers/header.jpg
 tags:
 - viewmodel-composition
 series: view-model-composition
+reviewed-by: [kbaley]
 ---
 
 Look at this beauty:

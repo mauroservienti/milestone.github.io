@@ -6,6 +6,7 @@ synopsis: "I've been using a Kindle Scribe since December 2022. Primarily for re
 header_image: /img/posts/eight-months-kindle-scribe/header.jpg
 tags:
 - personal
+reviewed-by: [kbaley]
 ---
 
 First, battery life is gorgeous.

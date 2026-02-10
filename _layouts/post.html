@@ -36,7 +36,7 @@ layout: default
       {{ page.meta }}{% endif %} • Reading time: <span class="eta"></span> • <a
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
         this post</a> • <a
-        href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>
+        href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>{% if page.reviewed-by %} • <span class="post-reviewers">Reviewed by:&nbsp;<span class="reviewer-stack">{% for reviewer in page.reviewed-by %}<a class="reviewer-link" href="https://github.com/{{ reviewer }}" title="@{{ reviewer }}"><img class="reviewer-avatar" src="https://github.com/{{ reviewer }}.png?size=40" alt="@{{ reviewer }}" width="24" height="24" loading="lazy" /></a>{% endfor %}</span></span>{% endif %}
       {% if page.series %}
       {% assign pages_with_same_series = site.pages | where: 'series',page.series %}
         {% if pages_with_same_series and pages_with_same_series.size > 0 %}

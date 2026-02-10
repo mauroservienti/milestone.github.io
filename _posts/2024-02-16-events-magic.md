@@ -6,6 +6,7 @@ synopsis: "I feel events are used too many times as a hammer to dismantle coupli
 header_image: /img/posts/events-magic/header.jpg
 tags:
 - architecture
+reviewed-by: [weralabaj, kbaley]
 ---
 
 I know... I'm grumpy, and [I've been ranting lately](https://milestone.topics.it/2024/01/27/cqrs-and-es.html). I promise it's the last time—famous last words 😬

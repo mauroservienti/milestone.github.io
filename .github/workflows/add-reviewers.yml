@@ -1,0 +1,146 @@
+name: Add PR Reviewers
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '_posts/**'
+
+jobs:
+  add-reviewed-by:
+    runs-on: ubuntu-latest
+
+    # Don't run on commits made by this action
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed posts
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only HEAD~1 HEAD -- '_posts/' 2>/dev/null || echo "")
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          if [ -n "$CHANGED" ]; then
+            echo "has_posts=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_posts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get PR number and reviewers
+        if: steps.changed.outputs.has_posts == 'true'
+        id: reviewers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SHA=$(git rev-parse HEAD)
+
+          # Find the PR associated with this merge commit
+          PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${SHA}/pulls" \
+            --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
+            echo "No PR found for commit ${SHA}"
+            echo "has_reviewers=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Found PR #${PR_NUMBER}"
+
+          # Fetch reviewers who submitted a review, exclude bots
+          REVIEWERS=$(gh api "repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" \
+            --jq '[.[].user | select(.type != "Bot") | .login] | unique | join(",")' 2>/dev/null || echo "")
+
+          if [ -z "$REVIEWERS" ]; then
+            echo "No reviewers found"
+            echo "has_reviewers=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Reviewers: $REVIEWERS"
+          echo "reviewers=$REVIEWERS" >> $GITHUB_OUTPUT
+          echo "has_reviewers=true" >> $GITHUB_OUTPUT
+
+      - name: Update frontmatter with reviewers
+        if: steps.reviewers.outputs.has_reviewers == 'true'
+        run: |
+          IFS=',' read -ra NEW_REVIEWERS <<< "${{ steps.reviewers.outputs.reviewers }}"
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            [ ! -f "$file" ] && continue
+
+            echo "Processing: $file"
+
+            # Check if file has YAML frontmatter
+            if ! head -1 "$file" | grep -q '^---'; then
+              echo "  Skipping: no frontmatter"
+              continue
+            fi
+
+            # Extract existing reviewers if any
+            EXISTING=$(sed -n '/^---$/,/^---$/{ /^reviewed-by:/{ s/^reviewed-by: *\[//; s/\] *$//; s/, */ /g; p; } }' "$file")
+
+            # Build combined unique reviewer list
+            declare -A SEEN
+            COMBINED=()
+            for r in $EXISTING; do
+              r=$(echo "$r" | tr -d ' ')
+              [ -z "$r" ] && continue
+              if [ -z "${SEEN[$r]+x}" ]; then
+                SEEN[$r]=1
+                COMBINED+=("$r")
+              fi
+            done
+            for r in "${NEW_REVIEWERS[@]}"; do
+              r=$(echo "$r" | tr -d ' ')
+              [ -z "$r" ] && continue
+              if [ -z "${SEEN[$r]+x}" ]; then
+                SEEN[$r]=1
+                COMBINED+=("$r")
+              fi
+            done
+            unset SEEN
+
+            if [ ${#COMBINED[@]} -eq 0 ]; then
+              echo "  No reviewers to add"
+              continue
+            fi
+
+            # Format as YAML list
+            REVIEWER_YAML="reviewed-by: [$(IFS=', '; echo "${COMBINED[*]}")]"
+            echo "  Setting: $REVIEWER_YAML"
+
+            # Remove existing reviewers line if present, then add before closing ---
+            if grep -q '^reviewed-by:' "$file"; then
+              sed -i '/^reviewed-by:/d' "$file"
+            fi
+
+            # Insert reviewers line before the closing --- of frontmatter
+            sed -i "0,/^---$/! { /^---$/i\\
+$REVIEWER_YAML
+            }" "$file"
+
+          done <<< "${{ steps.changed.outputs.files }}"
+
+      - name: Commit and push
+        if: steps.reviewers.outputs.has_reviewers == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add _posts/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add PR reviewers to post frontmatter [skip ci]"
+            git push
+            echo "Committed and pushed reviewer updates"
+          fi
