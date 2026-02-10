@@ -37,24 +37,9 @@ layout: default
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/tree/master/{{ page.path }}">Improve
         this post</a> • <a
         href="https://github.com/{{ site.github_username }}/{{ site.github_repository }}/commits/master/{{ page.path }}">Changelog</a>{% if page.reviewed-by %} • <span class="post-reviewers">Reviewed by:&nbsp;<span class="reviewer-stack">{% for reviewer in page.reviewed-by %}<a class="reviewer-link" href="https://github.com/{{ reviewer }}" title="@{{ reviewer }}"><img class="reviewer-avatar" src="https://github.com/{{ reviewer }}.png?size=40" alt="@{{ reviewer }}" width="24" height="24" loading="lazy" /></a>{% endfor %}</span></span>{% endif %}
-      {% if page.series %}
-      {% assign pages_with_same_series = site.pages | where: 'series',page.series %}
-        {% if pages_with_same_series and pages_with_same_series.size > 0 %}
-        {% assign series_page = pages_with_same_series[0] %}
-        <br />
-        Series: <a href="/series/{{ series_page.series | prepend: site.baseurl }}">{{ series_page.title }}</a>
-        {% endif %}
-      {% endif %}
     </p>
-    {% if page.tags %}
-    <p class="post-meta post-tags">Tags:&nbsp;
-      {% for tag in page.tags %}
-        {% assign tag_pages = site.tags | where: 'tag',tag %}
-        {% if tag_pages and tag_pages.size > 0 %}
-          {% assign tag_page = tag_pages[0] %}
-          <a href="{{ tag_page.url | prepend: site.baseurl }}"><nobr>{{ tag_page.title }}</nobr></a>{% if forloop.last == false %},&nbsp;{% endif %}
-        {% endif %}
-      {% endfor %}
+    {% if page.series or page.tags %}
+    <p class="post-meta">{% if page.series %}{% assign pages_with_same_series = site.pages | where: 'series',page.series %}{% if pages_with_same_series and pages_with_same_series.size > 0 %}{% assign series_page = pages_with_same_series[0] %}Series: <a href="/series/{{ series_page.series | prepend: site.baseurl }}">{{ series_page.title }}</a>{% endif %}{% endif %}{% if page.series and page.tags %} • {% endif %}{% if page.tags %}Tags:&nbsp;{% for tag in page.tags %}{% assign tag_pages = site.tags | where: 'tag',tag %}{% if tag_pages and tag_pages.size > 0 %}{% assign tag_page = tag_pages[0] %}<a href="{{ tag_page.url | prepend: site.baseurl }}"><nobr>{{ tag_page.title }}</nobr></a>{% if forloop.last == false %},&nbsp;{% endif %}{% endif %}{% endfor %}{% endif %}
     </p>
     {% endif %}
     <hr class="h-splitter" />
