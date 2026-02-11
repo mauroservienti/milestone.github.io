@@ -22,12 +22,12 @@ layout: default
     {% if page.header_image %}
     <picture>
       <source srcset="{{ page.header_image | replace: '.jpg', '.webp' | replace: '.png', '.webp' | prepend: site.baseurl }}" type="image/webp">
-      <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
+      <img class="img-fluid w-100 rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ page.header_image | prepend: site.baseurl }}" />
     </picture>
     {% else %}
     <picture>
       <source srcset="{{ '/img/posts/default-header.webp' | prepend: site.baseurl }}" type="image/webp">
-      <img class="img-fluid rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ '/img/posts/default-header.jpg' | prepend: site.baseurl }}" />
+      <img class="img-fluid w-100 rounded" width="1200" height="630" alt="{{ page.title }} header image" src="{{ '/img/posts/default-header.jpg' | prepend: site.baseurl }}" />
     </picture>
     {% endif %}
     <h1 class="post-title">{{ page.title }}</h1>
