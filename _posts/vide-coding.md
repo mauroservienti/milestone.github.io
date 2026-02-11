@@ -20,11 +20,11 @@ Are LLM and AI the doomsday? In a sense, yes, they are. At least in software dev
 
 ![A vibe-coding meme](/img/posts/vibe-coding/vibe-coding-meme.png){:class="img-fluid mx-auto d-block"}
 
-If you have not lived under a stone for the last couple of years, you should probably know that there is a group of people, not small, that believes we, software engineers, are all toast and destined to disappear because of AI. LLMs are so great at writing software that the no-code movement will take over, and with the help of LLMs, it’ll make software engineering a relic from the past.
+If you haven't been living under a stone for the last couple of years, you should probably know that there is a group of people, not small, that believes we, software engineers, are all toast and destined to disappear because of AI. LLMs are so great at writing software that the no-code movement will take over, and with the help of LLMs, it’ll make software engineering a relic from the past.
 
 Effectively, my LinkedIn feed is full of people, quite annoying to be honest, claiming that using AI, they’re producing software like never before, without even knowing what software engineering is.
 
-## I wanted to see it with my eyes
+## I wanted to see it with my own eyes
 
 And thanks to a decently serious race bike crash—I tried to prove that doing a 360 and landing with a leg on the concrete edge of the sidewalk would have broken the edge, not the leg—I had some downtime. Luckily, I did not break a leg or the edge of the sidewalk, but I managed to injure myself seriously enough not to be able to walk for about ten days. All that forced me to the couch for a couple of weeks and allowed me to experiment a bit with something I'd wanted to try for a while: vibe-coding (as the cool kids say… I’m not cool and not a kid anymore). Before diving into my journey, from the initial crappy experience to the juice, let me quickly mention a couple of things.
 
@@ -44,7 +44,7 @@ Let me give you an example: If you’re reading this article directly on my webs
 Dark mode has been one of my long-standing wishes, but to get to it, there were a couple of blockers:
 
 - Upgrade Bootstrap to the latest version
-- Find a replacement for the not-anymore-supported carousel-like component running on the home page
+- Find a replacement for the no-longer-supported carousel-like component running on the home page
 
 Those were the typical steps for a side project like a blog, so daunting that I never had the energy to look at them, especially when the only time you can work on them is Sunday morning, when everyone else is still sleeping.
 
@@ -163,7 +163,7 @@ I have no idea what the problem was. When the credit was restored, Claude conclu
 
 This is the turning point. You must be a software engineer; you need that experience.
 
-I went myself to the LocalStack documentation on configuring the AWS API Gateway and _not so kindly_ (when the judgment day comes, they’ll look for me, I know), suggested Claude read that link. It did it and finally correctly configured the Gateway. The front-end was still not working, as expected, because I knew what the other thing the LLM completely missed: CORS was. But before I could instruct it to reconfigure the Gateway with CORS support, I ran out of credits. The LLM was, reasonably, unable to understand that the front-end and back-end were running on different hosts.
+I went myself to the LocalStack documentation on configuring the AWS API Gateway and _not so kindly_ (when the judgment day comes, they’ll look for me, I know), suggested Claude read that link. It did it and finally correctly configured the Gateway. The front-end was still not working, as expected, because I knew what the other thing the LLM completely missed: CORS. But before I could instruct it to reconfigure the Gateway with CORS support, I ran out of credits. The LLM was, reasonably, unable to understand that the front-end and back-end were running on different hosts.
 
 I then made the mistake of looking at the DynamoDB schema that had been created. In production, that crap would have melted my credit card (not my tokens/credits this time) in the blink of an eye. It was using table scans in so many places that I had to ask the LLM to go back to the drawing board and gently instruct it about what design to apply where. The only good thing was that the LLM automatically updated the bash scripts to seed the data and the corresponding Lambda functions upon changing the table schema for a specific entity.
 
@@ -202,7 +202,7 @@ I’m drawing several conclusions from this experience, which, by the way, is fa
 
 The most important thing is that I’m not sure where people are drawing the conclusion that our jobs are toast. Without an experienced software engineer with management capabilities and good business analysis and knowledge, the LLM remains a wonderful parrot. My concern is that whoever enters this industry today will have a hard time building the experience needed to manage AI and achieve their goals.
 
-Along that line, the AI models' condescending nature is concerning. Whatever you say, the LLM makes you feel the best and that you're always right, and that's not great; it's the opposite, especially if you’re lacking the experience to challenge those answers. It’s dangerous. Challenge the LLM and ask to be challenged (yes, it works) are critical aspects of the human-to-AI relationship. But again, you need that long-term software engineering experience to do that.
+Along that line, the AI models' condescending nature is concerning. Whatever you say, the LLM makes you feel the best and that you're always right, and that's not great; it's the opposite, especially if you’re lacking the experience to challenge those answers. It’s dangerous. Challenging the LLM and asking to be challenged (yes, it works) are critical aspects of the human-to-AI relationship. But again, you need that long-term software engineering experience to do that.
 
 ### The art of the prompt
 
