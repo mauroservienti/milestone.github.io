@@ -60,7 +60,7 @@ I then left to bring the little one to one of those incredibly boring kids' birt
 When I got back home, I decided to quickly check [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/?url=https%3A%2F%2Fmilestone.topics.it%2F) for this website. Once the report was ready, I took screenshots of the desktop and mobile results and uploaded them to Claude Code. It prepared a plan, asked me for confirmation, and did the following:
 
 - Searched all the images that require optimizations
-- Resized and compressed all af them
+- Resized and compressed all of them
 - Created a webp version for each one
 - Updated the various HTML layouts to use the webp version and fall back to regular images when needed
 
