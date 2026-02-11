@@ -3,7 +3,7 @@ layout: post
 title: "I tried vibe-coding. It’s cool, indeed, but is it doomsday?"
 author: Mauro Servienti
 synopsis: "Is AI going to replace software engineers? I decided to road-test it with a real-life coding challenge: build an application from scratch using a technology I barely knew. The goal? Understand if all those claims about the programmer's doomsday have some foundation."
-header_image: /img/posts/vide-coding/header.jpg
+header_image: /img/posts/vibe-coding/header.jpg
 tags:
 - ai
 - integration-testing
@@ -18,7 +18,7 @@ Are LLM and AI the doomsday? In a sense, yes, they are. At least in software dev
 
 ## What’s vibe-coding?
 
-![A vibe-coding meme](/img/posts/vide-coding/vide-coding-meme.png){:class="img-fluid mx-auto d-block"}
+![A vibe-coding meme](/img/posts/vibe-coding/vibe-coding-meme.png){:class="img-fluid mx-auto d-block"}
 
 If you have not lived under a stone for the last couple of years, you should probably know that there is a group of people, not small, that believes we, software engineers, are all toast and destined to disappear because of AI. LLMs are so great at writing software that the no-code movement will take over, and with the help of LLMs, it’ll make software engineering a relic from the past.
 
@@ -105,7 +105,7 @@ Straightforward, not incredibly complex, but with a lot of moving parts. Could I
 
 It worked for ages, using up all my credit on the first day of vibe-coding. The result? It did not even compile. The problem was sort of trivial: package dependencies were messed up, causing all sorts of compilation issues. The thing is, the LLM was stuck in a loop, trying to update the code and change the dependencies simultaneously. It was updating the code to reflect the current dependencies, but changing the dependencies was making the updated code invalid again...
 
-Remember, I knew what the problem was, but I was acting like a cool kid vide-coding. I pretended I knew nothing. After the first credit exhaustion and waiting and waiting, what I had was:
+Remember, I knew what the problem was, but I was acting like a cool kid vibe-coding. I pretended I knew nothing. After the first credit exhaustion and waiting and waiting, what I had was:
 
 - A set of projects:
   - A Vue.js application (I have not yet touched)
@@ -208,7 +208,7 @@ Along that line, the AI models' condescending nature is concerning. Whatever you
 
 By taking the wrong path first, I realized that when the LLM gets caught in a chicken-and-egg problem, asking it to explain the problem is like asking a rubber duck for help. That’s why I have two of them ;-)
 
-![My rubber ducks](/img/posts/vide-coding/ducks.jpeg){:class="img-fluid mx-auto d-block"}
+![My rubber ducks](/img/posts/vibe-coding/ducks.jpeg){:class="img-fluid mx-auto d-block"}
 
 I also understood that open-ended prompts are the worst. Always provide a prompt with a clear definition of done; without that, the LLM never asks for clarifications and goes directly into the abyss. In line with this, each task must be as small as possible and well-structured, which raises an interesting question: How can I achieve project completion by providing only small, precise tasks, without becoming a micro-manager?
 
