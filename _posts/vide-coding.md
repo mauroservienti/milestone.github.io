@@ -14,7 +14,7 @@ tags:
 
 Are LLM and AI the doomsday? In a sense, yes, they are. At least in software development, which is my field of expertise, they look like a revolution. I can probably summarize it with, “Code is dead, long live coders.” Or if you prefer, English is the new programming language.
 
-> For this article, I’m referring to the use of AI and LLM in the context of software development, and not, for example, in the context of medicine development or hospital test analyses, [where things are anyway not so (yet?) great as generally pictured](https://worksinprogress.co/issue/the-algorithm-will-see-you-now/).
+> For this article, I’m referring to the use of AI and LLM in the context of software development, and not, for example, in the context of medicine development or hospital test analyses, [where things are anyway not (yet?) so great as generally pictured](https://worksinprogress.co/issue/the-algorithm-will-see-you-now/).
 
 ## What’s vibe-coding?
 
