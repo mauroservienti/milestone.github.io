@@ -8,6 +8,8 @@ tags:
 - viewmodel-composition
 series: view-model-composition
 reviewed-by: [kbaley]
+update_date: 2026-02-13
+update_note: "Update the contract-less composition handler snippets to reflect the new API requiring the CompositionHandler attribute to inprove the surce generator performance."
 ---
 
 Look at this beauty:
@@ -64,6 +66,8 @@ For example, given a user-defined contract-less handler like the following:
 
 ```csharp
 namespace Snippets.Contractless.CompositionHandlers;
+
+[CompositionHandler]
 class SampleCompositionHandler
 {
     [HttpGet("/sample/{id}")]
@@ -132,7 +136,7 @@ In a recent release of the `Microsoft.CodeAnalysis.Analyzers` package, the .NET 
 
 Last but not least, there are some pending design decisions. For example, the interface approach gives immediate access to the HTTP request, context, and surrounding properties. The contract-less approach makes it more difficult, requiring users to opt-in to the HTTP context accessor, register it in the IoC container, and add a dependency.
 
-It’s not the end of the world, but are there better options? Sure thing. For example, ServiceComposer contract-less request handlers could support the `[FromServices]` to make the design even more in line with ASP or support a convention-based approach. If the handler has a non-private HttpContex property, the source generator will emit code to set it.
+It’s not the end of the world, but are there better options? Sure thing. For example, ServiceComposer contract-less request handlers could support the `[FromServices]` to make the design even more in line with ASP or support a convention-based approach. Alternatively, if the handler has a non-private `HttpContext` property, the source generator will emit code to set it.
 
 It's critical to mention that `4.2.0.-alpha.1` includes no other changes. That means it's safe to update, as all existing functionalities remain unchanged. Using the new syntax to define contract-less composition request handlers is opt-in.
 
