@@ -9,6 +9,7 @@ tags:
 - integration-testing
 - testing
 - ai
+reviewed-by: [kbaley,mauroservienti]
 ---
 
 Without my trusted [Claude Code](https://claude.com/product/claude-code), this would have never seen the light. Not because I couldn't do it myself, but because I lack the time to focus enough on my side projects to get them anywhere.
