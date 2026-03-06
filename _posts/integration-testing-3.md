@@ -2,7 +2,7 @@
 layout: post
 title: "NServiceBus.IntegrationTesting 3 — A new container-based architecture"
 author: Mauro Servienti
-synopsis: "AI is the great enabler. I've doing so many things I always wanted to do but never found the time. This time, it's a new version of the NServiceBus.IntegrationTesting framework removing all the limitations of the previous versions by introducing a container-based hosting architecture, providing full endpoint-under-test isolation."
+synopsis: "AI is the great enabler. I've been doing so many things I always wanted to do but never found the time. This time, it's a new version of the NServiceBus.IntegrationTesting framework removing all the limitations of the previous versions by introducing a container-based hosting architecture, providing full endpoint-under-test isolation."
 enable_mermaid: true
 header_image: /img/posts/integration-testing-3/header.jpg
 tags:
@@ -14,6 +14,8 @@ tags:
 Without my trusted [Claude Code](https://claude.com/product/claude-code), this would have never seen the light. Not because I couldn't do it myself, but because I lack the time to focus enough on my side projects to get them anywhere.
 
 I released version [3.0.0-beta](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/releases/) of the [NServiceBus.IntegrationTesting](https://github.com/mauroservienti/NServiceBus.IntegrationTesting) framework, and I finally crafted what I wanted from day one.
+
+Integration tests for NServiceBus endpoints let you verify real message flows against a real broker and real persistence. It exercises the full stack of the production endpoints with little to no compromises.
 
 > For an introduction about what I was trying to achieve when I started, you can read [Exploring NServiceBus Integration testing options](https://milestone.topics.it/2019/07/04/exploring-nservicebus-integration-testing-options.html) and [NServiceBus.IntegrationTesting baby steps](https://milestone.topics.it/2021/04/07/nservicebus-integrationtesting-baby-steps.html)
 
@@ -28,7 +30,7 @@ graph TD
  TestHost["Test process<br/>TestHostServer (gRPC, dynamic port)"]
 
  SampleEndpoint["SampleEndpoint<br/>NSB 10 / .NET 10<br/>container"]
- AnotherEndpoint["AnotherEndpoint<br/>NSB 9 / .NET 9<br/>container"]
+ AnotherEndpoint["AnotherEndpoint<br/>NSB 9 / .NET 8<br/>container"]
 
  RabbitMQ["RabbitMQ container (message broker)"]
  PostgreSQL["PostgreSQL container (Sagas storage)"]
@@ -56,7 +58,7 @@ In a nutshell, maybe in a coconut shell ;-P:
   - Executes one or more scenarios
   - Hosts a gRPC agent to capture and share with the test process what happens
 
-Here is what a test looks like:
+Here is what the test side looks like end to end:
 
 ```csharp
 [TestFixture]
@@ -69,12 +71,8 @@ public class WhenSomeCommandIsSent
  [OneTimeSetUp]
     public static async Task SetUp()
  {
- // Point to the directory that contains the endpoint sub-directories.
- // Typically, this is the 'src/' folder of your repository.
-        var srcDir = Path.Combine(FindRepoRoot(), "src");
-
  _env = await new TestEnvironmentBuilder()
- .WithDockerfileDirectory(srcDir)
+ .WithDockerfileDirectory(TestEnvironmentBuilder.FindRootByDirectory(".git", "src"))
  .UseRabbitMQ()
  .UsePostgreSql()
  .AddEndpoint("YourEndpoint", "YourEndpoint.Testing/Dockerfile")
