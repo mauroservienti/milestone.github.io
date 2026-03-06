@@ -45,9 +45,7 @@ graph TD
 
 > The [getting started documentation](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/blob/master/docs/getting-started.md) covers all the details.
 
-In a nutshell, maybe in a coconut shell ;-P:
-
-- The test process:
+In a nutshell (well, maybe in a coconut shell ;-P), the test process:
   - Hosts a gRPC server
   - Builds and starts the required containers
   - Kicks off the scenario to test
@@ -151,7 +149,7 @@ Once the test completes, you can proceed with assertions, as usual.
 
 ### What's the correlationId?
 
-Tests can run in parallel; in such a case, endpoints might be processing messages from multiple tests. The correlationId, generated when the scenario is kicked off, is automatically stamped on all messages and allows the framework to observe only messages belonging to a specific test.
+Tests can run in parallel. In this case, endpoints might be processing messages from multiple tests. The correlationId, generated when the scenario is kicked off, is automatically stamped on all messages and allows the framework to observe only messages belonging to a specific test.
 
 The above test example uses the `NonParallelizable` attribute, though. We want that because, as written, running tests in parallel would cause them to compete for creating the infrastructure.
 
