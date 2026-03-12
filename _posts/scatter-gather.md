@@ -12,7 +12,7 @@ series: view-model-composition
 
 Starting [version 5.1.0](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/5.1.0), ServiceComposer natively supports [scatter/gather](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/scatter-gather.md) scenarios. Scatter/gather is supported through a fanout approach. Given an incoming HTTP request, ServiceComposer will issue HTTP requests to fetch data from downstream endpoints. Once all data has been retrieved, it is composed and returned to the original upstream caller.
 
-The following configuration configures a scatter/gather endpoint:
+The following snippet configures a scatter/gather endpoint:
 
 ```cs
 public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
@@ -59,7 +59,7 @@ The same approach can be used to customize the downstream URL before it is invok
 
 ## Data format
 
-ServiceComposer scatter/gather support works with JSON data by default. Gatherers must return an `IEnumerable<JsonNode>`. By default, gatherers assume that the downstream endpoint [results can be converted into a `JsonArray`](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/scatter-gather.md#data-format). With some configuration and customization, it's possible to support downstream endpoints using separate formats.
+ServiceComposer scatter/gather support works with JSON data by default. Gatherers must return an `IEnumerable<JsonNode>`. By default, gatherers assume that the downstream endpoint [results can be converted into a `JsonArray`](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/scatter-gather.md#data-format). With some configuration and customization, it's possible to support downstream endpoints using other formats.
 
 ### Transforming returned data
 
@@ -99,7 +99,7 @@ public class CustomGatherer : Gatherer
 
 ## Conclusion
 
-ServiceComposer had always supported scatter/gather, but without a proper feature, it required excessive manual, repetitive configuration, which made no sense at all. The new feature brings everything together, streamlining the approach with a lean, straightforward configuration-first approach that also supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration).
+ServiceComposer always supported scatter/gather, but without a proper feature, it required excessive manual, repetitive configuration, which made no sense at all. The new feature brings everything together, streamlining the approach with a lean, straightforward configuration-first approach that also supports [Microsoft.Extensions.Configuration](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration).
 
 ---
 
