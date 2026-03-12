@@ -8,6 +8,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+reviewed-by: [kbaley]
 ---
 
 Starting [version 5.1.0](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/5.1.0), ServiceComposer natively supports [scatter/gather](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/scatter-gather.md) scenarios. Scatter/gather is supported through a fanout approach. Given an incoming HTTP request, ServiceComposer will issue HTTP requests to fetch data from downstream endpoints. Once all data has been retrieved, it is composed and returned to the original upstream caller.
