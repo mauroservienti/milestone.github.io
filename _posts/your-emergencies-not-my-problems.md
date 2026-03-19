@@ -2,7 +2,7 @@
 layout: post
 title: "I'm sorry. Your emergencies are not my problems, at least not now"
 author: Mauro Servienti
-synopsis: "We might be finding ourselves in a viscious loop, our productivity is a disaster, we're putting in more and more ours, but things get even worse. Maybe we're not the problem."
+synopsis: "We might be finding ourselves in a vicious loop, our productivity is a disaster, we're putting in more and more hours, but things get even worse. Maybe we're not the problem."
 header_image: /img/posts/your-emergencies-not-my-problems/header.jpg
 tags:
 - self-organization
@@ -26,7 +26,7 @@ The essence here is to assume that disruptions will happen, so that we can [prep
 
 **Do not overload your schedule**: If the plan is too tight, a grain of sand in the gears will block the engine. If we have back-to-back meetings, a five-minute delay will ripple off and cause everything to fall apart, annoy people, and probably result in an hour-long delay at the end of the day. It's like traffic on a highway: the more cars, the more likely it is that someone slowing down a bit 10 kilometers ahead of you will bring you to a halt. _Leave some time between meetings and planned activities_; everyone needs a bio-break or time to make coffee.
 
-Every day in my calendar, there is at least one **"Inbox and ToDos" 15-minute slot**: When the time comes, I look at the unplanned. It could be a new email, a review request on a pull request, or a Slack ping. The rule is: if I can get the thing done in 15 minutes, I'll do; otherwise, I'll schedule it. The sender might not be happy with it, and that's what I want: a conversation to understand why their emergencies should become my problems.
+Every day in my calendar, there is at least one **"Inbox and ToDos" 15-minute slot**: When the time comes, I look at the unplanned. It could be a new email, a review request on a pull request, or a Slack ping. The rule is: if I can get the thing done in 15 minutes, I'll do it; otherwise, I'll schedule it. The sender might not be happy with it, and that's what I want: a conversation to understand why their emergencies should become my problems.
 
 ## Be explicit: Distinguish what you can move from what you cannot
 
