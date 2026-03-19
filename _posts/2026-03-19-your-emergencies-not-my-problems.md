@@ -8,6 +8,7 @@ tags:
 - self-organization
 - remote-work
 - time-management
+reviewed-by: [kbaley,mauroservienti]
 ---
 
 When working with various people, we need to protect our schedule. We planned for something, and we want to stick to the plan as much as possible.
