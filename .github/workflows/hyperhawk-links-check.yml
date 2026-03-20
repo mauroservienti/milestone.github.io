@@ -1,0 +1,21 @@
+name: Hyperhawk
+
+on:
+  workflow_dispatch: 
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 1'   # every Monday at midnight
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dvdstelt/hyperhawk@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
