@@ -6,7 +6,7 @@ tags:
 - radical
 ---
 
-We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RTW version of [Radical](https://github.com/RadicalFx/Radical) `Democracy`.
+We have just released ([also on NuGet](https://www.nuget.org/profiles/radical)) the RTW version of [Radical](https://github.com/RadicalFx/Radical) `Democracy`.
 
 ### Highlights
 

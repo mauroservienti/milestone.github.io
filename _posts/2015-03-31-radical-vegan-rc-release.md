@@ -8,7 +8,7 @@ tags:
 blogger_orig_url: http://milestone.topics.it/2015/03/radical-vegan-rc-release.html
 ---
 
-We have just released ([also on NuGet](http://www.nuget.org/profiles/radical)) the RC version of [Radical](https://github.com/RadicalFx/Radical) “Vegan”.
+We have just released ([also on NuGet](https://www.nuget.org/profiles/radical)) the RC version of [Radical](https://github.com/RadicalFx/Radical) “Vegan”.
 
 ### Highlights
 
