@@ -2,7 +2,7 @@
 layout: event
 header_image: /img/events/xe-one-day-2026/header.jpg
 status: 'upcoming'
-title: "Xe One Day - EnterpriHappy Birthday 20th - Architettura del Software"
+title: "Xe One Day - Happy Birthday 20th - Architettura del Software"
 location: "Belstay Venezia Mestre"
 language: "Italian"
 eventurl: "https://www.xedotnet.org/eventi/oneday2026/"
