@@ -22,7 +22,7 @@ builder.Services.AddOpenTelemetry()
        .AddSource("ServiceComposer.AspNetCore.ScatterGather"));
 ```
 
-Each `ICompositionRequestsHandler` execution produces a child span of the ASP.NET Core HTTP server span. When a handler raises an event via `context.RaiseEvent<TEvent>()`, the event handling produces a child span of the raising handler's span. When a handler or event handler throws, the span sets `ActivityStatusCode.Error`, adds tags, and an exception span event following the [OTel exception conventions](https://opentelemetry.io/docs/reference/specification/trace/semantic_conventions/exceptions/).
+Each `ICompositionRequestsHandler` execution produces a child span of the ASP.NET Core HTTP server span. When a handler raises an event via `context.RaiseEvent<TEvent>()`, the event handling produces a child span of the raising handler's span. When a handler or event handler throws, the span sets `ActivityStatusCode.Error`, adds tags, and an exception span event following the [OTel exception conventions](https://opentelemetry.io/docs/specs/semconv/general/trace/).
 
 On a smaller scale, when using [scatter/gather](https://milestone.topics.it/2026/03/12/scatter-gather.html), each `IGatherer` execution produces a child span of the ASP.NET Core HTTP server span. When a gatherer throws, the span sets `ActivityStatusCode.Error` with the same `otel.status_code`, `otel.status_description` tags, and exception span event as the composition process does.
 
