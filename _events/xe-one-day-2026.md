@@ -1,7 +1,7 @@
 ---
 layout: event
 header_image: /img/events/xe-one-day-2026/header.jpg
-status: 'upcoming'
+status: 'completed'
 title: "Xe One Day - Happy Birthday 20th - Architettura del Software"
 location: "Belstay Venezia Mestre"
 language: "Italian"
@@ -13,6 +13,7 @@ sessions:
   speakers:
   - name: "Mauro Servienti"
     profileurl: https://milestone.topics.it/about-me/
+  slides: https://1drv.ms/b/c/e5479799f933c3ed/IQDzeOemgFJTTK6i88lXdstgAfg3alrSPH5dbmhBM51UBEI?e=zRUert
 tags:
 - Microservices
 - Sagas
