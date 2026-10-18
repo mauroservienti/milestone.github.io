@@ -6,4 +6,4 @@
 - [ ] Header image credits
 - [ ] Review
 - [ ] Rename file and path to match publish date
-- [ ] Buffer content 
+- [ ] Schedule post on LinkedIn 
