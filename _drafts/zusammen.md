@@ -17,7 +17,7 @@ I built [Zusammen](https://github.com/mauroservienti/Zusammen). It means "togeth
 
 I built it with [Claude Code](https://claude.com/product/claude-code). It was fun. It was also, and this annoys me a bit, surprisingly easy.
 
-And yes, it's real. `npm install @zusammen/core@next`. It's an alpha and I'm a Node.js ignorant, so be gentle :-)
+And yes, it's real. `npm install @zusammen/core@next`. It's an alpha, and I'm a Node.js ignorant, so be gentle :-)
 
 ## Round two
 
@@ -59,22 +59,22 @@ And if the commit takes too long, the control message stores a tombstone. A late
 
 Yes. It sounds dramatic. It's actually a very small thing that solves a nasty problem.
 
-The control message is sent _before_ the commit. That's on purpose. If we sent it after, a crash between the commit and the send would leave committed messages with nobody to dispatch them. The whole point of the safety net is to be there first.
+The control message is sent _before_ the commit. That's on purpose. If we sent it after, a crash between the commit and the send would leave committed messages with nobody to dispatch them. The safety net is meant to be there first.
 
-But that creates a race. The control message can arrive before the commit lands. It looks for the outbox record, and finds nothing. Now what? There are two possibilities:
+But that creates a race. The control message can arrive before the commit lands. It looks for the outbox record and finds nothing. Now what? There are two possibilities:
 
 - The commit is still on its way. It's just slow.
 - The commit will never happen. The process crashed, or the transaction rolled back.
 
-From the outside, the two look exactly the same. No record is no record.
+From the outside, the two look identical. No record is no record.
 
-So the control message waits and checks again, a few times, with growing delays. But it can't wait forever. Sessions that never commit would leave control messages bouncing around for eternity.
+So the control message waits and checks again, a few times, with growing delays. But it can't wait forever. Sessions that never commit would keep control messages bouncing around forever.
 
 At some point, it has to give up. And that's the dangerous moment. Imagine giving up, and then the slow commit lands one second later. The business data is committed. The outgoing messages are in the outbox. The process will try to dispatch them right away, sure. But if that dispatch fails, or the process dies a millisecond after the commit, nobody is coming to rescue them. The safety net already went home. Data without messages: exactly what the outbox was supposed to prevent.
 
 The tombstone closes that gap. When the control message gives up, after the commit window (15 seconds by default), it doesn't just walk away. It writes an empty outbox record with the same session ID, already marked as dispatched. A tombstone: "this session is dead, don't come back."
 
-Now the late commit tries to insert its own outbox record. Same session ID, and that ID is unique. The insert fails, so the whole transaction fails, business data included. The user gets an error. Nothing is half-done.
+Now the late commit tries to insert its own outbox record. Same session ID, and that ID is unique. The insert fails, so the whole transaction fails, including the business data. The user gets an error. Nothing is half-done.
 
 In other words, either the commit wins and its messages are guaranteed to go out, immediately or through the control message, or the tombstone wins and the commit fails. Exactly one of the two. Never both, never neither.
 
@@ -85,7 +85,7 @@ The idea comes straight from the [NServiceBus transactional session](https://doc
 What's in the box:
 
 - The core, MongoDB persistence, and a RabbitMQ transport.
-- Express, Fastify, NestJS, and Hono adapters. They commit before the response is sent, so the client never sees success for a commit that failed.
+- Express, Fastify, NestJS, and Hono adapters. They commit before sending the response, so the client never sees success for a failed commit.
 - Opt-in NServiceBus wire compatibility, plus an optional tiny NuGet package for the receiving side.
 - More than 180 tests, with Testcontainers, and compatibility tests against a real NServiceBus 10 endpoint.
 - Eight npm packages, with provenance and trusted publishing, and one NuGet package.
@@ -104,10 +104,10 @@ From there, it was nine phases. Each one was a branch, and later a pull request.
 
 Being the manager doesn't mean saying "yes" to everything. A few times, the parrot needed a firm hand:
 
-- The processor role: Claude wanted a separate processor, like NServiceBus supports as optional. I explained why it exists in NServiceBus and Zusammen doesn't need it for now. Gone.
+- The processor role: Claude wanted a separate processor, as NServiceBus supports it as optional. I explained why it exists in NServiceBus and Zusammen doesn't need it for now. Gone.
 - The long-running consumer: Claude said processing control messages needs a long-running process. I disagreed. Once the session is committed and the control message is out, the process could die in hell. Another instance picks up the message. Claude agreed, and then overcorrected with a whole handler-and-host abstraction.
 - I asked: on RabbitMQ, isn't monitoring the queue simply the handler's job? It took three messages to land on the obvious design. Typical Monday, but on a Saturday.
-- Resources: Claude happily created queues and collections at startup. In real life, ops people own those. Now it's opt-in, with `createResources: true`. By default, it only checks that everything exists, and fails with the list of what's missing.
+- Resources: Claude happily created queues and collections at startup. In real life, ops people own those. Now it's opt-in, with `createResources: true`. By default, it only checks that everything exists and fails with the list of what's missing.
 - NServiceBus everywhere: At first, NServiceBus compatibility was mandatory. I made it opt-in. RabbitMQ has many requirements, but when SQS comes, things will be more relaxed. No reason to pay that price everywhere.
 
 ## Where it surprised me, in a good way
@@ -150,7 +150,7 @@ On side projects, this is the part nobody does. Here, it got done along the way:
 
 ## So, is it easy now?
 
-Yes. Surprisingly. But only because I knew what I wanted, and I could tell when an answer smelled.
+Yes. Surprisingly. But only because I knew what I wanted and could tell when an answer smelled off.
 
 Compared to the vibe-coding experiment, the difference is huge. No credit-burning loops. No couch, but also no broken leg ;-P. Just a plan, phases, pull requests, tests, and me saying "merge".
 
