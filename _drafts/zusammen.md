@@ -21,7 +21,7 @@ And yes, it's real. `npm install @zusammen/core@next`. It's an alpha, and I'm a 
 
 ## Round two
 
-Last Christmas (stop singing... ;-)), I [tried vibe-coding](/2026/02/11/vibe-coding.html). I had a half-broken leg, a couch, and a credit counter going down like a Ferrari pit stop. The parrot got stuck in loops, I played dumb, and things went sideways. The lesson was clear: stop playing dumb, be the manager.
+Last Christmas (stop singing... ;-)), I [tried vibe-coding](https://milestone.topics.it/2026/02/11/vibe-coding.html). I had a half-broken leg, a couch, and a credit counter going down like a Ferrari pit stop. The parrot got stuck in loops, I played dumb, and things went sideways. The lesson was clear: stop playing dumb, be the manager.
 
 So this time, I did exactly that. The rule stayed the same, though: a technology I know nothing about. Node.js, TypeScript tooling, pnpm, ES modules, npm publishing. I know what a `package.json` is. That's it. That's the list. What I do know is the problem space. Messaging, the outbox, NServiceBus. I could judge the "what". I couldn't judge the "how".
 
@@ -33,7 +33,7 @@ The problem fits in one sentence:
 
 > A web request stores an order and publishes an `OrderPlaced` event.
 
-Two operations, two infrastructure pieces, one crash away from a ghost message or a zombie record. I already wrote about [what an outbox is and why we need it](/2023/02/07/outbox-what-and-why.html), so I won't bore you twice.
+Two operations, two infrastructure pieces, one crash away from a ghost message or a zombie record. I already wrote about [what an outbox is and why we need it](https://milestone.topics.it/2023/02/07/outbox-what-and-why.html), so I won't bore you twice.
 
 This is what it looks like in Node.js:
 
