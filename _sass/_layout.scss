@@ -47,6 +47,20 @@
 		margin-left: 0px;
 		margin-right: 0px;
 	}
+
+	// Keep the layout readable on very large screens
+	@media screen and (min-width: $break-max-width) {
+		max-width: $max-content-width;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+// Prevent header images from taking over the viewport on large screens
+.home .card-img-top,
+.post-header img {
+	max-height: 50vh;
+	object-fit: cover;
 }
 
 .home{
@@ -76,6 +90,12 @@
 	margin-bottom: 20px;
 	margin-left: 5%;
 	margin-right: 5%;
+
+	@media screen and (min-width: $break-max-width) {
+		max-width: $max-content-width;
+		margin-left: auto;
+		margin-right: auto;
+	}
 
 	border-top-style: solid;
 	border-top-width: 1px;
