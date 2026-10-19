@@ -56,6 +56,14 @@
 	}
 }
 
+// Align the navbar items with the content on very large screens
+.navbar {
+	@media screen and (min-width: $break-max-width) {
+		padding-left: calc((100% - #{$max-content-width}) / 2) !important;
+		padding-right: calc((100% - #{$max-content-width}) / 2) !important;
+	}
+}
+
 // Prevent header images from taking over the viewport on large screens
 .home .card-img-top,
 .post-header img {
