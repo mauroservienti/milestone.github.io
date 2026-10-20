@@ -154,7 +154,7 @@ Yes. Surprisingly. But only because I knew what I wanted and could tell when an 
 
 Compared to the vibe-coding experiment, the difference is huge. No credit-burning loops. No couch, but also no broken leg ;-P. Just a plan, phases, pull requests, tests, and me saying "merge".
 
-Knowing the domain beats knowing the language. I still can't tell you how pnpm resolves workspace dependencies. I didn't need to. Should I learn it? Probably. Magari later.
+Knowing the domain beats knowing the language. I still can't tell you how pnpm resolves workspace dependencies. I didn't need to. Should I learn it? Probably. Maybe later.
 
 What's next? Receiving and handling incoming messages, with an inbox. That would make Zusammen an NServiceBus implementation for Node.js. Then Azure Service Bus, SQS and SNS, PostgreSQL, MySQL, and SQL Server. The issues are open. Contributions are welcome, from humans and parrots alike.
 
