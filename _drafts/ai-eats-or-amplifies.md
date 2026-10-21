@@ -108,7 +108,7 @@ I see a few shifts.
 
 So, will AI eat our jobs, or multiply them? Yes.
 
-AI eats tasks, not jobs. At least not all of them. It eats the typing. It doesn't eat, not yet, the understanding and the accountability.
+AI eats tasks, not jobs. At least not all of them. It eats the typing. It can't eat understanding and accountability. (At least, not yet.)
 
 Output capacity explodes. But the constraint moves to deciding, reviewing, and operating. Ten times the code doesn't mean ten times the value.
 
