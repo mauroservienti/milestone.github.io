@@ -48,7 +48,7 @@ Is AI just the next step on that ladder? Or is it a different kind of step? I'd 
 
 Let me use my own numbers.
 
-Recently, I built [Zusammen](https://github.com/mauroservienti/Zusammen), a [transactional session library for Node.js](https://milestone.topics.it/~~date~~/zusammen.html), over a weekend. <!-- TODO: link to the Zusammen post once published --> Eight npm packages, one NuGet package, more than 180 tests, documentation, samples, CI, and automated releases. In a stack I don't know. Ten years ago, that would have taken weeks. Maybe months.
+Recently, I built [Zusammen](https://github.com/mauroservienti/Zusammen), a [transactional session library for Node.js](https://milestone.topics.it/2026/10/21/zusammen.html), over a weekend. <!-- TODO: link to the Zusammen post once published --> Eight npm packages, one NuGet package, more than 180 tests, documentation, samples, CI, and automated releases. In a stack I don't know. Ten years ago, that would have taken weeks. Maybe months.
 
 So yes, the output is real. The second story isn't wrong.
 
