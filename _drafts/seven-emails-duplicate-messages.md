@@ -9,7 +9,7 @@ tags:
 - distributed-systems
 ---
 
-Whenever I discuss the possibility of duplicate messages with people new to distributed systems, the usual reaction is that it's more of a theoretical scenario than something that happens regularly. "Sure, in theory. But how often can it really happen?"
+Whenever I discuss duplicate messages with people new to distributed systems, the usual reaction is that it's more theoretical than common. "Sure, in theory. But how often can it really happen?"
 
 Often enough to land in my inbox.
 
@@ -17,13 +17,13 @@ Often enough to land in my inbox.
 
 The above screenshot is from my inbox. I'm a bike rider, and a couple of years ago, I bought a new pair of Favero power meters. For those unfamiliar, they look like regular MTB pedals, but they measure the power your legs generate while pedaling, along with several other, more or less interesting metrics. Enough said about bike pedals with power meters.
 
-What matters is what happened after the order. I received seven emails, one every few minutes, all related to the same shipment. On the surface, all emails were identical. Examining the SMTP headers, it was clear that they were different messages, sent one after the other.
+What matters is what happened after the order. I received seven emails, one every few minutes, all related to the same shipment. On the surface, they all looked identical. Examining the SMTP headers made it clear they were different messages, sent one after the other.
 
 Nothing terrible happened. I got slightly annoyed, archived six emails, and moved on. However, replace "send a shipping notification" with "charge a credit card" or "ship a pair of pedals", and the conversation changes.
 
 ## What's a duplicate message?
 
-In the distributed systems world, a duplicate message is a message that is sent, received, or processed more than once. Or all of that at the same time.
+In distributed systems, a duplicate message is one that is sent, received, or processed more than once. Or all of that at once.
 
 The distinction matters because each scenario has different causes and different remedies. Let's analyze them.
 
@@ -33,47 +33,47 @@ A sender might be sending the same message multiple times. In this scenario, two
 
 ### The trigger is processed more than once
 
-The sender processes the same trigger more than once, and the result is duplicate messages with different message identifiers.
+The sender processes the same trigger more than once, resulting in duplicate messages with different message identifiers.
 
 That might be cryptic; let's use an example to clarify.
 
-A web application processes an HTTP request that should result in sending a message. The web application sends the message, but then fails to respond to the HTTP client. Maybe the process crashes, maybe a load balancer times out, or maybe the network drops the response. From the client's perspective, the request failed, so it retries. The web application processes the request once more and dispatches the message once more. If the web application has no way to know it's the same incoming HTTP request, it ends up sending two or more messages that are identical except for the message identifier.
+A web application processes an HTTP request that should send a message. The web application sends the message, but then fails to respond to the HTTP client. Maybe the process crashes, maybe a load balancer times out, or maybe the network drops the response. From the client's perspective, the request failed, so it retries. The web application processes the request again and dispatches the message again. If the web application can't tell it's the same incoming HTTP request, it ends up sending two or more messages that are identical except for the message identifier.
 
 From the receiver's perspective, those are two legitimate, distinct messages. Nothing in the infrastructure can tell them apart.
 
 ### Non-atomic batches
 
-The sender is designed to send multiple messages, but the underlying infrastructure doesn't support atomic batching. If one message fails, the sender ends up resending all of them.
+The sender is designed to send multiple messages, but the underlying infrastructure doesn't support atomic batching. If one message fails, the sender resends all of them.
 
 This may be less cryptic; let's discuss an example anyway.
 
 Let's expand on the previous example. The web application sends the message it needs to send. The receiver handles it and, as a result, needs to send three messages. The system relies on Amazon SQS, which supports batching but not atomic batching. The receiver sends the three messages in a batch, and the infrastructure responds with two successes and one failure.
 
-What now? The simplest thing to do is to fail the whole operation and retry it. The incoming message goes back to the queue, it's processed again, and the three messages are sent again. The two that succeeded the first time are now duplicates. Depending on how the outgoing messages are created, they may or may not share the identifiers of the first attempt.
+What now? The simplest option is to fail the whole operation and retry. The incoming message goes back to the queue; it's processed again, and the three messages are sent again. The two that succeeded the first time are now duplicates. Depending on how the outgoing messages are created, they may or may not share the identifiers of the first attempt.
 
 ## Received more than once
 
-Most queuing systems offer at-least-once delivery guarantees. The keyword is "at least". The infrastructure promises the message will be delivered; it doesn't promise it will be delivered only once.
+Most queuing systems offer at-least-once delivery guarantees. The keyword is "at least". The infrastructure promises to deliver the message; it doesn't promise it will deliver it only once.
 
-For example, a receiver gets a message from the queue and processes it. Before it can acknowledge the message, the connection to the broker drops, or, in the case of SQS, the visibility timeout expires. As far as the broker is concerned, the message was never handled, so it makes it available again. The same receiver, or another competing instance, gets it a second time.
+For example, a receiver gets a message from the queue and processes it. Before it can acknowledge the message, the connection to the broker drops, or, in the case of SQS, the visibility timeout expires. From the broker's perspective, the message was never handled, so it makes it available again. The same receiver, or another competing instance, gets it a second time.
 
-The main difference with the email example is that these duplicate messages are exactly the same, on the surface and under the covers. If the message has a message identifier, each duplicate will have the same identifier. That's good news, as we'll see shortly.
+The main difference from the email example is that these duplicate messages are identical, on the surface and under the hood. If the message has a message identifier, each duplicate will have the same identifier. That's good news, as we'll see shortly.
 
 ## Processed more than once
 
 The last scenario is the sneakiest one. The message was received once, but processing ran more than once.
 
-A handler receives a message, updates the database, sends an email, and then something fails: the database transaction can't commit, the acknowledgment fails, or the process crashes. The message is retried, as it should be, and the handler runs again. The database changes were rolled back, so from a data perspective, all is good. The email, however, is already out there. There is no way to roll back an email.
+A handler receives a message, updates the database, sends an email, and then something fails: the database transaction can't commit, the acknowledgment fails, or the process crashes. The message is retried, as it should be, and the handler runs again. The database changes are rolled back, so from a data perspective, everything is fine. The email, however, is already out there. You can't roll back an email.
 
-Retries are a feature: they are one of the main reasons to use messages and queues in the first place. But retries and non-transactional side effects don't mix well. Each retry is an opportunity to repeat whatever happened before the failure and can't be undone.
+Retries are a feature: they are one of the main reasons to use messages and queues in the first place. But retries and non-transactional side effects don't mix well. Each retry is a chance to repeat whatever happened before the failure, and it can't be undone.
 
 ## What can we do about it?
 
-The first thing to accept is that duplicates will happen. Designing as if they won't is a bet against the network, the infrastructure, and the laws of physics. The house always wins. What we can do is make sure that duplicates are harmless.
+First, accept that duplicates will happen. Designing as if they won't is a bet against the network, the infrastructure, and the laws of physics. The house always wins. We can make sure duplicates are harmless.
 
 ### Take control of the message identifier
 
-If the sender can send the same message multiple times, and it doesn't use an outbox, take control of the identifier and ensure it's stable.
+If the sender can send the same message multiple times and doesn't use an outbox, take control of the identifier and keep it stable.
 
 Instead of letting the infrastructure generate a new identifier for every send operation, derive it from something stable in the triggering context. For example, an idempotency key provided by the HTTP client, or a combination of business identifiers. With NServiceBus, it could look like the following:
 
@@ -84,13 +84,13 @@ options.SetMessageId($"shipment-{shipmentId}-notification");
 await messageSession.Send(new SendShipmentNotification(shipmentId), options);
 ```
 
-Now, if the HTTP request is retried, the message is sent again, but with the same identifier. We moved from duplicates that are indistinguishable from legitimate messages to duplicates that are exactly the same message. We turned the "sent more than once" problem into a "received more than once" problem, and that's one we know how to solve.
+Now, if the HTTP request is retried, the message is sent again, but with the same identifier. We moved from duplicates indistinguishable from legitimate messages to duplicates that are identical. We turned the "sent more than once" problem into a "received more than once" problem, and we know how to solve that.
 
 ### Use an outbox
 
-The outbox pattern stores outgoing messages in the same transaction as the business data, and dispatches them afterward. It solves the non-atomic batch problem: messages are dispatched from the outbox until all of them succeed, with stable identifiers, and no business logic is executed twice. I wrote about it in more detail in ["What's an Outbox and why do we need it?"](https://milestone.topics.it/2023/02/07/outbox-what-and-why.html).
+The outbox pattern stores outgoing messages in the same transaction as the business data, and dispatches them afterward. It solves the non-atomic batch problem: messages are dispatched from the outbox until all succeed, with stable identifiers, and no business logic runs twice. I wrote about it in more detail in ["What's an Outbox and why do we need it?"](https://milestone.topics.it/2023/02/07/outbox-what-and-why.html).
 
-On the receiving side, the outbox also keeps track of processed message identifiers. When a message with an identifier that was already processed comes in, the business logic is skipped, and only the outgoing messages are dispatched again if needed. That's how "received more than once" becomes harmless.
+On the receiving side, the outbox also tracks processed message identifiers. When a message with an already-processed identifier arrives, the business logic is skipped, and the system re-dispatches outgoing messages only if needed. That's how "received more than once" becomes harmless.
 
 ### Make the business logic idempotent
 
@@ -100,13 +100,13 @@ Is there already a notification for this shipment? Then don't send another one. 
 
 ### Be careful with side effects
 
-Emails, payments, calls to third-party APIs: these are side effects that can't be rolled back by a database transaction. For each one, there is a choice to make: is it better to send it at most once, risking never sending it, or at least once, risking sending it multiple times? There is no free lunch. A common approach is to move the side effect into a dedicated handler that receives a message whose only job is to perform that side effect, record that it happened, and do nothing else. It narrows the window in which a failure can cause a duplicate, and makes it easier to reason about. If the third party supports idempotency keys, like most payment gateways do, use them.
+Emails, payments, and calls to third-party APIs are side effects that a database transaction can't roll back. For each one, you have a choice: send it at most once, risking never sending it, or at least once, risking sending it multiple times. There is no free lunch. A common approach is to move the side effect into a dedicated handler that receives a message whose only job is to perform that side effect, record that it happened, and do nothing else. It narrows the window in which a failure can cause a duplicate, and makes it easier to reason about. If the third party supports idempotency keys, like most payment gateways do, use them.
 
 ## Conclusion
 
 I don't know what happened behind the scenes of my seven shipping notifications. It could have been a retried trigger, a redelivered message, or a handler retried after the email was already gone. Any of the scenarios described above can produce exactly what landed in my inbox.
 
-What I know is that duplicate messages aren't theoretical. They are a matter of when, not if. The difference between a well-designed system and a poorly designed one isn't the absence of duplicates; it's whether anyone notices them.
+I know duplicate messages aren't theoretical. They are a matter of when, not if. The difference between a well-designed system and a poorly designed one isn't the absence of duplicates; it's whether anyone notices them.
 
 In my case, I noticed. Seven times.
 
