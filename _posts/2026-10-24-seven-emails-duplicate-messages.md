@@ -15,7 +15,7 @@ Often enough to land in my inbox.
 
 ![ShippyPro screenshot](/img/posts/seven-emails-duplicate-messages/shippypro-inbox.png){:class="img-fluid mx-auto d-block w-75"}
 
-The above screenshot is from my inbox. I'm a bike rider, and a couple of years ago, I bought a new pair of Favero power meters. For those unfamiliar, they look like regular MTB pedals, but they measure the power your legs generate while pedaling, along with several other, more or less interesting metrics. Enough said about bike pedals with power meters.
+The above screenshot is from my inbox. I'm a bike rider, and a couple of years ago, I bought a new pair of Favero power meters. For those unfamiliar, they look like regular bike pedals, but they measure the power your legs generate while pedaling, along with several other, more or less interesting metrics. Enough said about bike pedals with power meters.
 
 What matters is what happened after the order. I received seven emails, one every few minutes, all related to the same shipment. On the surface, they all looked identical. Examining the SMTP headers made it clear they were different messages, sent one after the other.
 
