@@ -100,7 +100,7 @@ Is there already a notification for this shipment? Then don't send another one. 
 
 ### Be careful with side effects
 
-Emails, payments, and calls to third-party APIs are side effects that a database transaction can't roll back. For each one, you have a choice: send it at most once, risking never sending it, or at least once, risking sending it multiple times. There is no free lunch. A common approach is to move the side effect into a dedicated handler that receives a message whose only job is to perform that side effect, record that it happened, and do nothing else. It narrows the window in which a failure can cause a duplicate, and makes it easier to reason about. If the third party supports idempotency keys, like most payment gateways do, use them.
+Emails, payments, and calls to third-party APIs are side effects that a database transaction can't roll back. For each one, you have a choice: send it at most once, risking never sending it, or at least once, risking sending it multiple times. There is no free lunch. A common approach is to move the side effect into a dedicated handler that receives a message whose only job is to perform that side effect, record that it happened, and do nothing else. It narrows the window in which a failure can cause a duplicate, and makes it easier to reason about. In the worst case, this dedicated handler lives in a separate endpoint with no retries. If processing fails once, the failing message goes straight to the error queue, and an operator decides what to do about it. If the third party supports idempotency keys, like most payment gateways do, use them.
 
 ## Conclusion
 
