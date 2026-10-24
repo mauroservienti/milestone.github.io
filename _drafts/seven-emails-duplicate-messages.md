@@ -37,7 +37,7 @@ The sender processes the same trigger more than once, resulting in duplicate mes
 
 That might be cryptic; let's use an example to clarify.
 
-A web application processes an HTTP request that should send a message. The web application sends the message, but then fails to respond to the HTTP client. Maybe the process crashes, maybe a load balancer times out, or maybe the network drops the response. From the client's perspective, the request failed, so it retries. The web application processes the request again and dispatches the message again. If the web application can't tell it's the same incoming HTTP request, it ends up sending two or more messages that are identical except for the message identifier.
+A web application processes an HTTP request that should send a message. The web application sends the message, but then fails to respond to the HTTP client. Maybe the process crashes, maybe a load balancer times out, or maybe the network drops the response. From the client's perspective, the request failed, so it retries. The web application processes the request again and dispatches the message again. If the web application can't tell it's the same incoming HTTP request, it ends up sending two or more messages that are identical except for the message identifier. I discussed retries in the absence of an incoming message in ["Ooops, can I try again, please?"](https://milestone.topics.it/2021/01/21/ooops-can-I-try-again-please.html).
 
 From the receiver's perspective, those are two legitimate, distinct messages. Nothing in the infrastructure can tell them apart.
 
@@ -53,7 +53,7 @@ What now? The simplest option is to fail the whole operation and retry. The inco
 
 ## Received more than once
 
-Most queuing systems offer at-least-once delivery guarantees. The keyword is "at least". The infrastructure promises to deliver the message; it doesn't promise it will deliver it only once.
+Most queuing systems offer at-least-once delivery guarantees. The keyword is "at least". The infrastructure promises to deliver the message; it doesn't promise it will deliver it only once. At-least-once delivery has interesting consequences on message ordering too, as I described in ["Isn't A supposed to come before B?"](https://milestone.topics.it/2021/10/20/isnt-a-supposed-to-come-before-b.html).
 
 For example, a receiver gets a message from the queue and processes it. Before it can acknowledge the message, the connection to the broker drops, or, in the case of SQS, the visibility timeout expires. From the broker's perspective, the message was never handled, so it makes it available again. The same receiver, or another competing instance, gets it a second time.
 
@@ -92,11 +92,13 @@ The outbox pattern stores outgoing messages in the same transaction as the busin
 
 On the receiving side, the outbox also tracks processed message identifiers. When a message with an already-processed identifier arrives, the business logic is skipped, and the system re-dispatches outgoing messages only if needed. That's how "received more than once" becomes harmless.
 
+When the trigger is an HTTP request rather than an incoming message, the [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) brings the same guarantees to the sending side. I recently built [Zusammen](https://milestone.topics.it/2026/10/21/zusammen.html), a transactional session for Node.js. It's a good reminder that dispatch is still at-least-once: receivers must be idempotent unless they have outbox support.
+
 ### Make the business logic idempotent
 
 Deduplication based on message identifiers only works when duplicates share the same identifier. When they don't, the only option left is to look at the business data.
 
-Is there already a notification for this shipment? Then don't send another one. Is this order already in the "shipped" state? Then shipping it again is a no-op. Often, designing operations to set state ("the order is shipped") rather than to apply changes ("ship the order once more") makes idempotency come almost for free.
+Is there already a notification for this shipment? Then don't send another one. Is this order already in the "shipped" state? Then shipping it again is a no-op. Often, designing operations to set state ("the order is shipped") rather than to apply changes ("ship the order once more") makes idempotency come almost for free. More on idempotency, and its limits when third parties are involved, in ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-first.html).
 
 ### Be careful with side effects
 
@@ -109,6 +111,11 @@ I don't know what happened behind the scenes of my seven shipping notifications.
 I know duplicate messages aren't theoretical. They are a matter of when, not if. The difference between a well-designed system and a poorly designed one isn't the absence of duplicates; it's whether anyone notices them.
 
 In my case, I noticed. Seven times.
+
+## Additional resources
+
+- ["Businesses don't fail, they make mistakes"](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html): sooner or later, failed messages end up in the error queue. This article discusses the difference between infrastructure failures and business failures, and why the latter shouldn't be handled like the former.
+- ["Transactions? None for me, thanks"](https://milestone.topics.it/2021/01/30/transactions-none-for-me-thanks.html): queues are designed for reliability, but there are rare cases where unreliable message processing is the right choice. This article explores one of them, using an endpoint configured with no transport transactions.
 
 ---
 
