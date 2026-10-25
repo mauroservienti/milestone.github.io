@@ -24,7 +24,7 @@ Owning data isn't about where the data is stored. It's about authority.
 
 The owner of a piece of data is:
 
-- **The only one allowed to change it.** There is a single writer. Other services can ask the owner to change something, for example, by sending a command, but they can't change it themselves.
+- **The only one allowed to change it.** There is a single writer. Changes come from within the service boundary, for example, from the service's own part of the user interface sending a command to its back end. Other services can't change the data, and they can't command the owner to change it either. At most, they announce that something happened, and the owner decides what to do about it.
 - **The authority on its meaning.** The owner decides what the data means, which values are valid, and which business rules apply to it.
 - **The authority on its shape.** The owner decides how the data is stored and structured, and it can change that whenever it wants without asking anyone.
 
@@ -69,7 +69,7 @@ When users need to see data owned by multiple services, the data is composed in 
 
 ### Share identifiers and facts, not state
 
-Services communicate through messages. Commands ask an owner to do something. Events announce that something happened. Ideally, events carry identifiers and facts, not the owner's internal state.
+Services communicate through messages. Commands stay within a service boundary, from the service's own components to its back end. Across boundaries, services publish events announcing that something happened. Ideally, events carry identifiers and facts, not the owner's internal state.
 
 `OrderPlaced` with an order identifier is a fact. `ProductUpdated` with the whole product inside is a database replication mechanism dressed up as an event. As I wrote in ["Someone says event, and magically, coupling goes away"](https://milestone.topics.it/2024/02/16/events-magic.html), events don't remove coupling by themselves.
 
@@ -82,6 +82,8 @@ The tempting solution is for Shipping to keep a copy of prices and calculate the
 When a service needs another service's data to make a decision, it's worth asking whether the decision is in the right place. Who owns the "free shipping" policy? If it's a marketing promotion based on the order value, maybe Sales should decide whether an order qualifies and announce it, for example, with an event carrying a flag. Shipping only needs to know the outcome.
 
 Copies aren't forbidden. A read-only copy of reference data that rarely changes, used for display purposes, is often fine. The problem starts when the copy is used to make decisions that belong to someone else.
+
+Keep in mind, though, that a copy is a cache, and caches come with their own set of problems: invalidation, staleness, and, most importantly, ownership. Who owns the copy? Who decides when it's stale? I discussed it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html).
 
 ## What about the database?
 
