@@ -28,7 +28,7 @@ I wrote about the difference between logical and physical architecture in ["Let'
 
 > In this article, I use the term service in the SOA sense: a logical boundary owning data and behavior. Not a deployment unit, and certainly not a _micro_ one.
 
-A single logical service can be deployed as many physical components: a web API, a couple of message endpoints, a background job, and some composition handlers in a gateway. In the other direction, multiple logical services can run in a single process. Neither is wrong per se.
+A single logical service can be deployed as many physical components: a web API, a couple of [NServiceBus](https://docs.particular.net/nservicebus/) message endpoints, a background job, and some composition handlers in a [ServiceComposer](https://github.com/ServiceComposer/ServiceComposer.AspNetCore) gateway. In the other direction, [multiple logical services can run in a single process](https://docs.particular.net/nservicebus/hosting/core-hosting#hosting-multiple-endpoints). Neither is wrong per se.
 
 The pendulum keeps swinging because we make the physical decision first and then try to retrofit a design onto it. Choose microservices first, and the network becomes the boundary, whether it's in the right place or not. Choose a monolith first, and boundaries become folders. Folders are very easy to ignore.
 
@@ -36,7 +36,7 @@ The pendulum keeps swinging because we make the physical decision first and then
 
 [Boundaries](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html). Which data belongs together? Which business capabilities change together? Who owns the product price, and who owns its description? None of these questions requires deciding how many processes we'll have.
 
-Boundaries are hard to find. They are also the most expensive decision to get wrong. A misplaced boundary splits data that should change together, and every change turns into a coordination exercise. That's true whether the two sides of the wrong boundary are separated by a namespace or by the network. The network only makes it hurt more.
+Boundaries are hard to find. [Anti-requirements](https://particular.net/blog/antirequirements) are a technique that helps: invent a rule that ties two pieces of data together and present it to business stakeholders. If they laugh, the data probably doesn't belong together. Boundaries are also the most expensive decision to get wrong. A misplaced boundary splits data that should change together, and every change turns into a coordination exercise. That's true whether the two sides of the wrong boundary are separated by a namespace or by the network. The network only makes it hurt more.
 
 That's why I find "modular first," which is where Oskar's article lands too, a much better answer than either "monolith first" or "microservices first." I'd go one step further, though. Having modules is not enough. Modules need to behave as if they were already distributed.
 
@@ -52,6 +52,8 @@ So the trick is to design and build as if the network were already there, even w
 - **Services interact through messages.** Commands and events describe what happens between services. A message-based contract is the same whether sender and receiver run in the same process or on different continents.
 - **Consistency across services is eventual.** Within a service, use transactions. Across services, design for eventual consistency, and use tools like the [outbox](https://milestone.topics.it/2023/02/07/outbox-what-and-why.html) to keep data and messages consistent.
 - **Composition happens at the edges.** When users need data from multiple services, compose it in the user interface or in a [composition gateway](https://milestone.topics.it/series/view-model-composition.html). Services don't query each other.
+
+> Messaging doesn't require a broker on day one. The new NServiceBus [Non-Durable transport](https://docs.particular.net/transports/non-durable/) exchanges messages in memory between endpoints hosted in the same process. It brings in messaging patterns without forcing additional infrastructure at the beginning. Messages are lost when the process stops, though, so it's a starting point, not a destination. When durability matters, or when an endpoint moves to its own process, we switch to a durable transport.
 
 Designed that way, the system is logically distributed from day one. Physically, it can still be a single deployment unit.
 
