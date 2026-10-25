@@ -6,4 +6,6 @@
 - [ ] Header image credits
 - [ ] Review
 - [ ] Rename file and path to match publish date
-- [ ] Schedule post on LinkedIn 
+- [ ] Update or create the corresponding Notion card
+  - [ ] Add a to-do to publish the article, if the PR is not merged immediately
+  - [ ] Add a to-do to post on LinkedIn
