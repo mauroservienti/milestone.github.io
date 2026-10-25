@@ -10,9 +10,9 @@ tags:
 series: view-model-composition
 ---
 
-When dealing with HTTP requests and responses, we usually deal with two different models: the request and the response models. The request model represents the incoming data; it could be the HTTP Post request body, the incoming form collection, a set of query string elements, elements from the matching route, or a combination.
+When dealing with HTTP requests and responses, we usually deal with two different models: the request and the response models. The request model represents the incoming data; it could be the HTTP Post request body, the incoming form collection, a set of query string elements, elements from the matching route, request headers, or a combination.
 
-On the other hand, the response model is what the web server sends back to the client. It could be empty when there is no response data, and the HTTP response code suffices, or it could be rich, ranging from simple data types, such as a string or a number, to complex structures, such as a JSON response.
+On the other hand, the response is what the web server sends back to the client: a status code, a set of response headers, and the response model. The response model could be empty when there is no response data, and the status code and headers suffice, or it could be rich, ranging from simple data types, such as a string or a number, to complex structures, such as a JSON response.
 
 ServiceComposer is no different; it deals with request and response models. However, when dealing with distributed systems and [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html), we pay a lot of attention to the effect of [coupling](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html) and how it can negatively impact the system maintainability over time.
 
@@ -183,7 +183,7 @@ The Marketing handler can no longer see, let alone change, the product price. Th
 Finally, the concrete view model implements all the interfaces:
 
 ```csharp
-public class ProductViewModel : ISalesProductViewModel, IMarketingProductViewModel
+internal class ProductViewModel : ISalesProductViewModel, IMarketingProductViewModel
 {
     public string ProductId { get; set; }
     public decimal ProductPrice { get; set; }
@@ -193,6 +193,8 @@ public class ProductViewModel : ISalesProductViewModel, IMarketingProductViewMod
 ```
 
 The view model factory doesn't change; it still creates a `ProductViewModel` instance. When the response is serialized, the serializer sees the concrete type, and the client gets all the properties.
+
+Since handlers only depend on the interfaces, nobody outside the assembly that defines the concrete view model needs to know about it. `ProductViewModel` can now be `internal`.
 
 ### Where does the coupling go?
 
