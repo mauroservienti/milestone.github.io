@@ -295,4 +295,4 @@ If the trade-off isn't worth it for a given route, dynamic view models are still
 
 ---
 
-Header image placeholder: add credits here.
+Photo by <a href="https://unsplash.com/@edge2edgemedia?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Edge2Edge Media</a> on <a href="https://unsplash.com/photos/grey-metal-chain-on-white-background-t1OalCBUYRc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
