@@ -59,7 +59,7 @@ Designed that way, the system is logically distributed from day one. Physically,
 
 Because distribution is expensive, and we pay its costs every day the system runs.
 
-Every network hop adds latency and a new way to fail. The network isn't reliable, and [duplicate messages aren't a theoretical problem](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html). Topology changes. Deployments get more complex, and observability needs more effort. Debugging a request that crosses five processes is a different sport from debugging one that crosses five classes. The [fallacies of distributed computing](https://particular.net/s/free-ebook-dr-harvey-and-the-8-fallacies-of-distributed-computing) are all still there.
+Every network hop adds latency and a new way to fail. The network isn't reliable, and [duplicate messages aren't a theoretical problem](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html). Topology changes. Deployments get more complex, and observability needs more effort. Debugging a request that crosses five processes is a different sport from debugging one that crosses five classes. The [fallacies of distributed computing](https://particular.net/blog/the-network-is-reliable) are all still there.
 
 Those costs are worth paying when there is a reason. And there are many good reasons to split a deployment:
 
