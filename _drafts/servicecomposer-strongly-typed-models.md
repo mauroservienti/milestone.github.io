@@ -212,6 +212,30 @@ Explicit interface implementations would make the collision visible, but they co
 
 The pragmatic mitigation is a naming convention, for example, prefixing properties or grouping each service's data under a dedicated property, such as `Sales` and `Marketing`. The concrete class is in one place, though, so reviewing it is much easier than chasing property names across dynamic objects scattered in many handlers.
 
+### What if there was no concrete class at all?
+
+The concrete view model is what forces the composition host to change every time a service evolves its interface. What if we could get rid of it?
+
+By default, the ServiceComposer view model is an `ExpandoObject`, a dynamic object that, under the hood, is a dictionary of property names and values. .NET can generate, at runtime, an object implementing a given interface whose property getters and setters read from and write to that dictionary. That's what `System.Reflection.DispatchProxy` is for. Each handler could then ask for the interface it owns, without any view model factory or concrete class involved:
+
+```csharp
+var vm = httpContextAccessor.HttpContext.Request.GetComposedResponseModel<IMarketingProductViewModel>();
+```
+
+ServiceComposer doesn't support that today. I quickly prototyped it, and it works, so I opened [an issue to discuss adding it](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1079). It's an interesting trade-off.
+
+On the plus side:
+
+- Each handler is type safe, scoped to the data it owns.
+- There is no concrete view model and no view model factory. Services can evolve their interfaces without changing the composition host and without coordinated deployments.
+
+On the minus side:
+
+- Property name collisions come back. Two interfaces declaring the same property name write to the same dictionary key, exactly as with dynamic view models.
+- Type safety is only skin-deep. Values are still stored as `object`; if a handler stores an `int` and another one reads it as a `decimal`, the read fails at runtime.
+- There is no type describing the whole response. Tools relying on a concrete response type, such as OpenAPI generators, can't infer its shape.
+- `DispatchProxy` relies on runtime code generation, which isn't available in Native AOT applications.
+
 ## Request models
 
 So far, we looked at composition. What about decomposition? When a client sends data to the composition gateway, the incoming request must be [dismantled](https://milestone.topics.it/2019/04/18/the-fine-art-of-dismantling.html), and each service must get the data it owns.
