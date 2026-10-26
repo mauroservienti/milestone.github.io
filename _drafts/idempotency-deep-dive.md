@@ -11,7 +11,7 @@ tags:
 
 In 2019, in ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-first.html), I wrote that idempotency comes with a couple of footnotes. The first one was: "no one tells the truth about how hard it can be."
 
-Seven years later, it's time to tell the truth.
+Seven years later, it's time to dive into it.
 
 In ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html), I described how duplicate messages happen: sent, received, or processed more than once. The conclusion was that duplicates are a matter of when, not if, and that the goal is to make them harmless. Idempotency is how we make them harmless. Idempotency is mentioned in many of my posts, yet it never had a post of its own. Let's fix that.
 
