@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Composing emails: the template owns the model"
+title: "Composing emails: one service owns the template, many own the data"
 author: Mauro Servienti
 synopsis: "Marketing wants to send an order confirmation email. It owns the template, but none of the data that fills it: items and totals belong to Sales, the shipping address and the delivery estimate to Shipping. Like Word's mail merge, the trick is to separate the document from the data source. Let's see how ViewModel Composition provides the data, why the template owner also owns the model, and how hosting Razor turns it into an email."
 header_image: /img/posts/composing-email-templates/header.jpg
