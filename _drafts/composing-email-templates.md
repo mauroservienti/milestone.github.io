@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Mail merge, composition style: who owns the email template?"
+title: "Composing emails: the template owns the model"
 author: Mauro Servienti
-synopsis: "Marketing wants to send an order confirmation email. It owns the template, but none of the data that fills it: items and totals belong to Sales, the shipping address and the delivery estimate to Shipping. Like Word's mail merge, the trick is to separate the document from the data source. Let's see how ViewModel Composition provides the data and how hosting Razor turns it into an email."
+synopsis: "Marketing wants to send an order confirmation email. It owns the template, but none of the data that fills it: items and totals belong to Sales, the shipping address and the delivery estimate to Shipping. Like Word's mail merge, the trick is to separate the document from the data source. Let's see how ViewModel Composition provides the data, why the template owner also owns the model, and how hosting Razor turns it into an email."
 header_image: /img/posts/composing-email-templates/header.jpg
 tags:
 - soa
@@ -128,47 +128,60 @@ class OrderPlacedHandler(
         var json = await client.GetStringAsync(
             $"/emails/order-confirmation/{message.OrderId}",
             context.CancellationToken);
-        dynamic model = JsonConvert.DeserializeObject<ExpandoObject>(json, new ExpandoObjectConverter());
+        var model = JsonSerializer.Deserialize<OrderConfirmationEmailModel>(json, JsonSerializerOptions.Web);
 
         string body = await razor.CompileRenderStringAsync(
             $"{template.Name}-v{template.Version}",
             template.Content,
             model);
 
-        await emailSender.Send((string)model.email, template.Subject, body);
+        await emailSender.Send(model.Email, template.Subject, body);
     }
 }
 ```
 
 `IEmailTemplates` and `IEmailSender` stand for wherever marketing stores templates and whatever it uses to send emails, an SMTP server or a provider API.
 
+The handler deserializes the composed response into a strongly typed model, defined by Marketing:
+
+```csharp
+public record OrderConfirmationEmailModel(
+    string CustomerName,
+    string Email,
+    IReadOnlyList<OrderConfirmationEmailItem> Items,
+    decimal Total,
+    string ShippingAddress,
+    DateOnly EstimatedDelivery);
+
+public record OrderConfirmationEmailItem(string ProductName, int Quantity, decimal Price);
+```
+
+Isn't that the shared model problem all over again? I discussed in ["ServiceComposer: how do strongly-typed models affect composition and decomposition?"](https://milestone.topics.it/2026/10/28/servicecomposer-strongly-typed-models.html) how a strongly typed response model shared by all services becomes a shared kernel nobody owns. That's not the case here. In this scenario, Marketing acts like a branding service: it owns the template and, by definition, also the data model required to fill it. The model is the template's contract with the outside world. Sales, Shipping, and Customers don't reference it; they contribute their data to the composed route, and only Marketing turns the response into its model. It's the same idea as each service defining its own request model during decomposition: the consumer owns the shape it needs. The model also ignores what the template doesn't need, such as product identifiers.
+
 The template is what marketing users design:
 
 ```cshtml
-@using System
-<p>Hi @Model.customerName, thanks for your order!</p>
+@model Marketing.OrderConfirmationEmailModel
+<p>Hi @Model.CustomerName, thanks for your order!</p>
 <table>
-@foreach (var item in Model.items)
+@foreach (var item in Model.Items)
 {
     <tr>
-        <td>@item.quantity x @item.productName</td>
-        <td>@item.price.ToString("C")</td>
+        <td>@item.Quantity x @item.ProductName</td>
+        <td>@item.Price.ToString("C")</td>
     </tr>
 }
 </table>
-<p>Total: @Model.total.ToString("C")</p>
+<p>Total: @Model.Total.ToString("C")</p>
 <p>
-    We'll ship it to @Model.shippingAddress.
-    It should arrive by @DateOnly.Parse(Model.estimatedDelivery).ToString("D").
+    We'll ship it to @Model.ShippingAddress.
+    It should arrive by @Model.EstimatedDelivery.ToString("D").
 </p>
 ```
 
-A few things I learned while putting the sample together:
+The strongly typed model pays off for template authors too. Values have types, so the estimated delivery is a date that can be formatted, not a string to parse. And a typo, such as `@Model.Totl`, fails when the template is compiled, not when a customer opens a broken email. Marketing can compile templates when users save them and reject the ones that don't compile.
 
-- **JSON has no types.** The composed model travels as JSON, and the estimated delivery date arrives as a string. That's why the template parses it before formatting it. Template authors need to know the shape of the model, including the types of its values, which means the composed route is a contract, and it deserves documentation, like any other API.
-- **`System.Text.Json` doesn't deserialize to `ExpandoObject`.** It produces `JsonElement` instances, which aren't friendly to navigate from a template. Newtonsoft.Json, with its `ExpandoObjectConverter`, produces a dynamic object that Razor can navigate with the familiar dot syntax.
-- **RazorLight templates don't import `System` by default.** Hence the `@using System` at the top of the template.
-- **Compiled templates are cached by key.** When users change a template, the key must change too. Otherwise, RazorLight keeps rendering the old compiled version. That's why the key includes the template version.
+One more thing to keep in mind: RazorLight caches compiled templates by key. When users change a template, the key must change too. Otherwise, RazorLight keeps rendering the old compiled version. That's why the key includes the template version.
 
 > In 2021, I mentioned that calling the composition gateway over HTTP from a message handler smells of temporal coupling. It does, but it's contained: if the gateway or one of the services is unavailable, the handler fails and the incoming message is retried later. Retries come with a different problem, though: sending an email isn't idempotent. If the handler fails after sending, the customer receives the email twice, or seven times, as I described in ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html).
 
@@ -182,7 +195,7 @@ The good news is that the choice doesn't affect the architecture. The composed m
 
 ## Conclusion
 
-An email is a frontend, and like any frontend, it needs data owned by many services. Mail merge is a useful mental model: marketing owns the document, ViewModel Composition provides the data source, and a template engine hosted by marketing merges the two. Razor is a natural fit for .NET teams, as long as we remember that a Razor template is code and treat it accordingly.
+An email is a frontend, and like any frontend, it needs data owned by many services. Mail merge is a useful mental model: marketing owns the document and the model it needs, ViewModel Composition provides the data, and a template engine hosted by marketing merges the two. Razor is a natural fit for .NET teams, as long as we remember that a Razor template is code and treat it accordingly.
 
 ---
 
