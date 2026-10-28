@@ -43,7 +43,6 @@ Fallacies of Distributed Computing series – Particular Software:
 Understanding the multiple dimensions of coupling is fundamental to ADSD. Udi identifies five dimensions and shows how reducing one may require accepting more of another.
 
 - [ADSD Course Notes (GitHub Gist – Craig Phillips)](https://gist.github.com/craigtp/05a82b51557adc278acd71b5a2b88905) — Comprehensive community notes covering all ADSD modules, including detailed coverage of the coupling dimensions, messaging patterns, service boundaries, and domain modeling.
-- [ADSD Course Summary – Conquer the Lawn](https://conquerthelawn.com/advanced-distributed-systems-design-course-summary/) — An excellent summary focusing on the shift from traditional design to SOA thinking, covering coupling, messaging, and the motivations behind the approach.
 
 ### From milestone.topics.it
 
@@ -324,7 +323,6 @@ These provide different perspectives on the ADSD material and can help reinforce
 
 - [ADSD Course Notes – Craig Phillips (GitHub Gist)](https://gist.github.com/craigtp/05a82b51557adc278acd71b5a2b88905) — The most comprehensive community notes available. Covers every module with detailed notes on coupling dimensions, Bus vs. Broker, SOA building blocks, IT/Ops services, CQRS, sagas, and the migration phases.
 - [Review of ADSD Online Course – Dmytro Khmara](https://www.dmytrokhmara.com/blog/advanced-distributed-system-design-review) — Detailed review covering course structure, format options, cost, and an overview of all topics.
-- [ADSD Course Summary – Conquer the Lawn](https://conquerthelawn.com/advanced-distributed-systems-design-course-summary/) — Highlights four main takeaways: fallacies, implicit coupling in traditional design, SOA as an alternative, and CQRS/sagas.
 - [ADSD Course Review – ieva.dev](https://www.ieva.dev/reviews/udi_dahan_adsd.html) — Honest review including the challenge of the "two bucket services" (IT/Ops and Branding) and the difficulty of applying the concepts in practice.
 - [ADSD Part 4: Go Forth and Make Things Simple – Tom Cabanski](https://web.archive.org/web/20230604071147/https://tom.cabanski.com/2012/01/28/advanced-distributed-system-design-with-udi-dahan-part-4-go-forth-and-make-things-simple/) — A four-part series covering the in-person course experience, including the hotel service boundary exercise and web-tier scalability discussion.
 - [What I Learned from the $2500 Udi Dahan Course – Michał Białecki](https://www.michalbialecki.com/2020/06/23/what-i-learned-from-2500-udi-dahan-course/) — Key lessons: messaging over RPC, don't use one approach for everything, service boundaries matter, and domain models shouldn't mimic the real world.
