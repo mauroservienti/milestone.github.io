@@ -10,7 +10,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
-redirect_from: /2019/03/21/the-viewmodels-lists-composition-dance.html
+redirect_from: /view-model-composition/2019/03/21/the-viewmodels-lists-composition-dance.html
 ---
 
 We recently [looked at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized as:
