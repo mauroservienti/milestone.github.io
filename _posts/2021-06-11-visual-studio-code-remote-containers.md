@@ -43,7 +43,7 @@ Once a machine meets the mentioned requirements, what we can do is as simple as 
 - A `devcontainer.json` file that specifies the development environment configuration.
 - A `Dockerfile` with the definition of the Docker container image to build and serve.
 
-Let's have a look at the latter first, the [`Dockerfile`](https://github.com/mauroservienti/distributed-systems-101/blob/main/.devcontainer/Dockerfile):
+Let's have a look at the latter first, the [`Dockerfile`](https://github.com/mauroservienti/distributed-systems-101/blob/96d304b2137a589bf02e08eb0fedbbc769ce5b2d/.devcontainer/Dockerfile):
 
 ```
 # [Choice] .NET Core version: 5.0, 3.1, 2.1
@@ -77,7 +77,7 @@ USER $USER_UID:$USER_GID
 
 Nothing fancy, just a standard `Dockerfile`. In this specific case, it creates a .NET 5 Docker image. By default, the created Docker image comes with Node.js installed and optionally with the Azure CLI. If configured to do so, it customizes some security settings.
 
-The [`devcontainer.json`](https://github.com/mauroservienti/distributed-systems-101/blob/main/.devcontainer/devcontainer.json) is much more interesting. This file contains all configuration settings that the Remote Containers extension will use to configure the remote environment:
+The [`devcontainer.json`](https://github.com/mauroservienti/distributed-systems-101/blob/96d304b2137a589bf02e08eb0fedbbc769ce5b2d/.devcontainer/devcontainer.json) is much more interesting. This file contains all configuration settings that the Remote Containers extension will use to configure the remote environment:
 
 ```
 {
@@ -106,7 +106,7 @@ The `workspaceFolder` tells Code how to map the Code workspace to the container 
 
 The following three settings are what make the whole experience extremely cool. They specify how the Remote Container extension interacts with Docker Compose and how containers are exposed to the local machine. The linked Docker Compose file is a regular Compose file I won't describe in detail. When the main container image is built and run, the Remote Container extension will also execute Docker Compose. The resulting infrastructure is, as mentioned earlier, a RabbitMQ instance, two PostgreSQL instances, and a C#/.NET 5 dev environment.
 
-If you take a look at the [Docker Compose file I'm using](https://github.com/mauroservienti/distributed-systems-101/blob/main/.devcontainer/docker-compose.yml), you'll notice that all containers share the same network, which makes sense since they need to communicate. So we can take advantage of that and use the `forwardPorts` setting to expose Docker network ports to the local machine.
+If you take a look at the [Docker Compose file I'm using](https://github.com/mauroservienti/distributed-systems-101/blob/96d304b2137a589bf02e08eb0fedbbc769ce5b2d/.devcontainer/docker-compose.yml), you'll notice that all containers share the same network, which makes sense since they need to communicate. So we can take advantage of that and use the `forwardPorts` setting to expose Docker network ports to the local machine.
 The Remote Container extension will remap and expose ports to the local machine allowing the local machine to access remote resources. When running Code connected to a remote container development environment, the Code user interface lists the exposed ports in a tab at the bottom:
 
 ![Forwarded ports](/img/posts/visual-studio-code-remote-containers/ports.png){:class="img-fluid mx-auto d-block"}
