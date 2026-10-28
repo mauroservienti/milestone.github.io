@@ -143,7 +143,7 @@ The differences are minimal. Instead of returning a `ProductDetails` instance, t
 
 Nothing is gained yet, architecturally speaking. What we gained is a safety net: the route is now served by ServiceComposer, and clients shouldn't notice. That's what we need to verify. A set of tests comparing the responses before and after the migration is the best tool for the job.
 
-Comparing the responses reveals one difference. `[ApiController]` turns `NotFound()` into a [problem details](https://www.rfc-editor.org/rfc/rfc9457) response body, while `NotFoundResult` returns an empty body. If clients rely on the problem details content, use an object result carrying a `ProblemDetails` instance instead.
+Comparing the responses reveals one difference. `[ApiController]` turns `NotFound()` into a [problem details](https://www.rfc-editor.org/info/rfc9457/) response body, while `NotFoundResult` returns an empty body. If clients rely on the problem details content, use an object result carrying a `ProblemDetails` instance instead.
 
 ## Step 3: split by ownership
 
