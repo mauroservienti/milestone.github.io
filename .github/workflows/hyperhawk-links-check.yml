@@ -25,3 +25,24 @@ jobs:
           # series, redirects) have no matching file on disk, so Hyperhawk can't verify them.
           # Twitter/X and Esselunga block automated requests, so links there can't be verified.
           ignore-patterns: '^/\d{4}/\d{2}/\d{2}/,^/(view-model-composition|soa-search|categories|series|events|talks|tags)/,^https?://(www\.)?(twitter|x)\.com/,^https?://(www\.)?esselungaacasa\.it'
+
+  # Keep a single "Broken links" issue in sync with the weekly (and manual) runs.
+  report:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: link-check
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - name: Update the broken links issue
+        run: .github/scripts/update-broken-links-issue.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
