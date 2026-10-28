@@ -26,7 +26,7 @@ Brace, brace, brace! It's going to be a challenging article ;-)
 
 Before ~~continuing~~ bracing, it's worth reading and watching a few resources on the subject:
 
-- "[Businesses don't fail, they make mistakes](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.htm)," from this blog.
+- "[Businesses don't fail, they make mistakes](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html)," from this blog.
 - "[Tales of a Reservation](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html)," also from this blog.
 - "[I caught an exception. Now what?](https://particular.net/blog/but-all-my-errors-are-severe)," from Particular's blog.
 - "[If (domain logic) then CQRS, or Saga?](https://youtu.be/fWU8ZK0Dmxs)," DDD Europe talk by Udi Dahan.
@@ -65,7 +65,7 @@ Getting into uncomfortable conversations with the business is critical, and aski
 
 If waiting so long is unacceptable or recovering from the error is impossible, we don't want to be failure driven but want to drive the failure.
 
-We need to design the system to fail gracefully, and it can only happen if that's a business scenario. Failing gracefully is the main topic of [Businesses don't fail, they make mistakes](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.htm). Let me quickly recap the essence of that article.
+We need to design the system to fail gracefully, and it can only happen if that's a business scenario. Failing gracefully is the main topic of [Businesses don't fail, they make mistakes](https://milestone.topics.it/2019/09/10/businesses-dont-fail-they-make-mistakes.html). Let me quickly recap the essence of that article.
 
 There are two main error categories, the ones we can recover from and those we cannot. If the system can recover, some form of retrying is the way. Otherwise, there is no point in retrying or even sending messages to the error queue.
 
