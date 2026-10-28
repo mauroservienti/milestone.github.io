@@ -56,7 +56,7 @@ Which are the benefits that HTTP brings to the table in this scenario? Remember 
 
 * There is no such thing as [cross-service communication/composition](/view-model-composition/2019/03/13/there-is-no-such-thing-as-cross-services-composition.html)
 
-HTTP is nice, indeed, but still has a few issues that we need to be aware of. The protocol tends to exacerbate some of the [fallacies of distributed computing](https://particular.net/s/free-ebook-dr-harvey-and-the-8-fallacies-of-distributed-computing). HTTP as a transport is highly interoperable, at the expense of transport costs. Serialization and deserialization impact on bandwidth and thus latency. And we need to be very careful about not introducing any unrequired additional cost.
+HTTP is nice, indeed, but still has a few issues that we need to be aware of. The protocol tends to exacerbate some of the [fallacies of distributed computing](https://particular.net/blog/the-network-is-reliable). HTTP as a transport is highly interoperable, at the expense of transport costs. Serialization and deserialization impact on bandwidth and thus latency. And we need to be very careful about not introducing any unrequired additional cost.
 
 The designed interaction can be represented using the following diagram:
 
