@@ -19,6 +19,8 @@ jobs:
       - uses: dvdstelt/hyperhawk@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Code samples contain placeholder URLs that aren't meant to resolve.
+          skip-code-blocks: true
           # Root-relative links to pages Jekyll generates at build time (posts, collections,
           # series, redirects) have no matching file on disk, so Hyperhawk can't verify them.
           # Twitter/X and Esselunga block automated requests, so links there can't be verified.
