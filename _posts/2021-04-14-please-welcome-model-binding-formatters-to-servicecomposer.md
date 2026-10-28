@@ -11,6 +11,7 @@ tags:
 - Input formatters
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2021/04/14/please-welcome-model-binding-formatters-to-servicecomposer.html
 ---
 
 The ServiceComposer API has been historically pretty low level. Users can access the incoming `HttpRequest` and the outgoing `HttpResponse` to read and manipulate content.

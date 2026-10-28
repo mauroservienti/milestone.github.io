@@ -11,6 +11,7 @@ tags:
 - viewmodel-composition
 series: view-model-composition
 redirect_from:
+- /view-model-composition/2019/03/13/there-is-no-such-thing-as-cross-services-composition.html
 - /2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
 - /view-model-composition/2019/03/13/there-is-no-such-a-thing-as-cross-services-composition.html
 ---

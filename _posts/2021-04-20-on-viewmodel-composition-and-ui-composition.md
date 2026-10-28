@@ -10,6 +10,7 @@ tags:
  - ui-composition
  - Micro frontends
 series: view-model-composition
+redirect_from: /view-model-composition/2021/04/20/on-viewmodel-composition-and-ui-composition.html
 ---
  
 They're not the same thing. They're not orthogonal. They can be used in conjunction or isolation, depending on the scenario.

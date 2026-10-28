@@ -8,6 +8,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2021/02/11/please-welcome-attribute-routing-to-servicecomposer.html
 ---
 
 With .NET Core 3, Microsoft introduced a long-waited feature in ASP.Net: Endpoint routing. Thanks to endpoint routing, it's finally possible to customize the target of an incoming HTTP request.
