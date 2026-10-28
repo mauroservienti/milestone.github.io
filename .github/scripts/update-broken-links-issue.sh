@@ -6,6 +6,9 @@
 # - comments only when the list changes, so notifications mean something new
 # - closes the issue when all links are valid
 #
+# Timeouts are listed in the issue but never open it or trigger a comment on
+# their own: slow sites come and go, and a timeout isn't proof a link is broken.
+#
 # Hyperhawk has no outputs and GitHub keeps only 10 warning annotations per
 # step, so the list is read from the link-check job log.
 #
@@ -19,6 +22,8 @@ MARKER_END="<!-- broken-links:end -->"
 current=$(mktemp)
 previous=$(mktemp)
 body=$(mktemp)
+solid_current=$(mktemp)
+solid_previous=$(mktemp)
 
 job_id=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" --jq '.jobs[] | select(.name == "link-check") | .id')
 gh api "repos/$REPO/actions/jobs/$job_id/logs" \
@@ -49,6 +54,13 @@ echo "$count broken link(s)."
   echo "This issue is updated by the link check workflow. It gets a comment when the list changes and is closed when all links are valid."
 } > "$body"
 
+grep -v '(Timed out' "$current" > "$solid_current" || true
+
+if [ -z "$issue" ] && [ ! -s "$solid_current" ]; then
+  echo "Only timeouts, not opening an issue."
+  exit 0
+fi
+
 if [ -z "$issue" ]; then
   gh label create "$LABEL" --repo "$REPO" --force --color d73a4a --description "Reported by the weekly link check"
   gh issue create --repo "$REPO" --title "Broken links" --label "$LABEL" --body-file "$body"
@@ -60,13 +72,15 @@ gh issue view "$issue" --repo "$REPO" --json body --jq .body \
   | { grep '^- `' || true; } \
   | sed 's/^- `\(.*\)`$/\1/' \
   | sort -u > "$previous"
+grep -v '(Timed out' "$previous" > "$solid_previous" || true
 
 gh issue edit "$issue" --repo "$REPO" --body-file "$body"
 
 # Compare by URL (the 4th field: "Broken <type> link: <url> (<error>)"), so a
-# link whose error changes, e.g. from HTTP 503 to a timeout, isn't a change.
-added=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$previous" "$current")
-removed=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$current" "$previous")
+# link whose error message changes isn't a change. A link counts as fixed only
+# when it's no longer reported at all, not when it merely times out instead.
+added=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$solid_previous" "$solid_current")
+removed=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$current" "$solid_previous")
 if [ -z "$added" ] && [ -z "$removed" ]; then
   echo "No changes since the last run."
   exit 0
