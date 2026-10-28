@@ -1,0 +1,39 @@
+name: Publish scheduled posts
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Request a Pages build even if no post is dated today'
+        type: boolean
+        default: false
+  schedule:
+    - cron: '15 0 * * *'   # every day at 00:15 UTC
+
+jobs:
+  request-pages-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: _posts
+      - name: Check for posts dated today
+        id: check
+        run: |
+          today=$(date -u +%F)
+          if ls _posts/"$today"-* >/dev/null 2>&1; then
+            echo "Posts dated $today:"
+            ls _posts/"$today"-*
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No posts dated $today."
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Request a GitHub Pages build
+        if: steps.check.outputs.build == 'true' || inputs.force
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
