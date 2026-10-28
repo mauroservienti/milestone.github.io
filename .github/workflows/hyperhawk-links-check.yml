@@ -19,3 +19,6 @@ jobs:
       - uses: dvdstelt/hyperhawk@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Root-relative links to pages Jekyll generates at build time (posts, collections,
+          # series, redirects) have no matching file on disk, so Hyperhawk can't verify them.
+          ignore-patterns: '^/\d{4}/\d{2}/\d{2}/,^/(view-model-composition|soa-search|categories|series|events|talks|tags)/'
