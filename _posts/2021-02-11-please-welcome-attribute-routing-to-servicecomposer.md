@@ -46,7 +46,7 @@ As you can see, it's pretty low-level stuff; you can barely use route templates 
 
 ## Problem: Lack of authentication and authorization support
 
-Requests to support authentication and authorization came as no surprise (for example [here](https://github.com/ServiceComposer/ServiceComposer.AspNetCore.Mvc/issues/53) and [here](https://github.com/mauroservienti/designing-a-ui-for-microservices-demos/issues/2)). The problem was that to provide an authentication and authorization model; we'd have had to write it from scratch.
+Requests to support authentication and authorization came as no surprise (for example [here](https://web.archive.org/web/20200930083927/https://github.com/ServiceComposer/ServiceComposer.AspNetCore.Mvc/issues/53) and [here](https://github.com/mauroservienti/designing-a-ui-for-microservices-demos/issues/2)). The problem was that to provide an authentication and authorization model; we'd have had to write it from scratch.
 
 To handle a request and compose results using ServiceComposer, users need to define request composition handlers, something like the following:
 

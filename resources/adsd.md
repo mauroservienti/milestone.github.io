@@ -23,7 +23,7 @@ A curated collection of resources aligned with the concepts and paradigms taught
 The ADSD course opens with the fallacies of distributed and enterprise computing — the false assumptions developers make about networks, latency, bandwidth, and system maintainability.
 
 - [Understanding the 8 Fallacies of Distributed Systems – Simple Oriented Architecture](https://simpleorientedarchitecture.com/8-fallacies-of-distributed-systems/) — A thorough walkthrough of each fallacy with practical implications and solutions, including aggregates, CQRS, and bounded contexts.
-- [Fallacies of Distributed Computing Explained – Arnon Rotem-Gal-Oz (PDF)](https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf) — The classic paper expanding on each of the original eight fallacies with real-world examples and consequences.
+- [Fallacies of Distributed Computing Explained – Arnon Rotem-Gal-Oz (PDF)](https://web.archive.org/web/20251207174633/https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf) — The classic paper expanding on each of the original eight fallacies with real-world examples and consequences.
 
 Fallacies of Distributed Computing series – Particular Software:
 
@@ -326,7 +326,7 @@ These provide different perspectives on the ADSD material and can help reinforce
 - [Review of ADSD Online Course – Dmytro Khmara](https://www.dmytrokhmara.com/blog/advanced-distributed-system-design-review) — Detailed review covering course structure, format options, cost, and an overview of all topics.
 - [ADSD Course Summary – Conquer the Lawn](https://conquerthelawn.com/advanced-distributed-systems-design-course-summary/) — Highlights four main takeaways: fallacies, implicit coupling in traditional design, SOA as an alternative, and CQRS/sagas.
 - [ADSD Course Review – ieva.dev](https://www.ieva.dev/reviews/udi_dahan_adsd.html) — Honest review including the challenge of the "two bucket services" (IT/Ops and Branding) and the difficulty of applying the concepts in practice.
-- [ADSD Part 4: Go Forth and Make Things Simple – Tom Cabanski](https://tom.cabanski.com/2012/01/28/advanced-distributed-system-design-with-udi-dahan-part-4-go-forth-and-make-things-simple/) — A four-part series covering the in-person course experience, including the hotel service boundary exercise and web-tier scalability discussion.
+- [ADSD Part 4: Go Forth and Make Things Simple – Tom Cabanski](https://web.archive.org/web/20230604071147/https://tom.cabanski.com/2012/01/28/advanced-distributed-system-design-with-udi-dahan-part-4-go-forth-and-make-things-simple/) — A four-part series covering the in-person course experience, including the hotel service boundary exercise and web-tier scalability discussion.
 - [What I Learned from the $2500 Udi Dahan Course – Michał Białecki](https://www.michalbialecki.com/2020/06/23/what-i-learned-from-2500-udi-dahan-course/) — Key lessons: messaging over RPC, don't use one approach for everything, service boundaries matter, and domain models shouldn't mimic the real world.
 
 ---

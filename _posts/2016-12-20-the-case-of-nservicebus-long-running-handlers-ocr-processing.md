@@ -63,4 +63,4 @@ The backend is now split to handle the two concerns. It's obvious that the commu
 
 Using the above scenario I put together a proof of concept that shows how it can be implemented. It's available on my GitHub account in the [NServiceBus.POCs.OCRProcessing](https://github.com/mauroservienti/NServiceBus.POCs.OCRProcessing) repository. This sample uses WCF to allow the `OCR state machine` and the `OCR worker process` talk to each other.
 
-There is also an [official sample](https://docs.particular.net/samples/azure/azure-service-bus-long-running/) showing how to design the same processing logic using Azure ServiceBus in the NServiceBus documentation.
+There is also an [official sample](https://web.archive.org/web/20190823004148/https://docs.particular.net/samples/azure/azure-service-bus-long-running/) showing how to design the same processing logic using Azure ServiceBus in the NServiceBus documentation.
