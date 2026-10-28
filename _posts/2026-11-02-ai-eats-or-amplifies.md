@@ -18,7 +18,7 @@ The bigger shift, though, is somewhere else. It's the entry barrier. We're movin
 
 Open LinkedIn. Scroll for thirty seconds.
 
-The first story goes like this: developers are toast. No-code meets large language models, and in a couple of years nobody will write software anymore. You describe what you want, the machine builds it, done. I met this crowd already in my [vibe-coding experiment](/2026/02/11/vibe-coding.html). They're loud. They're very sure.
+The first story goes like this: developers are toast. No-code meets large language models, and in a couple of years nobody will write software anymore. You describe what you want, the machine builds it, done. I met this crowd already in my [vibe-coding experiment](https://milestone.topics.it/2026/02/11/vibe-coding.html). They're loud. They're very sure.
 
 The second story goes like this: one developer now does the work of ten. Productivity goes through the roof. Teams ship features in hours instead of weeks.
 
@@ -48,7 +48,7 @@ Is AI just the next step on that ladder? Or is it a different kind of step? I'd 
 
 Let me use my own numbers.
 
-Recently, I built [Zusammen](https://github.com/mauroservienti/Zusammen), a [transactional session library for Node.js](https://milestone.topics.it/2026/10/21/zusammen.html), over a weekend. <!-- TODO: link to the Zusammen post once published --> Eight npm packages, one NuGet package, more than 180 tests, documentation, samples, CI, and automated releases. In a stack I don't know. Ten years ago, that would have taken weeks. Maybe months.
+Recently, I built [Zusammen](https://github.com/mauroservienti/Zusammen), a [transactional session library for Node.js](https://milestone.topics.it/2026/10/21/zusammen.html), over a weekend. Eight npm packages, one NuGet package, more than 180 tests, documentation, samples, CI, and automated releases. In a stack I don't know. Ten years ago, that would have taken weeks. Maybe months.
 
 So yes, the output is real. The second story isn't wrong.
 
