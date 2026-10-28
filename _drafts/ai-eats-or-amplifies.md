@@ -70,7 +70,7 @@ This is the part I find most fascinating.
 
 Until now, to turn an idea into software, you needed a developer. The developer was the translator between the problem and the machine. The domain expert explained the problem, the developer translated it into code, and a lot got lost in translation. Entire methodologies exist only to reduce that loss.
 
-Now look at what I did with Zusammen. I built a Node.js library without knowing Node.js. What I knew was the problem space: messaging, the outbox pattern, NServiceBus. I described the problem in English. The machine handled the syntax. It wasn't so strighforward as it sounds, though.
+Now look at what I did with Zusammen. I built a Node.js library without knowing Node.js. What I knew was the problem space: messaging, the outbox pattern, NServiceBus. I described the problem in English. The machine handled the syntax. It wasn't so straightforward as it sounds, though.
 
 Let's extrapolate. Picture an accountant who deeply understands their processes. A doctor who knows exactly what a clinic needs. A logistics planner who knows every corner case of a warehouse. Today, they need a developer to build their tools. Tomorrow, maybe, they describe the problem in English, and the software appears.
 
@@ -102,7 +102,7 @@ I see a few shifts.
 
 **The junior problem.** This one worries me. Seniors built their judgment by writing a lot of code, making a lot of mistakes, and fixing them at 2 AM. If juniors don't write the code anymore, how do they build that judgment? Where does the next generation of seniors come from? I don't have an answer. I only have the question, and I think we should ask it louder.
 
-**Domain experts building software.** It's great for prototypes and internal tools. But someone still owns the 2 AM incident. Someone still does the security review, the data migration, the upgrade nobody wants to do. Will domain experts want that part too? Some will. Many won't. And that's where developers, or whatever we'll call them, will still be needed.
+**Domain experts building software.** It's great for prototypes and internal tools. And domain experts know what the software should do, rarely how well it should do it. Performance, availability, security, data retention: nobody asks for them, until they're missing. But someone still owns the 2 AM incident. Someone still does the security review, the data migration, the upgrade nobody wants to do. Will domain experts want that part too? Some will. Many won't. And that's where developers, or whatever we'll call them, will still be needed.
 
 ## Both stories are right, and wrong
 
