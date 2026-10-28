@@ -63,8 +63,10 @@ gh issue view "$issue" --repo "$REPO" --json body --jq .body \
 
 gh issue edit "$issue" --repo "$REPO" --body-file "$body"
 
-added=$(comm -13 "$previous" "$current")
-removed=$(comm -23 "$previous" "$current")
+# Compare by URL (the 4th field: "Broken <type> link: <url> (<error>)"), so a
+# link whose error changes, e.g. from HTTP 503 to a timeout, isn't a change.
+added=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$previous" "$current")
+removed=$(awk 'FILENAME == ARGV[1] { seen[$4]; next } !($4 in seen)' "$current" "$previous")
 if [ -z "$added" ] && [ -z "$removed" ]; then
   echo "No changes since the last run."
   exit 0
