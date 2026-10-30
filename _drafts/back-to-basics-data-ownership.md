@@ -96,7 +96,7 @@ What matters is respecting the rules as if they were in separate databases:
 - No transactions spanning data owned by different services.
 - No service reading another service's tables "only for reading."
 
-If you follow those rules, moving a service's data to its own database later is an operational task. If they aren't, it's a redesign.
+If you follow those rules, moving a service's data to its own database later is an operational task. If you don't, it's a redesign.
 
 > What about reporting and business intelligence? Reports often need data from many services, and that deserves its own article.
 
