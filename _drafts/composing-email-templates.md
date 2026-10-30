@@ -22,7 +22,7 @@ Microsoft Word has had a feature called [mail merge](https://en.wikipedia.org/wi
 
 That's precisely the split we need. Who owns what in the order confirmation email?
 
-- **Marketing** owns the template: the wording, the layout, the branding, and the decision of when an email is worth sending. It also owns product names, as I discussed in ["Back to Basics: who owns the data?"](TODO-data-ownership-url).
+- **Marketing** owns the template: the wording, the layout, the branding, and the decision of when an email is worth sending. It also owns product names, as I discussed in ["Back to Basics: who owns the data?"](https://milestone.topics.it/2026/11/09/back-to-basics-data-ownership.html).
 - **Sales** owns the order: the items, their quantities and prices, and the total.
 - **Shipping** owns the shipping address and the estimated delivery date.
 - **Customers** owns the customer's name and email address.
