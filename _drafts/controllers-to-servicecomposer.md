@@ -268,7 +268,7 @@ That's not a ServiceComposer problem. It's what happens every time data owned by
 
 After step 4, the route is served by two handlers that only deal with their own data. Everything still runs in the same process, against the same database. And that's fine.
 
-From here on, each service can evolve independently: moving its data to its own tables, moving its handlers to its own assembly, and, eventually, if there is a reason, moving its data behind its own API in a separate deployment. As I argued in ["What I'm sure of is that it's distributed last"](TODO-distributed-last-url), physical distribution is the last decision, not the first.
+From here on, each service can evolve independently: moving its data to its own tables, moving its handlers to its own assembly, and, eventually, if there is a reason, moving its data behind its own API in a separate deployment. As I argued in ["What I'm sure of is that it's distributed last"](https://milestone.topics.it/2026/11/05/distributed-last.html), physical distribution is the last decision, not the first.
 
 ## Conclusion
 
