@@ -118,4 +118,4 @@ It sounds restrictive, and in a way, it is. It's also what allows services to ev
 
 ---
 
-TODO: header image and credits
+Photo by <a href="https://unsplash.com/@purzlbaum?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Claudio Schwarz</a> on <a href="https://unsplash.com/photos/data-word-and-star-on-glass-fyeOxvYvIyY?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
