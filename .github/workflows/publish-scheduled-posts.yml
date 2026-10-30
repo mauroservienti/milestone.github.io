@@ -17,7 +17,7 @@ jobs:
       contents: read
       pages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: _posts
       - name: Check for posts dated today
