@@ -55,7 +55,7 @@ public class ProductsController(ShopDbContext db) : ControllerBase
 }
 ```
 
-The `Product` entity has a name and a description, owned by Marketing, and a price, owned by Sales. Nothing in the code says so. As I discussed in ["Back to Basics: who owns the data?"](TODO-data-ownership-url), the product is a single entity only in the user's head.
+The `Product` entity has a name and a description, owned by Marketing, and a price, owned by Sales. Nothing in the code says so. As I discussed in ["Back to Basics: who owns the data?"](https://milestone.topics.it/2026/11/09/back-to-basics-data-ownership.html), the product is a single entity only in the user's head.
 
 The goal is to end up with a Sales composition handler and a Marketing composition handler, each dealing only with the data it owns, without breaking clients along the way.
 
