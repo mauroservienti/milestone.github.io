@@ -44,6 +44,29 @@
 .post-content{
     padding-top: 10px;
     padding-bottom: 10px;
+    // Keep lines around 75 characters, slightly larger text with more leading
+    max-width: 46rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+
+    p, li{
+        margin-bottom: 1.1rem;
+    }
+
+    // Headings: smaller than Bootstrap's defaults so they don't overpower the text
+    h2{
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 2.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    h3{
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+    }
 }
 
 .post-meta{
