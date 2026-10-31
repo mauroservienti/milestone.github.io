@@ -8,6 +8,7 @@ tags:
 - soa
 - architecture
 - back-to-basics
+series: back-to-basics
 ---
 
 In ["What I'm sure of is that it's distributed last"](https://milestone.topics.it/2026/11/05/distributed-last.html), I wrote that each service owns its data. I wrote it as a bullet point, as if it were obvious.
