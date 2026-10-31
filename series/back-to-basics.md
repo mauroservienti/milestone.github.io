@@ -3,6 +3,7 @@ layout: series
 series: back-to-basics
 title: "Back to Basics"
 synopsis: "When you're involved with something for a very long time, it's easy to fall into the trap of taking many concepts for granted. This series goes back to the basics of distributed systems and service-oriented architecture to build a common foundation."
+header_image: /img/series/back-to-basics/header.jpg
 ---
 
 When you're involved with something for a very long time, it's easy to fall into the trap of taking many concepts for granted. Service boundaries, autonomy, coupling, messages, data ownership: we use these words every day, and we rarely stop to define them.
