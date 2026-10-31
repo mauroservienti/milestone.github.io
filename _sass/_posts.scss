@@ -1,4 +1,17 @@
 .post{
+    // Same reading width for header image, title, and text, centered in the main column
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+
+    // Large screens: a wider column with larger text keeps lines around 75 characters
+    @media screen and (min-width: 1600px) {
+        max-width: 54rem;
+
+        .post-content{
+            font-size: 1.1875rem;
+        }
+    }
 }
 
 .post-list{
@@ -44,8 +57,7 @@
 .post-content{
     padding-top: 10px;
     padding-bottom: 10px;
-    // Keep lines around 75 characters, slightly larger text with more leading
-    max-width: 46rem;
+    // Slightly larger text with more leading
     font-size: 1.0625rem;
     line-height: 1.7;
 
