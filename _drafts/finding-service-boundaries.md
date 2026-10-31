@@ -8,6 +8,7 @@ tags:
 - soa
 - architecture
 - back-to-basics
+series: back-to-basics
 ---
 
 I've written a lot about why service boundaries matter. In ["Back to Basics: service boundaries, autonomous components, and coupling"](https://milestone.topics.it/2023/05/17/back-to-basics-boundaries.html), I described them as virtual fences that keep concepts belonging to different business concerns from melting into each other.
