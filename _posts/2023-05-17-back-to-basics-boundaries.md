@@ -8,6 +8,7 @@ tags:
 - soa
 - architecture
 - back-to-basics
+series: back-to-basics
 ---
 
 Domain Driven Design (DDD) folks talk a lot about bounded contexts. Service Oriented Architecture (SOA) people discuss service boundaries as if there is no tomorrow. Something must be interesting about those _"fences"_ and the separation they continuously discuss. But what is that, and why is it so important?
