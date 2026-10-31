@@ -4,6 +4,7 @@ series: distributed-systems-evolution
 title: "Distributed systems evolution"
 synopsis: "What are the challenges posed by evolving distributed systems architecture? In this short series of articles, we'll understand the critical factors we should be keeping an eye on and how to address them."
 header_image: /img/series/distributed-systems-evolution/header.jpg
+header_image_credit: 'Photo by [Cenk Batuhan Özaltun on Unsplash](https://unsplash.com/photos/nxL2hbI9zSA?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink)'
 ---
 
 What are the challenges posed by evolving distributed systems architecture? In this short series of articles, we'll understand the critical factors we should be keeping an eye on and how to address them.
@@ -25,7 +26,3 @@ We'll then analyze what options we have for evolving messages and process states
 - What is the impact of changing the topology
 - What is the process state and how to evolve it
 - What to do when changes need to be retroactive
-
----
-
-Photo by [Cenk Batuhan Özaltun on Unsplash](https://unsplash.com/photos/nxL2hbI9zSA?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink)
