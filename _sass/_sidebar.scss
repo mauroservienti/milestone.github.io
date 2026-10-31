@@ -1,5 +1,13 @@
 .sidebar{
-
+    // Keep the sidebar in view while scrolling (it's only visible from Bootstrap's lg breakpoint up).
+    // When it's taller than the viewport it scrolls on its own.
+    @media screen and (min-width: 992px) {
+        position: sticky;
+        top: 5rem;
+        max-height: calc(100vh - 6rem);
+        overflow-y: auto;
+        scrollbar-width: thin;
+    }
 }
 
 .sidebar-widget{
