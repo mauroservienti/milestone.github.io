@@ -1,4 +1,6 @@
 .post{
+    // Same reading width for header image, title, and text
+    max-width: 52rem;
 }
 
 .post-list{
@@ -44,9 +46,8 @@
 .post-content{
     padding-top: 10px;
     padding-bottom: 10px;
-    // Keep lines around 75 characters, slightly larger text with more leading
-    max-width: 46rem;
-    font-size: 1.0625rem;
+    // Slightly larger text with more leading
+    font-size: 1.125rem;
     line-height: 1.7;
 
     p, li{

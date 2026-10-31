@@ -1,6 +1,13 @@
 /**
  * Basic styling
  */
+html {
+    // Scale everything (text, Bootstrap components, rem-based widths) up on large screens
+    @media screen and (min-width: $break-large) {
+        font-size: 18px;
+    }
+}
+
 body {
     font-family: $base-font-family;
     font-size: $base-font-size;
@@ -63,7 +70,7 @@ a.muted-link{
  */
 pre,
 code {
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: 1px solid var(--site-code-border, $grey-color-light);
     border-radius: 3px;
     background-color: var(--site-code-background, #eef);
