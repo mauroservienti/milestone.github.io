@@ -28,7 +28,7 @@ The owner of a piece of data is:
 - **The authority on its meaning.** The owner decides what the data means, which values are valid, and which business rules apply to it.
 - **The authority on its shape.** The owner decides how the data is stored and structured, and it can change that whenever it wants without asking anyone.
 
-The last point hurts most when it's violated. If another service reads our tables, we can't rename a column without breaking it. The table structure became a contract, and nobody signed it.
+The last point hurts most when it's violated. If another service reads our tables, we can't rename a column without breaking it. The table structure became a contract nobody signed.
 
 ## Who owns the product?
 
@@ -69,7 +69,7 @@ When users need to see data owned by multiple services, the user interface or a 
 
 ### Share identifiers and facts, not state
 
-Services communicate through messages. Commands stay within a service boundary, from the service's own components to its back end. Across boundaries, services publish events announcing that something happened. Ideally, events carry identifiers and facts, not the owner's internal state.
+Services communicate through messages. Commands stay within a service boundary, from the service's own components to its back end, for example. Across boundaries, services publish events announcing that something happened. Ideally, events carry identifiers and facts, not the owner's internal state.
 
 `OrderPlaced` with an order identifier is a fact. `ProductUpdated` with the whole product inside is a database replication mechanism dressed up as an event. As I wrote in ["Someone says event, and magically, coupling goes away"](https://milestone.topics.it/2024/02/16/events-magic.html), events don't remove coupling on their own.
 
@@ -104,7 +104,7 @@ If you follow those rules, moving a service's data to its own database later is 
 
 A few smells to watch for:
 
-- **Two services write to the same table or the same column.** There are two owners, which means there is none.
+- **Two services write to the same table or the same column.** Two services own it, which means no one does.
 - **A `Common`, `Shared`, or `Core` service owns the main entities.** It usually becomes the place where every change has to happen.
 - **Changing a column requires a coordinated release of multiple services.** Someone is reading data they don't own.
 - **Events carry the full state of an entity.** Subscribers are probably using it to make decisions that belong to the publisher.
