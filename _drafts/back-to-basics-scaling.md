@@ -82,9 +82,6 @@ Scaling out has a nice side effect: availability. When multiple instances of the
 
 And if all instances are down, messages wait in the queue. Senders don't fail because the receiver is unavailable; the work is delayed, not lost.
 
-<!--
-TODO: check the high availability section. It's derived from the "High availability" note in the original draft. Expand it, trim it, or drop it.
--->
 
 ## Conclusion
 
@@ -92,6 +89,6 @@ Scaling up means adding resources to the same node. It's transparent to the syst
 
 A message-based system with clear boundaries and services owning their data makes scaling out a deployment decision for each part of the system rather than a rewrite of the whole. Scaling out is a physical concern: no matter how many instances we deploy, the logical design, with its commands, events, senders, and receivers, doesn't change.
 
-<!--
-TODO: review the conclusion; it's written from the points in the draft.
--->
+---
+
+<!-- header image credits -->
