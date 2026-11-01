@@ -278,4 +278,4 @@ The tricky parts aren't the handlers themselves. They are the details around the
 
 ---
 
-TODO: header image and credits
+Photo by <a href="https://unsplash.com/@jcraice?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Julia Craice</a> on <a href="https://unsplash.com/photos/white-bird-faCwTallTC0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
