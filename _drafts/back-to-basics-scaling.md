@@ -3,7 +3,7 @@ layout: post
 title: "Back to Basics: scaling up and scaling out message-based systems"
 author: Mauro Servienti
 synopsis: "We often use terms like scale up and scale out. What do they mean, and how do they influence the way we design software systems? Let's go back to the basics and build a common foundation. Today's topic is scaling."
-header_image: # TODO: header image
+header_image: /img/posts/back-to-basics-scaling/header.jpg
 tags:
 - back-to-basics
 - architecture
