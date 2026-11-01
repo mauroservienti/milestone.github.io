@@ -41,7 +41,9 @@ The crucial distinction is between device _types_ and _physical_ devices:
 - Deciding that a manager gets a laptop and a salesperson gets a tablet and a phone is a decision about device types. It's about roles and entitlements, the politics of who gets what.
 - Handing over a specific laptop, with a serial number, configured and ready to use, is about physical devices. It's about stock, procurement, and configuration.
 
-> **TODO (Mauro):** confirm the split. The rest of the draft assumes HR owns the "role to device types" policy, and IT owns the device types catalog and the physical devices. If you see it differently (for example, IT owns the policy and HR only owns roles), the composition and events sections change accordingly.
+<!--
+TODO: confirm the split. The rest of the draft assumes HR owns the "role to device types" policy, and IT owns the device types catalog and the physical devices. If you see it differently (for example, IT owns the policy and HR only owns roles), the composition and events sections change accordingly.
+-->
 
 ## Who owns the policy?
 
@@ -78,12 +80,14 @@ When a new person joins, HR publishes a corresponding event:
 
 HR uses a similar one, `EmployeeRoleChanged`, to broadcast promotions and changes of unit.
 
-> **TODO (Mauro):** decide how IT knows which devices to prepare. The role-to-device-types policy lives in HR, so `roleId` alone isn't enough for IT. Two options:
->
-> 1. HR applies its own policy and announces the outcome: the event also carries the device type IDs the employee is entitled to (for example, `"deviceTypeIds": ["DT-1", "DT-7"]`). IT doesn't need to know anything about roles. This matches the advice in the data ownership post: the owner makes the decision and announces it.
-> 2. IT doesn't get the entitlement in the event, and IT people see it through composition when the employee shows up.
->
-> Pick one and update the event sample and the next section.
+<!--
+TODO: decide how IT knows which devices to prepare. The role-to-device-types policy lives in HR, so `roleId` alone isn't enough for IT. Two options:
+
+1. HR applies its own policy and announces the outcome: the event also carries the device type IDs the employee is entitled to (for example, `"deviceTypeIds": ["DT-1", "DT-7"]`). IT doesn't need to know anything about roles. This matches the advice in the data ownership post: the owner makes the decision and announces it.
+2. IT doesn't get the entitlement in the event, and IT people see it through composition when the employee shows up.
+
+Pick one and update the event sample and the next section.
+-->
 
 IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Similar to the HR personnel, IT people use their system to determine which devices to hand over. Their system uses ViewModel Composition to show the employee's name and other details from the HR system. There is no need for IT to store any of those.
 
@@ -93,7 +97,9 @@ IT could wait for the new employee to show up at the desk. However, devices coul
 
 Similarly, when someone changes role, some devices might no longer be needed. IT wants to know which devices will become available again and start a different process to collect and reset them, making them available to others.
 
-> **TODO (Mauro):** describe the role change flow. With option 1 above, `EmployeeRoleChanged` could carry both the old and the new entitlements, or just the new ones and let IT work out the difference against what it handed out. Who decides that a device must be returned: HR (policy) or IT (inventory)?
+<!--
+TODO: describe the role change flow. With option 1 above, `EmployeeRoleChanged` could carry both the old and the new entitlements, or just the new ones and let IT work out the difference against what it handed out. Who decides that a device must be returned: HR (policy) or IT (inventory)?
+-->
 
 ## What if there are thousands of them?
 
@@ -107,8 +113,12 @@ Does that create coupling?
 
 In a sense, yes.
 
-> **TODO (Mauro):** finish the argument. Suggested direction: it's a different and milder kind of coupling than copying data. The HR user interface depends on IT's search contract at the edges, through composition, while HR's storage and business logic don't know anything about devices. IT can change how device types are stored or described without HR noticing, as long as the search contract holds. Copying device data into HR would couple storage, business rules, and release cycles.
+<!--
+TODO: finish the argument. Suggested direction: it's a different and milder kind of coupling than copying data. The HR user interface depends on IT's search contract at the edges, through composition, while HR's storage and business logic don't know anything about devices. IT can change how device types are stored or described without HR noticing, as long as the search contract holds. Copying device data into HR would couple storage, business rules, and release cycles.
+-->
 
 ## Conclusion
 
-> **TODO (Mauro):** restate the thesis in your words. Suggested points: the overlap between HR and IT is in the user's mental model, not in the data. Split device types from physical devices, let HR own the entitlement policy and IT the inventory, compose at the user interface, and use events carrying identifiers and decisions to keep the two in sync.
+<!--
+TODO: restate the thesis in your words. Suggested points: the overlap between HR and IT is in the user's mental model, not in the data. Split device types from physical devices, let HR own the entitlement policy and IT the inventory, compose at the user interface, and use events carrying identifiers and decisions to keep the two in sync.
+-->
