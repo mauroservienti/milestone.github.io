@@ -100,9 +100,9 @@ id: 'home'
            </div>
         </div>
         <div class="card-body">
-          <h2 class="card-title">
+          <h3 class="card-title">
             <a class="muted-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-          </h2>
+          </h3>
           <hr class="h-splitter" />
           <p class="card-text">
             {% if post.synopsis %}{{ post.synopsis }}{% else %}{{ post.excerpt }}{% endif %}
