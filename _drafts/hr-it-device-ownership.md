@@ -3,6 +3,7 @@ layout: post
 title: "Who decides who gets a laptop? Ownership when HR and IT overlap"
 author: Mauro Servienti
 synopsis: "HR hires people, IT hands out devices, and assigning a laptop to a new employee seems to need both. Does it? Let's dissect a scenario where ownership looks shared and find out who owns what."
+header_image: /img/posts/hr-it-device-ownership/header.jpg
 tags:
 - soa
 - architecture
