@@ -50,8 +50,13 @@
     font-size: 1.125rem;
     line-height: 1.7;
 
-    p, li{
+    p, ul, ol{
         margin-bottom: 1.1rem;
+    }
+
+    // List items closer together than paragraphs
+    li, li > p{
+        margin-bottom: 0.35rem;
     }
 
     // Headings: smaller than Bootstrap's defaults so they don't overpower the text
