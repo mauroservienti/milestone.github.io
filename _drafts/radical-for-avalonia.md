@@ -4,6 +4,9 @@ title: "Radical goes cross-platform: Radical for Avalonia"
 author: Mauro Servienti
 synopsis: "Radical, the MVVM and UI composition framework for WPF, has always been Windows only. Not anymore. Meet Radical for Avalonia, now at 1.0: the same API, running on Windows, macOS, Linux, mobile, and the browser."
 header_image: /img/posts/radical-for-avalonia/header.jpg
+related:
+- 2015-06-10-radical-democracy-release.md
+- 2015-04-08-radical-splash-screen-support-desktop.md
 tags:
 - radical
 - development
