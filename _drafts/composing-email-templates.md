@@ -182,7 +182,7 @@ The template is what marketing users design:
 </p>
 ```
 
-The strongly typed model pays off for template authors too. Values have types, so the estimated delivery is a date that can be formatted, not a string to parse. And a typo, such as `@Model.Totl`, fails when the template is compiled, not when a customer opens a broken email. Marketing can compile templates when users save them and reject the ones that don't compile.
+The strongly typed model also pays off for template authors. Values have types, so the estimated delivery is a date that can be formatted, not a string to parse. And a typo, such as `@Model.Total`, fails when the template is compiled, not when a customer opens a broken email. Marketing can compile templates when users save them and reject the ones that don't compile.
 
 One more thing to keep in mind: RazorLight caches compiled templates by key. When users change a template, the key must change too. Otherwise, RazorLight keeps rendering the old compiled version. That's why the key includes the template version.
 
