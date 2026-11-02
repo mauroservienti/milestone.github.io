@@ -161,4 +161,4 @@ Idempotent, you must be. Now you know why it's hard ;-)
 
 ---
 
-TODO: header image and credits
+Photo by <a href="https://unsplash.com/@henmankk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Keagan Henman</a> on <a href="https://unsplash.com/photos/green-clothes-hanger-Won79_9oUEk?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
