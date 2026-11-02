@@ -78,18 +78,31 @@ layout: default
   {% endif %}
 
   {% comment %}
-    Related articles: posts listed in this post's `related` front matter (full URLs),
-    plus posts listing this one in theirs, so a link only needs to be added on one side.
+    Related articles: posts listed in this post's `related` front matter, plus posts
+    listing this one in theirs, so a link only needs to be added on one side.
+    Entries are either full URLs or relative paths to the post's Markdown file
+    (for example, 2019-05-02-safety-first.md); paths match on the file name.
     Posts in the same series are already listed above. Future-dated posts aren't in
     site.posts, so they show up once published.
   {% endcomment %}
   {% assign page_full_url = page.url | prepend: site.url %}
+  {% assign page_file = page.path | split: "/" | last %}
   {% assign related_posts = "" | split: "" %}
   {% for related_post in site.posts %}
     {% if related_post.url == page.url %}{% continue %}{% endif %}
     {% if page.series and related_post.series == page.series %}{% continue %}{% endif %}
     {% assign related_post_full_url = related_post.url | prepend: site.url %}
-    {% if page.related contains related_post_full_url or related_post.related contains page_full_url %}
+    {% assign related_post_file = related_post.path | split: "/" | last %}
+    {% assign is_related = false %}
+    {% for entry in page.related %}
+      {% assign entry_file = entry | split: "/" | last %}
+      {% if entry == related_post_full_url or entry_file == related_post_file %}{% assign is_related = true %}{% endif %}
+    {% endfor %}
+    {% for entry in related_post.related %}
+      {% assign entry_file = entry | split: "/" | last %}
+      {% if entry == page_full_url or entry_file == page_file %}{% assign is_related = true %}{% endif %}
+    {% endfor %}
+    {% if is_related %}
       {% assign related_posts = related_posts | push: related_post %}
     {% endif %}
   {% endfor %}
