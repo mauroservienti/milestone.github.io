@@ -77,6 +77,33 @@ layout: default
   </section>
   {% endif %}
 
+  {% comment %}
+    Related articles: posts listed in this post's `related` front matter (full URLs),
+    plus posts listing this one in theirs, so a link only needs to be added on one side.
+    Posts in the same series are already listed above. Future-dated posts aren't in
+    site.posts, so they show up once published.
+  {% endcomment %}
+  {% assign page_full_url = page.url | prepend: site.url %}
+  {% assign related_posts = "" | split: "" %}
+  {% for related_post in site.posts %}
+    {% if related_post.url == page.url %}{% continue %}{% endif %}
+    {% if page.series and related_post.series == page.series %}{% continue %}{% endif %}
+    {% assign related_post_full_url = related_post.url | prepend: site.url %}
+    {% if page.related contains related_post_full_url or related_post.related contains page_full_url %}
+      {% assign related_posts = related_posts | push: related_post %}
+    {% endif %}
+  {% endfor %}
+  {% if related_posts.size > 0 %}
+  <section class="post-related-list">
+    <h3>Related articles</h3>
+    <ul>
+      {% for related_post in related_posts %}
+        <li><a href="{{ related_post.url | prepend: site.baseurl }}">{{ related_post.title }}</a> <span class="post-meta">{{ related_post.date | date: "%b %-d, %Y" }}</span></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
   <div id="disqus_thread"></div>
   <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
