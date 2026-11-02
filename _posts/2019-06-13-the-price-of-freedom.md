@@ -10,6 +10,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2019/06/13/the-price-of-freedom.html
 ---
 
 # The Price of Freedom

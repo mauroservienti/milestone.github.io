@@ -10,7 +10,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
-redirect_from: /2019/03/06/viewmodel-composition-show-me-the-code.html
+redirect_from: /view-model-composition/2019/03/06/viewmodel-composition-show-me-the-code.html
 ---
 
 The ViewModel Composition discovery journey is progressing nicely, so far we've discussed:

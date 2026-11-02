@@ -44,7 +44,7 @@ Not to mention that we don't have a single stack trace or memory dump. We'll hav
 
 When faced with new challenges, it's OK to apply previous experience and reuse what we already know, including the tools we're acquainted with. Simultaneously we need to be careful. We may want to pause and step back and evaluate if our approach fits the challenge. There is a chance that the set of available tools is inadequate, and we need to learn something new or apply different techniques.
 
-For more information, you can reach out to me or my dear friend and colleague [Laila](https://twitter.com/noctovis), who's [presenting on the topic](https://techorama.be/speakers/session/message-processing-failed-but-whats-the-root-cause/) at Techorama.
+For more information, you can reach out to me or my dear friend and colleague [Laila](https://twitter.com/noctovis), who's [presenting on the topic](https://web.archive.org/web/20220516120000/https://techorama.be/speakers/session/message-processing-failed-but-whats-the-root-cause/) at Techorama.
 
 ---
 

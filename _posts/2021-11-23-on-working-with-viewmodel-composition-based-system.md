@@ -9,6 +9,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2021/11/23/on-working-with-viewmodel-composition-based-system.html
 ---
 
 One of the frequently asked questions is what it is like to work on a system that implements a frontend based on ViewModel Composition techniques. I covered the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition) theory and the technical part from A to Z, but I never touched on what it means to do it effectively.

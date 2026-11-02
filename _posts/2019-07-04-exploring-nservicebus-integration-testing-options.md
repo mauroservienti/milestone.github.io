@@ -67,14 +67,14 @@ Both complexity and code duplication are imposed by the acceptance testing frame
 
 Not being able to test business scenarios, exercising the real production code, can be a limitation in a lot of cases so I decided to try to understand what could be the requirements and spiked a [solution](https://github.com/mauroservienti/NServiceBus.IntegrationTesting). A solution that right now has a ton of limitations and is far from being anything ready to be used.
 
-Let's say that there is a system that is composed by two endpoints: [MyService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyService) and [MyOtherService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/master/src/MyOtherService). These are just regular NServiceBus endpoints. The business flow is something like:
+Let's say that there is a system that is composed by two endpoints: [MyService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/3603d12830cc8811fefdc951c538d177f7b02b9f/src/MyService) and [MyOtherService](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/tree/3603d12830cc8811fefdc951c538d177f7b02b9f/src/MyOtherService). These are just regular NServiceBus endpoints. The business flow is something like:
 
 - `MyService` sends `AMessage` to `MyOtherService`
 - `MyOtherService` replies with a `AReplyMessage`
 - `MyService` handles `AReplyMessage` and sends locally to itself a `StartASaga` message
 - `ASaga` is started in `MyService`
 
-What I want to validate is that the outlined flow happens. I wrote the following [test](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/blob/master/src/MySystem.AcceptanceTests/When_doing_something.cs):
+What I want to validate is that the outlined flow happens. I wrote the following [test](https://github.com/mauroservienti/NServiceBus.IntegrationTesting/blob/3603d12830cc8811fefdc951c538d177f7b02b9f/src/MySystem.AcceptanceTests/When_doing_something.cs):
 
 ```csharp
 [Test]

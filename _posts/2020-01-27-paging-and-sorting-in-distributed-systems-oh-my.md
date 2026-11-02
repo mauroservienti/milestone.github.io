@@ -8,6 +8,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html
 ---
 Paging and sorting sound like a controversial and complex topic when it comes to displaying data; however, they don't need to be, even in distributed systems.
 

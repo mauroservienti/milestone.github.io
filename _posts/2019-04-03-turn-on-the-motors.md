@@ -11,6 +11,7 @@ tags:
 - soa
 - viewmodel-composition
 series: view-model-composition
+redirect_from: /view-model-composition/2019/04/03/turn-on-the-motors.html
 ---
 
 We spent the last seven posts introducing ViewModel Composition and diving into many aspects of it. A detailed list of articles can be found in the [ViewModel Composition](https://milestone.topics.it/categories/view-model-composition.html) category.

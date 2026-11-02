@@ -8,7 +8,7 @@ tags:
 - architecture
 ---
 
-[You Are Not Google](https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) is one of my all-time favorite articles.
+[You Are Not Google](https://web.archive.org/web/20190406163106/https://blog.bradfieldcs.com/you-are-not-google-84912cf44afb) is one of my all-time favorite articles.
 
 I wholeheartedly suggest reading it.
 

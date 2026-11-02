@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Need to fetch all history for proper git operations
           fetch-depth: 0
@@ -30,9 +30,18 @@ jobs:
 
       - name: Get changed image files
         id: changed
+        env:
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          # Get list of added/modified images in this push
-          CHANGED=$(git diff --name-only HEAD~1 HEAD -- 'img/*.jpg' 'img/*.jpeg' 'img/*.png' 'img/**/*.jpg' 'img/**/*.jpeg' 'img/**/*.png' 2>/dev/null || echo "")
+          # Get list of added/modified images in the whole pull request, not only the
+          # last commit: a push with multiple commits would otherwise miss images added
+          # in the earlier ones. Manual runs fall back to the last commit.
+          if [ -n "$BASE_REF" ]; then
+            RANGE="origin/$BASE_REF...HEAD"
+          else
+            RANGE="HEAD~1 HEAD"
+          fi
+          CHANGED=$(git diff --name-only --diff-filter=AM $RANGE -- 'img/*.jpg' 'img/*.jpeg' 'img/*.png' 'img/**/*.jpg' 'img/**/*.jpeg' 'img/**/*.png' 2>/dev/null || echo "")
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

@@ -7,7 +7,7 @@ tags:
 - OnePlus One
 ---
 
-I own a [OnePlus One](https://oneplus.net/) device, I am really happy with it. Seriously.
+I own a [OnePlus One](https://web.archive.org/web/20150710001814/https://oneplus.net/) device, I am really happy with it. Seriously.
 
 A couple of weeks ago I updated the built-in mail up (the one based on [Boxer](http://www.getboxer.com/)) and guess what? Battery life dropped from 2 full days to less than 8 hrs. Crap.
 

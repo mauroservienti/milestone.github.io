@@ -8,6 +8,7 @@ tags:
 - messaging
 - architecture
 - back-to-basics
+series: back-to-basics
 ---
 
 I often find myself talking about distributed systems and message-based architecture. Ultimately, it's been my focus for the last 15 years. I realized, though, that I often take basic concepts for granted. For example, I assume there's clarity about the differences between commands, events, and messages.

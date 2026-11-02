@@ -112,7 +112,7 @@ Microsoft offers a `dotnet-core-uninstall` command line utility for all the supp
 
 .NET is available through [Home Brew](https://formulae.brew.sh/formula/dotnet), which would be perfect if there were preview bits. Also, it was outdated when I looked at it a while back.
 
-Continuing my quest, I then found a [script that supposedly allows uninstalling .NET](https://github.com/MicrosoftDocs/visualstudio-docs/blob/main/mac/uninstall-net-2022.md):
+Continuing my quest, I then found a [script that supposedly allows uninstalling .NET](https://github.com/MicrosoftDocs/visualstudio-docs/blob/517f31e7366b26875d5bb7817998c8452f4ec5cc/mac/uninstall-net-2022.md):
 
 ```bash
 sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dotnet/sdk/main/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh)"
