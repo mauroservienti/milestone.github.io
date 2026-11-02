@@ -202,4 +202,4 @@ An email is a frontend, and like any frontend, it needs data owned by many servi
 
 ---
 
-TODO: header image and credits
+Photo by <a href="https://unsplash.com/@hostreviews?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Stephen Phillips - Hostreviews.co.uk</a> on <a href="https://unsplash.com/photos/mail-icon-F8QgtxUc6-E?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
