@@ -7,6 +7,7 @@ header_image: /img/posts/i-m-a-procrastinator-I-fail-at-to-do-lists/header.jpg
 title: "I'm a procrastinator. I fail at To-Do lists."
 author: Mauro Servienti
 synopsis: "I tried to-do lists many many times, and after a while I always failed. Being a procrastinator doesn't really help when it comes to to-do lists. Here is my reasoning on the root causes of the problem and how I decided to fix it."
+series: lifehacking-101
 tags:
 - self-organization
 - get-things-done

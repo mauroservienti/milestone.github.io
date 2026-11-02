@@ -4,6 +4,7 @@ title: "The guilt that comes with flexible working hours"
 author: Mauro Servienti
 synopsis: "I've been working remotely for Particular Software for the last ten years. To this day, I still feel guilty for taking time off during regular working hours, even though we don't have working hours at all. Why is that?"
 header_image: /img/posts/guilty-feeling/header.jpg
+series: lifehacking-101
 tags:
 - remote-work
 - time-management

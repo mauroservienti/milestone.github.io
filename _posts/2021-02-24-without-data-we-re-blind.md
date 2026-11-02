@@ -4,6 +4,7 @@ header_image: /img/posts/without-data-we-re-blind/header.jpg
 title: "Lifehacking 101: without data we're blind"
 author: Mauro Servienti
 synopsis: "Your day is a mess. By the end of the day, the predominant feeling is that you probably got nothing done. Before trying to address any problem, it's essential to understand which issues we're facing."
+series: lifehacking-101
 tags:
 - time-management
 - self-organization

@@ -4,6 +4,7 @@ title: "I'm sorry. Your emergencies are not my problems, at least not now"
 author: Mauro Servienti
 synopsis: "We might be finding ourselves in a vicious loop, our productivity is a disaster, we're putting in more and more hours, but things get even worse. Maybe we're not the problem."
 header_image: /img/posts/your-emergencies-not-my-problems/header.jpg
+series: lifehacking-101
 tags:
 - self-organization
 - remote-work

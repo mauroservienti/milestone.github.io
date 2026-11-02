@@ -4,6 +4,7 @@ header_image: /img/posts/plans-disruptions/header.jpg
 title: "Lifehacking 101: plans disruptions"
 author: Mauro Servienti
 synopsis: "Dealing with plan disruptions is never easy. Unfortunately, all the involved people will pay the price one way or the other. However, there are some actions we can put in place to mitigate the effects of a planning disruption."
+series: lifehacking-101
 tags:
 - time-management
 - self-organization
