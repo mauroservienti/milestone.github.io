@@ -41,7 +41,21 @@ jobs:
           else
             RANGE="HEAD~1 HEAD"
           fi
-          CHANGED=$(git diff --name-only --diff-filter=AM $RANGE -- 'img/*.jpg' 'img/*.jpeg' 'img/*.png' 'img/**/*.jpg' 'img/**/*.jpeg' 'img/**/*.png' 2>/dev/null || echo "")
+          CANDIDATES=$(git diff --name-only --diff-filter=AM $RANGE -- 'img/*.jpg' 'img/*.jpeg' 'img/*.png' 'img/**/*.jpg' 'img/**/*.jpeg' 'img/**/*.png' 2>/dev/null || echo "")
+
+          # Skip images this workflow already optimized: their last commit is the bot's.
+          # JPEG compression is lossy, so optimizing again on every push would degrade
+          # them a little more each time. Replacing an image makes it eligible again.
+          CHANGED=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            if [ "$(git log -1 --format=%an -- "$file")" = "github-actions[bot]" ]; then
+              echo "Already optimized: $file"
+              continue
+            fi
+            CHANGED="$CHANGED$file"$'\n'
+          done <<< "$CANDIDATES"
+          CHANGED=$(printf '%s' "$CHANGED" | sed '/^$/d')
           echo "files<<EOF" >> $GITHUB_OUTPUT
           echo "$CHANGED" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
