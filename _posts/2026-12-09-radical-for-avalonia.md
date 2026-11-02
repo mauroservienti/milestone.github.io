@@ -34,7 +34,7 @@ Meet [Radical.Avalonia](https://github.com/RadicalFx/Radical.Avalonia). Version 
 
 Radical.Avalonia is the Avalonia counterpart of Radical.Windows 4.0. It targets .NET 10 and Avalonia 12, and mirrors the Radical.Windows API, using the `Radical.Avalonia` root namespace instead of `Radical.Windows`. Concepts, conventions, and most of the code carry over. Moving an application from WPF to Avalonia should be mostly a matter of changing `using` directives and XAML namespaces.
 
-> Radical.Avalonia mirrors Radical.Windows 4.0. If the application runs on an older version, the [3.x to 4.0.0 upgrade guide](https://docs.radicalframework.com/upgrade-guides/3.x-to-4.0.0) and the [async message broker upgrade guide for WPF and Avalonia applications](https://docs.radicalframework.com/upgrade-guides/async-message-broker/async-message-broker-ui) cover the breaking changes.
+> If the application runs on a Radical.Windows version older than 4.0, the [3.x to 4.0.0 upgrade guide](https://docs.radicalframework.com/upgrade-guides/3.x-to-4.0.0) and the [async message broker upgrade guide for WPF and Avalonia applications](https://docs.radicalframework.com/upgrade-guides/async-message-broker/async-message-broker-ui) cover the breaking changes.
 
 Booting an application is a single line of code, as it is with WPF. The only difference is where the line goes. Avalonia applications initialize in `OnFrameworkInitializationCompleted` rather than in the `App` constructor, like the following:
 
