@@ -13,7 +13,7 @@ In 2019, in ["Safety first!"](https://milestone.topics.it/2019/05/02/safety-firs
 
 Seven years later, it's time to dive into it.
 
-In ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html), I described how duplicate messages happen: sent, received, or processed more than once. The conclusion was that duplicates are a matter of when, not if, and that the goal is to make them harmless. Idempotency is how we make them harmless. Idempotency is mentioned in many of my posts, yet it never had a post of its own. Let's fix that.
+In ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html), I described how duplicate messages happen: sent, received, or processed more than once. The conclusion was that duplicates are a matter of when, not if, and that the goal is to make them harmless. Idempotency is how we make them harmless. I mention idempotency in many of my posts, yet I've never had a post about it. Let's fix that.
 
 ## What does idempotent mean, really?
 
@@ -24,18 +24,18 @@ In a message-based system, the definition needs a small but critical extension. 
 - leave the system in the same state as processing it once;
 - produce the same observable effects as processing it once.
 
-The second point is the one we tend to forget. Observable effects include outgoing messages, emails, calls to third-party systems, and anything else that leaves the boundaries of the handler. A handler that correctly avoids storing the same data twice, but publishes the same event twice, isn't idempotent. It moved the problem downstream.
+We tend to forget the second point. Observable effects include outgoing messages, emails, calls to third-party systems, and anything else that leaves the handler's boundaries. A handler that avoids storing the same data twice but publishes the same event twice isn't idempotent. It moved the problem downstream.
 
 ## Some operations are idempotent by nature
 
 Let's start with the good news. Some operations are naturally idempotent:
 
 - "Set the product price to 120" is idempotent. Doing it twice results in a price of 120.
-- "Increase the product price by 10" isn't. Doing it twice results in a price increased by 20.
+- "Increase the product price by 10" isn't. Doing it twice increases the price by 20.
 
 The difference is in how the message is designed. Messages that carry absolute values, or that describe a desired state, tend to result in naturally idempotent handlers. Messages that carry deltas, or that describe an action to apply, tend to require extra work.
 
-That's a good design principle. However, it's not always possible. Charging a credit card, shipping a parcel, and sending an email are actions, and there is no way to express them as a state. Even when it's possible, as we'll see shortly, naturally idempotent isn't always safe.
+That's a good design principle. However, it's not always possible. Charging a credit card, shipping a parcel, and sending an email are actions, and you can't express them as a state. Even when it's possible, as we'll see shortly, naturally idempotent isn't always safe.
 
 ## The "check, then act" trap
 
@@ -59,7 +59,7 @@ public async Task Handle(ShipOrder message, IMessageHandlerContext context)
 
 It looks reasonable. If the order is already shipped, the handler does nothing. What could possibly go wrong?
 
-Concurrency. Most systems scale out by running multiple instances of the same endpoint, competing for messages on the same queue. If two copies of the same message are delivered at about the same time, two instances can run the check at the same time. Both find no shipment. Both create one.
+Concurrency. Most systems scale out by running multiple instances of the same endpoint that compete for messages on the same queue. If two copies of the same message are delivered at about the same time, two instances can run the check at the same time. Both find no shipment. Both create one.
 
 The check and the act must be atomic. The database is usually the best tool for the job:
 
@@ -71,7 +71,7 @@ In all cases, the losing attempt fails, the message goes back to the queue, and 
 
 ## Don't forget the outgoing messages
 
-Let's assume the unique constraint is in place. There is still a problem with the above handler. Let's look at the following sequence:
+Let's assume the unique constraint is in place. The above handler still has a problem. Let's look at the following sequence:
 
 1. The handler stores the shipment, and the transaction commits.
 2. The process crashes before publishing `OrderShipped`.
@@ -80,7 +80,7 @@ Let's assume the unique constraint is in place. There is still a problem with th
 
 Nobody will ever know the order was shipped. The billing service won't send the invoice, and the customer won't get a notification. Skipping the business logic on a duplicate is correct. Skipping the outgoing messages isn't.
 
-When a handler detects it already processed a message, it must still produce the same outgoing messages. Ideally, with the same message identifiers, so that receivers can recognize them as duplicates. With NServiceBus, it could look like the following:
+When a handler detects it has already processed a message, it must still produce the same outgoing messages. Ideally, with the same message identifiers, so that receivers can recognize them as duplicates. With NServiceBus, it could look like the following:
 
 ```csharp
 public async Task Handle(ShipOrder message, IMessageHandlerContext context)
@@ -112,7 +112,7 @@ Let's go back to the good news. "Set the price to 120" is idempotent. Is it safe
 3. In the meantime, Sales sends "set the price to 120", and the handler processes it.
 4. The redelivered "set the price to 100" message arrives and is processed again.
 
-The price is now 100. Each message, taken individually, is idempotent. The combination of duplicates and out-of-order delivery isn't. I discussed message ordering in ["Isn't A supposed to come before B?"](https://milestone.topics.it/2021/10/20/isnt-a-supposed-to-come-before-b.html), and this is one of the scenarios where it bites.
+The price is now 100. Each message, taken individually, is idempotent. The combination of duplicates and out-of-order delivery isn't. I discussed message ordering in ["Isn't A supposed to come before B?"](https://milestone.topics.it/2021/10/20/isnt-a-supposed-to-come-before-b.html), and this is one scenario where it bites.
 
 A common solution is to version the data. The owner increments a version every time the price changes and includes it in the message. The receiver ignores messages carrying a version older than, or equal to, the one it already has:
 
@@ -137,23 +137,23 @@ Duplicates and stale messages are now harmless. The same optimistic concurrency 
 
 Deduplication based on message identifiers requires storing the identifiers of processed messages. Storage isn't infinite, so identifiers are kept for a while and then removed. With NServiceBus, for example, the [outbox expiration duration](https://docs.particular.net/nservicebus/outbox/#outbox-expiration-duration) depends on the chosen persistence and can be configured.
 
-What happens when a duplicate arrives after its identifier has been removed? It's processed as a brand-new message. That can happen, for example, when an operator retries a failed message from the error queue after a few weeks.
+What happens when a duplicate arrives after its identifier has been removed? It's processed as a brand-new message. For example, this can happen when an operator retries a failed message from the error queue after a few weeks.
 
-The retention period must be longer than the longest time a message can be retried. And for the operations where a duplicate is costly, it's worth having business-level idempotency as a second line of defense. The unique constraint on `OrderId` doesn't expire.
+The retention period must be longer than the longest time a message can be retried. For operations where a duplicate is costly, it's worth adding business-level idempotency as a second line of defense. The unique constraint on `OrderId` doesn't expire.
 
 ## Idempotency at the edges
 
 Everything so far assumes there is an incoming message. What about HTTP requests?
 
-The same principles apply, but the client must help. HTTP clients retrying a `POST` can't be distinguished from clients sending a new request, unless they send an identifier. That's the purpose of idempotency keys: the client generates a unique key for each logical operation and sends it, for example, in an `Idempotency-Key` header. There's an [IETF draft standardizing the header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/). The server stores the key with the outcome of the first request and returns the same outcome for subsequent requests with the same key.
+The same principles apply, but the client must help. HTTP clients retrying a `POST` can't be distinguished from clients sending a new request, unless they send an identifier. That's the purpose of idempotency keys: the client generates a unique key for each logical operation and sends it, for example, in an `Idempotency-Key` header. An [IETF draft standardizes the header](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/). The server stores the key and the outcome of the first request, then returns the same outcome for subsequent requests with the same key.
 
 The key can then become the stable message identifier for any message the request sends, turning the "sent more than once" problem into a "received more than once" problem, as discussed in ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html).
 
-The same applies when we're the client. When calling a third-party service, such as a payment gateway, pass our own idempotency key if the third party supports it. If it doesn't, there is nothing we can do to make the call idempotent, and we're back to choosing between at-most-once and at-least-once.
+The same applies when we're the client. When calling a third-party service, such as a payment gateway, pass our own idempotency key if the third party supports it. If it doesn't, we can't make the call idempotent, and we're back to choosing between at-most-once and at-least-once.
 
 ## Conclusion
 
-Idempotency isn't a checkbox. It's a property of the whole message-handling process: state, outgoing messages, and side effects. Checking whether something has already been done is a starting point, but it isn't enough on its own. The check must be atomic with the action, duplicates must still produce the same outgoing messages, and stale messages must be told apart from new ones.
+Idempotency isn't a checkbox. It's a property of the whole message-handling process: state, outgoing messages, and side effects. Checking whether something has already been done is a starting point, but it isn't enough. The check must be atomic with the action, duplicates must still produce the same outgoing messages, and stale messages must be told apart from new ones.
 
 The good news is that we don't have to do it all by hand. Designing messages to describe state, versioning data, and relying on an outbox remove most of the burden. What remains, side effects that can't be undone, needs explicit design.
 
