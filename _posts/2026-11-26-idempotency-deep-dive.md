@@ -4,6 +4,9 @@ title: "Idempotent, you must be. A deep dive into idempotency"
 author: Mauro Servienti
 synopsis: "Duplicate messages are a fact of life, and idempotency is the usual answer. But what does idempotent really mean, and why is it harder than checking whether we've already done something? Let's dive in."
 header_image: /img/posts/idempotency-deep-dive/header.jpg
+related:
+- https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html
+- https://milestone.topics.it/2019/05/02/safety-first.html
 tags:
 - messaging
 - distributed-systems
