@@ -17,11 +17,11 @@ The last time I wrote about Radical on this blog was in 2015, for the [Democracy
 
 [Radical](https://github.com/RadicalFx/Radical.Windows) is an infrastructure framework to build composite WPF applications based on the [Model-View-ViewModel pattern](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel). It comes with:
 
-- conventions to bind views and view models;
-- a message broker;
-- UI composition through regions;
-- change tracking with undo and redo;
-- validation;
+- [conventions](https://docs.radicalframework.com/presentation/conventions) to bind views and view models;
+- a [message broker](https://docs.radicalframework.com/concepts/message-broker);
+- [UI composition](https://docs.radicalframework.com/ui-composition/index) through regions;
+- [change tracking](https://docs.radicalframework.com/memento/change-tracking-service) with undo and redo;
+- [validation](https://docs.radicalframework.com/presentation/validation-validationservice);
 - a set of behaviors that make XAML development less painful.
 
 All of that comes with a constraint: WPF runs on Windows only.
@@ -33,6 +33,8 @@ Meet [Radical.Avalonia](https://github.com/RadicalFx/Radical.Avalonia). Version 
 ## The same Radical, a different UI framework
 
 Radical.Avalonia is the Avalonia counterpart of Radical.Windows 4.0. It targets .NET 10 and Avalonia 12, and mirrors the Radical.Windows API, using the `Radical.Avalonia` root namespace instead of `Radical.Windows`. Concepts, conventions, and most of the code carry over. Moving an application from WPF to Avalonia should be mostly a matter of changing `using` directives and XAML namespaces.
+
+> Radical.Avalonia mirrors Radical.Windows 4.0. If the application runs on an older version, the [3.x to 4.0.0 upgrade guide](https://docs.radicalframework.com/upgrade-guides/3.x-to-4.0.0) and the [async message broker upgrade guide for WPF and Avalonia applications](https://docs.radicalframework.com/upgrade-guides/async-message-broker/async-message-broker-ui) cover the breaking changes.
 
 Booting an application is a single line of code, as it is with WPF. The only difference is where the line goes. Avalonia applications initialize in `OnFrameworkInitializationCompleted` rather than in the `App` constructor, like the following:
 
@@ -87,7 +89,7 @@ Avalonia is close to WPF, but it's not WPF. Most differences come from Avalonia 
 - Drag and drop relies on the Avalonia `IDataTransfer`. Drag and drop command arguments expose `GetData` to retrieve the dragged objects.
 - Avalonia raises `Loaded` on windows when they're created, not when they're shown. Radical raises the view loaded notifications for windows when they're opened.
 
-A few features aren't available. Some make no sense in Avalonia: the multithreading busy indicator, for instance, since Avalonia has a single UI thread. Others lack the underlying infrastructure, like custom pixel shader effects or `ICollectionView`. The [migration guide](https://docs.radicalframework.com/avalonia/migrating-from-radical-windows) has the complete list, with the alternatives.
+A few features aren't available. Some make no sense in Avalonia: the multithreading busy indicator, for instance, since Avalonia has a single UI thread. Others lack the underlying infrastructure, like custom pixel shader effects or `ICollectionView`. The [migration guide](https://docs.radicalframework.com/avalonia/avalonia/migrating-from-radical-windows) has the complete list, with the alternatives.
 
 `EntityView` deserves a mention. It relies on custom type descriptors to expose custom properties to data grids. Neither Avalonia bindings nor the Avalonia `DataGrid` support them. How to bring that functionality to Avalonia is still an [open question](https://github.com/RadicalFx/Radical.Avalonia/issues/21).
 
@@ -135,8 +137,8 @@ Same code, same API, different semantics. That's precisely the kind of differenc
 
 The [Radical documentation](https://docs.radicalframework.com/) has a new section dedicated to Avalonia:
 
-- [Radical for Avalonia](https://docs.radicalframework.com/avalonia) covers how to bootstrap an application, compiled bindings, desktop and single-view platforms, and the generic host.
-- [Migrating from Radical.Windows](https://docs.radicalframework.com/avalonia/migrating-from-radical-windows) lists, area by area, where the API or the behavior differs and what isn't available.
+- [Radical for Avalonia](https://docs.radicalframework.com/avalonia/avalonia) covers how to bootstrap an application, compiled bindings, desktop and single-view platforms, and the generic host.
+- [Migrating from Radical.Windows](https://docs.radicalframework.com/avalonia/avalonia/migrating-from-radical-windows) lists, area by area, where the API or the behavior differs and what isn't available.
 - The [samples page](https://docs.radicalframework.com/samples) makes the samples discoverable from the documentation itself.
 
 The rest of the documentation applies to both WPF and Avalonia. Code snippets use WPF, and the migration guide covers what changes.
