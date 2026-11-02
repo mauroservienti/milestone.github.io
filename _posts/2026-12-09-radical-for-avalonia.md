@@ -15,7 +15,7 @@ tags:
 
 The last time I wrote about Radical on this blog was in 2015, for the [Democracy release](https://milestone.topics.it/2015/06/10/radical-democracy-release.html). That's a long time ago. Radical is still here, though, and it just left home.
 
-[Radical](https://github.com/RadicalFx/Radical.Windows) is an infrastructure framework to build composite WPF applications based on the Model-View-ViewModel pattern. It comes with:
+[Radical](https://github.com/RadicalFx/Radical.Windows) is an infrastructure framework to build composite WPF applications based on the [Model-View-ViewModel pattern](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93viewmodel). It comes with:
 
 - conventions to bind views and view models;
 - a message broker;
@@ -109,7 +109,7 @@ samples/
 
 The showcase application turned into 17 separate applications. The splash screen content it used became a dedicated splash screen sample. The existing standalone samples, such as modules, plugins, and the generic host integration, moved to the new layout. All WPF samples are part of the `Samples.Wpf.slnx` solution, all Avalonia ones of `Samples.Avalonia.slnx`, and CI builds both.
 
-Out of 23 samples, 19 have an Avalonia version. The grayscale effect sample doesn't, because Avalonia has no custom pixel shader effects. Neither do the samples depending on `EntityView`, for the reason mentioned above. The [samples reference page](https://docs.radicalframework.com/samples) lists all of them, with the related documentation and whether there is an Avalonia version, and if not, why.
+Out of 23 samples, 19 have an Avalonia version. The grayscale effect sample doesn't, and neither do the samples depending on `EntityView`, for the reasons mentioned above. The [samples reference page](https://docs.radicalframework.com/samples) lists all of them, with the related documentation and whether there is an Avalonia version, and if not, why.
 
 ## Samples are tests too
 
