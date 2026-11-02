@@ -5,6 +5,9 @@ author: Mauro Servienti
 synopsis: "Distributed systems are ugly beasts sometimes. They hide subtle tricks that can lead to data loss and system corruption. The Outbox pattern helps address a couple of them."
 enable_mermaid: true
 header_image: /img/posts/outbox-what-and-why/header.jpg
+related:
+- 2019-05-02-safety-first.md
+- 2021-01-30-transactions-none-for-me-thanks.md
 tags:
 - messaging
 - distributed-systems

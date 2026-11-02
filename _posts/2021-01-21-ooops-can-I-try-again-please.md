@@ -4,6 +4,9 @@ header_image: /img/posts/ooops-can-I-try-again-please/header.jpg
 title: "Ooops, can I try again, please?"
 author: Mauro Servienti
 synopsis: "When systems fail, we can retry the whole process and be successful. However, there are scenarios in which retrying a subset of the process might be a better choice. Not all failures are born equal."
+related:
+- 2019-05-02-safety-first.md
+- 2019-09-10-businesses-dont-fail-they-make-mistakes.md
 tags:
 - distributed-systems
 - soa

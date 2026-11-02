@@ -2,6 +2,10 @@
 layout: post
 title: "Radical Democracy (RTW) Release"
 author: Mauro Servienti
+related:
+- 2015-01-15-radical-news.md
+- 2015-03-31-radical-vegan-rc-release.md
+- 2015-04-08-radical-splash-screen-support-desktop.md
 tags:
 - radical
 ---

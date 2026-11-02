@@ -4,6 +4,9 @@ title: "Define messages as POCO, interfaces, or records. Does it really matter?"
 author: Mauro Servienti
 synopsis: ".NET developers building message-based systems seem to give serialization and surrounding concerns more importance than needed. Let's try to dissect the topic"
 header_image: /img/posts/defining-messages/header.jpg
+related:
+- 2022-07-04-messages-evolution.md
+- 2023-05-25-back-to-basics-messages.md
 tags:
 - messaging
 reviewed-by: [kbaley]

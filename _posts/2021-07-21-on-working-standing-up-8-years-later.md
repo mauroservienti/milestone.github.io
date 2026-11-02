@@ -4,6 +4,9 @@ header_image: /img/posts/on-working-standing-up-8-years-later/header.jpg
 title: "On working standing up, 8 years later"
 author: Mauro Servienti
 synopsis: "I started using a standing desk as my default setup eight years ago. It's time for a retrospective, to share some learnings, and to see what options the future holds."
+related:
+- 2015-07-01-on-working-standing-up.md
+- 2015-12-08-on-working-standing-up-take-2.md
 tags:
 - stand-up-work
 ---

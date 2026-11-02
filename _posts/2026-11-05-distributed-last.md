@@ -5,6 +5,9 @@ author: Mauro Servienti
 synopsis: "Monolith first or microservices first? Both answers describe how the system is deployed, not how it's designed. What comes first is finding the logical boundaries. Distribution is a physical decision, and it should be the last one we make."
 header_image: /img/posts/distributed-last/header.jpg
 enable_mermaid: true
+related:
+- 2022-01-25-lets-get-logical.md
+- 2023-03-15-how-many-services.md
 tags:
 - architecture
 - distributed-systems

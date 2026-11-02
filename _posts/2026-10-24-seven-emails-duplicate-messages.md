@@ -4,6 +4,10 @@ title: "Seven emails later: duplicate messages are not a theoretical problem"
 author: Mauro Servienti
 synopsis: "Duplicate messages are often dismissed as a corner case. My inbox disagrees. Let's look at how duplicates happen, sent, received, or processed more than once, and what we can do about them."
 header_image: /img/posts/seven-emails-duplicate-messages/header.jpg
+related:
+- 2019-05-02-safety-first.md
+- 2021-01-21-ooops-can-I-try-again-please.md
+- 2023-02-07-outbox-what-and-why.md
 tags:
 - messaging
 - distributed-systems

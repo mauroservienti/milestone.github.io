@@ -4,6 +4,9 @@ title: "Will AI eat our jobs, or multiply them? Yes"
 author: Mauro Servienti
 synopsis: "One half of my feed says AI will make developers obsolete. The other half says it will multiply what we can build. Both can't be right. Or can they? And what happens when English becomes the programming language?"
 header_image: /img/posts/ai-eats-or-amplifies/header.jpg
+related:
+- 2026-02-11-vibe-coding.md
+- 2026-10-21-zusammen.md
 tags:
 - ai
 ---
