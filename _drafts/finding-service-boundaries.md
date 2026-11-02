@@ -4,6 +4,11 @@ title: "Back to Basics: how do we find service boundaries?"
 author: Mauro Servienti
 synopsis: "Everyone agrees that service boundaries matter. Fewer people explain how to find them. Let's walk through a few practical techniques, from modeling behaviors to anti-requirements, using a hotel booking system as an example."
 header_image: /img/posts/finding-service-boundaries/header.jpg
+related:
+- 2021-02-02-do-not-trust-the-user-mental-model.md
+- 2023-03-15-how-many-services.md
+- 2021-03-10-not-all-changes-are-born-equal.md
+- 2021-05-05-tales-of-a-reservation.md
 tags:
 - soa
 - architecture
