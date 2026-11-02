@@ -5,6 +5,10 @@ author: Mauro Servienti
 synopsis: "AI is the great enabler. I've been doing so many things I always wanted to do but never found the time. This time, it's a new version of the NServiceBus.IntegrationTesting framework removing all the limitations of the previous versions by introducing a container-based hosting architecture, providing full endpoint-under-test isolation."
 enable_mermaid: true
 header_image: /img/posts/integration-testing-3/header.jpg
+related:
+- https://milestone.topics.it/2019/07/04/exploring-nservicebus-integration-testing-options.html
+- https://milestone.topics.it/2021/04/07/nservicebus-integrationtesting-baby-steps.html
+- https://milestone.topics.it/2026/02/11/vibe-coding.html
 tags:
 - integration-testing
 - testing

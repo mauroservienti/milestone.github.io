@@ -4,6 +4,8 @@ header_image: /img/posts/nservicebus-integrationtesting-baby-steps/header.jpg
 title: "NServiceBus.IntegrationTesting baby steps"
 author: Mauro Servienti
 synopsis: "NServiceBus.IntegrationTesting started as an exploration activity and recently turned into a stable v1 release. V1 comes with some new features and one limitation that led to brainstorming options for the future."
+related:
+- https://milestone.topics.it/2019/07/04/exploring-nservicebus-integration-testing-options.html
 tags:
 - nservicebus
 - integration-testing

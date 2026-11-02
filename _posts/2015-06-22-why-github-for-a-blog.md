@@ -2,6 +2,9 @@
 layout: post
 title: "Why should I use GitHub to host a blog?"
 author: Mauro Servienti
+related:
+- https://milestone.topics.it/2015/06/12/new-home-jekyll.html
+- https://milestone.topics.it/2015/06/15/moving-blogger-comments.html
 tags:
 - github
 - github-pages

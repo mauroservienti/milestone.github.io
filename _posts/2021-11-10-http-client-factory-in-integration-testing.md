@@ -5,6 +5,8 @@ title: "HTTP client and HTTP client factory in integration testing"
 enable_mermaid: true
 author: Mauro Servienti
 synopsis: "Integration testing can be challenging. If we're also dealing with HTTP, it can be a nightmare. HTTP client factory in combination with the Microsoft.AspNetCore.Mvc.Testing package can come to the rescue and save our day."
+related:
+- https://milestone.topics.it/2021/04/28/you-wanna-test-http.html
 tags:
 - integration-testing
 ---

@@ -4,6 +4,8 @@ title: "Mattox: simple, pre-configured NServiceBus endpoints"
 author: Mauro Servienti
 synopsis: "NServiceBus endpoints support only code-based configuration, which is handy and not always friendly at the same time. But what if we could plug in the superb Microsoft configuration extensions to configure NServiceBus endpoints?"
 header_image: /img/posts/mattox-endpoints/header.jpg
+related:
+- https://milestone.topics.it/2019/06/19/i-built-a-thing-well-two.html
 tags:
 - nservicebus
 - messaging

@@ -4,6 +4,8 @@ title: "ServiceComposer 5.2 OpenTelemetry support"
 author: Mauro Servienti
 synopsis: "OpenTelemetry tracing is one of those things you don't want until you need it. With version 5.2, ServiceComposer integrates with ASP.NET tracing adding relevant information to the ASP.NET spans."
 header_image: /img/posts/service-composer-telemetry/header.jpg
+related:
+- https://milestone.topics.it/2025/01/08/all-new-goodies-in-servicecomposer.html
 tags:
 - soa
 - viewmodel-composition

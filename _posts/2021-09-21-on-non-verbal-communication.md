@@ -4,6 +4,8 @@ header_image: /img/posts/on-non-verbal-communication/header.jpg
 title: "On non-verbal communication for remote workers"
 author: Mauro Servienti
 synopsis: "Communication is hard. Bad communication leads to misunderstandings, stress, and bad things. Remote communication is even harder. What could go wrong? Can we do something about it?"
+related:
+- https://milestone.topics.it/2021/09/15/linguistic-limitation.html
 tags:
 - remote-work
 - communication

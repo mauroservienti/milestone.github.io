@@ -5,6 +5,9 @@ author: Mauro Servienti
 synopsis: "Distributed systems are different and require a different mindset. That's particularly true when dealing with async processes and failures. We need new tools and a new toolbox. And in the end, we can avoid rejecting that command."
 enable_mermaid: true
 header_image: /img/posts/reject-commands/header.jpg
+related:
+- https://milestone.topics.it/2021/08/03/update-me-please.html
+- https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html
 tags:
 - soa
 - architecture
