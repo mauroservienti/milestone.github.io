@@ -9,3 +9,7 @@ header_image: /img/series/lifehacking-101/header.jpg
 I'm a procrastinator, and I fail at to-do lists. That's how this series started, back in 2019. Since then, I've tried to-do lists, calendars, journaling, checklists, and tracking where my time goes.
 
 This series collects those experiments: what worked, what didn't, and what I'm still figuring out about organizing time, tasks, and days, especially when working remotely.
+
+---
+
+Photo by <a href="https://unsplash.com/@towfiqu999999?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Towfiqu barbhuiya</a> on <a href="https://unsplash.com/photos/white-and-pink-analog-alarm-clock-jOeh3Lv88xA?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
