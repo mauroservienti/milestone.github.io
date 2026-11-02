@@ -5,7 +5,7 @@ title: "Can we predict the future?"
 author: Mauro Servienti
 synopsis: "Eventual consistency is everywhere and distributed systems tend to expose consistency issues. Most of the time that's not a problem, except when it comes to the UI. What options do we have?"
 related:
-- https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html
+- 2021-01-12-feedback-to-users-requests-in-distributed-systems.md
 tags:
 - soa
 - viewmodel-composition

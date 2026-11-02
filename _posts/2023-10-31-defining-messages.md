@@ -5,8 +5,8 @@ author: Mauro Servienti
 synopsis: ".NET developers building message-based systems seem to give serialization and surrounding concerns more importance than needed. Let's try to dissect the topic"
 header_image: /img/posts/defining-messages/header.jpg
 related:
-- https://milestone.topics.it/2022/07/04/messages-evolution.html
-- https://milestone.topics.it/2023/05/25/back-to-basics-messages.html
+- 2022-07-04-messages-evolution.md
+- 2023-05-25-back-to-basics-messages.md
 tags:
 - messaging
 reviewed-by: [kbaley]

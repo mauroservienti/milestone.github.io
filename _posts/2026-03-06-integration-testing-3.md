@@ -6,9 +6,9 @@ synopsis: "AI is the great enabler. I've been doing so many things I always want
 enable_mermaid: true
 header_image: /img/posts/integration-testing-3/header.jpg
 related:
-- https://milestone.topics.it/2019/07/04/exploring-nservicebus-integration-testing-options.html
-- https://milestone.topics.it/2021/04/07/nservicebus-integrationtesting-baby-steps.html
-- https://milestone.topics.it/2026/02/11/vibe-coding.html
+- 2019-07-04-exploring-nservicebus-integration-testing-options.md
+- 2021-04-07-nservicebus-integrationtesting-baby-steps.md
+- 2026-02-11-vibe-coding.md
 tags:
 - integration-testing
 - testing

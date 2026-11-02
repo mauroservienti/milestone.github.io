@@ -5,7 +5,7 @@ title: "Update me, please"
 author: Mauro Servienti
 synopsis: "We're so used to notifications that we probably never stopped to think about how to implement them. It might be trivial at first glance. However, in a distributed system, we might face more challenges requiring techniques we don't expect when implementing a notifications infrastructure."
 related:
-- https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html
+- 2021-01-12-feedback-to-users-requests-in-distributed-systems.md
 tags:
 - soa
 - distributed-systems

@@ -5,8 +5,8 @@ author: Mauro Servienti
 synopsis: "In a message-based system, we might feel a lack of control, especially when in need of compensating changes spread across the system. Fear not! Real life deals with compensation every day! And it's better than rolling back a transaction or deleting some data in the database."
 header_image: /img/posts/compensation/header.jpg
 related:
-- https://milestone.topics.it/2023/10/18/timeouts-power.html
-- https://milestone.topics.it/2022/01/03/is-it-complex-break-it-down.html
+- 2023-10-18-timeouts-power.md
+- 2022-01-03-is-it-complex-break-it-down.md
 tags:
 - architecture
 - soa

@@ -6,8 +6,8 @@ synopsis: "Monolith first or microservices first? Both answers describe how the 
 header_image: /img/posts/distributed-last/header.jpg
 enable_mermaid: true
 related:
-- https://milestone.topics.it/2022/01/25/lets-get-logical.html
-- https://milestone.topics.it/2023/03/15/how-many-services.html
+- 2022-01-25-lets-get-logical.md
+- 2023-03-15-how-many-services.md
 tags:
 - architecture
 - distributed-systems

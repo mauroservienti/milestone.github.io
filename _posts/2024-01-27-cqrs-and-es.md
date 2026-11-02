@@ -5,7 +5,7 @@ author: Mauro Servienti
 synopsis: "Too many times, Event Sourcing is presented as the natural companion to CQRS. That's not the case. CQRS doesn't dictate using Event Sourcing. Let's see why."
 header_image: /img/posts/cqrs-and-es/header.jpg
 related:
-- https://milestone.topics.it/2023/09/22/append-only.html
+- 2023-09-22-append-only.md
 tags:
 - architecture
 reviewed-by: [kbaley]

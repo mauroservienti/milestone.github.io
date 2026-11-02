@@ -6,7 +6,7 @@ author: Mauro Servienti
 synopsis: "Having a deep understanding of the differences between physical and logical boundaries can help shed light on the way we architect systems. Usually, it leads to simpler solutions."
 enable_mermaid: true
 related:
-- https://milestone.topics.it/2019/05/08/dont-have-to-be-cool-to-rule-my-world.html
+- 2019-05-08-dont-have-to-be-cool-to-rule-my-world.md
 tags:
 - viewmodel-composition
 - soa

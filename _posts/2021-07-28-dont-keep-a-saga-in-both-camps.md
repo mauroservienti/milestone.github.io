@@ -5,7 +5,7 @@ title: "Don't keep a saga in both camps"
 author: Mauro Servienti
 synopsis: "When it comes to distributed systems, autonomy is a guiding star, and coupling is the villain trying to sneak in at every step. Orchestration is a particularly subtle form of coupling, usually detected when it's too late. However, the root cause is somewhere else."
 related:
-- https://milestone.topics.it/2021/07/08/no-orchstration.html
+- 2021-07-08-no-orchstration.md
 tags:
 - architecture
 - soa

@@ -5,8 +5,8 @@ author: Mauro Servienti
 synopsis: "Our industry seems to worry A LOT about eventual consistency. The real world is eventually consistent by definition. Still, we continuously try to fit a square peg into a round hole. Why is that, and what can we do about it?"
 header_image: /img/posts/fuss-about-eventual-consistency/header.jpeg
 related:
-- https://milestone.topics.it/2021/06/02/can-we-predict-the-future.html
-- https://milestone.topics.it/2021/01/12/feedback-to-users-requests-in-distributed-systems.html
+- 2021-06-02-can-we-predict-the-future.md
+- 2021-01-12-feedback-to-users-requests-in-distributed-systems.md
 tags:
 - soa
 - distributed-systems

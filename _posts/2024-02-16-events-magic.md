@@ -5,8 +5,8 @@ author: Mauro Servienti
 synopsis: "I feel events are used too many times as a hammer to dismantle coupling. Unfortunately, it's gold plating. It might look better, but it'll fire back in the long term and cost more."
 header_image: /img/posts/events-magic/header.jpg
 related:
-- https://milestone.topics.it/2024/01/27/cqrs-and-es.html
-- https://milestone.topics.it/2022/09/05/autonomy.html
+- 2024-01-27-cqrs-and-es.md
+- 2022-09-05-autonomy.md
 tags:
 - architecture
 reviewed-by: [weralabaj, kbaley]
