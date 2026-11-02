@@ -30,7 +30,7 @@ That's precisely the split we need. Who owns what in the order confirmation emai
 - **Shipping** owns the shipping address and the estimated delivery date.
 - **Customers** owns the customer's name and email address.
 
-Marketing owns the document, but almost none of the data. If marketing reached into other services' databases to fill the template, every change to those databases would break the email. If, instead, Sales and Shipping started building emails, wording changes would require releasing services that have nothing to do with marketing.
+Marketing owns the document, but almost none of the data. If marketing reached into other services' databases to fill the template, every change to those databases would break the email. If, instead, Sales and Shipping started building emails, wording changes would require releasing services unrelated to marketing.
 
 What marketing needs is a data source that someone else fills. That's what a composed API is.
 
@@ -186,13 +186,13 @@ The strongly typed model pays off for template authors too. Values have types, s
 
 One more thing to keep in mind: RazorLight caches compiled templates by key. When users change a template, the key must change too. Otherwise, RazorLight keeps rendering the old compiled version. That's why the key includes the template version.
 
-> In 2021, I mentioned that calling the composition gateway over HTTP from a message handler smells of temporal coupling. It does, but it's contained: if the gateway or one of the services is unavailable, the handler fails and the incoming message is retried later. Retries come with a different problem, though: sending an email isn't idempotent. If the handler fails after sending, the customer receives the email twice, or seven times, as I described in ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html).
+> In 2021, I mentioned that calling the composition gateway over HTTP from a message handler smells of temporal coupling. It does, but it's contained: if the gateway or one of the services is unavailable, the handler fails, and the incoming message is retried later. Retries come with a different problem, though: sending an email isn't idempotent. If the handler fails after sending, the customer receives the email twice, or seven times, as I described in ["Seven emails later"](https://milestone.topics.it/2026/10/24/seven-emails-duplicate-messages.html).
 
 ## Templates are code
 
 There's a catch I don't want to hide. A Razor template isn't a document with placeholders: it's compiled into C# and executed. Anyone who can edit a template can run code inside the marketing process, with the same permissions the process has. A template can read files, call external services, or loop forever.
 
-If the people designing templates are developers or trusted users, and templates go through some form of review before going live, that's acceptable. If templates are designed by people outside the development team, or worse, by customers, Razor is the wrong tool. Template languages such as Liquid, through libraries like [Fluid](https://github.com/sebastienros/fluid), or [Scriban](https://github.com/scriban/scriban), are designed to be sandboxed: templates can only access the model they're given.
+If template designers are developers or trusted users, and templates go through some form of review before going live, that's acceptable. If templates are designed by people outside the development team, or worse, by customers, Razor is the wrong tool. Template languages such as Liquid, through libraries like [Fluid](https://github.com/sebastienros/fluid), or [Scriban](https://github.com/scriban/scriban), are designed to be sandboxed: templates can only access the model they're given.
 
 The good news is that the choice doesn't affect the architecture. The composed model, the dedicated route, and the message handler stay the same. Only the rendering step changes.
 
