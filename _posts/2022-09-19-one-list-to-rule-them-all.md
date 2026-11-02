@@ -4,6 +4,7 @@ title: "Lifehacking 101: One to-do list to rule 'em all"
 author: Mauro Servienti
 synopsis: "I'm so bad at to-do lists. At the same time, if I don't write things down, I forget everything. So what? It turns out that with a bit of inventiveness,  I can make to-do lists mostly work for me."
 header_image: /img/posts/one-list-to-rule-them-all/header.jpg
+series: lifehacking-101
 tags:
 - time-management
 - processes

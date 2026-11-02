@@ -4,6 +4,7 @@ header_image: /img/posts/journaling-as-a-continuous-learning-process/header.jpg
 title: "Lifehacking 101: journaling as a continuous learning process"
 author: Mauro Servienti
 synopsis: "Brainstorming alone is painful for me. Questions like 'what can I improve?' or 'what's going wrong?' hardly get answered. Journaling is helping me in shaping what's next."
+series: lifehacking-101
 tags:
 - time-management
 - self-organization
