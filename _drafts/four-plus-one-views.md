@@ -90,7 +90,6 @@ Fulfillment doesn't know who is listening, and it doesn't care. If tomorrow Fina
 
 Different is when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want issues at the provider to propagate into our system, with the risk of creating a snowball effect. To mitigate that, we isolate the communication with the credit card provider in a credit card gateway, and the payment processor talks to the gateway via messaging.
 
-<!-- TODO: the original draft had the payment processor read the card details from the vault. I moved that to the gateway so card details never leave the vault/gateway pair and never travel in messages ("We don't want to move around the system's credit card details"). Revert if that's not what you meant. -->
 
 When charging a credit card, the gateway needs the card details. We don't want to move credit card details around the system. We store them in the vault and use the vault ID everywhere else. The payment processor sends a `ChargeCreditCard` command containing the vault ID, and the gateway is the only component that reads the actual card details from the vault, right before calling the provider. It'll use a synchronous request to access the vault. There is no need for asynchrony there. The two are coupled anyway, and [request/response over messaging is tricky](https://milestone.topics.it/2023/01/19/pitfalls-of-request-response-over-messaging.html).
 
