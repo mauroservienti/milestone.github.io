@@ -89,8 +89,9 @@ Fulfillment doesn't know who is listening, and it doesn't care. If tomorrow Fina
 
 Different is when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want issues at the provider to propagate into our system, with the risk of creating a snowball effect. To mitigate that, we isolate the communication with the credit card provider in a credit card gateway, and the payment processor talks to the gateway via messaging.
 
+When charging a credit card, the gateway needs the card details. However, we don't want to move credit card details around the system. We store them in the vault and use the vault ID everywhere else. The payment processor sends a `ChargeCreditCard` command containing only the vault ID, and the gateway reads the actual card details from the vault right before calling the provider.
 
-When charging a credit card, the gateway needs the card details. We don't want to move credit card details around the system. We store them in the vault and use the vault ID everywhere else. The payment processor sends a `ChargeCreditCard` command containing the vault ID, and the gateway is the only component that reads the actual card details from the vault, right before calling the provider. It'll use a synchronous request to access the vault. There is no need for asynchrony there. The two are coupled anyway, and [request/response over messaging is tricky](https://milestone.topics.it/2023/01/19/pitfalls-of-request-response-over-messaging.html).
+The gateway isn't the only component that needs the vault, though. Adding a new credit card or removing an existing one goes through it too, as we'll see in a moment. That's why the vault is a component on its own, exposing a small API that's the only way in and out of credit card details. Components that need it use synchronous requests. There is no need for asynchrony there. They are coupled anyway, and [request/response over messaging is tricky](https://milestone.topics.it/2023/01/19/pitfalls-of-request-response-over-messaging.html).
 
 <div class="mermaid">
 flowchart LR
@@ -124,14 +125,14 @@ flowchart LR
     PMDB[(Payment methods)]
     VAL[Validation]
   end
-  UI -- HTTP POST/PATCH --> API
-  API -- store card details --> V
+  UI -- HTTP POST/PATCH/DELETE --> API
+  API -- store/remove card details --> V
   API -- store display details --> PMDB
   API -- ValidatePaymentMethod --> VAL
   VAL -- update status --> PMDB
 </div>
 
-<!-- TODO: what happens when validation fails? Notify the user (email, UI notification), or flag the payment method so checkout can't select it? -->
+What if validation fails? The validation component does two things: it flags the payment method so that checkout can't offer it, and it notifies the user. That's no different from what happens when a credit card already saved as a payment method expires.
 
 Notice that the logical view had four components. The process view already has more moving parts: a gateway that wasn't there before, a user interface piece, and a back end piece. That's expected. Each view answers a different question.
 
