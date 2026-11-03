@@ -44,7 +44,6 @@ Philippe Kruchten introduced the model in 1995, in a paper titled ["Architectura
 
 Wikipedia lists the UML diagrams suited for each view. I'll stick to boxes and arrows.
 
-That's indeed helpful. Let's see how it could shape the way we design the above requirements.
 
 ## Where do we start?
 
@@ -54,11 +53,11 @@ It's never easy to decide where to start. Shall we begin with the development vi
 
 ## Let's get logical, again
 
-That said, I find it easier to start from the logical view. Given the above description, we're dealing with two logical services. Let's call them Finance and Fulfillment. We can also state that Fulfillment is only a trigger for a process, or a policy, in Finance:
+All in all, I find it easier to start from the logical view. Given the above description, we're dealing with two logical services. Let's call them Finance and Fulfillment. We can also state that Fulfillment is only a trigger for a process, or a policy, in Finance:
 
 > When Fulfillment ships orders, the system needs to charge credit cards.
 
-Finance is the main character in this script. Fulfillment is merely an external party publishing an event to which Finance reacts.
+For this scenario, Finance is the main character in this script. Fulfillment is merely an external party publishing an event to which Finance reacts.
 
 Within Finance, we can identify a few components:
 
