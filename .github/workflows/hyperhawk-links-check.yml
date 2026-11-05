@@ -16,18 +16,21 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
-      - uses: dvdstelt/hyperhawk@v1
+      # Pinned to the merge of dvdstelt/hyperhawk#34 (Jekyll support), not released yet.
+      # Switch back to @v1 once a release ships it.
+      - uses: dvdstelt/hyperhawk@6259b47385aeaebf579447b913526a4e4f6b2b79
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Resolve root-relative links against the pages Jekyll generates (posts,
+          # collections, series, redirects), not only files on disk.
+          site-generator: jekyll
           # Code samples contain placeholder URLs that aren't meant to resolve.
           skip-code-blocks: true
           # Some sites take well over 10 seconds to answer (archive.org, small blogs).
           timeout: 30000
-          # Root-relative links to pages Jekyll generates at build time (posts, collections,
-          # series, redirects) have no matching file on disk, so Hyperhawk can't verify them.
           # Twitter/X and Esselunga block automated requests, so links there can't be verified.
           # Wayback Machine snapshots never change, and archive.org is often too slow to answer.
-          ignore-patterns: '^/\d{4}/\d{2}/\d{2}/,^/(view-model-composition|soa-search|categories|series|events|talks|tags)/,^https?://(www\.)?(twitter|x)\.com/,^https?://(www\.)?esselungaacasa\.it,^https://web\.archive\.org/web/'
+          ignore-patterns: '^https?://(www\.)?(twitter|x)\.com/,^https?://(www\.)?esselungaacasa\.it,^https://web\.archive\.org/web/'
 
   # Keep a single "Broken links" issue in sync with the weekly (and manual) runs.
   report:
