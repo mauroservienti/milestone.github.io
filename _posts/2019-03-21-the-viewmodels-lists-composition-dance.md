@@ -11,6 +11,8 @@ tags:
 - viewmodel-composition
 series: view-model-composition
 redirect_from: /view-model-composition/2019/03/21/the-viewmodels-lists-composition-dance.html
+resources:
+- "[Composing product lists with ServiceComposer](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/), by Dennis van der Stelt"
 ---
 
 We recently [looked at some pseudo code showing how Single Item Composition could work](https://milestone.topics.it/2019/03/06/viewmodel-composition-show-me-the-code.html). At the end of that article the composition flow was summarized as:

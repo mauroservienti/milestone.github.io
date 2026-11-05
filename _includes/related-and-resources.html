@@ -1,0 +1,32 @@
+{% comment %}
+  One box for related articles and external resources, each part shown only when it has entries.
+  - include.related_posts: posts computed by the post layout from the `related` front matter (none on series pages).
+  - page.resources: external links. Each entry is a Markdown string, usually a link followed by an optional note:
+      resources:
+      - "[Death to the batch job](https://particular.net/blog/death-to-the-batch-job), on the Particular blog"
+    Entries are Markdown, so the link checker verifies them like any other link in the file.
+{% endcomment %}
+{% assign has_related = false %}
+{% if include.related_posts and include.related_posts.size > 0 %}{% assign has_related = true %}{% endif %}
+{% assign has_resources = false %}
+{% if page.resources and page.resources.size > 0 %}{% assign has_resources = true %}{% endif %}
+{% if has_related or has_resources %}
+<section class="post-related-list">
+  {% if has_related %}
+  <h3>Related articles</h3>
+  <ul>
+    {% for related_post in include.related_posts %}
+      <li><a href="{{ related_post.url | prepend: site.baseurl }}">{{ related_post.title }}</a> <span class="post-meta">{{ related_post.date | date: "%b %-d, %Y" }}</span></li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if has_resources %}
+  <h3>Resources</h3>
+  <ul>
+    {% for resource in page.resources %}
+      <li>{{ resource | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>
+{% endif %}

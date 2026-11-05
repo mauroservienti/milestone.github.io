@@ -122,6 +122,7 @@
     border-radius: 0.5rem;
 
     h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+    ul + h3 { margin-top: 1.5rem; }
     ol, ul { margin-bottom: 0; }
     li { margin-bottom: 0.3rem; }
     .post-series-current { font-weight: bold; }
