@@ -21,7 +21,7 @@
   </ul>
   {% endif %}
   {% if has_resources %}
-  <h3>Resources</h3>
+  <h3>Additional resources</h3>
   <ul>
     {% for resource in page.resources %}
       <li>{{ resource | markdownify | remove: '<p>' | remove: '</p>' | strip }}</li>
