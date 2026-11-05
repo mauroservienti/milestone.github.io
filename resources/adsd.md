@@ -272,7 +272,7 @@ These complement the ADSD curriculum and are frequently referenced by Udi and th
 
 ### Udi Dahan
 
-- [Q&A on Advanced Distributed Systems with Udi Dahan (2021)](https://particular.net/videos/ndeva-qa-with-udi) — 85-minute Q&A covering service boundaries, distributed monoliths, data ownership, and front-end composition.
+- [Q&A on Advanced Distributed Systems with Udi Dahan (2021)](https://web.archive.org/web/20221004023715/https://particular.net/videos/ndeva-qa-with-udi) — 85-minute Q&A covering service boundaries, distributed monoliths, data ownership, and front-end composition.
 - [Fireside Chat with Udi Dahan (2021)](https://particular.net/videos/fireside-chat-with-udi-dahan) — Wide-ranging discussion on DDD, SOA, CQRS, sagas, event sourcing, microservices, and the historical context of the saga pattern from its 1987 origins.
 - [Udi Dahan – DDD Europe 2017 Speaker Page](https://2017.dddeurope.com/speakers/udi-dahan/) — Links to Udi's DDD Europe talks on race conditions, CQRS, long-running processes, and microservices workshops.
 
