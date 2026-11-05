@@ -118,8 +118,9 @@
     margin-top: 2rem;
     margin-bottom: 2rem;
     padding: 1.5rem;
-    border: 1px solid var(--site-grey-color-light, $grey-color-light);
-    border-radius: 0.5rem;
+    // Same border as Bootstrap cards (the series grid, the home page)
+    border: var(--bs-border-width) solid var(--bs-border-color-translucent);
+    border-radius: var(--bs-border-radius);
 
     h3 { font-size: 1.1rem; margin-bottom: 1rem; }
     ul + h3 { margin-top: 1.5rem; }
