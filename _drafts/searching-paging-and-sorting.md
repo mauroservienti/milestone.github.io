@@ -20,112 +20,294 @@ tags:
 - distributed-systems
 ---
 
-<!-- TODO: opening hook. "The Quest for better Search" (2019) promised "at least two more articles", one with an implementation using the hotel reservations scenario. One came out, the implementation never did. Famous last words. This is the one, seven years later, and it comes with a runnable demo. -->
+In May 2019, [Tomek](https://twitter.com/Masternak) and I wrote ["The Quest for better Search"](https://milestone.topics.it/2019/05/15/the-quest-for-better-search.html), and closed it with a promise: "There will be at least two more articles, one discussing the architecture of a distributed search, and another one showing a possible implementation using the Hotel Reservations scenario."
 
-<!-- TODO: thesis in one or two sentences: searching, filtering, sorting, and paging across services can't be composed after the fact; they need the data in one place. That place can still respect service boundaries: each service owns its own lean data and its own piece of the query. -->
+The first one came out a week later. The second one? Famous last words.
+
+Seven years later, here it is. It ties together searching, filtering, sorting, and paging, and it comes with a runnable demo.
+
+<!-- TODO: link to the demo repository once it exists. -->
+
+The short version: searching, sorting, and paging across services can't be composed after the fact. The data needs to meet in one place. That place can still respect service boundaries, as long as each service owns its own data and its own piece of the query, and shares nothing more than needed.
 
 ## What are we building?
 
-<!-- TODO: the requirements, from "Search is a Team Effort":
-- search hotels by city
-- optional check-in and check-out dates, to filter out sold-out hotels
-- filter by stars, amenities, and guest rating
-- facets with counts for stars, amenities, and rating bands
-- sort by price, rating, or stars, and combinations like "price, then rating"
-- nightly rates vary by season, so the price to sort by is the total for the requested stay
-- page the results
--->
+Let's go back to the hotel reservations scenario from ["Search is a Team Effort"](https://milestone.topics.it/2019/05/22/search-is-a-team-effort.html). Users want to:
 
-<!-- TODO: the decomposition:
-- Registry: name, description, city, stars, amenities
-- Reservations: availability
-- Marketing: guest ratings and reviews
-- Sales: seasonal nightly rates. New compared to the 2019 posts, needed for sorting by price.
--->
+- search hotels in a city;
+- optionally, pick check-in and check-out dates, to filter out sold-out hotels;
+- filter results by stars, amenities, and guest rating;
+- see facets, with counts, for stars, amenities, and rating;
+- sort by price, rating, or stars, or by combinations like "price, then rating";
+- page through the results.
+
+There's a twist compared to 2019: nightly rates vary by season. The price users want to sort by isn't the nightly rate. It's the total for the stay they asked for.
+
+We won't get into how to find service boundaries here. Let's assume the following decomposition:
+
+- **Registry** owns the hotel: name, description, city, stars, and amenities. Registry decides what a hotel is and whether it exists.
+- **Reservations** owns availability.
+- **Marketing** owns guest reviews and ratings.
+- **Sales** owns the seasonal nightly rates.
 
 ## Why can't we compose it?
 
-<!-- TODO: short recap with links:
-- ViewModel Composition works for a page of known IDs ("The ViewModels Lists Composition Dance").
-- Paging alone works: the owner of the list pages it ("Paging and sorting in distributed systems, oh my!").
-- Sorting by data owned by another service, and then paging, falls apart: sort first, then page, and that's a join ("OK Mauro, but I want to do paging AND sorting").
-- Search adds filters owned by different services, plus facets. Moving IDs from service to service is the naive design from "Search is a Team Effort": the race car moving to the engineers.
--->
+If you've been following the [ViewModel Composition series](https://milestone.topics.it/series/view-model-composition.html), the first instinct is to compose the results page. It works for a page of known items, as described in ["The ViewModels Lists Composition Dance"](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html): one service loads the IDs, the others add their data.
+
+Paging alone is fine too. The service that owns the list pages it, and everyone else gets an already-paged list of IDs. I described it in ["Paging and sorting in distributed systems, oh my!"](https://milestone.topics.it/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html).
+
+Things fall apart as soon as we sort by something owned by another service and then page. Sorting must happen before paging. If we page first, we sort only the current page, and page two makes no sense anymore. And to sort by price before paging, Sales needs all the candidates, not a page of them. That's a join, as I admitted in ["OK Mauro, but I want to do paging AND sorting"](https://milestone.topics.it/2020/03/06/ok-mauro-but-i-want-to-do-paging-and-sorting.html).
+
+Search makes it worse. Filters are owned by different services, and facets need counts over the whole result set, not over a page. Moving IDs from Registry to Reservations to Marketing to Sales, filtering at every step, is the naïve design from "Search is a Team Effort". It works, and it's very inefficient. It's like moving the race car to the engineers during a pit stop, instead of bringing the engineers, and only the tools they need, to the car.
+
+So, let's bring the engineers to the car.
 
 ## One store, many owners
 
-<!-- TODO: the shared PostgreSQL database:
-- one schema per service (registry, reservations, marketing, sales), each with its own tables, keyed by hotel ID
-- Sales stores its seasonal rates as date ranges with a nightly price, like Reservations stores availability
-- each service writes only to its own schema; database roles enforce it
-- only the data needed to search, filter, sort, and build facets: nothing more, nothing less (the pit stop)
-- each service keeps it up to date from its own data, e.g. handling its own events
-- eventual consistency: fine for Registry, critical for Reservations; keep the availability data lean
--->
+The demo uses a single PostgreSQL database dedicated to search. Each service gets its own schema and writes only to it:
 
-<!-- TODO: Mermaid diagram: services writing to their own schemas in the shared database; the search component reading from all of them. -->
+- `registry.hotels`: hotel ID, city, stars, and amenities.
+- `reservations.sold_out_nights`: hotel ID and night, one row for each night a hotel has no rooms left.
+- `marketing.ratings`: hotel ID, average rating, and number of reviews.
+- `sales.nightly_rates`: hotel ID, night, and rate.
+
+> PostgreSQL range types would let Reservations and Sales store periods instead of single nights. One row per night keeps the demo, and the queries, simpler.
+
+Each service has a database role that can write only to its own schema. Ownership isn't a convention; the database enforces it.
+
+<div class="mermaid">
+flowchart LR
+  R[Registry] --> RS[(registry schema)]
+  RE[Reservations] --> RES[(reservations schema)]
+  M[Marketing] --> MS[(marketing schema)]
+  S[Sales] --> SS[(sales schema)]
+  subgraph Search database
+    RS
+    RES
+    MS
+    SS
+  end
+  SE[Search] -. reads .-> RS
+  SE -. reads .-> RES
+  SE -. reads .-> MS
+  SE -. reads .-> SS
+</div>
+
+The tables contain only what's needed to search, filter, sort, and build facets. Nothing more, nothing less. The hotel description, the photos, and the reviews' text aren't there: they're needed to display results, not to find them, and composition takes care of displaying.
+
+Each service keeps its tables up to date from its own data, for example, by handling its own events. That introduces eventual consistency. Registry doesn't care much: hotels don't change city or stars every five minutes. Reservations cares a lot: a hotel that sold out a minute ago shouldn't show up as available. That's why its table is as lean as possible: the nights with no rooms left, and nothing else.
+
+<!-- TODO: how the demo keeps the tables up to date (NServiceBus handlers? direct writes from each service's own database?) once the demo exists. -->
 
 ## Search is (still) a team effort
 
-<!-- TODO: the search process, in code from the demo. The 2019 pseudo-code becomes real: services deploy search providers that add their pieces to a shared EF Core IQueryable. Who owns the search process? Nobody: like the composition engine, it's infrastructure that hosts the services' components. -->
+Data isn't enough. Services need to take part in the search process. In 2019, we used pseudo-code with search providers appending statements to an `IQueryable`. That's what the demo does, using EF Core.
+
+<!-- TODO: replace the snippets in this section with the code from the demo, once it exists. -->
+
+The search process starts from the list of hotels, owned by Registry, and asks each service to contribute. Services deploy providers, and the search process discovers them, the same way ServiceComposer discovers composition handlers. There are three kinds of providers: filters, facets, and sorters.
 
 ### Filtering
 
-<!-- TODO: each provider handles the criteria it owns: Registry the city, stars, and amenities; Reservations the dates, as a daterange overlap; Marketing the minimum rating. -->
+A filter provider looks like the following:
+
+```csharp
+public interface IFilterProvider
+{
+    IQueryable<Hotel> Filter(IQueryable<Hotel> hotels, SearchRequest request);
+}
+```
+
+Each service handles the criteria it owns. Registry filters by city, stars, and amenities. Reservations, when the request has stay dates, removes sold-out hotels:
+
+```csharp
+class AvailabilityFilter(SearchDbContext db) : IFilterProvider
+{
+    public IQueryable<Hotel> Filter(IQueryable<Hotel> hotels, SearchRequest request)
+    {
+        if (request.Stay is not { } stay)
+        {
+            return hotels;
+        }
+
+        return hotels.Where(h => !db.SoldOutNights.Any(n =>
+            n.HotelId == h.Id && n.Night >= stay.CheckIn && n.Night < stay.CheckOut));
+    }
+}
+```
+
+Reservations doesn't know what Registry filtered, and doesn't care. It adds its condition, and EF Core turns the whole thing into a single SQL query.
 
 ### Facets
 
-<!-- TODO: each service computes the facets it owns on the filtered set: stars and amenities from Registry, rating bands from Marketing. -->
+Facets work the same way. Each service builds the facets for the data it owns, using the filtered set of hotels:
+
+```csharp
+public interface IFacetProvider
+{
+    Task<Facet> Build(IQueryable<Hotel> filtered, SearchRequest request);
+}
+```
+
+Registry counts stars and amenities, and Marketing groups ratings into bands like "8+" or "9+". Each is a `GROUP BY` on the service's own table, joined with the filtered hotels.
+
+> A detail that makes users happy: facet counts usually ignore the facet's own filter. If users select four stars, the stars facet still shows how many three- and five-star hotels match, so they can change their minds. To do that, the search process builds each facet on the hotels filtered by all the other providers.
+
+<!-- TODO: check that the demo does this; if not, drop the note or adjust the IFacetProvider signature. -->
 
 ### Sorting, then paging
 
-<!-- TODO: sort providers for the fields each service owns; the order comes from the request (orderBy=price,rating) and becomes OrderBy/ThenBy across services. Paging happens last, in the database. Offset vs keyset paging, briefly. -->
+Sorting is where the 2020 posts got stuck. A sort provider looks like the following:
 
-<!-- TODO: sorting by price with seasonal rates: the price depends on the requested dates (a stay from Dec 28 to Jan 2 spans two seasons), so there's no single value to precompute and sort by. The Sales sort provider sums the nightly rates for the requested stay within the same query. This is why sorting must happen where the data is, and Sales still owns its pricing rules. -->
+```csharp
+public interface ISortProvider
+{
+    string Key { get; }
+
+    IOrderedQueryable<Hotel> Sort(
+        IQueryable<Hotel> hotels, SearchRequest request, bool descending, bool first);
+}
+```
+
+`Key` is the value in the request's `orderBy` parameter that the provider handles: `price` for Sales, `rating` for Marketing, `stars` for Registry. The `first` argument tells the provider whether it's the primary sort, `OrderBy`, or a secondary one, `ThenBy`. That's how a request like `orderBy=price,rating` turns into "sort by price, then by rating", with each part owned by a different service.
+
+Seasonal prices make Sales' sorter interesting. A stay from December 28 to January 2 might span two seasons, so there's no single price to precompute and store. The price to sort by is the sum of the nightly rates for the requested nights:
+
+```csharp
+class StayPriceSort(SearchDbContext db) : ISortProvider
+{
+    public string Key => "price";
+
+    public IOrderedQueryable<Hotel> Sort(
+        IQueryable<Hotel> hotels, SearchRequest request, bool descending, bool first)
+    {
+        var stay = request.Stay!.Value;
+        Expression<Func<Hotel, decimal>> stayPrice = h => db.NightlyRates
+            .Where(r => r.HotelId == h.Id && r.Night >= stay.CheckIn && r.Night < stay.CheckOut)
+            .Sum(r => r.Rate);
+
+        return (first, descending) switch
+        {
+            (true, false) => hotels.OrderBy(stayPrice),
+            (true, true) => hotels.OrderByDescending(stayPrice),
+            (false, false) => ((IOrderedQueryable<Hotel>)hotels).ThenBy(stayPrice),
+            (false, true) => ((IOrderedQueryable<Hotel>)hotels).ThenByDescending(stayPrice),
+        };
+    }
+}
+```
+
+<!-- TODO: sorting by price without stay dates: lowest upcoming nightly rate? Not allowed? Decide in the demo. -->
+
+This is why sorting must happen where the data is. Sales still owns its pricing rules: how seasons work, and how a stay's price is calculated. The rule just runs inside the query, next to everyone else's.
+
+Paging comes last, once everything is filtered and sorted. The search process adds a final sort on the hotel ID, so hotels with the same price and rating always come back in the same order, and two pages never show the same hotel. Then it skips and takes. The demo uses offset paging. For deep result sets, keyset paging, "the next ten after this one", is more efficient, but users rarely go past page three of a hotel search.
+
+The whole search process looks like the following:
+
+```csharp
+var hotels = db.Hotels.AsQueryable();
+foreach (var filter in filterProviders)
+{
+    hotels = filter.Filter(hotels, request);
+}
+
+var facets = new List<Facet>();
+foreach (var facetProvider in facetProviders)
+{
+    facets.Add(await facetProvider.Build(hotels, request));
+}
+
+var total = await hotels.CountAsync();
+
+IOrderedQueryable<Hotel>? sorted = null;
+foreach (var (key, descending) in request.OrderBy)
+{
+    sorted = sortProviders[key].Sort(sorted ?? hotels, request, descending, first: sorted is null);
+}
+
+var pageIds = await (sorted?.ThenBy(h => h.Id) ?? hotels.OrderBy(h => h.Id))
+    .Skip(request.Page * request.PageSize)
+    .Take(request.PageSize)
+    .Select(h => h.Id)
+    .ToListAsync();
+```
+
+The search process knows nothing about cities, prices, or ratings. It runs whatever services contributed, in the order the request asked for.
 
 ### What about dynamic pricing?
 
-<!-- TODO: if the price is computed at request time by a pricing engine (occupancy, demand, who's asking), there's nothing stored to sort by, and computing it for every candidate on every search doesn't scale. Options:
-- sort by an indicative "from" price that Sales refreshes in its table, and show the real price in the composed page ("prices may change"); the cost is that sort order and displayed price can diverge
-- Sales recomputes and republishes prices on a schedule or on occupancy changes: more eventual consistency, owned by Sales
-- compute the real price only for the visible page, when sorting isn't by price
-Not in the demo. -->
+Seasonal prices are known in advance. Dynamic prices aren't: a pricing engine calculates them at request time, based on occupancy, demand, or even who's asking. There's nothing stored to sort by, and calculating the price of every candidate hotel on every search doesn't scale.
+
+There are a few options, each with a cost:
+
+- **Sort by an indicative price.** Sales regularly refreshes a "from" price in its table, and the results page shows the real one. That's what booking sites do, and why they say "prices may change". The cost: the sort order and the displayed price can disagree.
+- **Recalculate often.** Sales recalculates and stores prices on a schedule, or when occupancy changes. More eventual consistency, but it stays inside Sales.
+- **Calculate only what's visible.** When users sort by something else, the real price is needed only for the page they see, and composition can ask Sales for it.
+
+The demo sticks to seasonal prices.
 
 ## Isn't search just another Branding service?
 
-<!-- TODO: yes and no. Like Branding in "The price of freedom" (https://milestone.topics.it/2019/06/13/the-price-of-freedom.html), the search component imposes a contract on every service that wants to take part:
-- the extension points: search, facet, and sort providers, and when they run
-- the criteria and result shapes: city, stay dates, orderBy keys, facet names in; a page of IDs, facet counts, and a total out
-- shared assumptions: the hotel ID as the join key, the query model providers add to, parameters used by more than one service (the stay dates, used by Reservations and Sales)
-Same cost as Branding: changing the contract affects every provider, and a new filter means changing the search page and the owning service.
-What it doesn't impose: a data schema (each service keeps its own tables and query logic) or business rules. As "The Quest for better Search" says, if searching isn't a business capability, it's not a service: the search host is infrastructure, like the composition engine. The criteria vocabulary belongs to whoever owns the search page, like Marketing owns the email model in "Composing emails" (https://milestone.topics.it/2026/12/02/composing-email-templates.html).
-Contrast with Elasticsearch's one document per hotel, where the shared index mapping becomes a shared data schema: much closer to the Branding coupling.
-Takeaway: keep the contract small and technical. -->
+In ["The price of freedom"](https://milestone.topics.it/2019/06/13/the-price-of-freedom.html), I described Branding as a service "defining contracts that other services needs to implement and respect if they want their data displayed on a UI they don't own." Doesn't search do the same?
+
+Yes and no.
+
+Yes, the search process imposes a contract on every service that wants to take part:
+
+- the extension points: filter, facet, and sort providers, and when they run;
+- the shape of requests and results: city, stay dates, `orderBy` keys, and facet names in; a page of IDs, facet counts, and a total out;
+- some shared assumptions: the hotel ID is the join key, everyone contributes to the same query, and some parameters, like the stay dates, are used by more than one service.
+
+And it comes with the same cost as Branding. Changing the contract affects every provider. Adding a filter means changing the search page and the service that owns the data.
+
+No, because the contract doesn't include a data schema. Each service keeps its own tables and its own query logic; the contract says where to plug in, not what the data looks like. It doesn't include business rules either. As we said in "The Quest for better Search", if searching isn't a business capability, it isn't a service. The search process is infrastructure, like the composition engine. The vocabulary of the search, which criteria and which facets exist, belongs to whoever owns the search page, the same way Marketing owns the email model in ["Composing emails: one service owns the template, many own the data"](https://milestone.topics.it/2026/12/02/composing-email-templates.html).
+
+The lesson is the same as with Branding: keep the contract small and technical.
 
 ## From IDs to a results page
 
-<!-- TODO: the search returns a page of hotel IDs, the facets, and the total count. ViewModel Composition, with ServiceComposer, turns the IDs into the results page: each service adds its own data to each item (name and photo, price, rating). That's the process Mike described on Slack: index, query, order, page, compose. -->
+The search returns a page of hotel IDs, the facets, and the total count. That's not a results page yet. Users want names, photos, prices, and ratings.
 
-<!-- TODO: compare with Dennis's approach in "Composing product lists with ServiceComposer": no shared store, Catalog raises an event with the candidate IDs and Marketing returns them sorted. When is that enough, and when does it stop scaling (it loads all candidate IDs)? -->
+That's a job for [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html). In the demo, the search runs in the composition gateway, as part of the request for the results page, using ServiceComposer. Once the page of IDs is ready, a composition event notifies all services, and each one adds its own data to each item: Registry the name and the photo, Sales the price for the stay, Marketing the rating. It's the [lists composition dance](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html) all over again, with search in the role of the list owner.
+
+<!-- TODO: snippet of the composition event and one handler from the demo. -->
+
+Years ago, a reader named Mike described on Slack an engine he'd built along the same lines: services index the data they care about, answer the query with matching IDs, order the results, and then the page is paginated and fleshed out with ViewModel Composition. Different implementation, same steps.
+
+> Dennis van der Stelt recently described a different approach in ["Composing product lists with ServiceComposer"](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/). There's no shared store: Catalog raises an event with all the candidate IDs, and Marketing returns them sorted. It's simpler, and it's enough when one service sorts and candidate lists are small. It stops scaling when the candidates are many, or when sorting needs data from more than one service.
 
 ## What about Elasticsearch?
 
-<!-- TODO: the comparison:
-- Elasticsearch wins at relevance-ranked full-text search, fuzzy matching, geo queries, and many facets at scale (aggregations).
-- No joins: services share one document per hotel, each owning a section of it, and share the index mapping; or they're back to moving IDs around.
-- Cross-service sorting needs all fields in the same document.
-- Availability by date is awkward (date_range or nested documents).
-- Near real-time indexing adds to eventual consistency.
-- Weaker ownership enforcement than per-schema database roles.
-- PostgreSQL: joins, per-schema ownership, daterange, plain SQL facets; weaker text relevance and costlier facets at scale.
-- So: what you're searching for decides the store. "You are Google, you are not Google."
--->
+When Tomek and I talked about building a demo, Elasticsearch was his first idea. It's a great search engine, and it beats PostgreSQL at many things:
+
+- relevance-ranked full-text search, fuzzy matching, and typo tolerance;
+- geographic queries, like "within 5 km of the city center";
+- facets: aggregations return all the counts in the same request as the results, and they scale to many facets and large data sets.
+
+It has a problem with our design, though: it has no joins. There are a few ways around it:
+
+- **One document per hotel**, with a section for each service. Each service updates only its own section, but they all share one index mapping, and a reindex affects everyone.
+- **One index per service**, joined in code. That's moving IDs around again: the naïve design.
+- **Parent/child relationships**, which are limited, slower, and still need a single index.
+
+Sorting by price, then by rating, needs both fields in the same document. So we're back to the shared document. Availability is awkward to model, too: booked dates become date ranges or nested documents, and they're the data that changes the most. Elasticsearch also refreshes its indexes about once a second, which adds a little more eventual consistency. And anyone who can write to the index can write any field: there's no equivalent of a database role per schema.
+
+That shared document has a familiar shape. The index mapping becomes a data contract all services depend on, much closer to the Branding coupling than the PostgreSQL design, where only the plug-in contract is shared.
+
+PostgreSQL has its limits too. Its full-text search is basic compared to Elasticsearch, and many facets over large data sets get expensive.
+
+So which one? It depends on what you're searching for. If users search free text and expect relevance, typo tolerance, and maps, and that's at the core of your business, it might be worth the coupling. Remember the 2019 mantra: "You are Google, you are not Google." A hotel booking site searching by city, dates, stars, and price isn't Google. PostgreSQL, with joins and a schema per service, keeps boundaries clearer.
 
 ## Conclusion
 
-<!-- TODO: zero coupling is an illusion. Searching, sorting, and paging across services need a place where the data meets; that place can still respect boundaries if each service owns its own data and its own piece of the query, and shares nothing more than needed. Link to the demo repository. -->
+Zero coupling is an illusion. Searching, sorting, and paging data owned by many services needs a place where that data meets, and pretending otherwise leads to chatty, slow systems.
 
-<!-- TODO: demo repository: name, location, and link. PostgreSQL in Docker, ServiceComposer, hotel domain. -->
+That place doesn't have to be a hodgepodge, though. If each service owns its own lean data, its own piece of the query, and its own facets and sorting rules, the only thing shared is a small, technical contract. Composition does the rest.
+
+The demo has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. Better late than never ;-)
+
+<!-- TODO: demo repository link and how to run it. -->
 
 ---
 
