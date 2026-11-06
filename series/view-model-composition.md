@@ -6,6 +6,7 @@ synopsis: "Designing a UI when the back-end system consists of dozens (or more) 
 header_image: /img/series/view-model-composition/header.jpg
 redirect_from: [/view-model-composition/, /categories/view-model-composition/, /categories/view-model-composition.html]
 resources:
+- "[One product page, three services](https://bloggingabout.net/2026/11/03/one-product-page-three-services/), by Dennis van der Stelt"
 - "[Composing product lists with ServiceComposer](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/), by Dennis van der Stelt"
 ---
 
