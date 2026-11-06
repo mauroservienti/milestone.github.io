@@ -91,6 +91,17 @@ tags:
 - compute the real price only for the visible page, when sorting isn't by price
 Not in the demo. -->
 
+## Isn't search just another Branding service?
+
+<!-- TODO: yes and no. Like Branding in "The price of freedom" (https://milestone.topics.it/2019/06/13/the-price-of-freedom.html), the search component imposes a contract on every service that wants to take part:
+- the extension points: search, facet, and sort providers, and when they run
+- the criteria and result shapes: city, stay dates, orderBy keys, facet names in; a page of IDs, facet counts, and a total out
+- shared assumptions: the hotel ID as the join key, the query model providers add to, parameters used by more than one service (the stay dates, used by Reservations and Sales)
+Same cost as Branding: changing the contract affects every provider, and a new filter means changing the search page and the owning service.
+What it doesn't impose: a data schema (each service keeps its own tables and query logic) or business rules. As "The Quest for better Search" says, if searching isn't a business capability, it's not a service: the search host is infrastructure, like the composition engine. The criteria vocabulary belongs to whoever owns the search page, like Marketing owns the email model in "Composing emails" (https://milestone.topics.it/2026/12/02/composing-email-templates.html).
+Contrast with Elasticsearch's one document per hotel, where the shared index mapping becomes a shared data schema: much closer to the Branding coupling.
+Takeaway: keep the contract small and technical. -->
+
 ## From IDs to a results page
 
 <!-- TODO: the search returns a page of hotel IDs, the facets, and the total count. ViewModel Composition, with ServiceComposer, turns the IDs into the results page: each service adds its own data to each item (name and photo, price, rating). That's the process Mike described on Slack: index, query, order, page, compose. -->
