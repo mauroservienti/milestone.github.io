@@ -32,6 +32,7 @@ tags:
 - filter by stars, amenities, and guest rating
 - facets with counts for stars, amenities, and rating bands
 - sort by price, rating, or stars, and combinations like "price, then rating"
+- nightly rates vary by season, so the price to sort by is the total for the requested stay
 - page the results
 -->
 
@@ -39,7 +40,7 @@ tags:
 - Registry: name, description, city, stars, amenities
 - Reservations: availability
 - Marketing: guest ratings and reviews
-- Sales (or Pricing): the nightly rate. New compared to the 2019 posts, needed for sorting by price. Decide the name.
+- Sales: seasonal nightly rates. New compared to the 2019 posts, needed for sorting by price.
 -->
 
 ## Why can't we compose it?
@@ -54,7 +55,8 @@ tags:
 ## One store, many owners
 
 <!-- TODO: the shared PostgreSQL database:
-- one schema per service (registry, reservations, marketing, sales), each with its own table, keyed by hotel ID
+- one schema per service (registry, reservations, marketing, sales), each with its own tables, keyed by hotel ID
+- Sales stores its seasonal rates as date ranges with a nightly price, like Reservations stores availability
 - each service writes only to its own schema; database roles enforce it
 - only the data needed to search, filter, sort, and build facets: nothing more, nothing less (the pit stop)
 - each service keeps it up to date from its own data, e.g. handling its own events
@@ -78,6 +80,18 @@ tags:
 ### Sorting, then paging
 
 <!-- TODO: sort providers for the fields each service owns; the order comes from the request (orderBy=price,rating) and becomes OrderBy/ThenBy across services. Paging happens last, in the database. Offset vs keyset paging, briefly. -->
+
+<!-- TODO: sorting by price with seasonal rates: the price depends on the requested dates (a stay from Dec 28 to Jan 2 spans two seasons), so there's no single value to precompute and sort by. The Sales sort provider sums the nightly rates for the requested stay within the same query. This is why sorting must happen where the data is, and Sales still owns its pricing rules. -->
+
+### What about dynamic pricing?
+
+<!-- TODO: if the price is computed at request time by a pricing engine (occupancy, demand, who's asking), there's nothing stored to sort by, and computing it for every candidate on every search doesn't scale. Options:
+- sort by an indicative "from" price that Sales refreshes in its table, and show the real price in the composed page ("prices may change"); the cost is that sort order and displayed price can diverge
+- Sales recomputes and republishes prices on a schedule or on occupancy changes: more eventual consistency, owned by Sales
+- compute the real price only for the visible page, when sorting isn't by price
+Not in the demo. -->
+
+
 
 ## From IDs to a results page
 
