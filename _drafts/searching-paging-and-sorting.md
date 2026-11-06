@@ -98,10 +98,6 @@ tags:
 - So: what you're searching for decides the store. "You are Google, you are not Google."
 -->
 
-## What about ad-hoc queries and reports?
-
-<!-- TODO: decide whether to keep this section, or move Michel van den Berg's question (ad-hoc queries and data science don't fit SOA; is a central database inevitable?) to the "Reporting and BI across service boundaries" card. If it stays: a short answer, and a link to that article once published. -->
-
 ## Conclusion
 
 <!-- TODO: zero coupling is an illusion. Searching, sorting, and paging across services need a place where the data meets; that place can still respect boundaries if each service owns its own data and its own piece of the query, and shares nothing more than needed. Link to the demo repository. -->
