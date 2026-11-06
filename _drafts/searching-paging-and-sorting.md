@@ -11,6 +11,7 @@ related:
 - 2020-01-27-paging-and-sorting-in-distributed-systems-oh-my.md
 - 2020-03-06-ok-mauro-but-i-want-to-do-paging-and-sorting.md
 - 2019-03-21-the-viewmodels-lists-composition-dance.md
+- 2026-12-16-finding-service-boundaries.md
 resources:
 - "[Composing product lists with ServiceComposer](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/), by Dennis van der Stelt"
 tags:
@@ -43,7 +44,7 @@ Let's go back to the hotel reservations scenario from ["Search is a Team Effort"
 
 There's a twist compared to 2019: nightly rates vary by season. The price users want to sort by isn't the nightly rate. It's the total for the stay they asked for.
 
-We won't get into how to find service boundaries here. Let's assume the following decomposition:
+We won't get into how to find service boundaries here; I covered some techniques, with a hotel example too, in ["Back to Basics: how do we find service boundaries?"](https://milestone.topics.it/2026/12/16/finding-service-boundaries.html). Let's assume the following decomposition:
 
 - **Registry** owns the hotel: name, description, city, stars, and amenities. Registry decides what a hotel is and whether it exists.
 - **Reservations** owns availability.
