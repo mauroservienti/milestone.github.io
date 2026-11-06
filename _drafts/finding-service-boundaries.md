@@ -119,4 +119,4 @@ And when someone laughs at a requirement, take it as good news ;-)
 
 ---
 
-TODO: header image and credits
+Photo by <a href="https://unsplash.com/@irrabagon?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Alexandr Popadin</a> on <a href="https://unsplash.com/photos/magnifying-glass-resting-on-a-wooden-surface-d3KjJHhblTI?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
