@@ -91,8 +91,6 @@ tags:
 - compute the real price only for the visible page, when sorting isn't by price
 Not in the demo. -->
 
-
-
 ## From IDs to a results page
 
 <!-- TODO: the search returns a page of hotel IDs, the facets, and the total count. ViewModel Composition, with ServiceComposer, turns the IDs into the results page: each service adds its own data to each item (name and photo, price, rating). That's the process Mike described on Slack: index, query, order, page, compose. -->
