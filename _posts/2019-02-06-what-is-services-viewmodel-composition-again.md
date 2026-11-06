@@ -12,6 +12,8 @@ tags:
 - viewmodel-composition
 series: view-model-composition
 redirect_from: /view-model-composition/2019/02/06/what-is-services-viewmodel-composition-again.html
+resources:
+- "[One product page, three services](https://bloggingabout.net/2026/11/03/one-product-page-three-services/), by Dennis van der Stelt"
 ---
 Building distributed systems requires facing an interesting challenge: there is a dichotomy between the way behaviors and data are decomposed at the backend and the way users expect to consume them from the frontend.
 

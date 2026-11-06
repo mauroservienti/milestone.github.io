@@ -11,6 +11,8 @@ tags:
 - viewmodel-composition
 series: view-model-composition
 redirect_from: /view-model-composition/2019/03/06/viewmodel-composition-show-me-the-code.html
+resources:
+- "[One product page, three services](https://bloggingabout.net/2026/11/03/one-product-page-three-services/), by Dennis van der Stelt"
 ---
 
 The ViewModel Composition discovery journey is progressing nicely, so far we've discussed:
