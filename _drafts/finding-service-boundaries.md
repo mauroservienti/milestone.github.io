@@ -55,7 +55,7 @@ Behaviors tell us which pieces of data are used together. Searching for availabl
 
 ## Forget the names
 
-Names like `Room` drag a lot of baggage with them. Everything that has something to do with a room ends up in the `Room` class.
+Names like `Room` carry a lot of baggage. Everything related to a room ends up in the `Room` class.
 
 A trick I like is to temporarily throw names away. Instead of entities, list the attributes, and group them by the behaviors that use them. If a group needs a name, use a color. Yellow, Green, Red. Colors carry no baggage, and they force us to look at what the group does rather than what it's called. Meaningful names can come back later, once the groups are stable.
 
@@ -94,9 +94,9 @@ Applying the techniques to the hotel example, we might end up with something lik
 - **Reservations:** availability, reservation dates and status, maximum number of guests.
 - **Guests:** guest name and contact details.
 - **Finance:** payment methods, authorizations, and charges.
-- **Housekeeping:** cleaning status, and the check-in rule that depends on it.
+- **Housekeeping:** cleaning status and the check-in rule that depends on it.
 
-Is it correct? I don't know. It's a starting point that will change as we learn more about the business. There's no product shaped `Room` anywhere, and the only thing all services share is the room identifier. As I wrote in ["How many (micro)services do I need?"](https://milestone.topics.it/2023/03/15/how-many-services.html), those are logical services. How many processes we deploy is a different question, to be answered later.
+Is it correct? I don't know. It's a starting point that will change as we learn more about the business. There's no product shaped `Room` anywhere, and the only thing all services share is the room identifier. As I wrote in ["How many (micro)services do I need?"](https://milestone.topics.it/2023/03/15/how-many-services.html), those are logical services. How many processes we deploy is a different question to answer later.
 
 Then, to show a search result page, we compose the data from Content, Pricing, and Reservations. That's what [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html) is for.
 
@@ -113,7 +113,7 @@ The good news is that, as long as boundaries are logical and we didn't distribut
 
 ## Conclusion
 
-There's no algorithm to find service boundaries. There are techniques: model behaviors instead of data, forget the names, test relationships with anti-requirements, and group what must change together. None of them gives the answer alone. Together, they make the conversation with the business much more productive.
+No algorithm can find service boundaries. There are techniques: model behaviors instead of data, forget the names, test relationships with anti-requirements, and group what must change together. None of them gives the answer on its own. Together, they make the conversation with the business much more productive.
 
 And when someone laughs at a requirement, take it as good news ;-)
 
