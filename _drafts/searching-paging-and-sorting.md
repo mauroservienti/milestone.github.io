@@ -12,6 +12,7 @@ related:
 - 2020-03-06-ok-mauro-but-i-want-to-do-paging-and-sorting.md
 - 2019-03-21-the-viewmodels-lists-composition-dance.md
 - 2026-12-16-finding-service-boundaries.md
+- 2021-07-15-own-the-cache.md
 resources:
 - "[Composing product lists with ServiceComposer](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/), by Dennis van der Stelt"
 tags:
@@ -111,6 +112,10 @@ Databases are good at replication, and there are ways to sync data that don't ma
 - **Periodic rebuilds:** the search tables are a copy, so they can be thrown away and rebuilt from scratch. It's too slow for Reservations, but it's a good safety net, and good enough for Registry.
 
 Whatever the option, the sync is part of the service: the same team owns it, deploys it, and monitors it.
+
+Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
+
+What makes it manageable is the same thing that makes any cache manageable: ownership. I wrote about it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html). Each service owns its schema, decides how fresh its data must be, and can wipe and rebuild its tables without asking anyone. Registry can rebuild nightly, and Reservations can't afford to be more than seconds behind. Nobody else is affected by those choices. The only thing services share is the infrastructure: the database server, its capacity, and its uptime.
 
 <!-- TODO: which option the demo uses, once the demo exists. -->
 
