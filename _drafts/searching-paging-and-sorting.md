@@ -113,7 +113,7 @@ Databases are good at replication, and there are ways to sync data that don't ma
 
 Whatever the option, the sync is part of the service: the same team owns it, deploys it, and monitors it.
 
-Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
+Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the physical service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
 
 What makes it manageable is the same thing that makes any cache manageable: ownership. I wrote about it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html). Each service owns its schema, decides how fresh its data must be, and can wipe and rebuild its tables without asking anyone. Registry can rebuild nightly, and Reservations can't afford to be more than seconds behind. Nobody else is affected by those choices. The only thing services share is the infrastructure: the database server, its capacity, and its uptime.
 
@@ -293,7 +293,7 @@ That's a job for [ViewModel Composition](https://milestone.topics.it/series/view
 
 <!-- TODO: snippet of the composition event and one handler from the demo. -->
 
-Years ago, a reader named Mike described on Slack an engine he'd built along the same lines: services index the data they care about, answer the query with matching IDs, order the results, and then the page is paginated and fleshed out with ViewModel Composition. Different implementation, same steps.
+Years ago, a friend and colleague named Mike described on Slack an engine he'd built along the same lines: services index the data they care about, answer the query with matching IDs, order the results, and then the page is paginated and fleshed out with ViewModel Composition. Different implementation, same steps.
 
 > Dennis van der Stelt recently described a different approach in ["Composing product lists with ServiceComposer"](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/). There's no shared store: Catalog raises an event with all the candidate IDs, and Marketing returns them sorted. It's simpler, and it's enough when one service sorts and candidate lists are small. It stops scaling when the candidates are many, or when sorting needs data from more than one service.
 
