@@ -96,9 +96,23 @@ flowchart LR
 
 The tables contain only what's needed to search, filter, sort, and build facets. Nothing more, nothing less. The hotel description, the photos, and the reviews' text aren't there: they're needed to display results, not to find them, and composition takes care of displaying.
 
-Each service keeps its tables up to date from its own data, for example, by handling its own events. That introduces eventual consistency. Registry doesn't care much: hotels don't change city or stars every five minutes. Reservations cares a lot: a hotel that sold out a minute ago shouldn't show up as available. That's why its table is as lean as possible: the nights with no rooms left, and nothing else.
+Each service keeps its tables up to date from its own data. That introduces eventual consistency. Registry doesn't care much: hotels don't change city or stars every five minutes. Reservations cares a lot: a hotel that sold out a minute ago shouldn't show up as available. That's why its table is as lean as possible: the nights with no rooms left, and nothing else.
 
-<!-- TODO: how the demo keeps the tables up to date (NServiceBus handlers? direct writes from each service's own database?) once the demo exists. -->
+### Keeping the tables up to date
+
+The tempting answer is messaging: each service publishes an event when something changes, and a handler updates the search table. It works, but it's the wrong tool. Filling the search tables isn't communication between services. It's data synchronization within a service's boundary: the Sales search table is Sales data, stored somewhere else.
+
+And messaging brings ordering to the table. Say Sales changes the rate for a night twice in a minute. Messages can be retried, delivered out of order, or processed in parallel, so the second change can land before the first, and the old rate wins. To fix it, we need a version on every row and handlers that discard stale updates. At that point, we're building a replication mechanism, badly, on top of a messaging infrastructure.
+
+Databases are good at replication, and there are ways to sync data that don't make ordering our problem:
+
+- **Change data capture:** the service's own database streams its changes, in commit order, to the search schema. If the service uses PostgreSQL, logical replication does it out of the box. Otherwise, tools like Debezium do.
+- **Reading the current state:** when something changes, the sync process reads the current state from the service's database and overwrites the search rows. A notification can still trigger it, but it carries only the hotel ID. Nobody trusts its content, so the order notifications arrive in doesn't matter.
+- **Periodic rebuilds:** the search tables are a copy, so they can be thrown away and rebuilt from scratch. It's too slow for Reservations, but it's a good safety net, and good enough for Registry.
+
+Whatever the option, the sync is part of the service: the same team owns it, deploys it, and monitors it.
+
+<!-- TODO: which option the demo uses, once the demo exists. -->
 
 ## Search is (still) a team effort
 
