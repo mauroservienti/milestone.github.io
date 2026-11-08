@@ -113,6 +113,23 @@ Databases are good at replication, and there are ways to sync data that don't ma
 
 Whatever the option, the sync is part of the service: the same team owns it, deploys it, and monitors it.
 
+The demo uses logical replication. Each service has its own PostgreSQL server, and publishes only the columns search needs. Registry, for example:
+
+```sql
+CREATE PUBLICATION registry_search
+    FOR TABLE registry.hotels (id, city, stars, amenities);
+```
+
+The hotel name and description stay in Registry. In the search database, Registry then subscribes its schema to that publication:
+
+```sql
+CREATE SUBSCRIPTION registry_search
+    CONNECTION 'host=registry-db dbname=registry ...'
+    PUBLICATION registry_search;
+```
+
+That's all the sync code there is. The subscription copies the existing rows first, then streams every change as it's committed. Logical replication matches tables by schema-qualified name, which is why Registry's own table lives in a `registry` schema too.
+
 Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the physical service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
 
 What makes it manageable is the same thing that makes any cache manageable: ownership. I wrote about it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html). Each service owns its schema, decides how fresh its data must be, and can wipe and rebuild its tables without asking anyone. Registry can rebuild nightly, and Reservations can't afford to be more than seconds behind. Nobody else is affected by those choices. The only thing services share is the infrastructure: the database server, its capacity, and its uptime.
@@ -122,8 +139,6 @@ What happens when the network between a service and the search database is flaky
 The catch is on the other side. While the search database is unreachable, each service's database keeps all the changes search hasn't received yet. If the outage lasts long enough, they fill the disk: the cache being down hurts the source of truth. That's why each service sets a limit, `max_slot_wal_keep_size` in PostgreSQL, beyond which it stops waiting. Search then needs a full resync of that service's tables, the rebuild from scratch we already discussed. Once more, the decision stays with the service that owns the data: how much it's willing to keep before giving up.
 
 Notice how the problem changed along the way. We started with an architectural problem: who owns what, and how data gets where it's needed. We ended up with a platform engineering problem: keeping servers, and the network between them, up. Uptime isn't something architecture can solve. Architecture can alleviate the effects of an outage, often trading them for other downsides, like the resync above. And it can decide what an outage means: when the search database is down, search degrades, and booking a hotel still works. Keeping things up, though, is someone else's job.
-
-<!-- TODO: which option the demo uses, once the demo exists. -->
 
 ## Search is (still) a team effort
 
