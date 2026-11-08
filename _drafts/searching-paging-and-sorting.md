@@ -130,6 +130,17 @@ CREATE SUBSCRIPTION registry_search
 
 That's all the sync code there is. The subscription copies the existing rows first, then streams every change as it's committed. Logical replication matches tables by schema-qualified name, which is why Registry's own table lives in a `registry` schema too.
 
+A publication can filter rows too. Search doesn't need to know how many rooms are left; it needs to know which nights are sold out. Reservations publishes only those:
+
+```sql
+CREATE PUBLICATION reservations_search
+    FOR TABLE reservations.availability WHERE (booked >= rooms);
+```
+
+When a booking sells out a night, the row shows up in search. When a cancellation frees a room, it disappears.
+
+What a publication can't do is reshape data. It picks tables, columns, and rows, but it doesn't aggregate, join, or compute anything. Take ratings: search sorts by the average rating, and Marketing stores reviews. The demo replicates one row per review, without the comments, and search computes the averages at query time. It's simple, but every query pays for it. The alternative is for Marketing to keep a per-hotel summary in its own database, updated in the same transaction as the review, and to publish that instead. Queries get cheaper, and sync code is back, but it lives in the service, in a local transaction: no messaging, no ordering problems. Either way, the shape of the search tables is the service's decision, like the queries that read them.
+
 Interestingly, the order is the opposite of messaging. With messaging, the subscriber must subscribe before events are published: an event delivered while nobody's listening is gone. With replication, the publication must exist first. Subscribing late loses nothing, since the subscription starts with a copy of the current state. What the subscriber can't do without is the contract: the publication declares which tables and columns are available, and the subscription reads it when it's created. Messaging moves events; replication moves state. For search tables, state is what we need.
 
 Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the physical service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
