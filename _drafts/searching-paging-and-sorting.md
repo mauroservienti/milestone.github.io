@@ -403,4 +403,4 @@ That place doesn't have to be a hodgepodge, though. If each service owns its own
 
 ---
 
-<!-- TODO: header image credit -->
+Photo by <a href="https://unsplash.com/@kylejglenn?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Kyle Glenn</a> on <a href="https://unsplash.com/photos/desk-globe-on-table-nXt5HtLmlgE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
