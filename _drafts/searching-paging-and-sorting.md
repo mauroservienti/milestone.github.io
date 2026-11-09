@@ -157,9 +157,9 @@ Notice how the problem changed along the way. We started with an architectural p
 
 Data isn't enough. Services need to take part in the search process. In 2019, we used pseudo-code with search providers appending statements to an `IQueryable`. That's what the demo does, using EF Core.
 
-<!-- TODO: replace the snippets in this section with the code from the demo, once it exists. -->
-
 The search process starts from the list of hotels, owned by Registry, and asks each service to contribute. Services deploy providers, and the search process discovers them, the same way ServiceComposer discovers composition handlers. There are three kinds of providers: filters, facets, and sorters.
+
+Providers work on hotel IDs, an `IQueryable<Guid>`, not on a shared `Hotel` entity: there's no such thing. Each service maps its own tables in the search database's `DbContext`, and providers query them through it.
 
 ### Filtering
 
@@ -168,24 +168,24 @@ A filter provider looks like the following:
 ```csharp
 public interface IFilterProvider
 {
-    IQueryable<Hotel> Filter(IQueryable<Hotel> hotels, SearchRequest request);
+    IQueryable<Guid> Filter(SearchDbContext db, IQueryable<Guid> hotels, SearchRequest request);
 }
 ```
 
 Each service handles the criteria it owns. Registry filters by city, stars, and amenities. Reservations, when the request has stay dates, removes sold-out hotels:
 
 ```csharp
-class AvailabilityFilter(SearchDbContext db) : IFilterProvider
+class AvailabilityFilter : IFilterProvider
 {
-    public IQueryable<Hotel> Filter(IQueryable<Hotel> hotels, SearchRequest request)
+    public IQueryable<Guid> Filter(SearchDbContext db, IQueryable<Guid> hotels, SearchRequest request)
     {
         if (request.Stay is not { } stay)
         {
             return hotels;
         }
 
-        return hotels.Where(h => !db.SoldOutNights.Any(n =>
-            n.HotelId == h.Id && n.Night >= stay.CheckIn && n.Night < stay.CheckOut));
+        return hotels.Where(id => !db.Set<SoldOutNight>()
+            .Any(n => n.HotelId == id && n.Night >= stay.CheckIn && n.Night < stay.CheckOut));
     }
 }
 ```
@@ -199,7 +199,8 @@ Facets work the same way. Each service builds the facets for the data it owns, u
 ```csharp
 public interface IFacetProvider
 {
-    Task<Facet> Build(IQueryable<Hotel> filtered, SearchRequest request);
+    Task<Facet> Build(
+        SearchDbContext db, IQueryable<Guid> filtered, SearchRequest request, CancellationToken cancellationToken);
 }
 ```
 
@@ -218,8 +219,8 @@ public interface ISortProvider
 {
     string Key { get; }
 
-    IOrderedQueryable<Hotel> Sort(
-        IQueryable<Hotel> hotels, SearchRequest request, bool descending, bool first);
+    IOrderedQueryable<Guid> Sort(
+        SearchDbContext db, IQueryable<Guid> hotels, SearchRequest request, bool descending, bool first);
 }
 ```
 
@@ -228,28 +229,31 @@ public interface ISortProvider
 Seasonal prices make Sales' sorter interesting. A stay from December 28 to January 2 might span two seasons, so there's no single price to precompute and store. The price to sort by is the sum of the nightly rates for the requested nights:
 
 ```csharp
-class StayPriceSort(SearchDbContext db) : ISortProvider
+class PriceSort(TimeProvider time) : ISortProvider
 {
     public string Key => "price";
 
-    public IOrderedQueryable<Hotel> Sort(
-        IQueryable<Hotel> hotels, SearchRequest request, bool descending, bool first)
+    public IOrderedQueryable<Guid> Sort(
+        SearchDbContext db, IQueryable<Guid> hotels, SearchRequest request, bool descending, bool first)
     {
-        var stay = request.Stay!.Value;
-        Expression<Func<Hotel, decimal>> stayPrice = h => db.NightlyRates
-            .Where(r => r.HotelId == h.Id && r.Night >= stay.CheckIn && r.Night < stay.CheckOut)
-            .Sum(r => r.Rate);
-
-        return (first, descending) switch
+        if (request.Stay is { } stay)
         {
-            (true, false) => hotels.OrderBy(stayPrice),
-            (true, true) => hotels.OrderByDescending(stayPrice),
-            (false, false) => ((IOrderedQueryable<Hotel>)hotels).ThenBy(stayPrice),
-            (false, true) => ((IOrderedQueryable<Hotel>)hotels).ThenByDescending(stayPrice),
-        };
+            return hotels.SortBy(id => db.Set<NightlyRate>()
+                .Where(r => r.HotelId == id && r.Night >= stay.CheckIn && r.Night < stay.CheckOut)
+                .Sum(r => r.Rate), descending, first);
+        }
+
+        var today = DateOnly.FromDateTime(time.GetLocalNow().Date);
+        var until = today.AddDays(30);
+        var missing = descending ? decimal.MinValue : decimal.MaxValue;
+        return hotels.SortBy(id => db.Set<NightlyRate>()
+            .Where(r => r.HotelId == id && r.Night >= today && r.Night < until)
+            .Min(r => (decimal?)r.Rate) ?? missing, descending, first);
     }
 }
 ```
+
+`SortBy` is a small helper that picks `OrderBy`, `OrderByDescending`, `ThenBy`, or `ThenByDescending`, based on `first` and the direction.
 
 Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels Sales can't price come last, whichever direction the sort goes. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
 
@@ -260,31 +264,36 @@ Paging comes last, once everything is filtered and sorted. The search process ad
 The whole search process looks like the following:
 
 ```csharp
-var hotels = db.Hotels.AsQueryable();
-foreach (var filter in filterProviders)
+var hotels = source.Hotels(db);
+foreach (var filter in filters)
 {
-    hotels = filter.Filter(hotels, request);
+    hotels = filter.Filter(db, hotels, request);
 }
 
-var facets = new List<Facet>();
-foreach (var facetProvider in facetProviders)
+var builtFacets = new List<Facet>();
+foreach (var facet in facets)
 {
-    facets.Add(await facetProvider.Build(hotels, request));
+    builtFacets.Add(await facet.Build(db, hotels, request, cancellationToken));
 }
 
-var total = await hotels.CountAsync();
+var totalCount = await hotels.CountAsync(cancellationToken);
 
-IOrderedQueryable<Hotel>? sorted = null;
-foreach (var (key, descending) in request.OrderBy)
+var sorted = hotels;
+var first = true;
+foreach (var sortBy in request.OrderBy)
 {
-    sorted = sortProviders[key].Sort(sorted ?? hotels, request, descending, first: sorted is null);
+    sorted = sortsByKey[sortBy.Key].Sort(db, sorted, request, sortBy.Descending, first);
+    first = false;
 }
 
-var pageIds = await (sorted?.ThenBy(h => h.Id) ?? hotels.OrderBy(h => h.Id))
-    .Skip(request.Page * request.PageSize)
-    .Take(request.PageSize)
-    .Select(h => h.Id)
-    .ToListAsync();
+var ordered = first
+    ? sorted.OrderBy(id => id)
+    : ((IOrderedQueryable<Guid>)sorted).ThenBy(id => id);
+
+var ids = await ordered
+    .Skip((page - 1) * pageSize)
+    .Take(pageSize)
+    .ToListAsync(cancellationToken);
 ```
 
 The search process knows nothing about cities, prices, or ratings. It runs whatever services contributed, in the order the request asked for.
