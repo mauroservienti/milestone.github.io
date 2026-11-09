@@ -336,7 +336,7 @@ The event carries the search request, so that Sales can price the stay, and a vi
 public record HotelsFound(SearchRequest Request, IReadOnlyDictionary<Guid, dynamic> Hotels);
 ```
 
-Each service subscribes to it, and loads what it owns for the whole page with a single query. Registry's handler looks like the following:
+Each service subscribes to it, and loads what it owns for the whole page with a single query. There's no EF Core here: nothing else adds to the query, so plain SQL is enough. Registry's handler looks like the following:
 
 ```csharp
 class HotelsFoundSubscriber([FromKeyedServices("registry")] NpgsqlDataSource registry)
