@@ -251,7 +251,7 @@ class StayPriceSort(SearchDbContext db) : ISortProvider
 }
 ```
 
-<!-- TODO: sorting by price without stay dates: lowest upcoming nightly rate? Not allowed? Decide in the demo. -->
+Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels Sales can't price come last, whichever direction the sort goes. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
 
 This is why sorting must happen where the data is. Sales still owns its pricing rules: how seasons work, and how a stay's price is calculated. The rule just runs inside the query, next to everyone else's.
 
