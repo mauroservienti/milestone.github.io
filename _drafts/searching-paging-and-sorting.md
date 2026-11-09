@@ -399,7 +399,7 @@ Zero coupling is an illusion. Searching, sorting, and paging data owned by many 
 
 That place doesn't have to be a hodgepodge, though. If each service owns its own lean data, its own piece of the query, and its own facets and sorting rules, the only thing shared is a small, technical contract. Composition does the rest.
 
-[The demo](https://github.com/mauroservienti/hotelly) has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. All it needs is the .NET 10 SDK and Docker: `dotnet run --project src/Hotelly.AppHost` starts everything with Aspire, and the README has a search to try. Better late than never ;-)
+[The demo](https://github.com/mauroservienti/hotelly) has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. All it needs is the .NET 10 SDK and Docker: `dotnet run --project src/Hotelly.AppHost` starts everything with Aspire, including a search page that shows which service owns each filter and each piece of data, and the request and the composed response behind every search. Better late than never ;-)
 
 ---
 
