@@ -26,9 +26,7 @@ In May 2019, [Tomek](https://twitter.com/Masternak) and I wrote ["The Quest for 
 
 The first one came out a week later. The second one? Famous last words.
 
-Seven years later, here it is. It ties together searching, filtering, sorting, and paging, and it comes with a runnable demo.
-
-<!-- TODO: link to the demo repository once it exists. -->
+Seven years later, here it is. It ties together searching, filtering, sorting, and paging, and it comes with [a runnable demo](https://github.com/mauroservienti/hotelly).
 
 The short version: searching, sorting, and paging across services can't be composed after the fact. The data needs to meet in one place. That place can still respect service boundaries, as long as each service owns its own data and its own piece of the query, and shares nothing more than needed.
 
@@ -401,9 +399,7 @@ Zero coupling is an illusion. Searching, sorting, and paging data owned by many 
 
 That place doesn't have to be a hodgepodge, though. If each service owns its own lean data, its own piece of the query, and its own facets and sorting rules, the only thing shared is a small, technical contract. Composition does the rest.
 
-The demo has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. Better late than never ;-)
-
-<!-- TODO: demo repository link and how to run it. -->
+[The demo](https://github.com/mauroservienti/hotelly) has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. All it needs is the .NET 10 SDK and Docker: `dotnet run --project src/Hotelly.AppHost` starts everything with Aspire, and the README has a search to try. Better late than never ;-)
 
 ---
 
