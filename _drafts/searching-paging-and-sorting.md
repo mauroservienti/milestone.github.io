@@ -204,11 +204,9 @@ public interface IFacetProvider
 }
 ```
 
-Registry counts stars and amenities, and Marketing groups ratings into bands like "8+" or "9+". Each is a `GROUP BY` on the service's own table, joined with the filtered hotels.
+Registry counts cities, stars, and amenities, and Marketing groups average ratings into bands like "4 and up" or "3 and up". Each is a `GROUP BY` on the service's own table, joined with the filtered hotels.
 
-> A detail that makes users happy: facet counts usually ignore the facet's own filter. If users select four stars, the stars facet still shows how many three- and five-star hotels match, so they can change their minds. To do that, the search process builds each facet on the hotels filtered by all the other providers.
-
-<!-- TODO: check that the demo does this; if not, drop the note or adjust the IFacetProvider signature. -->
+> A detail that makes users happy: facet counts usually ignore the facet's own filter. If users select four stars, the stars facet still shows how many three- and five-star hotels match, so they can change their minds. To do that, the search process must build each facet on the hotels filtered by all the other providers, which means knowing which filter each facet belongs to. The demo doesn't: filters don't declare the request parameter they handle, so every facet counts the fully filtered hotels. Giving filters a key, like sorters, would fix it, at the cost of one more query per facet.
 
 ### Sorting, then paging
 
