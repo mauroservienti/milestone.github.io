@@ -128,3 +128,7 @@ TODO: finish the argument. Suggested direction: it's a different and milder kind
 <!--
 TODO: restate the thesis in your words. Suggested points: the overlap between HR and IT is in the user's mental model, not in the data. Split device types from physical devices, let HR own the entitlement policy and IT the inventory, compose at the user interface, and use events carrying identifiers and decisions to keep the two in sync.
 -->
+
+---
+
+Photo by <a href="https://unsplash.com/@yolk_coworking_krakow?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Yolk CoWorking - Krakow</a> on <a href="https://unsplash.com/photos/white-wooden-table-with-chairs-k9aUYYkWWI0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
