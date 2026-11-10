@@ -385,7 +385,7 @@ It has a problem with our design, though: it has no joins. There are a few ways 
 - **One index per service**, joined in code. That's moving IDs around again: the naïve design.
 - **Parent/child relationships**, which are limited, slower, and still need a single index.
 
-Sorting by price, then by rating, needs both fields in the same document. So we're back to the shared document. Availability is awkward to model, too: booked dates become date ranges or nested documents, and they're the data that changes the most. Elasticsearch also refreshes its indexes about once a second, which adds a little more eventual consistency. And anyone who can write to the index can write any field: there's no equivalent of a database role per schema.
+Sorting by price, then by rating, needs both fields in the same document. So we're back to the shared document. Availability is awkward to model, too: booked dates become date ranges or nested documents, and they change the most. Anyone who can write to the index can write any field; there's no equivalent of a database role per schema.
 
 That shared document has a familiar shape. The index mapping becomes a data contract all services depend on, much closer to the Branding coupling than the PostgreSQL design, where only the plug-in contract is shared.
 
