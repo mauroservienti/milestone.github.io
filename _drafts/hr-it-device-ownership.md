@@ -16,11 +16,11 @@ tags:
 enable_mermaid: true
 ---
 
-In many organizations, one of the responsibilities of the human resources (HR) department is to hire new people. The Information Technology (IT) department controls, among other things, what kind of hardware each employee receives. Some employees might get a desktop computer, others a laptop and a desktop, and some have a mobile phone or a tablet.
+In many organizations, one of the responsibilities of the human resources (HR) department is to hire new people. The Information Technology (IT) department controls, among other things, what kind of hardware each employee receives. Some employees get a desktop computer, others a laptop and a desktop, and some also get a mobile phone or a tablet.
 
 Oversimplifying, when someone gets hired, they sign papers with HR, then go to the IT people and get their hardware. Similarly, HR manages the legal bits when someone gets a promotion or changes units, and IT handles any device update.
 
-Looks trivial. However, from the perspective of a software development team in charge of implementing those scenarios, it's no longer trivial.
+Looks trivial. However, for the software development team in charge of implementing those scenarios, it isn't trivial at all.
 
 Regardless of the chosen architectural style, the scenario is a challenge from the ownership perspective. HR is responsible for the person's role and IT for the assigned devices. However, they need to cooperate when assigning hardware to people.
 
@@ -53,7 +53,7 @@ Once the two are separated, ownership becomes clearer. IT owns the catalog of de
 
 For the sake of the discussion, let's assume that HR is in charge of deciding who gets what. They control the policy and the politics around it: a manager receives a laptop, everyone else a desktop, a salesperson a tablet and a phone, and so on.
 
-HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of positions. As expected, the list shows labels and descriptions: HR owns positions, and IDs, names, and descriptions are in HR storage. They click on a position to get to its details, where a dropdown list allows them to select one or more device types. Again, as expected, the list is a human-readable set of device names and descriptions.
+HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of positions. As expected, the list shows labels and descriptions: HR owns positions, and IDs, names, and descriptions are in HR storage. They click on a position to get to its details, where a list allows them to select one or more device types. Again, as expected, the list is a human-readable set of device names and descriptions.
 
 ### Wait, aren't devices an IT responsibility?
 
