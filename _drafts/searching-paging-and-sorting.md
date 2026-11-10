@@ -56,7 +56,7 @@ If you've been following the [ViewModel Composition series](https://milestone.to
 
 Paging alone is fine too. The service that owns the list pages it, and everyone else gets an already-paged list of IDs. I described it in ["Paging and sorting in distributed systems, oh my!"](https://milestone.topics.it/2020/01/27/paging-and-sorting-in-distributed-systems-oh-my.html).
 
-Things fall apart as soon as we sort by something owned by another service and then page. Sorting must happen before paging. If we page first, we sort only the current page, and page two makes no sense anymore. And to sort by price before paging, Sales needs all the candidates, not a page of them. That's a join, as I admitted in ["OK Mauro, but I want to do paging AND sorting"](https://milestone.topics.it/2020/03/06/ok-mauro-but-i-want-to-do-paging-and-sorting.html).
+Things fall apart as soon as we sort by something owned by another service and then page. Sorting must happen before paging. If we page first, we sort only the current page, and page two no longer makes sense. To sort by price before paging, Sales needs all the candidates, not just a page of them. That's a join, as I admitted in ["OK Mauro, but I want to do paging AND sorting"](https://milestone.topics.it/2020/03/06/ok-mauro-but-i-want-to-do-paging-and-sorting.html).
 
 Search makes it worse. Filters are owned by different services, and facets need counts over the whole result set, not over a page. Moving IDs from Registry to Reservations to Marketing to Sales, filtering at every step, is the naïve design from "Search is a Team Effort". It works, and it's very inefficient. It's like moving the race car to the engineers during a pit stop, instead of bringing the engineers, and only the tools they need, to the car.
 
@@ -71,7 +71,7 @@ The demo uses a single PostgreSQL database dedicated to search. Each service get
 - `marketing.ratings`: hotel ID, average rating, and number of reviews.
 - `sales.nightly_rates`: hotel ID, night, and rate.
 
-> PostgreSQL range types would let Reservations and Sales store periods instead of single nights. One row per night keeps the demo, and the queries, simpler.
+> PostgreSQL range types would let Reservations and Sales store periods instead of single nights. One row per night keeps the demo and the queries simpler.
 
 Each service has a database role that can write only to its own schema. Ownership isn't a convention; the database enforces it.
 
@@ -93,7 +93,7 @@ flowchart LR
   SE -. reads .-> SS
 </div>
 
-The tables contain only what's needed to search, filter, sort, and build facets. Nothing more, nothing less. The hotel description, the photos, and the reviews' text aren't there: they're needed to display results, not to find them, and composition takes care of displaying.
+The tables contain only what's needed to search, filter, sort, and build facets. Nothing more, nothing less. The hotel description, photos, and review text aren't there: they're needed to display results, not to find them, and ViewModel composition handles displaying them.
 
 Each service keeps its tables up to date from its own data. That introduces eventual consistency. Registry doesn't care much: hotels don't change city or stars every five minutes. Reservations cares a lot: a hotel that sold out a minute ago shouldn't show up as available. That's why its table is as lean as possible: the nights with no rooms left, and nothing else.
 
@@ -106,10 +106,10 @@ And messaging brings ordering to the table. Say Sales changes the rate for a nig
 Databases are good at replication, and there are ways to sync data that don't make ordering our problem:
 
 - **Change data capture:** the service's own database streams its changes, in commit order, to the search schema. If the service uses PostgreSQL, logical replication does it out of the box. Otherwise, tools like Debezium do.
-- **Reading the current state:** when something changes, the sync process reads the current state from the service's database and overwrites the search rows. A notification can still trigger it, but it carries only the hotel ID. Nobody trusts its content, so the order notifications arrive in doesn't matter.
+- **Reading the current state:** when something changes, the sync process reads the current state from the service's database and overwrites the search rows. A notification can still trigger it, but it carries only the hotel ID. Nobody trusts its content, so the order of notifications doesn't matter.
 - **Periodic rebuilds:** the search tables are a copy, so they can be thrown away and rebuilt from scratch. It's too slow for Reservations, but it's a good safety net, and good enough for Registry.
 
-Whatever the option, the sync is part of the service: the same team owns it, deploys it, and monitors it.
+Either way, the sync is part of the service: the same team owns it, deploys it, and monitors it.
 
 The demo uses logical replication. Each service has its own PostgreSQL server, and publishes only the columns search needs. Registry, for example:
 
@@ -126,7 +126,7 @@ CREATE SUBSCRIPTION registry_search
     PUBLICATION registry_search;
 ```
 
-That's all the sync code there is. The subscription copies the existing rows first, then streams every change as it's committed. Logical replication matches tables by schema-qualified name, which is why Registry's own table lives in a `registry` schema too.
+That's all the sync code. The subscription copies the existing rows first, then streams every change as it's committed. Logical replication matches tables by schema-qualified name, which is why Registry's own table lives in a `registry` schema too.
 
 A publication can filter rows too. Search doesn't need to know how many rooms are left; it needs to know which nights are sold out. Reservations publishes only those:
 
@@ -139,7 +139,7 @@ When a booking sells out a night, the row shows up in search. When a cancellatio
 
 What a publication can't do is reshape data. It picks tables, columns, and rows, but it doesn't aggregate, join, or compute anything. Take ratings: search sorts by the average rating, and Marketing stores reviews. The demo replicates one row per review, without the comments, and search computes the averages at query time. It's simple, but every query pays for it. The alternative is for Marketing to keep a per-hotel summary in its own database, updated in the same transaction as the review, and to publish that instead. Queries get cheaper, and sync code is back, but it lives in the service, in a local transaction: no messaging, no ordering problems. Either way, the shape of the search tables is the service's decision, like the queries that read them.
 
-Interestingly, the order is the opposite of messaging. With messaging, the subscriber must subscribe before events are published: an event delivered while nobody's listening is gone. With replication, the publication must exist first. Subscribing late loses nothing, since the subscription starts with a copy of the current state. What the subscriber can't do without is the contract: the publication declares which tables and columns are available, and the subscription reads it when it's created. Messaging moves events; replication moves state. For search tables, state is what we need.
+Interestingly, the order is the opposite of messaging. With messaging, the subscriber must subscribe before events are published: an event delivered while nobody's listening is gone. With replication, the publication must exist first. Subscribing late loses nothing, since the subscription starts with a copy of the current state. What the subscriber can't do without is the contract: the publication declares which tables and columns are available, and the subscription reads it when it's created. Messaging moves events; replication moves state. For search tables, we need state.
 
 Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the physical service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
 
@@ -155,7 +155,7 @@ Notice how the problem changed along the way. We started with an architectural p
 
 Data isn't enough. Services need to take part in the search process. In 2019, we used pseudo-code with search providers appending statements to an `IQueryable`. That's what the demo does, using EF Core.
 
-The search process starts from the list of hotels, owned by Registry, and asks each service to contribute. Services deploy providers, and the search process discovers them, the same way ServiceComposer discovers composition handlers. There are three kinds of providers: filters, facets, and sorters.
+The search process starts with the list of hotels owned by Registry and asks each service to contribute. Services deploy providers, and the search process discovers them, the same way ServiceComposer discovers composition handlers. There are three kinds of providers: filters, facets, and sorters.
 
 Providers work on hotel IDs, an `IQueryable<Guid>`, not on a shared `Hotel` entity: there's no such thing. Each service maps its own tables in the search database's `DbContext`, and providers query them through it.
 
@@ -188,7 +188,7 @@ class AvailabilityFilter : IFilterProvider
 }
 ```
 
-Reservations doesn't know what Registry filtered, and doesn't care. It adds its condition, and EF Core turns the whole thing into a single SQL query.
+Reservations doesn't know what Registry filtered, and doesn't care. It adds its condition, and EF Core turns it into a single SQL query.
 
 ### Facets
 
@@ -251,9 +251,9 @@ class PriceSort(TimeProvider time) : ISortProvider
 
 `SortBy` is a small helper that picks `OrderBy`, `OrderByDescending`, `ThenBy`, or `ThenByDescending`, based on `first` and the direction.
 
-Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels Sales can't price come last, whichever direction the sort goes. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
+Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels Sales can't price come last, no matter which direction the sort goes. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
 
-This is why sorting must happen where the data is. Sales still owns its pricing rules: how seasons work, and how a stay's price is calculated. The rule just runs inside the query, next to everyone else's.
+This is why sorting must happen where the data is. Sales still owns its pricing rules: how seasons work, and how a stay's price is calculated. The rule runs inside the query, alongside everyone else's.
 
 Paging comes last, once everything is filtered and sorted. The search process adds a final sort on the hotel ID, so hotels with the same price and rating always come back in the same order, and two pages never show the same hotel. Then it skips and takes. The demo uses offset paging. For deep result sets, keyset paging, "the next ten after this one", is more efficient, but users rarely go past page three of a hotel search.
 
