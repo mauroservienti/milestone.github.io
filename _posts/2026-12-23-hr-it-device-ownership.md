@@ -18,9 +18,9 @@ enable_mermaid: true
 
 In many organizations, one of the responsibilities of the human resources (HR) department is to hire new people. The Information Technology (IT) department controls, among other things, what kind of hardware each employee receives. Some employees get a desktop computer, others a laptop and a desktop, and some also get a mobile phone or a tablet.
 
-Oversimplifying, when someone gets hired, they sign papers with HR, then go to the IT people and get their hardware. Similarly, HR manages the legal bits when someone gets a promotion or changes units, and IT handles any device update.
+Oversimplifying, when someone gets hired, they sign papers with HR, then go to IT to get their hardware. Similarly, HR manages the legal bits when someone gets a promotion or changes units, and IT handles any device update.
 
-Looks trivial. However, for the software development team in charge of implementing those scenarios, it isn't trivial at all.
+Looks trivial. However, for the software development team implementing those scenarios, it isn't trivial at all.
 
 Regardless of the chosen architectural style, the scenario is a challenge from the ownership perspective. HR is responsible for the person's role and IT for the assigned devices. However, they need to cooperate when assigning hardware to people.
 
@@ -30,11 +30,11 @@ The apparent overlap muddies the waters and risks introducing unneeded [coupling
 
 ## Why does it look shared?
 
-The problem arises by [trusting the user's mental model](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html) instead of dissecting the requirements and understanding how the different parts interact.
+The problem arises from [trusting the user's mental model](https://milestone.topics.it/2021/02/02/do-not-trust-the-user-mental-model.html) instead of dissecting the requirements and understanding how the different parts interact.
 
-The way users and business people present requirements is _visual_. They think about how they'd do it on a user interface or (worse) how they always did it in the past. Given that it's not their area of expertise, they describe those processes without paying much attention to the distinction between data and behaviors, and without any attention to ownership and coupling. That's why I suggest not trusting the users' mental model.
+Users and business people present requirements in a _visual_ way. They think about how they'd do it on a user interface or (worse) how they always did it in the past. Because it's not their area of expertise, they describe those processes without paying much attention to the distinction between data and behaviors, or to ownership and coupling. That's why I suggest not trusting the users' mental model.
 
-Let's start with a bird's-eye view. We're talking about two services, HR and IT, and a workflow, or a policy, to assign devices to employees. As described by users, the policy crosses the boundary between HR and IT. And that might have long-term consequences we prefer to avoid.
+Let's start with a bird's-eye view. We're talking about two services, HR and IT, and a workflow, or a policy, to assign devices to employees. As users describe it, the policy crosses the boundary between HR and IT. And that might have long-term consequences we prefer to avoid.
 
 > On why cross-service policies (or sagas) are suboptimal, I wrote ["Don't keep a saga in both camps"](https://milestone.topics.it/2021/07/28/dont-keep-a-saga-in-both-camps.html).
 
@@ -47,13 +47,13 @@ The crucial distinction is between device _types_ and _physical_ devices:
 - Deciding that a manager gets a laptop and a salesperson gets a tablet and a phone is a decision about device types. It's about roles and entitlements, the politics of who gets what.
 - Handing over a specific laptop, with a serial number, configured and ready to use, is about physical devices. It's about stock, procurement, and configuration.
 
-Once the two are separated, ownership becomes clearer. IT owns the catalog of device types, their names, descriptions, and specifications, and the physical devices, from procurement to configuration. What's left is the policy that connects roles to device types.
+Once you separate the two, ownership becomes clearer. IT owns the catalog of device types, their names, descriptions, and specifications, and the physical devices, from procurement to configuration. What's left is the policy that connects roles to device types.
 
 ## Who owns the policy?
 
-For the sake of the discussion, let's assume that HR is in charge of deciding who gets what. They control the policy and the politics around it: a manager receives a laptop, everyone else a desktop, a salesperson a tablet and a phone, and so on.
+For the sake of the discussion, let's assume HR decides who gets what. They control the policy and the politics around it: a manager receives a laptop, everyone else a desktop, a salesperson a tablet and a phone, and so on.
 
-HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of positions. As expected, the list shows labels and descriptions: HR owns positions, and IDs, names, and descriptions are in HR storage. They click on a position to get to its details, where a list allows them to select one or more device types. Again, as expected, the list is a human-readable set of device names and descriptions.
+HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of positions. As expected, the list shows labels and descriptions: HR owns positions, and IDs, names, and descriptions are in HR storage. They click a position to view its details, where a list lets them select one or more device types. Again, as expected, the list shows human-readable device names and descriptions.
 
 ### Wait, aren't devices an IT responsibility?
 
@@ -83,9 +83,9 @@ When a new person joins, HR publishes a corresponding event:
 }
 ```
 
-The role ID alone isn't enough for IT. The policy connecting roles to device types lives in HR, and IT shouldn't reimplement it or keep a copy of it to work out what the new employee is entitled to. Instead, HR applies its own policy and announces the outcome: employee E-456 is entitled to device types DT-1 and DT-7. IT doesn't need to know anything about roles. As I wrote in ["Back to Basics: who owns the data?"](https://milestone.topics.it/2026/11/09/back-to-basics-data-ownership.html), when a decision belongs to a service, that service makes it and announces it. Others only need to know the outcome.
+The role ID alone isn't enough for IT. The policy connecting roles to device types lives in HR, and IT shouldn't reimplement it or keep a copy to determine what the new employee is entitled to. Instead, HR applies its own policy and announces the outcome: employee E-456 is entitled to device types DT-1 and DT-7. IT doesn't need to know anything about roles. As I wrote in ["Back to Basics: who owns the data?"](https://milestone.topics.it/2026/11/09/back-to-basics-data-ownership.html), when a decision belongs to a service, that service makes it and announces it. Others only need to know the outcome.
 
-Note that the event carries identifiers and the decision, not names, descriptions, or anything else HR doesn't own.
+The event carries identifiers and the decision, not names, descriptions, or anything else HR doesn't own.
 
 HR uses a similar event, `EmployeeRoleChanged`, to broadcast promotions and changes of unit:
 
@@ -98,15 +98,15 @@ HR uses a similar event, `EmployeeRoleChanged`, to broadcast promotions and chan
 }
 ```
 
-IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Similar to the HR personnel, IT people use their system to determine which devices to hand over. Their system uses ViewModel Composition to show the employee's name and other details from the HR system. There is no need for IT to store any of those.
+IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Like HR, IT uses its system to determine which devices to hand over. Their system uses ViewModel Composition to show the employee's name and other details from the HR system. There is no need for IT to store any of those.
 
 ### Why does IT subscribe to HR events?
 
-IT could wait for the new employee to show up at the desk. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as a new employee is hired or changes role, not when they're standing in front of the IT desk.
+IT could wait until the new employee shows up at their desk. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as a new employee is hired or changes role, not when they're standing in front of the IT desk.
 
-Similarly, when someone changes role, some devices might no longer be needed. IT wants to know which devices will become available again and start a different process to collect and reset them, making them available to others.
+Similarly, when someone changes role, some devices might no longer be needed. IT wants to know which devices will become available again so it can start a different process to collect and reset them, making them available to others.
 
-Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides about what it owns.
+Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides what it manages.
 
 ## What if there are thousands of them?
 
@@ -114,13 +114,13 @@ What if we had thousands of employees or hundreds of different device types? We 
 
 But the things we want to search for are in different places.
 
-That means the search functionality must be implemented by the service that owns the data. HR will search for device types through IT's search capabilities, and IT will search for employees through HR's.
+That means the service that owns the data must implement the search functionality. HR will search for device types through IT's search capabilities, and IT will search for employees through HR's.
 
 Does that create coupling?
 
 In a sense, yes. But it's a different, and much milder, kind of coupling than the one we were trying to avoid.
 
-The HR user interface depends on IT's search capabilities, at the edges, through composition. HR's storage and business logic know nothing about devices other than their identifiers. IT can change how it stores, describes, or indexes device types without HR noticing, as long as the search contract holds. The same goes in the opposite direction for employees.
+The HR user interface depends on IT's search capabilities, at the edges, through composition. HR's storage and business logic know nothing about devices other than their identifiers. IT can change how it stores, describes, or indexes device types without HR noticing, as long as the search contract holds. The same goes the other way for employees.
 
 Compare that with the alternative: copying device types into HR storage to make them searchable. HR would need to keep the copy up to date, decide when it's stale, and, sooner or later, start making decisions based on data it doesn't own. Storage, business rules, and release cycles would be coupled. That's the coupling that hurts.
 
