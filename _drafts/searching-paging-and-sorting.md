@@ -251,7 +251,7 @@ class PriceSort(TimeProvider time) : ISortProvider
 
 `SortBy` is a small helper that picks `OrderBy`, `OrderByDescending`, `ThenBy`, or `ThenByDescending`, based on `first` and the direction.
 
-Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels Sales can't price come last, no matter which direction the sort goes. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
+Without stay dates, there's no stay to price. The demo falls back to the "from" price hotel listings usually show: the lowest nightly rate in the next 30 days. Hotels with no rate in the next 30 days come last, whatever the sort direction. The results page shows the same price the hotels are sorted by: Sales' composition handler computes it with the same rule, from Sales' own database.
 
 This is why sorting must happen where the data is. Sales still owns its pricing rules: how seasons work, and how a stay's price is calculated. The rule runs inside the query, alongside everyone else's.
 
