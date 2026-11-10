@@ -47,9 +47,7 @@ The crucial distinction is between device _types_ and _physical_ devices:
 - Deciding that a manager gets a laptop and a salesperson gets a tablet and a phone is a decision about device types. It's about roles and entitlements, the politics of who gets what.
 - Handing over a specific laptop, with a serial number, configured and ready to use, is about physical devices. It's about stock, procurement, and configuration.
 
-<!--
-TODO: confirm the split. The rest of the draft assumes HR owns the "role to device types" policy, and IT owns the device types catalog and the physical devices. If you see it differently (for example, IT owns the policy and HR only owns roles), the composition and events sections change accordingly.
--->
+Once the two are separated, ownership becomes clearer. IT owns the catalog of device types, their names, descriptions, and specifications, and the physical devices, from procurement to configuration. What's left is the policy that connects roles to device types.
 
 ## Who owns the policy?
 
@@ -80,20 +78,25 @@ When a new person joins, HR publishes a corresponding event:
 {
   "type": "EmployeeHired",
   "employeeId": "E-456",
-  "roleId": "R-123"
+  "roleId": "R-123",
+  "deviceTypeIds": ["DT-1", "DT-7"]
 }
 ```
 
-HR uses a similar one, `EmployeeRoleChanged`, to broadcast promotions and changes of unit.
+The role ID alone isn't enough for IT. The policy connecting roles to device types lives in HR, and IT shouldn't reimplement it or keep a copy of it to work out what the new employee is entitled to. Instead, HR applies its own policy and announces the outcome: employee E-456 is entitled to device types DT-1 and DT-7. IT doesn't need to know anything about roles. As I wrote in ["Back to Basics: who owns the data?"](https://milestone.topics.it/2026/11/09/back-to-basics-data-ownership.html), when a decision belongs to a service, that service makes it and announces it. Others only need to know the outcome.
 
-<!--
-TODO: decide how IT knows which devices to prepare. The role-to-device-types policy lives in HR, so `roleId` alone isn't enough for IT. Two options:
+Note that the event carries identifiers and the decision, not names, descriptions, or anything else HR doesn't own.
 
-1. HR applies its own policy and announces the outcome: the event also carries the device type IDs the employee is entitled to (for example, `"deviceTypeIds": ["DT-1", "DT-7"]`). IT doesn't need to know anything about roles. This matches the advice in the data ownership post: the owner makes the decision and announces it.
-2. IT doesn't get the entitlement in the event, and IT people see it through composition when the employee shows up.
+HR uses a similar event, `EmployeeRoleChanged`, to broadcast promotions and changes of unit:
 
-Pick one and update the event sample and the next section.
--->
+```json
+{
+  "type": "EmployeeRoleChanged",
+  "employeeId": "E-456",
+  "roleId": "R-789",
+  "deviceTypeIds": ["DT-1", "DT-3"]
+}
+```
 
 IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Similar to the HR personnel, IT people use their system to determine which devices to hand over. Their system uses ViewModel Composition to show the employee's name and other details from the HR system. There is no need for IT to store any of those.
 
@@ -103,9 +106,7 @@ IT could wait for the new employee to show up at the desk. However, devices coul
 
 Similarly, when someone changes role, some devices might no longer be needed. IT wants to know which devices will become available again and start a different process to collect and reset them, making them available to others.
 
-<!--
-TODO: describe the role change flow. With option 1 above, `EmployeeRoleChanged` could carry both the old and the new entitlements, or just the new ones and let IT work out the difference against what it handed out. Who decides that a device must be returned: HR (policy) or IT (inventory)?
--->
+Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides about what it owns.
 
 ## What if there are thousands of them?
 
@@ -117,17 +118,15 @@ That means the search functionality must be implemented by the service that owns
 
 Does that create coupling?
 
-In a sense, yes.
+In a sense, yes. But it's a different, and much milder, kind of coupling than the one we were trying to avoid.
 
-<!--
-TODO: finish the argument. Suggested direction: it's a different and milder kind of coupling than copying data. The HR user interface depends on IT's search contract at the edges, through composition, while HR's storage and business logic don't know anything about devices. IT can change how device types are stored or described without HR noticing, as long as the search contract holds. Copying device data into HR would couple storage, business rules, and release cycles.
--->
+The HR user interface depends on IT's search capabilities, at the edges, through composition. HR's storage and business logic know nothing about devices other than their identifiers. IT can change how it stores, describes, or indexes device types without HR noticing, as long as the search contract holds. The same goes in the opposite direction for employees.
+
+Compare that with the alternative: copying device types into HR storage to make them searchable. HR would need to keep the copy up to date, decide when it's stale, and, sooner or later, start making decisions based on data it doesn't own. Storage, business rules, and release cycles would be coupled. That's the coupling that hurts.
 
 ## Conclusion
 
-<!--
-TODO: restate the thesis in your words. Suggested points: the overlap between HR and IT is in the user's mental model, not in the data. Split device types from physical devices, let HR own the entitlement policy and IT the inventory, compose at the user interface, and use events carrying identifiers and decisions to keep the two in sync.
--->
+The overlap between HR and IT is in the users' mental model, not in the data. Once we split device types from physical devices, ownership becomes clear: HR owns roles and the policy that entitles each role to device types, and IT owns the device types catalog and the physical devices. The user interface composes data from both, and events carrying identifiers and decisions keep the two in sync. Neither service copies the other's data, and neither makes decisions that belong to the other.
 
 ---
 
