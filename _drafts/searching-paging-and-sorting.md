@@ -143,7 +143,7 @@ Interestingly, the order is the opposite of messaging. With messaging, the subsc
 
 Let's be honest, though. The search database is a copy of data that lives somewhere else. That's a cache, and it comes with all the problems caches have: stale data, invalidation, and rebuilding it when it's lost. It's worse than that: it's a distributed cache. It lives outside the physical service, in a different database, maybe on a different server, and every service writes to it. A copy that falls behind, a sync that fails silently, or a database that's down affects search for everyone, not only the service that caused it.
 
-What makes it manageable is the same thing that makes any cache manageable: ownership. I wrote about it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html). Each service owns its schema, decides how fresh its data must be, and can wipe and rebuild its tables without asking anyone. Registry can rebuild nightly, and Reservations can't afford to be more than seconds behind. Nobody else is affected by those choices. The only thing services share is the infrastructure: the database server, its capacity, and its uptime.
+What makes it manageable is the same thing that makes any cache manageable: ownership. I wrote about it in ["Own the cache!"](https://milestone.topics.it/2021/07/15/own-the-cache.html). Each service owns its schema, decides how fresh its data must be, and can wipe and rebuild its tables without asking anyone. Registry can rebuild nightly, and Reservations can't afford to be more than seconds behind. Those choices don't affect anyone else. The only thing services share is the infrastructure: the database server, its capacity, and its uptime.
 
 What happens when the network between a service and the search database is flaky? With logical replication, not much. The subscriber reconnects on its own, and the publisher keeps every change the subscriber hasn't confirmed yet. Nothing is lost, nothing is applied twice, and changes still arrive in commit order. Search serves stale data for a while, and that's it.
 
@@ -318,9 +318,9 @@ Yes, the search process imposes a contract on every service that wants to take p
 - the shape of requests and results: city, stay dates, `orderBy` keys, and facet names in; a page of IDs, facet counts, and a total out;
 - some shared assumptions: the hotel ID is the join key, everyone contributes to the same query, and some parameters, like the stay dates, are used by more than one service.
 
-And it comes with the same cost as Branding. Changing the contract affects every provider. Adding a filter means changing the search page and the service that owns the data.
+And it costs the same as Branding. Changing the contract affects every provider. Adding a filter means changing the search page and the service that owns the data.
 
-No, because the contract doesn't include a data schema. Each service keeps its own tables and its own query logic; the contract says where to plug in, not what the data looks like. It doesn't include business rules either. As we said in "The Quest for better Search", if searching isn't a business capability, it isn't a service. The search process is infrastructure, like the composition engine. The vocabulary of the search, which criteria and which facets exist, belongs to whoever owns the search page, the same way Marketing owns the email model in ["Composing emails: one service owns the template, many own the data"](https://milestone.topics.it/2026/12/02/composing-email-templates.html).
+No, because the contract doesn't include a data schema. Each service keeps its own tables and its own query logic; the contract says where to plug in, not what the data looks like. It also doesn't include business rules. As we said in "The Quest for better Search", if searching isn't a business capability, it isn't a service. The search process is infrastructure, like the composition engine. The vocabulary of the search, which criteria and which facets exist, belongs to whoever owns the search page, the same way Marketing owns the email model in ["Composing emails: one service owns the template, many own the data"](https://milestone.topics.it/2026/12/02/composing-email-templates.html).
 
 The lesson is the same as with Branding: keep the contract small and technical.
 
@@ -328,7 +328,7 @@ The lesson is the same as with Branding: keep the contract small and technical.
 
 The search returns a page of hotel IDs, the facets, and the total count. That's not a results page yet. Users want names, photos, prices, and ratings.
 
-That's a job for [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html). In the demo, the search runs in the composition gateway, as part of the request for the results page, using ServiceComposer. Once the page of IDs is ready, a composition event notifies all services, and each one adds its own data to each item: Registry the name and the amenities, Sales the price, Marketing the rating. It's the [lists composition dance](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html) all over again, with search in the role of the list owner.
+That's a job for [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html). In the demo, the search runs in the composition gateway as part of the results-page request, using ServiceComposer. Once the page of IDs is ready, a composition event notifies all services, and each adds its own data to each item: Registry adds the name and amenities, Sales adds the price, and Marketing adds the rating. It's the [lists composition dance](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html) all over again, with search in the role of the list owner.
 
 The demo's search page colors each piece of data by the service that owns it. In each result, the name, the stars, the city, and the amenities come from Registry (blue), the rating from Marketing (purple), and the price of the stay from Sales (green):
 
@@ -340,7 +340,7 @@ The event carries the search request, so that Sales can price the stay, and a vi
 public record HotelsFound(SearchRequest Request, IReadOnlyDictionary<Guid, dynamic> Hotels);
 ```
 
-Each service subscribes to it, and loads what it owns for the whole page with a single query. There's no EF Core here: nothing else adds to the query, so plain SQL is enough. Registry's handler looks like the following:
+Each service subscribes to it and loads what it owns for the whole page with a single query. There's no EF Core here: nothing else adds to the query, so plain SQL is enough. Registry's handler looks like the following:
 
 ```csharp
 class HotelsFoundSubscriber([FromKeyedServices("registry")] NpgsqlDataSource registry)
@@ -369,11 +369,11 @@ class HotelsFoundSubscriber([FromKeyedServices("registry")] NpgsqlDataSource reg
 
 Where do the services get their data from? The obvious answer is their APIs: Registry exposes an endpoint that returns the details for a page of hotels, and its composition handler calls it. But the composition handler is part of Registry. It's deployed in the composition gateway, like Registry's search providers, but it belongs to the same logical service. Nothing prevents it from reading Registry's database directly, and that's what the demo does, with a database role that can only read. The endpoint, its contract, and the network hop are gone.
 
-It's a trade-off, not a rule. With direct access, the database schema becomes a contract between two parts of the same service, deployed separately: a schema change means deploying the composition handler too, in a gateway shared with every other service. And the gateway holds credentials for every service's database, which is why each one gets a role that can only read. An API in between lets Registry change its schema freely, and keeps the databases away from the edge of the network. Both choices are valid, and neither is about service boundaries: the boundary is logical, and it doesn't move when a piece of the service runs in someone else's process. What decides is deployment and network topology.
+It's a trade-off, not a rule. With direct access, the database schema becomes a contract between two parts of the same service, deployed separately: a schema change means deploying the composition handler too, in a gateway shared with every other service. And the gateway holds credentials for every service's database, which is why each one gets a read-only role. An API in between lets Registry change its schema freely, and keeps the databases away from the edge of the network. Both choices are valid, and neither is about service boundaries: the boundary is logical, and it doesn't move when part of a service runs in someone else's process. What decides is deployment and network topology.
 
 Years ago, a friend and colleague named Mike described on Slack an engine he'd built along the same lines: services index the data they care about, answer the query with matching IDs, order the results, and then the page is paginated and fleshed out with ViewModel Composition. Different implementation, same steps.
 
-> Dennis van der Stelt recently described a different approach in ["Composing product lists with ServiceComposer"](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/). There's no shared store: Catalog raises an event with all the candidate IDs, and Marketing returns them sorted. It's simpler, and it's enough when one service sorts and candidate lists are small. It stops scaling when the candidates are many, or when sorting needs data from more than one service.
+> Dennis van der Stelt recently described a different approach in ["Composing product lists with ServiceComposer"](https://bloggingabout.net/2026/11/04/composing-product-lists-with-servicecomposer/). There's no shared store: Catalog raises an event with all the candidate IDs, and Marketing returns them sorted. It's simpler, and it's enough when one service sorts and candidate lists are small. It stops scaling when there are many candidates, or when sorting needs data from more than one service.
 
 ## What about Elasticsearch?
 
@@ -403,7 +403,7 @@ Zero coupling is an illusion. Searching, sorting, and paging data owned by many 
 
 That place doesn't have to be a hodgepodge, though. If each service owns its own lean data, its own piece of the query, and its own facets and sorting rules, the only thing shared is a small, technical contract. Composition does the rest.
 
-[The demo](https://github.com/mauroservienti/hotelly) has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. All it needs is the .NET 10 SDK and Docker: `dotnet run --project src/Hotelly.AppHost` starts everything with Aspire, including a search page that shows which service owns each filter and each piece of data, and the request and the composed response behind every search. Better late than never ;-)
+[The demo](https://github.com/mauroservienti/hotelly) has all the pieces: PostgreSQL in Docker, ServiceComposer, and the hotels we've been talking about since 2019. All it needs is the .NET 10 SDK and Docker: `dotnet run --project src/Hotelly.AppHost` starts everything with Aspire, including a search page that shows which service owns each filter and piece of data, plus the request and composed response behind every search. Better late than never ;-)
 
 ---
 
