@@ -330,6 +330,10 @@ The search returns a page of hotel IDs, the facets, and the total count. That's 
 
 That's a job for [ViewModel Composition](https://milestone.topics.it/series/view-model-composition.html). In the demo, the search runs in the composition gateway, as part of the request for the results page, using ServiceComposer. Once the page of IDs is ready, a composition event notifies all services, and each one adds its own data to each item: Registry the name and the amenities, Sales the price, Marketing the rating. It's the [lists composition dance](https://milestone.topics.it/2019/03/21/the-viewmodels-lists-composition-dance.html) all over again, with search in the role of the list owner.
 
+The demo's search page colors each piece of data by the service that owns it. In each result, the name, the stars, the city, and the amenities come from Registry (blue), the rating from Marketing (purple), and the price of the stay from Sales (green):
+
+![The demo's search page: hotels in Rome for a 3-night stay, sorted by rating, then by price](/img/posts/searching-paging-and-sorting/search-results.png){:class="img-fluid mx-auto d-block"}
+
 The event carries the search request, so that Sales can price the stay, and a view model for each hotel on the page, by ID:
 
 ```csharp
