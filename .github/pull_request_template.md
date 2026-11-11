@@ -6,6 +6,7 @@
 - [ ] Header image credits
 - [ ] Review
 - [ ] Rename file and path to match publish date
+  - [ ] Update the PR title with the publish date: `[month, day] post title`
 - [ ] Update or create the corresponding Notion card
   - [ ] Set the publish date
 - [ ] Merge the PR
