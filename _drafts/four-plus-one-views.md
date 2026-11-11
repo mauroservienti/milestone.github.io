@@ -32,7 +32,7 @@ The system needs to process payments:
 
 Let's start with the definition. [The following is from Wikipedia](https://en.wikipedia.org/wiki/4%2B1_architectural_view_model):
 
-> 4+1 is a view model used for "describing the architecture of software-intensive systems, based on the use of multiple, concurrent views". The views describe the system from the viewpoints of different stakeholders, such as end-users, developers, system engineers, and project managers. The four views are logical, development, process, and physical. In addition, selected use cases or scenarios are used to illustrate the architecture, serving as the "plus one" view. Hence, the model contains 4+1 views
+> 4+1 is a view model used for "describing the architecture of software-intensive systems, based on the use of multiple, concurrent views". The views describe the system from the viewpoints of different stakeholders, such as end-users, developers, system engineers, and project managers. The four views are logical, development, process, and physical. In addition, selected use cases or scenarios are used to illustrate the architecture, serving as the "plus one" view. Hence, the model contains 4+1 views.
 
 Philippe Kruchten introduced the model in 1995, in a paper titled ["Architectural Blueprints: The '4+1' View Model of Software Architecture"](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf). In short, the five views are:
 
