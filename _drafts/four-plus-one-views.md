@@ -224,8 +224,6 @@ The happy path works. However, scenarios are most useful when things go wrong. W
 
 The requirements we started from say nothing about the last two. That's precisely the point. Walking through scenarios surfaces questions that none of the other views asks. And those are questions for the business, not for developers.
 
-<!-- TODO: optionally show how a declined charge flows back (CreditCardDeclined → who tells the user? Who decides whether to cancel or retry?). -->
-
 ## Conclusion
 
 The 4+1 architectural view model isn't a set of documents we must produce. It's a set of lenses. Each view answers a different question: what the system does, how its parts talk to each other at runtime, how the code is organized, where it runs, and whether all that holds up against real use cases.
