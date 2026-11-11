@@ -182,7 +182,7 @@ A few things stand out:
 
 - **One logical component, many physical ones.** The payment methods component is a user interface piece running in the web application and a back end piece running in the Finance API host.
 - **Many logical components, one physical host.** The payment processor and the validation component run in the same process. They don't need to scale or fail independently, at least not today.
-- **Some components get their own host for a reason.** The gateway runs separately so that provider issues don't take down anything else, and so it can be scaled on its own. The vault lives in an isolated network segment because compliance requirements, like PCI DSS, demand it.
+- **Some components get their own host for a reason.** The gateway runs separately so that provider issues don't take down anything else, and so it can be scaled on its own. The vault lives in an isolated network segment, to keep the PCI DSS compliance scope as small as possible.
 
 None of these choices changes the logical view. If payments volume grows and the payment processor needs more instances, we can move it to its own host, and the logical design stays the same. As I wrote in ["What I'm sure of is that it's distributed last"](https://milestone.topics.it/2026/11/05/distributed-last.html), physical distribution is a knob we turn when there is a reason to pay for it.
 
