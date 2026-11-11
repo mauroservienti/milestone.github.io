@@ -45,7 +45,7 @@ Scaling up a monolithic system is generally easy. On the other hand, scaling it 
 
 The monolithic nature of the system comes with another impediment. We need to scale out the entire monolith, even if only a subset of it needs or benefits from the infrastructure changes.
 
-Imagine a trivial accounting application that only provides invoicing and a customer and supplier registry. If invoicing needs scaling because it's slow and doesn't keep up with the requested throughput, the whole application must scale, including the customer and supplier registry. Invoicing might be easy to scale out, while other parts aren't: for example, the customer and supplier registry uses in-memory web sessions, making scaling out harder than needed.
+Imagine a trivial accounting application that only provides invoicing and a customer and supplier registry. If invoicing needs scaling because it's slow and doesn't keep up with the requested throughput, the whole application must scale, including the customer and supplier registry. Invoicing might be easy to scale out (it's not), while other parts aren't: for example, the customer and supplier registry uses in-memory web sessions, making scaling out harder than needed.
 
 ## It's not only about code
 
