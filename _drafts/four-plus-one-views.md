@@ -190,7 +190,7 @@ None of these choices changes the logical view. If payments volume grows and the
 
 I don't think microservices are SOA done right. The microservices theory has one big drawback: it conflates the logical and physical views into one, making it look like the logical unit is also the deployment unit. That's absolutely not the case. In our example, Finance is one logical service deployed as five physical pieces, and two of its components happily share a process.
 
-> In the past, SOA had many attempts to provide an out-of-the-box implementation, and they all failed. But that's fine. It would be like building a framework whose promise is to enable you to do Domain-Driven Design.
+> In the past, there were many attempts to provide an out-of-the-box SOA implementation, and they all failed. But that's fine. It would be like building a framework whose promise is to enable you to do Domain-Driven Design.
 
 If microservices are where you come from, the 4+1 architectural view model is one of the things worth looking into. Keeping the views separate is what allows us to decide on deployment units without redesigning services.
 
