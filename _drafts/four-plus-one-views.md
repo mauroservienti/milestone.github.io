@@ -86,7 +86,7 @@ flowchart LR
 
 Fulfillment doesn't know who is listening, and it doesn't care. If Finance decides tomorrow to charge credit cards differently, nothing changes in Fulfillment.
 
-Different is when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want provider issues to propagate into our system and create a snowball effect. To mitigate that, we isolate communication with the credit card provider in a credit card gateway, and the payment processor communicates with the gateway via messaging.
+Things are different when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want provider issues to propagate into our system and create a snowball effect. To mitigate that, we isolate communication with the credit card provider in a credit card gateway, and the payment processor communicates with the gateway via messaging.
 
 When charging a credit card, the gateway needs the card details. However, we don't want to move credit card details around the system. We store them in the vault and use the vault ID everywhere else. The payment processor sends a `ChargeCreditCard` command containing only the vault ID, and the gateway reads the actual card details from the vault right before calling the provider.
 
