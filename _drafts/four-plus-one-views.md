@@ -113,7 +113,7 @@ The payment methods component allows users to add new credit cards or edit exist
 - A user interface component that lives in the application user interface.
 - A back-end component that talks to the vault and stores additional data, like "credit card ending with 1234," in a separate storage.
 
-The user interface component is, almost certainly, synchronous with its back-end counterpart. Users press the save button and expect to know that something happened. The card details must also go to the vault right away, synchronously. We don't want them sitting in a queue. However, since we don't immediately need the new payment method, the back end can offload whatever else needs to be done to itself via a message on a queue. That's where the validation component comes into play:
+The user interface component is, almost certainly, synchronous with its back-end counterpart. Users press the save button and expect to know that something happened. The card details must also go to the vault right away, synchronously. We don't want them sitting in a queue. However, since we don't immediately need the new payment method, the back end can hand off the rest asynchronously, with a message on a queue. That's where the validation component comes into play:
 
 <div class="mermaid">
 flowchart LR
