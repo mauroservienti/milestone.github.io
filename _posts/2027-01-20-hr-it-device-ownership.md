@@ -102,11 +102,11 @@ IT is responsible for managing devices. When someone joins, they go to the IT de
 
 ### Why does IT subscribe to HR events?
 
-IT could wait until the new employee shows up. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as a new employee is hired or changes role, not when they're standing in front of the IT desk.
+IT could wait until the new employee shows up. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as someone is hired or changes role, not when they're standing in front of the IT desk.
 
 Similarly, when someone changes role, some devices might no longer be needed. IT wants to find out which devices will become available again so it can start a different process to collect and reset them, making them available to others.
 
-Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides what it manages.
+Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do. Say DT-1 is a laptop, DT-7 a tablet, and DT-3 a phone: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides what it manages.
 
 ## What if there are thousands of them?
 
