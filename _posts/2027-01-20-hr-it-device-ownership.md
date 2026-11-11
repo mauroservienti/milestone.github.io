@@ -126,7 +126,7 @@ Compare that with the alternative: copying device types into HR storage to make 
 
 ## Conclusion
 
-The overlap between HR and IT is in the users' mental model, not in the data. Once we split device types from physical devices, ownership becomes clear: HR owns roles and the policy that entitles each role to device types, and IT owns the device type catalog and the physical devices. The user interface composes data from both, and events carrying identifiers and decisions keep the two in sync. Neither service copies the other's data, and neither makes decisions that belong to the other.
+The overlap between HR and IT is in the users' mental model, not in the data. Once we split device types from physical devices, ownership becomes clear: HR owns roles and the policy that entitles each role to device types, and IT owns the device type catalog and the physical devices. The user interface composes data from both, and events carrying identifiers and decisions let IT act on what HR decides. Neither service copies the other's data, and neither makes decisions that belong to the other.
 
 ---
 
