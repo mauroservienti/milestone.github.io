@@ -96,4 +96,4 @@ A message-based system with clear boundaries and services owning their data make
 
 ---
 
-<!-- header image credits -->
+Photo by <a href="https://unsplash.com/@possessedphotography?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Franck V.</a> on <a href="https://unsplash.com/photos/black-and-white-letter-m-RrlWhe2bfUE?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
