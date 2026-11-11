@@ -98,11 +98,11 @@ HR uses a similar event, `EmployeeRoleChanged`, to broadcast promotions and chan
 }
 ```
 
-IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Like HR, IT uses its own system to determine which devices to hand over. That system uses ViewModel Composition to show the employee's name and other details from the HR system. IT doesn't need to store any of that.
-
 ### Why does IT subscribe to HR events?
 
-IT could wait until the new employee shows up. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as someone is hired or changes role, not when they're standing in front of the IT desk.
+IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Like HR, IT uses its own system to determine which devices to hand over. That system uses ViewModel Composition to show the employee's name and other details from the HR system. IT doesn't need to store any of that.
+
+It could wait until the new employee shows up. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as someone is hired or changes role, not when they're standing in front of the IT desk.
 
 Similarly, when someone changes role, some devices might no longer be needed. IT wants to find out which devices will become available again so it can start a different process to collect and reset them, making them available to others.
 
