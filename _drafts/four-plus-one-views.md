@@ -20,7 +20,7 @@ Logical services. Physical components. Service instances. Endpoints. If you've b
 
 If that's confusing, I feel your pain. It's been confusing for me too.
 
-The reason for those distinctions lies in the 4+1 architectural view model. Before diving into what it is, let me describe a few business requirements we'll use throughout the post. I always find it simpler to use examples to understand high-level, sometimes philosophical, concepts.
+Those distinctions come from the 4+1 architectural view model. Before diving into what it is, let me describe a few business requirements we'll use throughout the post. I always find it simpler to use examples to understand high-level, sometimes philosophical, concepts.
 
 The system needs to process payments:
 
@@ -32,7 +32,7 @@ The system needs to process payments:
 
 Let's start with the definition. [The following is from Wikipedia](https://en.wikipedia.org/wiki/4%2B1_architectural_view_model):
 
-> 4+1 is a view model used for "describing the architecture of software-intensive systems, based on the use of multiple, concurrent views". The views are used to describe the system from the viewpoint of different stakeholders, such as end-users, developers, system engineers, and project managers. The four views of the model are logical, development, process and physical. In addition, selected use cases or scenarios are used to illustrate the architecture serving as the "plus one" view. Hence, the model contains 4+1 views
+> 4+1 is a view model used for "describing the architecture of software-intensive systems, based on the use of multiple, concurrent views". The views describe the system from the viewpoints of different stakeholders, such as end-users, developers, system engineers, and project managers. The four views are logical, development, process, and physical. In addition, selected use cases or scenarios are used to illustrate the architecture, serving as the "plus one" view. Hence, the model contains 4+1 views
 
 Philippe Kruchten introduced the model in 1995, in a paper titled ["Architectural Blueprints: The '4+1' View Model of Software Architecture"](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf). In short, the five views are:
 
@@ -44,7 +44,6 @@ Philippe Kruchten introduced the model in 1995, in a paper titled ["Architectura
 
 Wikipedia lists the UML diagrams suited for each view. I'll stick to boxes and arrows.
 
-
 ## Where do we start?
 
 It's never easy to decide where to start. Shall we begin with the development view? Or with the process view? There is no correct answer. I also believe that every view will be reworked and refactored over time as we gain more understanding of the business.
@@ -53,11 +52,11 @@ It's never easy to decide where to start. Shall we begin with the development vi
 
 ## Let's get logical, again
 
-All in all, I find it easier to start from the logical view. Given the above description, we're dealing with two logical services. Let's call them Finance and Fulfillment. We can also state that Fulfillment is only a trigger for a process, or a policy, in Finance:
+Overall, I find it easier to start from the logical view. Given the above description, we're dealing with two logical services. Let's call them Finance and Fulfillment. We can also state that Fulfillment is only a trigger for a process, or a policy, in Finance:
 
 > When Fulfillment ships orders, the system needs to charge credit cards.
 
-For this scenario, Finance is the main character in this script. Fulfillment is merely an external party publishing an event to which Finance reacts.
+In this scenario, Finance is the main character. Fulfillment is merely an external party publishing an event to which Finance reacts.
 
 Within Finance, we can identify a few components:
 
@@ -66,11 +65,11 @@ Within Finance, we can identify a few components:
 - **A validation component** designed to validate the aforementioned credit card details.
 - **A vault** to securely store payment methods' sensitive details.
 
-Those are logical components. At this stage, we don't know, and don't care much, how they interact technically with each other or how they'll look in production. They all belong to Finance, which defines the logical boundaries. A component belonging to Finance is subject to different rules when interacting with components inside the boundaries than with components outside of them. For example, [coupling has a different weight if it happens inside or across a service's boundaries](https://milestone.topics.it/2021/03/10/not-all-changes-are-born-equal.html).
+Those are logical components. At this stage, we don't know, and don't care much, how they interact technically with each other or how they'll look in production. They all belong to Finance, which defines the logical boundaries. A component belonging to Finance is subject to different rules when interacting with components inside the boundaries than with components outside of them. For example, [coupling carries different weight inside or across a service's boundaries](https://milestone.topics.it/2021/03/10/not-all-changes-are-born-equal.html).
 
 ## How do components talk to each other?
 
-The process view describes how components and services interact with each other at runtime. This is when things get interesting, in my opinion.
+The process view describes how components and services interact at runtime. This is when things get interesting, in my opinion.
 
 The payment processor is a good candidate for a background kind of component. It charges credit cards when Fulfillment ships orders. That's an asynchronous reaction to a trigger, and messaging is a very good solution. The payment processor listens for messages in its queue, and Fulfillment publishes an `OrderShipped` event:
 
@@ -85,9 +84,9 @@ flowchart LR
   FS -- OrderShipped --> PP
 </div>
 
-Fulfillment doesn't know who is listening, and it doesn't care. If tomorrow Finance decides to charge credit cards in a different way, nothing changes in Fulfillment.
+Fulfillment doesn't know who is listening, and it doesn't care. If Finance decides tomorrow to charge credit cards differently, nothing changes in Fulfillment.
 
-Different is when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want issues at the provider to propagate into our system, with the risk of creating a snowball effect. To mitigate that, we isolate the communication with the credit card provider in a credit card gateway, and the payment processor talks to the gateway via messaging.
+Different is when Finance needs to interact with the credit card provider. The credit card provider is a remote service that we don't control. Usually, credit card providers expose a payment flow based on HTTP interactions. We don't want provider issues to propagate into our system and create a snowball effect. To mitigate that, we isolate communication with the credit card provider in a credit card gateway, and the payment processor communicates with the gateway via messaging.
 
 When charging a credit card, the gateway needs the card details. However, we don't want to move credit card details around the system. We store them in the vault and use the vault ID everywhere else. The payment processor sends a `ChargeCreditCard` command containing only the vault ID, and the gateway reads the actual card details from the vault right before calling the provider.
 
@@ -109,12 +108,12 @@ flowchart LR
 
 Wait, isn't the exchange between the payment processor and the gateway request/response over messaging too? It is. The difference is that nobody is sitting there waiting for the reply. The payment processor sends a command and moves on. When the reply arrives, it's handled like any other message. If the provider is slow or down, messages wait in the gateway queue, and retries kick in. The rest of the system doesn't notice.
 
-The payment methods component allows users to add new credit cards or edit existing ones. Here, we're dealing with a multifaceted component. The system needs to allow users to edit data and to store it securely. For example, during checkout, users can select an existing payment method or add a new one. Adding new payment methods or editing existing ones requires:
+The payment methods component allows users to add new credit cards or edit existing ones. Here, we're dealing with a multifaceted component. The system needs to let users edit data and store it securely. For example, during checkout, users can select an existing payment method or add a new one. Adding new payment methods or editing existing ones requires:
 
 - A user interface component that lives in the application user interface.
-- A back end component that talks to the vault and stores additional data, like "credit card ending with 1234," in a separate storage.
+- A back-end component that talks to the vault and stores additional data, like "credit card ending with 1234," in a separate storage.
 
-The user interface component is, almost certainly, synchronous with its back end counterpart. Users press the save button and expect to know that something happened. The card details must also go to the vault right away, synchronously. We don't want them sitting in a queue. However, given that we don't immediately need the new payment method, the back end can offload whatever else needs to be done to itself, through a message on a queue. That's where the validation component comes into play:
+The user interface component is, almost certainly, synchronous with its back-end counterpart. Users press the save button and expect to know that something happened. The card details must also go to the vault right away, synchronously. We don't want them sitting in a queue. However, since we don't immediately need the new payment method, the back end can offload whatever else needs to be done to itself via a message on a queue. That's where the validation component comes into play:
 
 <div class="mermaid">
 flowchart LR
@@ -132,7 +131,7 @@ flowchart LR
   VAL -- update status --> PMDB
 </div>
 
-What if validation fails? The validation component does two things: it flags the payment method so that checkout can't offer it, and it notifies the user. That's no different from what happens when a credit card already saved as a payment method expires.
+What if validation fails? The validation component does two things: it flags the payment method so that checkout can't offer it, and it notifies the user. That's no different from what happens when a saved credit card expires.
 
 Notice that the logical view had four components. The process view already has more moving parts: a gateway that wasn't there before, a user interface piece, and a back end piece. That's expected. Each view answers a different question.
 
