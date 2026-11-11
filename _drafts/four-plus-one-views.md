@@ -133,7 +133,7 @@ flowchart LR
 
 What if validation fails? The validation component does two things: it flags the payment method so that checkout can't offer it, and it notifies the user. That's no different from what happens when a saved credit card expires.
 
-Notice that the logical view had four components. The process view already has more moving parts: a gateway that wasn't there before, a user interface piece, and a back end piece. That's expected. Each view answers a different question.
+Notice that the logical view had four components. The process view already has more moving parts: a gateway that wasn't there before, a user interface piece, and a back-end piece. That's expected. Each view answers a different question.
 
 ## Who works on what? The development view
 
@@ -180,7 +180,7 @@ flowchart LR
 
 A few things stand out:
 
-- **One logical component, many physical ones.** The payment methods component is a user interface piece running in the web application and a back end piece running in the Finance API host.
+- **One logical component, many physical ones.** The payment methods component is a user interface piece running in the web application and a back-end piece running in the Finance API host.
 - **Many logical components, one physical host.** The payment processor and the validation component run in the same process. They don't need to scale or fail independently, at least not today.
 - **Some components get their own host for a reason.** The gateway runs separately so that provider issues don't take down anything else, and so it can be scaled on its own. The vault lives in an isolated network segment, to keep the PCI DSS compliance scope as small as possible.
 
