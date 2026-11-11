@@ -146,7 +146,7 @@ In ["Let's get logical!"](https://milestone.topics.it/2022/01/25/lets-get-logica
 - The payment methods user interface component is Finance code too, even if it ends up in the application user interface. The application shell hosts it, but Finance owns it.
 - The only thing Finance needs from Fulfillment is the `OrderShipped` event contract. Fulfillment owns it and publishes it, for example, as a package. Finance references that, and nothing else.
 
-<!-- TODO: add a sentence on how you'd distribute the payment methods UI component to the application (package, micro frontend, composition)? Related idea card: "Continuous delivery when a service's components are compiled into other teams' container images". -->
+How it gets there is a development view decision too: a package the application references, a micro frontend loaded at runtime, or server-side composition. Each option couples Finance's releases to the application's in a different way, and that's a topic for another article.
 
 The last point is where the development view helps the most. Looking at code dependencies tells us immediately whether logical boundaries are respected. If a Finance project references a Fulfillment project that isn't a contract, something is off.
 
