@@ -51,9 +51,9 @@ Once you separate the two, ownership becomes clearer. IT owns the catalog of dev
 
 ## Who owns the policy?
 
-For the sake of the discussion, let's assume HR decides who gets what. They control the policy and the politics around it: a manager receives a laptop, everyone else a desktop, a salesperson a tablet and a phone, and so on.
+For the sake of the discussion, let's assume HR decides who gets what. They control the policy and the politics around it: a manager receives a laptop, a salesperson a tablet and a phone, everyone else a desktop, and so on.
 
-HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of positions. As expected, the list shows labels and descriptions: HR owns positions, and IDs, names, and descriptions are in HR storage. They click a position to view its details, where a list lets them select one or more device types. Again, as expected, the list shows human-readable device names and descriptions.
+HR people need to configure that policy. They open their system, go to the "device assignment policy" screen, and see a list of roles. As expected, the list shows names and descriptions: HR owns roles, and their IDs, names, and descriptions are in HR storage. They click a role to view its details, where a list lets them select one or more device types. Again, as expected, the list shows human-readable device names and descriptions.
 
 ### Wait, aren't devices an IT responsibility?
 
@@ -62,15 +62,15 @@ Yes, they are. The system uses [ViewModel Composition](https://milestone.topics.
 <div class="mermaid">
 flowchart LR
     UI["HR policy screen"] --> Composition["Composition gateway"]
-    Composition --> HR["HR: positions and the device type IDs assigned to them"]
+    Composition --> HR["HR: roles and the device type IDs assigned to them"]
     Composition --> IT["IT: device type names and descriptions"]
 </div>
 
 HR gets all the information it needs to fulfill the requirements without copying IT data into HR storage. All the information about device types comes from the IT service. The composition engine shows HR personnel the list of device types, their names, and all the details needed to make a choice.
 
-When a device type gets assigned to a role, HR stores that a role with a specific ID has one or more device type IDs. HR isn't interested in names or descriptions; only identifiers matter. If someone returns to that page, something very similar happens. This time, however, HR already knows the device type IDs and composes the information to display.
+When a device type gets assigned to a role, HR stores that a role with a specific ID has one or more device type IDs. HR isn't interested in names or descriptions; only identifiers matter. When someone returns to that page, the same composition happens: HR provides the device type IDs it stored, and IT provides the names and descriptions to display.
 
-## Something changes in the organization
+## What happens when someone joins or changes role?
 
 When a new person joins, HR publishes a corresponding event:
 
@@ -98,13 +98,13 @@ HR uses a similar event, `EmployeeRoleChanged`, to broadcast promotions and chan
 }
 ```
 
-IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Like HR, IT uses its system to determine which devices to hand over. Their system uses ViewModel Composition to show the employee's name and other details from the HR system. There is no need for IT to store any of those.
+IT is responsible for managing devices. When someone joins, they go to the IT department to get their devices. Like HR, IT uses its own system to determine which devices to hand over. That system uses ViewModel Composition to show the employee's name and other details from the HR system. IT doesn't need to store any of that.
 
 ### Why does IT subscribe to HR events?
 
-IT could wait until the new employee shows up at their desk. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as a new employee is hired or changes role, not when they're standing in front of the IT desk.
+IT could wait until the new employee shows up. However, devices could be out of stock or need configuration before being used. IT wants to start a process to acquire or configure them as soon as a new employee is hired or changes role, not when they're standing in front of the IT desk.
 
-Similarly, when someone changes role, some devices might no longer be needed. IT wants to know which devices will become available again so it can start a different process to collect and reset them, making them available to others.
+Similarly, when someone changes role, some devices might no longer be needed. IT wants to find out which devices will become available again so it can start a different process to collect and reset them, making them available to others.
 
 Who decides that a device must be returned? HR could send both the old and the new entitlements, but that would be HR telling IT what to do with its inventory. `EmployeeRoleChanged` carries only the new entitlement. IT knows which physical devices it handed out to employee E-456, compares them with the device types the employee is now entitled to, and decides what to do: the laptop stays, the tablet must be collected and reset, and a new phone must be prepared. HR owns the policy, IT owns the inventory, and each one decides what it manages.
 
@@ -114,7 +114,7 @@ What if we had thousands of employees or hundreds of different device types? We 
 
 But the things we want to search for are in different places.
 
-That means the service that owns the data must implement the search functionality. HR will search for device types through IT's search capabilities, and IT will search for employees through HR's.
+That means the service that owns the data must implement the search. HR will search for device types through IT's search capabilities, and IT will search for employees through HR's.
 
 Does that create coupling?
 
@@ -126,7 +126,7 @@ Compare that with the alternative: copying device types into HR storage to make 
 
 ## Conclusion
 
-The overlap between HR and IT is in the users' mental model, not in the data. Once we split device types from physical devices, ownership becomes clear: HR owns roles and the policy that entitles each role to device types, and IT owns the device types catalog and the physical devices. The user interface composes data from both, and events carrying identifiers and decisions keep the two in sync. Neither service copies the other's data, and neither makes decisions that belong to the other.
+The overlap between HR and IT is in the users' mental model, not in the data. Once we split device types from physical devices, ownership becomes clear: HR owns roles and the policy that entitles each role to device types, and IT owns the device type catalog and the physical devices. The user interface composes data from both, and events carrying identifiers and decisions keep the two in sync. Neither service copies the other's data, and neither makes decisions that belong to the other.
 
 ---
 
