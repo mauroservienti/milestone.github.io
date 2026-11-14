@@ -61,7 +61,7 @@ In this scenario, Finance is the main character. Fulfillment is merely an extern
 Within Finance, we can identify a few components:
 
 - **A payment processor** responsible for authorizing and charging credit cards.
-- **A payment methods component** that allows users to input new credit card details and edit existing ones.
+- **A payment methods component** that allows users to select which method to use, input new credit card details, and edit existing ones.
 - **A validation component** designed to validate the aforementioned credit card details.
 - **A vault** to securely store payment methods' sensitive details.
 
