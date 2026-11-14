@@ -143,10 +143,8 @@ In ["Let's get logical!"](https://milestone.topics.it/2022/01/25/lets-get-logica
 
 - Finance owns its repositories. The payment processor, the gateway, the payment methods back end, and the validation component are Finance code, maintained by the Finance team.
 - The vault is a special case. Given its sensitivity, it might live in a separate repository with stricter access rules and a different review process. That's a development view decision driven by security, not by the logical design.
-- The payment methods user interface component is Finance code too, even if it ends up in the application user interface. The application shell hosts it, but Finance owns it.
+- The payment methods user interface component is Finance code too, even if it ends up in the application user interface. The application shell hosts it, but Finance owns it. How the component gets into the application user interface is a development view decision too: a package the application references, a micro frontend loaded at runtime, or server-side composition. Each option couples Finance's releases to the application's in a different way, and that's a topic for another article.
 - The only thing Finance needs from Fulfillment is the `OrderShipped` event contract. Fulfillment owns it and publishes it, for example, as a package. Finance references that, and nothing else.
-
-How it gets there is a development view decision too: a package the application references, a micro frontend loaded at runtime, or server-side composition. Each option couples Finance's releases to the application's in a different way, and that's a topic for another article.
 
 The last point is where the development view helps the most. Looking at code dependencies tells us immediately whether logical boundaries are respected. If a Finance project references a Fulfillment project that isn't a contract, something is off.
 
