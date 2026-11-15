@@ -9,6 +9,8 @@ related:
 - 2023-06-27-reject-commands.md
 - 2023-09-08-fuss-about-eventual-consistency.md
 - 2021-06-02-can-we-predict-the-future.md
+- 2026-11-26-idempotency-deep-dive.md
+- 2021-01-21-ooops-can-I-try-again-please.md
 resources:
 - "[Stale Data Is More Than an Eventual Consistency Problem](https://codeopinion.com/stale-data-consistency-boundaries/) by [Derek Comartin](https://codeopinion.com/)"
 tags:
@@ -61,9 +63,22 @@ It's a sound approach, but let's be honest about what a reservation is: it's a l
 - **Expiration.** Someone has to decide how long a reservation lasts, and something has to release it when it expires. Too short, and users lose reservations they meant to complete. Too long, and capacity is wasted.
 - **Contention.** Popular resources get many concurrent reservation attempts. The more popular the resource, the more users hear "sorry, it's gone" at the very moment they wanted it.
 
-<!-- TODO: decide whether the expiration details stay here as a teaser or move entirely to the follow-up "Reservations that expire: the details that bite" -->
-
 Reservations work best when capacity is truly fixed, like a hotel room or a seat in a theater. When the business can't create one more of something, reserving is often the only sensible option.
+
+### Reservations that expire
+
+Expiration deserves a closer look, because that's where the details bite.
+
+A timed reservation usually works like this: the dispatcher reserves a slot, the system creates the shipment, and the shipment creation confirms the reservation. If the confirmation doesn't arrive in time, the reservation expires and the slot goes back on the market.
+
+It sounds simple. Let's see what can go wrong.
+
+- **The confirmation arrives after the reservation expired.** Should the capacity owner reject it, try to reserve the slot again, or accept it and deal with a possible overbooking? Look closely at the last option: it's an apology.
+- **Messages arrive more than once.** Reserve and confirm requests can be retried or duplicated. Both must be idempotent, or a retry could reserve two slots for the same shipment. I covered the techniques in ["Idempotent, you must be. A deep dive into idempotency"](https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html).
+- **Something fails after the reservation.** If the shipment creation fails, who releases the slot, and when? Waiting for the timeout is simple, but it holds capacity for nothing.
+- **Someone has to own the workflow.** Reserving, waiting for a confirmation, and expiring is a long-running process with a timeout. It belongs to the service that owns the capacity, and a saga with a timeout is a natural fit for it.
+
+Finally, how long should a reservation last? That's not a technical decision. Ten minutes might be fine for a dispatcher and way too long for a concert ticket on sale day. Ask the business.
 
 ## Answer two: accept and apologize
 
