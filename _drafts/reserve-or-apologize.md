@@ -100,6 +100,38 @@ There's a catch, though: apologizing is a process, and someone has to design it.
 
 Accepting and apologizing also means commands don't fail. As I discussed in ["What if my command was rejected?"](https://milestone.topics.it/2023/06/27/reject-commands.html), a command that can't be rejected is a lot simpler to deal with in a distributed system. The user's intent is captured, and the system takes care of the consequences.
 
+A waitlist is a milder version of the same idea. When capacity runs out, the request is accepted anyway and filled later, from cancellations or expired reservations. If nothing frees up, the business says sorry.
+
+## Is there a middle ground?
+
+So far, I presented the two answers as opposites. They don't have to be. Think about a concert in a stadium with tens of thousands of seats. Pure reservations hurt the most there: everyone wants the same thing at the same second, and everyone competes for the same capacity.
+
+There are a few options in between.
+
+### Partition the capacity
+
+A stadium isn't one pool of 60,000 seats. It's 40 sectors. If each sector is managed independently, contention is spread across 40 small pools instead of one big counter, and sectors don't need to coordinate with each other.
+
+The price is fragmentation. Sector B can sell out while sector F still has seats, and a group of four might not fit anywhere because the free seats are scattered. Someone has to decide whether, and how, to rebalance. In the dispatchers' example, the equivalent is partitioning carrier capacity by route or by day.
+
+A variation is to partition by who sells instead of by what is sold. Hotels give a fixed allotment of rooms to each booking site, and each site sells from its own slice without coordinating with the others. What's left unsold goes back to the hotel at a cutoff date.
+
+### Reserve a quantity, not an item
+
+"Two seats in sector B" is a lot less contended than "seats B-14 and B-15." Users reserve a quantity, and the specific seats are assigned later, for example, as the best available at checkout. Airlines work like that: we buy a seat in a fare class, and the seat number comes later.
+
+Contention moves from items to counters, and counters are much easier to partition.
+
+### Switch strategy at a threshold
+
+While capacity is plentiful, accept freely: an overbooking is practically impossible. When capacity drops below a threshold, switch to strict reservations. That's where the "only 3 left!" messages come from. It's literally a mix of the two answers, chosen based on how much risk is left.
+
+### Change the rules
+
+Sometimes the best option is to change the game. Some big events sell tickets with a lottery. Requests are collected for a while, and tickets are allocated afterward. Nobody competes with anybody, no command fails, and not getting a ticket is part of the rules, not an apology.
+
+That's not a technical solution. It's the business redesigning the process so that the stale data problem doesn't exist anymore. Virtual waiting rooms go in the same direction, more modestly: they control how many users compete at the same time.
+
 ## What does an overbooking cost?
 
 So, reserve or apologize? The answer depends on a question we should ask the business before writing any code:
@@ -127,7 +159,7 @@ Data is stale the moment we read it, and no amount of technology in the user int
 - **Reserve**, making the competition explicit and accepting the costs of a business-level lock: held capacity, expirations, and contention.
 - **Accept and apologize**, capturing the user's intent and letting the resource owner make it right when the limit turns out to be exceeded.
 
-Neither is better in general. Reservations fit truly fixed resources; apologies fit elastic ones, or ones where an occasional overbooking is cheap. Asking the business what an overbooking costs usually tells us which is which. And in both cases, the decision belongs to the service that owns the resource.
+Neither is better in general. Reservations fit truly fixed resources; apologies fit elastic ones, or ones where an occasional overbooking is cheap. And there's plenty of room in between: partitioning the capacity, reserving quantities instead of items, switching strategy at a threshold, or changing the rules altogether. Asking the business what an overbooking costs usually tells us which is which. And in both cases, the decision belongs to the service that owns the resource.
 
 <!-- TODO: closing wink or a teaser for the follow-up on expiring reservations -->
 
