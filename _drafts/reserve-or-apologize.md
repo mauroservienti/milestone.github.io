@@ -17,9 +17,15 @@ tags:
 - architecture
 ---
 
-<!-- TODO: a personal hook could work better than the article reaction, if there's one (a booking or shipment that went wrong?) -->
+I once got a tablet I never paid for.
 
-I recently read ["Stale Data Is More Than an Eventual Consistency Problem"](https://codeopinion.com/stale-data-consistency-boundaries/) by Derek Comartin. It's a good read, and it made me nod more than once.
+The tablet arrived, but the payment never went through. I contacted the dealer to pay. According to their system, the order was shipped. They could see it wasn't paid, but there was nothing they could do about it.
+
+So I never paid for it.
+
+Somewhere in that system lived a rule: nothing ships unless it's paid. The rule broke, and nobody had designed a way to deal with it.
+
+That tablet came back to my mind while reading ["Stale Data Is More Than an Eventual Consistency Problem"](https://codeopinion.com/stale-data-consistency-boundaries/) by Derek Comartin. It's a good read, and it made me nod more than once.
 
 The scenario goes more or less like this: two dispatchers look at the same screen. The screen says a carrier has one free slot left. Both assign a shipment to it. One of them is in for a surprise.
 
@@ -75,7 +81,9 @@ That last option is not a joke. A carrier is not a hotel room. A truck that can 
 
 This is what I call a follow-the-money approach. The question is not "how do we prevent this from ever happening?" It's "what does it cost when it happens, and how do we make it right?"
 
-It also means commands don't fail. As I discussed in ["What if my command was rejected?"](https://milestone.topics.it/2023/06/27/reject-commands.html), a command that can't be rejected is a lot simpler to deal with in a distributed system. The user's intent is captured, and the system takes care of the consequences.
+There's a catch, though: apologizing is a process, and someone has to design it. My tablet dealer had a rule but no plan for when the rule broke. The system couldn't take a late payment for a shipped order, so the business didn't apologize: it silently lost money.
+
+Accepting and apologizing also means commands don't fail. As I discussed in ["What if my command was rejected?"](https://milestone.topics.it/2023/06/27/reject-commands.html), a command that can't be rejected is a lot simpler to deal with in a distributed system. The user's intent is captured, and the system takes care of the consequences.
 
 ## What does an overbooking cost?
 
