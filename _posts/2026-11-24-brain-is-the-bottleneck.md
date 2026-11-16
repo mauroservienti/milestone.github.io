@@ -35,7 +35,7 @@ None of that is hard. All of it requires me to make decisions. Is this wording r
 
 The tool doesn't get tired. It doesn't need to remember where it was yesterday, because I hand it the context. I do get tired. And I do need to remember where I was.
 
-> I'm having a hard time keeping up. With a tool. That I'm supposedly driving. ;P
+> I'm having a hard time keeping up. With a tool. That I'm supposedly driving. 😜
 
 And it feels like a ton of pressure to do more. It starts with one idea. The LLM quickly helps me turn it into something real and, along the way, raises several follow-ups: a related fix, a missing test, a better name, an article that could come out of it. Each follow-up branches into more directions, and each direction looks worth pursuing. Before I know it, one idea became five threads, and I'm not sure which one I was working on.
 
@@ -130,7 +130,7 @@ AI tools made doing things cheap. They didn't make deciding cheap, and they cert
 
 So I'm doing what I always do when something exceeds my brain's capacity: I write it down, and I build a system around it. Workspaces give me focus, the board gives me visibility, and slowing down gives me the rest.
 
-Now, if you'll excuse me, I have a few pull requests waiting for my review. The tool opened them while I was writing this ;-)
+Now, if you'll excuse me, I have a few pull requests waiting for my review. The tool opened them while I was writing this 😉
 
 ---
 
