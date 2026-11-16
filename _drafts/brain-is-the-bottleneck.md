@@ -37,7 +37,9 @@ The tool doesn't get tired. It doesn't need to remember where it was yesterday, 
 
 > I'm having a hard time keeping up. With a tool. That I'm supposedly driving. ;P
 
-<!-- TODO: a personal note on how it feels: evenings, weekends, the "one more thing" temptation -->
+And it feels like a ton of pressure to do more. It starts with one idea. The LLM quickly helps me turn it into something real and, along the way, raises several follow-ups: a related fix, a missing test, a better name, an article that could come out of it. Each follow-up branches into more directions, and each direction looks worth pursuing. Before I know it, one idea became five threads, and I'm not sure which one I was working on.
+
+It's a vortex, and it sucks you in.
 
 ## Watch out for burnout
 
