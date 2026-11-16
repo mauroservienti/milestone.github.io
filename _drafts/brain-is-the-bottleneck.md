@@ -123,4 +123,4 @@ Now, if you'll excuse me, I have a few pull requests waiting for my review. The 
 
 ---
 
-<!-- TODO: header image and Unsplash credit -->
+Photo by <a href="https://unsplash.com/@haemishm?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Gary Ballard</a> on <a href="https://unsplash.com/photos/light-trails-of-cars-on-a-highway-at-night-77VCMQNXUHc?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
