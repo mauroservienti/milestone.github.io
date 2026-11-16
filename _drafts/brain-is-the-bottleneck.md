@@ -77,7 +77,22 @@ The interesting part is how a workspace is born. I wrote a skill for my AI codin
 
 When I open a session in a workspace, the README tells the tool (and me!) what this is about. The scope is the folder. Nothing else leaks in.
 
-<!-- TODO: a concrete example of a task force workspace, if one can be shared publicly -->
+Here's a slightly fictional example. Let's say I'm working on a bug in [ServiceControl](https://docs.particular.net/servicecontrol/) that requires some changes to [ServicePulse](https://docs.particular.net/servicepulse/) too. The fix will also need a documentation update. The workspace contains the three repositories, and its README looks like this:
+
+```markdown
+# Failed messages retry gets stuck after a ServiceControl restart
+
+- [Bug issue](https://github.com/Particular/ServiceControl/issues/<number>)
+- [Project board](https://github.com/orgs/Particular/projects/<number>)
+
+## Repositories
+
+- [ServiceControl](https://github.com/Particular/ServiceControl): the fix
+- [ServicePulse](https://github.com/Particular/ServicePulse): show the retry state in the UI
+- [docs.particular.net](https://github.com/Particular/docs.particular.net): document the new behavior
+```
+
+The project board link is there only if a task force is handling the bug. Even after a week spent elsewhere, opening that folder is enough to pick up where I left off.
 
 ## A bird's-eye view of everything else
 
