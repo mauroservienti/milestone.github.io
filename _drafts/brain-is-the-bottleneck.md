@@ -47,7 +47,7 @@ There's a trap here, and I can see it clearly because I've fallen into similar o
 
 The cost didn't disappear. It moved. It moved from typing to deciding, reviewing, and context switching. And those are exactly the activities that drain me the most.
 
-Context switching isn't new to me. I did a lot of it long before the LLM era. But this is a whole new level, both in how often it happens and, more importantly, in how quickly. Before, a switch came after hours or days of work on something. Now, it comes after minutes: the tool finishes, hands me a result to review, and I'm already somewhere else.
+Context switching isn't new to me. I did a lot of it long before the LLM era. But this is a whole new level, both in how often it happens and, more importantly, in how quickly. Before, a switch came after hours of work on something. Now, it comes after minutes: the tool finishes, hands me a result to review, and I'm already somewhere else.
 
 I wrote about this years ago in ["Lifehacking 101: slow down"](https://milestone.topics.it/2021/11/17/slow-down.html). The advice still holds, maybe more than ever. Speed is not the goal. The tool can go as fast as it wants; I decide how fast I go.
 
