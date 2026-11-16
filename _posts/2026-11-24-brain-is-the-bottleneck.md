@@ -72,7 +72,7 @@ The clones are standalone. They're not worktrees or symlinks to my everyday clon
 The interesting part is how a workspace is born. I wrote a skill for my AI coding agent, a reusable set of instructions the LLM follows when I ask, with three commands:
 
 - **`new <issue-url>`** reads the task force issue, proposes a short name, creates the folder, and writes the README.
-- **`suggest`** reads the task force project board and recommends which repositories to bring in, based on where the open work is: bring in, optional, or skip.
+- **`suggest`** reads the task force issue or project board and recommends which repositories to bring in, based on where the open work is: bring in, optional, or skip.
 - **`add <repo>...`** clones the repositories into the workspace and updates the README.
 
 When I open a session in a workspace, the README tells the tool (and me!) what this is about. The scope is the folder. Nothing else leaks in.
