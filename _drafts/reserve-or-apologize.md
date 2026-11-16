@@ -90,9 +90,9 @@ How? That's up to the business. For example:
 - upgrade it to a faster, more expensive option at no extra cost for the customer;
 - ask the carrier whether it can take one more shipment anyway.
 
-That last option is not a joke. A carrier is not a hotel room. A truck that can take ten pallets can sometimes take eleven. The "one free slot" on the screen might be a softer limit than it looks. As I wrote in ["Tales of a reservation"](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html), invariants are often less invariant than we think, and airlines built a whole business practice, overbooking, on that idea.
+That last option is not a joke. Airlines do something similar every day, and they have a name for it: overbooking. They know that some passengers won't show up, so they sell more tickets than there are seats. When everyone shows up, they apologize: they look for volunteers, rebook passengers on the next flight, and compensate them. It happened to me once, on a Sunday night flight from London City to Milan, where a bid ran at the gate because there were four more passengers than seats.
 
-<!-- TODO: double-check the carrier capacity claim against the domain; if "slot" in the example means a hard limit (e.g., a dock appointment), reword -->
+Overbooking doesn't require elastic capacity. The plane doesn't grow an extra seat. It's a bet based on statistics, and carriers can make the same bet: some shipments get canceled, some aren't ready on time, some are smaller than declared. A capacity owner that knows those numbers might decide to accept more than the nominal capacity on purpose. As I wrote in ["Tales of a reservation"](https://milestone.topics.it/2021/05/05/tales-of-a-reservation.html), invariants are often less invariant than we think.
 
 This is what I call a follow-the-money approach. The question is not "how do we prevent this from ever happening?" It's "what does it cost when it happens, and how do we make it right?"
 
