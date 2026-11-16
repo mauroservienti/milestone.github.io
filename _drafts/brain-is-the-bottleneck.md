@@ -80,25 +80,25 @@ When I open a session in a workspace, the README tells the tool (and me!) what t
 Here's a slightly fictional example. Let's say I'm working on a bug in [ServiceControl](https://docs.particular.net/servicecontrol/) that requires some changes to [ServicePulse](https://docs.particular.net/servicepulse/) too. The fix will also need a documentation update. The workspace contains the three repositories, and its README looks like this:
 
 ```markdown
-# Failed messages retry gets stuck after a ServiceControl restart
+# Bug issue title
 
 - [Bug issue](https://github.com/Particular/ServiceControl/issues/<number>)
 - [Project board](https://github.com/orgs/Particular/projects/<number>)
 
 ## Repositories
 
-- [ServiceControl](https://github.com/Particular/ServiceControl): the fix
-- [ServicePulse](https://github.com/Particular/ServicePulse): show the retry state in the UI
-- [docs.particular.net](https://github.com/Particular/docs.particular.net): document the new behavior
+- [ServiceControl](https://github.com/Particular/ServiceControl)
+- [ServicePulse](https://github.com/Particular/ServicePulse)
+- [docs.particular.net](https://github.com/Particular/docs.particular.net)
 ```
 
-The project board link is there only if a task force is handling the bug. Even after a week spent elsewhere, opening that folder is enough to pick up where I left off.
+The project board link is there only if a task force is using a project for managing the work. Even after a week spent elsewhere, opening that folder is enough to pick up where I left off.
 
 ## A bird's-eye view of everything else
 
 Then there's everything I do outside work: this blog, [ServiceComposer](https://github.com/ServiceComposer), [Radical](https://github.com/RadicalFx), NServiceBus extensions, demos, and a long tail of small repositories.
 
-Workspaces don't help there. The problem is different. I don't need focus; I need visibility. I want to know, at a glance, what's open everywhere.
+Workspaces don't help there, and I don't need them. Organizations are already a form of workspace on their own: ServiceComposer and Radical each group the repositories that belong together. And each repository under my personal account is independent, a scope of its own. The problem is different. I don't need focus; I need visibility. I want to know, at a glance, what's open everywhere.
 
 So I created a single GitHub project board. Every issue and pull request opened in any of my repositories gets added to it automatically, using the [add to project](https://github.com/actions/add-to-project) GitHub Action. Today, that's 46 repositories across my personal account and the ServiceComposer and Radical organizations. The first sync brought in 287 items. Yes, 287. That number alone was a wake-up call.
 
