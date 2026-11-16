@@ -7,6 +7,8 @@ header_image: /img/posts/brain-is-the-bottleneck/header.jpg
 series: lifehacking-101
 related:
 - 2021-11-17-slow-down.md
+- 2019-01-23-i-m-a-procrastinator-i-fail-at-to-do-lists.md
+- 2021-02-24-without-data-we-re-blind.md
 - 2022-09-19-one-list-to-rule-them-all.md
 - 2022-01-10-lazy-check-list-for-everything.md
 - 2026-11-02-ai-eats-or-amplifies.md
@@ -19,9 +21,11 @@ tags:
 
 I finally have a tool that can bring all my ideas to life.
 
-For years, my ideas list grew faster than my free time. Blog posts, OSS features, demos, small tools to scratch an itch. Most of them stayed ideas. Now, with Claude Code, many of them become real in an afternoon.
+For years, my ideas list grew faster than my free time. Blog posts, OSS features, demos, small tools to scratch an itch. Most of them stayed ideas. Now, with an AI coding agent, many of them become real in an afternoon.
 
 However, the tool is so fast that my brain is the bottleneck.
+
+That's an ironic twist for someone who started the [Lifehacking 101 series](https://milestone.topics.it/series/lifehacking-101.html) with ["I'm a procrastinator. I fail at To-Do lists."](https://milestone.topics.it/2019/01/23/i-m-a-procrastinator-i-fail-at-to-do-lists.html) Back then, my problem was getting things started. Now it's the opposite: too many things get started, and they move faster than I can follow.
 
 ## Where was I?
 
@@ -59,7 +63,7 @@ For each task force, I create a workspace. A workspace is a folder under `~/dev/
 
 The clones are standalone. They're not worktrees or symlinks to my everyday clones. My everyday clones are used for other work, and their branches change all the time. A workspace must not be affected by what I do elsewhere, and the other way around.
 
-The interesting part is how a workspace is born. I wrote a Claude Code skill with three commands:
+The interesting part is how a workspace is born. I wrote a skill for my AI coding agent, a reusable set of instructions the LLM follows when I ask, with three commands:
 
 - **`new <issue-url>`** reads the task force issue, proposes a short name, creates the folder, and writes the README.
 - **`suggest`** reads the task force project board and recommends which repositories to bring in, based on where the open work is: bring in, optional, or skip.
@@ -80,6 +84,17 @@ So I created a single GitHub project board. Every issue and pull request opened 
 The board has views for each group of repositories: ServiceComposer, NServiceBus extensions, Radical, and demos. When I sit down for some OSS time, I don't start from a repository. I start from the board, pick what matters, and only then open the repository.
 
 <!-- TODO: link to the board if it's public, or a screenshot -->
+
+## Same old principles, new pressure
+
+None of this is new. It's the same lifehacking toolbox I've been using for years, applied to a new kind of pressure:
+
+- **Write it down.** In ["I'm lazy, I have a checklist for everything"](https://milestone.topics.it/2022/01/10/lazy-check-list-for-everything.html), I wrote that I don't want to waste brain cycles remembering things. A workspace README is exactly that: I don't remember what a task force is about; I read it.
+- **One list to rule them all.** In ["One to-do list to rule 'em all"](https://milestone.topics.it/2022/09/19/one-list-to-rule-them-all.html), the trick was a single place for everything. The board is the same idea for my OSS work: one place, all repositories.
+- **Without data, we're blind.** Before the board, I had no idea how much was open. The board said 287. As in ["Without data we're blind"](https://milestone.topics.it/2021/02/24/without-data-we-re-blind.html), where my calendar data told a different story than my feelings, numbers beat gut feelings.
+- **Slow down.** The tool sets the pace only if I let it.
+
+What changed is the pressure. Before, the bottleneck was my time. Now, it's my attention.
 
 ## Two scopes, two questions
 
