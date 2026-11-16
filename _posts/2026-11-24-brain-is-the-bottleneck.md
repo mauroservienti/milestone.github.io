@@ -119,7 +119,7 @@ What changed is the pressure. Before, the bottleneck was my time. Now, it's my a
 
 Looking back, the two tools answer two different questions:
 
-- **A workspace answers "what am I doing here?"** It's narrow and deep. One problem, the repositories it touches, the notes that go with it.
+- **A workspace answers "what am I doing here?"** It's narrow and deep. One problem, the repositories it touches, the project board to track its progress, and the notes that go with it.
 - **The board answers "what's going on everywhere?"** It's wide and shallow. Everything open, grouped, at a glance.
 
 Together, they let me stop and pick up again without relying on my memory. And that's the point. My memory is the scarcest resource in this setup, not the tool's speed.
