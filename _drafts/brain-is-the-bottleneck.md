@@ -49,6 +49,8 @@ The cost didn't disappear. It moved. It moved from typing to deciding, reviewing
 
 I wrote about this years ago in ["Lifehacking 101: slow down"](https://milestone.topics.it/2021/11/17/slow-down.html). The advice still holds, maybe more than ever. Speed is not the goal. The tool can go as fast as it wants; I decide how fast I go.
 
+I somewhat learned not to follow every branch of the vortex. When the LLM raises a follow-up, I don't explore it right away. Instead, I ask the LLM to write it down for me: a GitHub issue in the right repository when it's about code, or a document or a card in Notion when it's something more personal, like an idea for an article. The follow-up isn't lost, and I can stay on the thread I started. I'll get to it later, or I'll realize it wasn't that important after all.
+
 But slowing down alone isn't enough. If I want to keep many things in flight without losing track of them, I need a management system. Something that tells me, at any moment, where I am.
 
 I have two: scoped workspaces, mainly for work, and a project board for everything else.
