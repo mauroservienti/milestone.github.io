@@ -161,7 +161,7 @@ Data is stale the moment we read it, and no amount of technology in the user int
 
 Neither is better in general. Reservations fit truly fixed resources; apologies fit elastic ones, or ones where an occasional overbooking is cheap. And there's plenty of room in between: partitioning the capacity, reserving quantities instead of items, switching strategy at a threshold, or changing the rules altogether. Asking the business what an overbooking costs usually tells us which is which. And in both cases, the decision belongs to the service that owns the resource.
 
-There's one question I deliberately left out: who generates the reservation identifier? If the client does, retries become trivially idempotent. But we're now trusting the client with something the capacity owner cares a lot about. That's a story for another post ;-)
+There's one question I deliberately left out: who generates the reservation identifier? If the client does, retries become trivially idempotent. But we're now trusting the client with something the capacity owner cares a lot about. That's a story for another post, together with its evil twin: invoice numbers ;-)
 
 ---
 
