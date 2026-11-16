@@ -104,13 +104,11 @@ So I created a single GitHub project board. Every issue and pull request opened 
 
 The board has views for each group of repositories: ServiceComposer, NServiceBus extensions, Radical, and demos. When I sit down for some OSS time, I don't start from a repository. I start from the board, pick what matters, and only then open the repository.
 
-<!-- TODO: link to the board if it's public, or a screenshot -->
-
 ## Same old principles, new pressure
 
 None of this is new. It's the same lifehacking toolbox I've been using for years, applied to a new kind of pressure:
 
-- **Write it down.** In ["I'm lazy, I have a checklist for everything"](https://milestone.topics.it/2022/01/10/lazy-check-list-for-everything.html), I wrote that I don't want to waste brain cycles remembering things. A workspace README is exactly that: I don't remember what a task force is about; I read it.
+- **Write it down.** In ["I'm lazy, I have a checklist for everything"](https://milestone.topics.it/2022/01/10/lazy-check-list-for-everything.html), I wrote that I don't want to waste brain cycles remembering things. A workspace README is exactly that: I don't remember what a task force is about; I read it. It's also where I leave to-dos for myself: a check to run before closing the bug, a question for a colleague, something to follow up on later. Next time I open the workspace, they're waiting for me.
 - **One list to rule them all.** In ["One to-do list to rule 'em all"](https://milestone.topics.it/2022/09/19/one-list-to-rule-them-all.html), the trick was a single place for everything. The board is the same idea for my OSS work: one place, all repositories.
 - **Without data, we're blind.** Before the board, I had no idea how much was open. The board said 287. As in ["Without data we're blind"](https://milestone.topics.it/2021/02/24/without-data-we-re-blind.html), where my calendar data told a different story than my feelings, numbers beat gut feelings.
 - **Slow down.** The tool sets the pace only if I let it.
