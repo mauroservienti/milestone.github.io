@@ -22,7 +22,7 @@ tags:
 - distributed-systems
 ---
 
-In May 2019, [Tomek](https://twitter.com/Masternak) and I wrote ["The Quest for better Search"](https://milestone.topics.it/2019/05/15/the-quest-for-better-search.html), and closed it with a promise: "There will be at least two more articles, one discussing the architecture of a distributed search, and another one showing a possible implementation using the Hotel Reservations scenario."
+In May 2019, [Tomek](https://twitter.com/Masternak) and I wrote ["The Quest for better Search"](https://milestone.topics.it/soa-search/2019/05/15/the-quest-for-better-search.html), and closed it with a promise: "There will be at least two more articles, one discussing the architecture of a distributed search, and another one showing a possible implementation using the Hotel Reservations scenario."
 
 The first one came out a week later. The second one? Famous last words.
 
@@ -32,7 +32,7 @@ The short version: searching, sorting, and paging across services can't be compo
 
 ## What are we building?
 
-Let's go back to the hotel reservations scenario from ["Search is a Team Effort"](https://milestone.topics.it/2019/05/22/search-is-a-team-effort.html). Users want to:
+Let's go back to the hotel reservations scenario from ["Search is a Team Effort"](https://milestone.topics.it/soa-search/2019/05/22/search-is-a-team-effort.html). Users want to:
 
 - search hotels in a city;
 - optionally, pick check-in and check-out dates, to filter out sold-out hotels;
