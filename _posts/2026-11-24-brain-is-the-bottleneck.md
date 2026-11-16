@@ -29,7 +29,7 @@ That's an ironic twist for someone who started the [Lifehacking 101 series](http
 
 ## Where was I?
 
-Let me give you an idea of what a couple of days look like. In roughly two days, I reviewed and merged a blog post, scheduled its LinkedIn promotion, drafted a brand new article from an idea card, fixed broken links the link checker reported, reviewed a skill I wrote for work, and renamed a folder that had a typo in its name.
+Let me give you an idea of what a couple of days look like. In roughly a day, I reviewed and merged a blog post, scheduled its LinkedIn promotion, drafted a brand new article from an idea card, fixed broken links the link checker reported, reviewed a skill I wrote for work, and renamed a folder that had a typo in its name. And I also worked!
 
 None of that is hard. All of it requires me to make decisions. Is this wording right? Is this the right publish date? Should this be one article or two?
 
