@@ -122,6 +122,8 @@ A variation is to partition by who sells instead of by what is sold. Hotels give
 
 Contention moves from items to counters, and counters are much easier to partition.
 
+Airlines also let us pre-select a seat, which looks like the opposite approach. It isn't, it's both: a quantity by default, and an item only for those who ask for one. Often for a fee, which is a nice way to keep the item-level contention small. And even a pre-selected seat isn't set in stone: if the airline swaps the aircraft for a smaller one, seat 14A might not exist anymore, and it's back to answer two: apologize and reassign.
+
 ### Switch strategy at a threshold
 
 While capacity is plentiful, accept freely: an overbooking is practically impossible. When capacity drops below a threshold, switch to strict reservations. That's where the "only 3 left!" messages come from. It's literally a mix of the two answers, chosen based on how much risk is left.
