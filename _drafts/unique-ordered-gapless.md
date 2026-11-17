@@ -108,8 +108,6 @@ In most systems, only a small part of the data needs gapless numbers, and it's u
 
 As for my tablet, I wonder if it ever got an invoice number. I'd love to know how they explained the gap ;-)
 
-<!-- TODO: the tablet callback assumes the reader read "Reserve, or apologize?"; keep it, reword it, or drop it -->
-
 ---
 
 <!-- TODO: header image and Unsplash credit -->
