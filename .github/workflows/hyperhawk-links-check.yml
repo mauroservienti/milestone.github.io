@@ -16,9 +16,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
-      # Pinned to the merge of dvdstelt/hyperhawk#34 (Jekyll support), not released yet.
-      # Switch back to @v1 once a release ships it.
-      - uses: dvdstelt/hyperhawk@0dbb7b8b84f071ad24837ae3d67766a7edd2a291
+      - uses: dvdstelt/hyperhawk@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # Resolve root-relative links against the pages Jekyll generates (posts,
