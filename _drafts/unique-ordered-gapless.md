@@ -110,4 +110,4 @@ As for my tablet, I wonder if it ever got an invoice number. I'd love to know ho
 
 ---
 
-<!-- TODO: header image and Unsplash credit -->
+Photo by <a href="https://unsplash.com/@omilaev?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Igor Omilaev</a> on <a href="https://unsplash.com/photos/a-bunch-of-rubber-ducks-sitting-on-a-blue-surface-VyD_UzTDm9o?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
