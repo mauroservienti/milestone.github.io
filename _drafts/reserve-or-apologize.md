@@ -165,4 +165,4 @@ There's one question I deliberately left out: who generates the reservation iden
 
 ---
 
-<!-- TODO: header image and Unsplash credit -->
+Photo by <a href="https://unsplash.com/@marcokaufmann?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Marco Kaufmann</a> on <a href="https://unsplash.com/photos/yellow-hiking-signs-in-forest-0kbNh7XrJ7Q?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
