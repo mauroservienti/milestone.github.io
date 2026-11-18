@@ -46,7 +46,7 @@ Haven't taken the course yet? Start with the first and the last sections. The fi
 
 ## One section that isn't in the course
 
-The last section covers Dynamic Consistency Boundaries (DCB), a pattern Sara Pellegrini introduced in her "Kill Aggregate!" talk. DCB comes from the event sourcing community, not from ADSD. However, its take on consistency and aggregate design connects directly to the course's themes of data ownership and service decomposition. If the ["All our aggregates are wrong"](https://www.youtube.com/watch?v=KkzvQSuYd5I) part of the course made you uncomfortable, DCB is a good next stop.
+The last section covers Dynamic Consistency Boundaries (DCB), a pattern Sara Pellegrini introduced in her "Kill Aggregate!" talk. DCB comes from the event-sourcing community, not ADSD. However, its take on consistency and aggregate design connects directly to the course's themes of data ownership and service decomposition. If the ["All our aggregates are wrong"](https://www.youtube.com/watch?v=KkzvQSuYd5I) talk you uncomfortable, DCB is a good next stop.
 
 ## Conclusion
 
