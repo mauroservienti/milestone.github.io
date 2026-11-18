@@ -57,3 +57,7 @@ The page is alive. When I find something worth adding, it goes there. If you kno
 - Reach out on [LinkedIn](https://www.linkedin.com/in/mauroservienti).
 - Click the "Improve this page" link at the bottom of the page and open a pull request.
 - Leave a comment on this article.
+
+---
+
+Photo by <a href="https://unsplash.com/@sasun1990?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Sasun Bughdaryan</a> on <a href="https://unsplash.com/photos/white-letter-beads-spell-out-next-on-pink-background-jKIEe89BmlI?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
