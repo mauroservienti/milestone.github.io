@@ -15,7 +15,7 @@ tags:
 
 Udi Dahan's [Advanced Distributed Systems Design](https://particular.net/adsd) course, ADSD for friends, is a lot. The online version is 33 hours of video. Fallacies, coupling, messaging, service boundaries, UI composition, CQRS, sagas, and a migration strategy for the big ball of mud we all have at home.
 
-I share all my blog posts on LinkedIn, and over time, I got plenty of requests there. Where can I learn more about this? Is there anything hands-on? I take it as a good sign: the topics I write about are interesting. However, they're also topics that a single blog post can't cover, and that sink in better with some code at hand.
+I share all my blog posts on [LinkedIn](https://www.linkedin.com/in/mauroservienti), and over time, I got plenty of requests there. Where can I learn more about this? Is there anything hands-on? I take it as a good sign: the topics I write about are interesting. However, they're also topics that a single blog post can't cover, and that sink in better with some code at hand.
 
 And, to be honest, I felt the same need. The course gives the big picture, and the big picture is clear. But, as usual, the devil is in the details. I wanted to dive deeper into each topic, and going back to the sources, again and again, is how I get to the details.
 
@@ -54,6 +54,6 @@ The course gives the ideas. Applying them takes time, practice, and a lot of goi
 
 The page is alive. When I find something worth adding, it goes there. If you know of something that should be on it, there are a few ways to let me know:
 
-- Reach out on LinkedIn.
+- Reach out on [LinkedIn](https://www.linkedin.com/in/mauroservienti).
 - Click the "Improve this page" link at the bottom of the page and open a pull request.
 - Leave a comment on this article.
