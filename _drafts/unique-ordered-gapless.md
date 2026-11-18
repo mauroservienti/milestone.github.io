@@ -15,7 +15,9 @@ tags:
 - architecture
 ---
 
-At the end of ["Reserve, or apologize?"](https://milestone.topics.it/2027/02/10/reserve-or-apologize.html), I left a question hanging: who generates the reservation identifier? And I promised to come back to it, together with its evil twin: invoice numbers.
+In ["Reserve, or apologize?"](https://milestone.topics.it/2027/02/10/reserve-or-apologize.html), I looked at what happens when two people compete for the last of something, a slot on a carrier, a hotel room, a concert ticket. One answer is to reserve: the service that owns the capacity holds the item for us for a while, and we either confirm the reservation or let it expire.
+
+Every reservation needs an identifier, something to confirm, cancel, or retry it with. At the end of that post, I left a question hanging: who generates that identifier? And I promised to come back to it, together with its evil twin: invoice numbers.
 
 Here we are.
 
@@ -106,7 +108,7 @@ Identifiers are a requirements problem disguised as a technical one. Before pick
 
 In most systems, only a small part of the data needs gapless numbers, and it's usually the part with legal consequences. Keep it small: give everything a cheap, unique identity, and let the owner of the legal number assign it as late as possible.
 
-As for my tablet, I wonder if it ever got an invoice number. I'd love to know how they explained the gap ;-)
+As for the tablet a dealer once shipped me without ever getting paid for it, I wonder if it ever got an invoice number. I'd love to know how they explained the gap ;-)
 
 ---
 
