@@ -15,9 +15,9 @@ tags:
 
 Udi Dahan's [Advanced Distributed Systems Design](https://particular.net/adsd) course, ADSD for friends, is a lot. The online version is 33 hours of video. Fallacies, coupling, messaging, service boundaries, UI composition, CQRS, sagas, and a migration strategy for the big ball of mud we all have at home.
 
-<!-- TODO: a personal hook. When did you take the course, or what made you build the page? -->
+I share all my blog posts on LinkedIn, and over time, I got plenty of requests there. Where can I learn more about this? Is there anything hands-on? I take it as a good sign: the topics I write about are interesting. However, they're also topics that a single blog post can't cover, and that sink in better with some code at hand.
 
-It's the kind of content that doesn't sink in on the first pass. The questions come later, when we go back to work and try to apply what we heard. Where did Udi talk about that? Is there a sample? Did someone write it down better than my notes?
+And, to be honest, I felt the same need. The course gives the big picture, and the big picture is clear. But, as usual, the devil is in the details. I wanted to dive deeper into each topic, and going back to the sources, again and again, is how I get to the details.
 
 That's why the blog has an [ADSD resources page](https://milestone.topics.it/resources/adsd/). It's in the Resources menu, and it's probably the least visible page on the site. Let's fix that.
 
