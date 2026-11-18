@@ -52,6 +52,8 @@ The last section covers Dynamic Consistency Boundaries (DCB), a pattern Sara Pel
 
 The course gives the ideas. Applying them takes time, practice, and a lot of going back to the sources. The [ADSD resources page](https://milestone.topics.it/resources/adsd/) is where I keep those sources, organized so that finding the right one takes less time than remembering where I saw it.
 
-The page is alive. When I find something worth adding, it goes there. If you know of something that should be on it, let me know.
+The page is alive. When I find something worth adding, it goes there. If you know of something that should be on it, there are a few ways to let me know:
 
-<!-- TODO: how should readers suggest additions? A GitHub issue on the blog repository, a comment, LinkedIn? -->
+- Reach out on LinkedIn.
+- Click the "Improve this page" link at the bottom of the page and open a pull request.
+- Leave a comment on this article.
