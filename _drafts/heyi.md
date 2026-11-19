@@ -30,14 +30,36 @@ So, I built a library to make those lines disappear: [Heyi](https://github.com/m
 
 ## The plumbing we write today
 
-<!-- TODO: show the transactional session as used in an ASP.NET Core endpoint today, without Heyi: open with the persistence-specific options, use the session to send and to get the storage session, save, commit, dispose. Keep it short and fair: it works, and the Particular sample does it with an MVC filter. The problem is that it's ceremony, repeated, and easy to get subtly wrong. -->
+Let's look at an example. The following is a minimal API endpoint that stores an order and publishes `OrderPlaced`, using the transactional session by hand:
+
+```csharp
+app.MapPost("/orders", async (PlaceOrder request, ITransactionalSession session, HttpContext httpContext) =>
+{
+    await session.Open(new SqlPersistenceOpenSessionOptions());
+
+    // Resolved after Open, so that it uses the session's connection and transaction
+    var db = httpContext.RequestServices.GetRequiredService<OrdersDbContext>();
+
+    var order = Order.From(request);
+    db.Orders.Add(order);
+    await session.Publish(new OrderPlaced(order.Id));
+
+    await session.Commit();
+
+    return Results.Created($"/orders/{order.Id}", order);
+});
+```
+
+That's not all. For the `DbContext` to join the session's transaction, its registration checks whether there is an open SQL storage session, builds the context on top of its connection, enlists it in its transaction, and asks the session to save the context's changes right before committing. About twenty lines, once per application. The [ASP.NET Core sample in the NServiceBus documentation](https://docs.particular.net/samples/transactional-session/aspnetcore-webapi/) shows them all.
+
+It works, and it's correct. The sample even moves the open and commit part to an MVC filter, so that controllers don't repeat it. That's the right instinct, and it's where Heyi starts from. The sample keeps the filter short on purpose, though: it commits whenever the action doesn't throw, and leaves turning a failed commit into a proper error response as an exercise to the reader.
 
 What can go wrong in those few lines? Let's see:
 
 <!-- TODO: the subtle mistakes, one line each:
 - committing after the response is written: the client gets a 201 for an order that was never stored;
 - committing on a 400 or a 409: the validation failed, but the messages went out anyway;
-- the DbContext using its own connection instead of the session's: two transactions, no atomicity;
+- the DbContext using its own connection instead of the session's: two transactions, no atomicity. Injecting it as an endpoint parameter is enough, since parameters are resolved before the endpoint body opens the session;
 - forgetting to dispose on exceptions.
 Link to "What's an Outbox and why do we need it?" (https://milestone.topics.it/2023/02/07/outbox-what-and-why.html) for why the outbox is needed in the first place, without repeating it. -->
 
