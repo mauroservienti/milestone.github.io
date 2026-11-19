@@ -105,10 +105,20 @@ Both endpoints are transactional, each request with its own session.
 
 > Heyi doesn't add guarantees. The [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) and the outbox do the heavy lifting; Heyi adds the programming model.
 
-<!-- TODO: design decisions worth telling, pick two or three:
+One decision deserves a few more words: how the `DbContext` joins the session. The usual approach builds the context in its DI registration: if there's an open SQL storage session, the context is created on top of its connection and transaction. It works, as long as the session is already open when the context is created. And that's not up to the registration: it depends on when something first asks for the context. An endpoint parameter asks before the endpoint body runs, so before the session opens.
+
+Heyi turns it around. The `DbContext` registration stays the one you already have, and `AddHeyiDbContext` tells Heyi which context to take care of:
+
+```csharp
+builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddHeyiDbContext<OrdersDbContext>();
+```
+
+Right after opening the session, Heyi takes the request's context, creating it if nobody asked for it yet, and points it at the session's connection and transaction. Then it asks the session to save the context's changes right before committing. When the context was created doesn't matter anymore, since it's moved over after the fact. Outside transactional endpoints, nothing changes: the context uses its own connection, as registered.
+
+<!-- TODO: other design decisions worth telling, pick one or two:
 - why commit before the response is written (and what it costs);
 - why status codes decide, not exceptions only;
-- sharing the connection and transaction with EF Core;
 - send-only web apps and the remote processor endpoint. -->
 
 ## Should the endpoint do the work at all?
