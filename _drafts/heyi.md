@@ -69,8 +69,6 @@ None of these fail loudly. Everything works on a good day, and the damage shows 
 
 ## What if the endpoint looked like a handler?
 
-<!-- TODO: the idea behind Heyi. A message handler never opens or commits anything: the infrastructure does it around the handler. Why not the same for HTTP endpoints? Introduce the name: Heyi, 合一, héyī, "to become one": data and messages become one operation. -->
-
 The following is what an endpoint looks like with Heyi:
 
 ```csharp
