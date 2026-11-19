@@ -125,16 +125,26 @@ Right after opening the session, Heyi takes the request's context, creating it i
 
 ## Should the endpoint do the work at all?
 
-<!-- TODO: the ADSD angle, the heart of the post. The atomic endpoint still runs business logic inside an HTTP request: validation, rules, storage. What if it didn't? The edge accepts the command, returns 202 Accepted, and a regular message handler does the work, with retries, the outbox, and everything messaging gives us. Link to "What if my command was rejected?" (https://milestone.topics.it/2023/06/27/reject-commands.html): commands that are validated upfront rarely need to fail. And to "Reserve, or apologize?" (https://milestone.topics.it/2027/02/10/reserve-or-apologize.html) for when accepting first is the business's choice. -->
+Look at the endpoint again. It doesn't cancel anything. It records that the user asked, and hands the work over to the backend. That's on purpose: I don't think HTTP endpoints should run business logic at all.
 
-That's what accept-only endpoints are for:
+An endpoint that does the work runs it inside an HTTP request: no retries, a client waiting on the other end, and a timeout ready to cut everything short. A message handler runs the same logic with retries, the outbox, and everything else messaging gives us. The endpoint's job is to accept the request, turn it into a message, and get out of the way with a `202 Accepted`.
+
+"But what if the request is invalid?" Validation that only needs the request, such as required fields, formats, and ranges, belongs at the edge, and it happens before anything is sent. Validation that needs the business's state is a different story. As I wrote in ["What if my command was rejected?"](https://milestone.topics.it/2023/06/27/reject-commands.html), commands validated upfront rarely need to fail. And when accepting first is the business's choice, the backend can still say no later, as in ["Reserve, or apologize?"](https://milestone.topics.it/2027/02/10/reserve-or-apologize.html).
+
+So, where does that leave atomic endpoints? With task-based applications. When users start something that takes time, they want to see it, with its status, right away. The task isn't business logic: it doesn't decide anything, it records that something was asked. But it must be created together with the message that starts the work, and that's precisely the job atomic endpoints are for.
+
+"Couldn't the client generate the task ID, send the command, and poll? A `404` means not started yet." It works as long as the client only tracks the task it just started. It falls apart as soon as the task must show up elsewhere: in the user's list of requests, on a colleague's screen, or in an audit trail that must show the request even when the message is stuck in a queue. Then the task has to exist the moment the request is accepted.
+
+For everything else, really, use accept-only endpoints.
+
+Heyi has those too:
 
 ```csharp
 app.MapCommand<PlaceOrder>("/orders");           // Send, 202 Accepted
 app.MapEvent<OrderRequested>("/order-requests"); // Publish, 202 Accepted
 ```
 
-<!-- TODO: no database, no transactional session needed, routing comes from the NServiceBus configuration. Optional location to poll. Then the nuance: when the atomic endpoint is the right call (the client needs the result now, the UI can't cope with eventual consistency), and when accept-only is the better default. No silver bullet. -->
+<!-- TODO: what accept-only endpoints do: no database, no transactional session, routing comes from the NServiceBus configuration, an optional location to poll (location: command => ...), a malformed body is a 400 and nothing is sent, a failed send is a 500 problem details response. -->
 
 ## What about retries?
 
