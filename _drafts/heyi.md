@@ -134,10 +134,13 @@ builder.Services.AddHeyiDbContext<RequestsDbContext>();
 
 Right after opening the session, Heyi takes the request's context, creating it if nobody asked for it yet, and points it at the session's connection and transaction. Then it asks the session to save the context's changes right before committing. When the context was created doesn't matter anymore, since it's moved over after the fact. Outside transactional endpoints, nothing changes: the context uses its own connection, as registered.
 
-<!-- TODO: other design decisions worth telling, pick one or two:
-- why commit before the response is written (and what it costs);
-- why status codes decide, not exceptions only;
-- send-only web apps and the remote processor endpoint. -->
+Two more decisions are worth telling: when to commit, and what decides whether to commit.
+
+Heyi commits after the endpoint returns, but before the response is written. The endpoint returns a result, not a response: ASP.NET Core writes it afterward, and Heyi sits in between. That's the only place where a failed commit can still become a `500` instead of a `202` for a request that never happened. It comes at a cost: every response waits for the commit, which means a database commit plus a message to the broker. I think it's a fair price: the alternative is a fast response that might be lying.
+
+There's still one gap no server can close: the commit succeeds, and the response gets lost on its way to the client. The client sees an error and retries, but the work is already done. That's what the `Idempotency-Key` is for, more on that later.
+
+As for what decides, it's the status code, not exceptions only. Endpoints say no the HTTP way, by returning a `400` or a `409`, not by throwing. A filter that commits whenever nothing throws commits those too, along with whatever the endpoint stored and sent before deciding to say no. Heyi looks at the result: only a `2xx` commits. It understands typed results such as `Results<Accepted, Conflict>`, looking at the one actually returned, and falls back to the response status code for plain return values.
 
 ## Should the endpoint do the work at all?
 
