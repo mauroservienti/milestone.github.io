@@ -96,7 +96,7 @@ app.MapEvent<OrderRequested>("/order-requests"); // Publish, 202 Accepted
 - Accept-only endpoints: a direct fit. MapCommand and MapEvent send through IMessageSession, outside a handler, so the dispatch goes through the outgoing pipeline and DispatchRetries retries it with a Polly policy (the batch policy, in this case) before giving up. A transient broker hiccup becomes a slower 202 instead of a 500.
 - Atomic endpoints: no fit. On Commit, the transactional session sends its dispatch message straight through the transport dispatcher (IMessageDispatcher), not the pipeline, so DispatchRetries never sees it. If that send fails, the session rolls back and Commit throws: Heyi turns it into a 500, and the client's retry, with the same Idempotency-Key, is the retry. The messages themselves are dispatched later by the processor endpoint, from the outbox, where recoverability already retries.
 - The layers, from the outside in: the client retries with an Idempotency-Key, the endpoint retries the dispatch (accept-only only), the receiver deduplicates by message ID. A dispatch retry after an ambiguous failure (the broker got the message, the acknowledgment got lost) resends the same message ID, so the receiver's deduplication covers that too.
-- Possibly an aside or a blockquote rather than a section: it's an existing library of mine, not part of Heyi. Decide whether Heyi's docs recommend it for accept-only endpoints. -->
+- Mention it as an option for accept-only endpoints, not a recommendation: a short aside or blockquote, since it's an existing library of mine, not part of Heyi. Heyi's docs mention it the same way. -->
 
 ## Conclusion
 
