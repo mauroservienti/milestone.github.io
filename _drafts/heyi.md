@@ -56,12 +56,14 @@ It works, and it's correct. The sample even moves the open and commit part to an
 
 What can go wrong in those few lines? Let's see:
 
-<!-- TODO: the subtle mistakes, one line each:
-- committing after the response is written: the client gets a 201 for an order that was never stored;
-- committing on a 400 or a 409: the validation failed, but the messages went out anyway;
-- the DbContext using its own connection instead of the session's: two transactions, no atomicity. Injecting it as an endpoint parameter is enough, since parameters are resolved before the endpoint body opens the session;
-- forgetting to dispose on exceptions.
-Link to "What's an Outbox and why do we need it?" (https://milestone.topics.it/2023/02/07/outbox-what-and-why.html) for why the outbox is needed in the first place, without repeating it. -->
+- **Committing after the response is written.** A middleware that commits after the rest of the pipeline has run is too late: the client already has its `201`, even when the commit fails and the order never exists.
+- **Committing on a `400` or a `409`.** A filter that commits whenever nothing throws doesn't look at the result. The validation failed, the endpoint said so, but whatever it stored and sent before noticing goes through anyway.
+- **The `DbContext` using its own connection.** Two connections, two transactions, no atomicity. And it takes very little: injecting the `DbContext` as an endpoint parameter is enough, since parameters are resolved before the endpoint body opens the session.
+- **Sending through `IMessageSession` instead of the session.** It compiles, it works, and the message leaves immediately, outside the transaction. Hello, ghost message.
+
+None of these fail loudly. Everything works on a good day, and the damage shows up only when something else goes wrong, which is precisely the case the transactional session exists for.
+
+> If you're wondering why we can't just save and then publish, I wrote about it in ["What's an Outbox and why do we need it?"](https://milestone.topics.it/2023/02/07/outbox-what-and-why.html).
 
 ## What if the endpoint looked like a handler?
 
