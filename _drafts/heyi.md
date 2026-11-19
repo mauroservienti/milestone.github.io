@@ -90,7 +90,25 @@ The endpoint doesn't open, commit, or dispose anything. `WithTransactionalSessio
 - A failed commit becomes a `500`, never a success.
 - `IOutgoingMessages` sends and publishes through the open session. Using it outside a transactional endpoint throws, instead of quietly sending right away.
 
-<!-- TODO: the setup: NServiceBus first, Heyi second (AddNServiceBusEndpoint, then AddHeyi; AddDbContext plus AddHeyiDbContext is shown in the EF Core decision below, so keep it short here or move it), and the checks that fail fast when endpoints are built (AddHeyi missing, no transactional session registered, no open options). -->
+<!-- TODO: introduce the setup in a sentence or two: NServiceBus first, Heyi second. Heyi doesn't configure or host NServiceBus. The DbContext registration comes in the EF Core decision below. -->
+
+```csharp
+var endpointConfiguration = new EndpointConfiguration("Sales.Api");
+// Transport, serializer, and routing as usual
+
+var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
+persistence.SqlDialect<SqlDialect.MsSqlServer>();
+persistence.ConnectionBuilder(() => new SqlConnection(connectionString));
+persistence.EnableTransactionalSession();
+endpointConfiguration.EnableOutbox();
+
+builder.Services.AddNServiceBusEndpoint(endpointConfiguration);
+
+builder.Services.AddHeyi(options =>
+    options.OpenSessionOptions(() => new SqlPersistenceOpenSessionOptions()));
+```
+
+<!-- TODO: the checks that fail fast when endpoints are built: AddHeyi missing, no transactional session registered, no open session options. -->
 
 Marking endpoints one at a time gets repetitive, too. Minimal APIs have an answer for that: route groups. A route group is a URL prefix plus configuration, such as authorization rules or filters, shared by every endpoint mapped in it. Heyi works on route groups as well:
 
