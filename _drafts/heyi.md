@@ -26,11 +26,7 @@ The transactional session does exactly what it promises: data and messages are c
 
 None of it is hard. It's the same few lines in every endpoint that stores data and sends messages. And code copied everywhere eventually gets copied wrong somewhere: a commit after the response is written, a commit on a `400`, a `DbContext` that quietly opens its own connection.
 
-So, I built a library to make those lines disappear. And along the way, I ended up asking a different question: should the endpoint do the work at all?
-
-<!-- TODO: round two was about building with an AI coding agent. Decide whether round three mentions it too (one line, "AI coding agent", no product names), or keeps the focus on the design. -->
-
-<!-- TODO: TL;DR? The Zusammen post had one. Something like: "I built Heyi (合一, "to become one"). It turns ASP.NET Core endpoints into handler-shaped endpoints: store data and send messages as one atomic operation, on top of the NServiceBus transactional session." -->
+So, I built a library to make those lines disappear: [Heyi](https://github.com/mauroservienti/Heyi) (合一, héyī, "to become one"). It turns ASP.NET Core endpoints into handler-shaped endpoints: they store data and send messages as one atomic operation, on top of the NServiceBus transactional session. And along the way, I ended up asking a different question: should the endpoint do the work at all?
 
 ## The plumbing we write today
 
