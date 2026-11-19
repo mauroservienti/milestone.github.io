@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Should the HTTP endpoint do the work? Atomic web endpoints for NServiceBus"
+title: "Should the HTTP endpoint do the work? Heyi: atomic web endpoints for NServiceBus"
 author: Mauro Servienti
 synopsis: "A web request stores an order and publishes an event. Doing both atomically takes a handful of plumbing lines in every endpoint. I built a small library to make them disappear, and along the way asked whether the endpoint should do the work at all."
 header_image: /img/posts/heyi/header.jpg
@@ -15,12 +15,6 @@ tags:
 - messaging
 - distributed-systems
 ---
-
-<!-- TODO: title options:
-- "Should the HTTP endpoint do the work? Atomic web endpoints for NServiceBus" (current)
-- "合一: when a web request and a message become one"
-- "Five lines of plumbing in every endpoint. Not anymore"
--->
 
 <!-- TODO: hook. The Zusammen post already used "a web request stores an order and publishes an event, one crash away from a ghost message or a zombie record", so pick a different angle. Options:
 - the plumbing: the same open, send, commit, dispose lines copied into every controller action, and the day someone forgets one;
