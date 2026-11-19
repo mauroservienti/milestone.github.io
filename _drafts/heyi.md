@@ -136,7 +136,7 @@ Right after opening the session, Heyi takes the request's context, creating it i
 
 Two more decisions are worth telling: when to commit, and what decides whether to commit.
 
-Heyi commits after the endpoint returns, but before the response is written. The endpoint returns a result, not a response: ASP.NET Core writes it afterward, and Heyi sits in between. That's the only place where a failed commit can still become a `500` instead of a `202` for a request that never happened. It comes at a cost: every response waits for the commit, which means a database commit plus a message to the broker. I think it's a fair price: the alternative is a fast response that might be lying.
+Heyi commits after the endpoint returns, but before the response is written. The endpoint returns a result, not a response: ASP.NET Core writes it afterward, and Heyi sits in between. That's the only place where a failed commit can still become a `500` instead of a `202` for a request that never happened. It comes at a cost: every response waits for the commit. That's a small control message to the broker, sent first so the outcome is atomic either way, and then the database commit. The endpoint's own messages aren't part of the wait: they leave later, from the outbox. I think it's a fair price: the alternative is a fast response that might be lying.
 
 There's still one gap no server can close: the commit succeeds, and the response gets lost on its way to the client. The client sees an error and retries, but the work is already done. That's what the `Idempotency-Key` is for, more on that later.
 
