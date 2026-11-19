@@ -16,11 +16,19 @@ tags:
 - distributed-systems
 ---
 
-<!-- TODO: hook. The Zusammen post already used "a web request stores an order and publishes an event, one crash away from a ghost message or a zombie record", so pick a different angle. Options:
-- the plumbing: the same open, send, commit, dispose lines copied into every controller action, and the day someone forgets one;
-- round three: after the Node.js transactional session, back on home turf (.NET), but building the layer on top this time;
-- a real question received after the Zusammen post (only if there was one).
--->
+In ["I built a Node.js library over a weekend. I don't know Node.js"](https://milestone.topics.it/2026/10/21/zusammen.html), I brought the NServiceBus transactional session to a platform I can barely spell. That was round two. For round three, I went back home: .NET, a platform I know a little better. I hope.
+
+This time, the transactional session was already there. What I wanted was the layer on top of it.
+
+The transactional session does exactly what it promises: data and messages are committed together, or not at all. Using it from an ASP.NET Core endpoint, though, is a bit chatty. Open the session with the persistence-specific options. Send and publish through it. Make sure the database work shares its connection and transaction. Commit, but only if things went well, and before the response goes out. Dispose of it either way.
+
+> Full disclosure: I work at Particular Software, so I'm allowed to tease our own APIs. Gently ;-)
+
+None of it is hard. It's the same few lines in every endpoint that stores data and sends messages. And code copied everywhere eventually gets copied wrong somewhere: a commit after the response is written, a commit on a `400`, a `DbContext` that quietly opens its own connection.
+
+So, I built a library to make those lines disappear. And along the way, I ended up asking a different question: should the endpoint do the work at all?
+
+<!-- TODO: round two was about building with an AI coding agent. Decide whether round three mentions it too (one line, "AI coding agent", no product names), or keeps the focus on the design. -->
 
 <!-- TODO: TL;DR? The Zusammen post had one. Something like: "I built Heyi (合一, "to become one"). It turns ASP.NET Core endpoints into handler-shaped endpoints: store data and send messages as one atomic operation, on top of the NServiceBus transactional session." -->
 
