@@ -2,7 +2,7 @@
 layout: post
 title: "Should the HTTP endpoint do the work? Heyi: atomic web endpoints for NServiceBus"
 author: Mauro Servienti
-synopsis: "A web request stores an order and publishes an event. Doing both atomically takes a handful of plumbing lines in every endpoint. I built a small library to make them disappear, and along the way asked whether the endpoint should do the work at all."
+synopsis: "A web request records a task and sends the message that starts it. Doing both atomically takes a handful of plumbing lines in every endpoint. I built a small library to make them disappear, and along the way asked whether the endpoint should do the work at all."
 header_image: /img/posts/heyi/header.jpg
 related:
 - 2026-10-21-zusammen.md
@@ -30,25 +30,27 @@ So, I built a library to make those lines disappear: [Heyi](https://github.com/m
 
 ## The plumbing we write today
 
-Let's look at an example. The following is a minimal API endpoint that stores an order and publishes `OrderPlaced`, using the transactional session by hand:
+Let's look at an example. A user asks to cancel an order. The cancellation itself is the backend's job, and it might take a while, but the user wants to follow its progress. So, the following minimal API endpoint records a cancellation request, the task the user can check on, and sends `CancelOrder` to the backend, using the transactional session by hand:
 
 ```csharp
-app.MapPost("/orders", async (PlaceOrder request, ITransactionalSession session, HttpContext httpContext) =>
+app.MapPost("/orders/{orderId}/cancellations", async (Guid orderId, ITransactionalSession session, HttpContext httpContext) =>
 {
     await session.Open(new SqlPersistenceOpenSessionOptions());
 
     // Resolved after Open, so that it uses the session's connection and transaction
-    var db = httpContext.RequestServices.GetRequiredService<OrdersDbContext>();
+    var db = httpContext.RequestServices.GetRequiredService<RequestsDbContext>();
 
-    var order = Order.From(request);
-    db.Orders.Add(order);
-    await session.Publish(new OrderPlaced(order.Id));
+    var cancellation = new CancellationRequest(orderId);
+    db.CancellationRequests.Add(cancellation);
+    await session.Send(new CancelOrder(orderId, cancellation.Id));
 
     await session.Commit();
 
-    return Results.Created($"/orders/{order.Id}", order);
+    return Results.Accepted($"/cancellations/{cancellation.Id}", cancellation);
 });
 ```
+
+The task and the message must go together. A task without its message stays pending forever, and a message without its task leaves the user with nothing to look at.
 
 That's not all. For the `DbContext` to join the session's transaction, its registration checks whether there is an open SQL storage session, builds the context on top of its connection, enlists it in its transaction, and asks the session to save the context's changes right before committing. About twenty lines, once per application. The [ASP.NET Core sample in the NServiceBus documentation](https://docs.particular.net/samples/transactional-session/aspnetcore-webapi/) shows them all.
 
@@ -56,7 +58,7 @@ It works, and it's correct. The sample even moves the open and commit part to an
 
 What can go wrong in those few lines? Let's see:
 
-- **Committing after the response is written.** A middleware that commits after the rest of the pipeline has run is too late: the client already has its `201`, even when the commit fails and the order never exists.
+- **Committing after the response is written.** A middleware that commits after the rest of the pipeline has run is too late: the client already has its `202`, even when the commit fails and the cancellation request never exists.
 - **Committing on a `400` or a `409`.** A filter that commits whenever nothing throws doesn't look at the result. The validation failed, the endpoint said so, but whatever it stored and sent before noticing goes through anyway.
 - **The `DbContext` using its own connection.** Two connections, two transactions, no atomicity. And it takes very little: injecting the `DbContext` as an endpoint parameter is enough, since parameters are resolved before the endpoint body opens the session.
 - **Sending through `IMessageSession` instead of the session.** It compiles, it works, and the message leaves immediately, outside the transaction. Hello, ghost message.
@@ -72,12 +74,12 @@ None of these fail loudly. Everything works on a good day, and the damage shows 
 The following is what an endpoint looks like with Heyi:
 
 ```csharp
-app.MapPost("/orders", async (PlaceOrder request, OrdersDbContext db, IOutgoingMessages messages) =>
+app.MapPost("/orders/{orderId}/cancellations", async (Guid orderId, RequestsDbContext db, IOutgoingMessages messages) =>
 {
-    var order = Order.From(request);
-    db.Orders.Add(order);
-    await messages.Publish(new OrderPlaced(order.Id));
-    return Results.Created($"/orders/{order.Id}", order);
+    var cancellation = new CancellationRequest(orderId);
+    db.CancellationRequests.Add(cancellation);
+    await messages.Send(new CancelOrder(orderId, cancellation.Id));
+    return Results.Accepted($"/cancellations/{cancellation.Id}", cancellation);
 })
 .WithTransactionalSession();
 ```
@@ -95,10 +97,10 @@ The endpoint doesn't open, commit, or dispose anything. `WithTransactionalSessio
 Marking endpoints one at a time gets repetitive, too. Minimal APIs have an answer for that: route groups. A route group is a URL prefix plus configuration, such as authorization rules or filters, shared by every endpoint mapped in it. Heyi works on route groups as well:
 
 ```csharp
-var orders = app.MapGroup("/orders").WithTransactionalSession();
+var order = app.MapGroup("/orders/{orderId}").WithTransactionalSession();
 
-orders.MapPost("/", ...);
-orders.MapPost("/{id}/cancel", ...);
+order.MapPost("/cancellations", ...);
+order.MapPost("/returns", ...);
 ```
 
 Both endpoints are transactional, each request with its own session.
@@ -110,8 +112,8 @@ One decision deserves a few more words: how the `DbContext` joins the session. T
 Heyi turns it around. The `DbContext` registration stays the one you already have, and `AddHeyiDbContext` tells Heyi which context to take care of:
 
 ```csharp
-builder.Services.AddDbContext<OrdersDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddHeyiDbContext<OrdersDbContext>();
+builder.Services.AddDbContext<RequestsDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddHeyiDbContext<RequestsDbContext>();
 ```
 
 Right after opening the session, Heyi takes the request's context, creating it if nobody asked for it yet, and points it at the session's connection and transaction. Then it asks the session to save the context's changes right before committing. When the context was created doesn't matter anymore, since it's moved over after the fact. Outside transactional endpoints, nothing changes: the context uses its own connection, as registered.
