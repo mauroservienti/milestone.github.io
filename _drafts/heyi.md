@@ -82,12 +82,15 @@ app.MapPost("/orders", async (PlaceOrder request, OrdersDbContext db, IOutgoingM
 .WithTransactionalSession();
 ```
 
-<!-- TODO: walk through the rules, as a list:
-- the filter opens the session before the endpoint runs;
-- it commits after the endpoint returns and before the response is written; a failed commit becomes a 500, never a success;
-- only 2xx commits; exceptions and 4xx/5xx dispose the session, which rolls back data and messages;
-- IOutgoingMessages is a facade over the open session; the endpoint never opens, commits, or disposes anything.
-Then the setup: NServiceBus first, Heyi second (AddNServiceBusEndpoint, then AddHeyi and AddHeyiDbContext), and the startup checks that fail fast. -->
+The endpoint doesn't open, commit, or dispose anything. `WithTransactionalSession()` adds a filter that does it around the endpoint:
+
+- It opens the session before the endpoint runs.
+- Right after opening it, it moves the request's `DbContext` onto the session's connection and transaction, no matter when the context was created. Injecting it as a parameter is fine.
+- After the endpoint returns, it looks at the status code. A `2xx` commits, before the response is written, and the session saves the context's changes as part of the commit: no `SaveChanges` call needed. Anything else, exceptions included, disposes the session, which rolls back data and messages.
+- A failed commit becomes a `500`, never a success.
+- `IOutgoingMessages` sends and publishes through the open session. Using it outside a transactional endpoint throws, instead of quietly sending right away.
+
+<!-- TODO: the setup: NServiceBus first, Heyi second (AddNServiceBusEndpoint, then AddHeyi; AddDbContext plus AddHeyiDbContext is shown in the EF Core decision below, so keep it short here or move it), and the checks that fail fast when endpoints are built (AddHeyi missing, no transactional session registered, no open options). -->
 
 Marking endpoints one at a time gets repetitive, too. Minimal APIs have an answer for that: route groups. A route group is a URL prefix plus configuration, such as authorization rules or filters, shared by every endpoint mapped in it. Heyi works on route groups as well:
 
