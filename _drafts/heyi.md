@@ -89,6 +89,17 @@ app.MapPost("/orders", async (PlaceOrder request, OrdersDbContext db, IOutgoingM
 - IOutgoingMessages is a facade over the open session; the endpoint never opens, commits, or disposes anything.
 Then the setup: NServiceBus first, Heyi second (AddNServiceBusEndpoint, then AddHeyi and AddHeyiDbContext), and the startup checks that fail fast. -->
 
+Marking endpoints one at a time gets repetitive, too. Minimal APIs have an answer for that: route groups. A route group is a URL prefix plus configuration, such as authorization rules or filters, shared by every endpoint mapped in it. Heyi works on route groups as well:
+
+```csharp
+var orders = app.MapGroup("/orders").WithTransactionalSession();
+
+orders.MapPost("/", ...);
+orders.MapPost("/{id}/cancel", ...);
+```
+
+Both endpoints are transactional, each request with its own session.
+
 > Heyi doesn't add guarantees. The [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) and the outbox do the heavy lifting; Heyi adds the programming model.
 
 <!-- TODO: design decisions worth telling, pick two or three:
