@@ -1,0 +1,101 @@
+---
+layout: post
+title: "Should the HTTP endpoint do the work? Atomic web endpoints for NServiceBus"
+author: Mauro Servienti
+synopsis: "A web request stores an order and publishes an event. Doing both atomically takes a handful of plumbing lines in every endpoint. I built a small library to make them disappear, and along the way asked whether the endpoint should do the work at all."
+header_image: /img/posts/heyi/header.jpg
+related:
+- 2026-10-21-zusammen.md
+- 2023-02-07-outbox-what-and-why.md
+- 2023-06-27-reject-commands.md
+- 2026-11-26-idempotency-deep-dive.md
+- 2027-02-10-reserve-or-apologize.md
+tags:
+- nservicebus
+- messaging
+- distributed-systems
+---
+
+<!-- TODO: title options:
+- "Should the HTTP endpoint do the work? Atomic web endpoints for NServiceBus" (current)
+- "合一: when a web request and a message become one"
+- "Five lines of plumbing in every endpoint. Not anymore"
+-->
+
+<!-- TODO: hook. The Zusammen post already used "a web request stores an order and publishes an event, one crash away from a ghost message or a zombie record", so pick a different angle. Options:
+- the plumbing: the same open, send, commit, dispose lines copied into every controller action, and the day someone forgets one;
+- round three: after the Node.js transactional session, back on home turf (.NET), but building the layer on top this time;
+- a real question received after the Zusammen post (only if there was one).
+-->
+
+<!-- TODO: TL;DR? The Zusammen post had one. Something like: "I built Heyi (合一, "to become one"). It turns ASP.NET Core endpoints into handler-shaped endpoints: store data and send messages as one atomic operation, on top of the NServiceBus transactional session." -->
+
+## The plumbing we write today
+
+<!-- TODO: show the transactional session as used in an ASP.NET Core endpoint today, without Heyi: open with the persistence-specific options, use the session to send and to get the storage session, save, commit, dispose. Keep it short and fair: it works, and the Particular sample does it with an MVC filter. The problem is that it's ceremony, repeated, and easy to get subtly wrong. -->
+
+What can go wrong in those few lines? Let's see:
+
+<!-- TODO: the subtle mistakes, one line each:
+- committing after the response is written: the client gets a 201 for an order that was never stored;
+- committing on a 400 or a 409: the validation failed, but the messages went out anyway;
+- the DbContext using its own connection instead of the session's: two transactions, no atomicity;
+- forgetting to dispose on exceptions.
+Link to "What's an Outbox and why do we need it?" (https://milestone.topics.it/2023/02/07/outbox-what-and-why.html) for why the outbox is needed in the first place, without repeating it. -->
+
+## What if the endpoint looked like a handler?
+
+<!-- TODO: the idea behind Heyi. A message handler never opens or commits anything: the infrastructure does it around the handler. Why not the same for HTTP endpoints? Introduce the name: Heyi, 合一, héyī, "to become one": data and messages become one operation. -->
+
+The following is what an endpoint looks like with Heyi:
+
+```csharp
+app.MapPost("/orders", (PlaceOrder request, OrdersDbContext db, IOutgoingMessages messages) =>
+{
+    var order = Order.From(request);
+    db.Orders.Add(order);
+    messages.Publish(new OrderPlaced(order.Id));
+    return Results.Created($"/orders/{order.Id}", order);
+})
+.WithTransactionalSession();
+```
+
+<!-- TODO: walk through the rules, as a list:
+- the filter opens the session before the endpoint runs;
+- it commits after the endpoint returns and before the response is written; a failed commit becomes a 500, never a success;
+- only 2xx commits; exceptions and 4xx/5xx dispose the session, which rolls back data and messages;
+- IOutgoingMessages is a facade over the open session; the endpoint never opens, commits, or disposes anything.
+Then the setup: NServiceBus first, Heyi second (AddNServiceBusEndpoint, then AddHeyi and AddHeyiDbContext), and the startup checks that fail fast. -->
+
+> Heyi doesn't add guarantees. The [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) and the outbox do the heavy lifting; Heyi adds the programming model.
+
+<!-- TODO: design decisions worth telling, pick two or three:
+- why commit before the response is written (and what it costs);
+- why status codes decide, not exceptions only;
+- sharing the connection and transaction with EF Core;
+- send-only web apps and the remote processor endpoint. -->
+
+## Should the endpoint do the work at all?
+
+<!-- TODO: the ADSD angle, the heart of the post. The atomic endpoint still runs business logic inside an HTTP request: validation, rules, storage. What if it didn't? The edge accepts the command, returns 202 Accepted, and a regular message handler does the work, with retries, the outbox, and everything messaging gives us. Link to "What if my command was rejected?" (https://milestone.topics.it/2023/06/27/reject-commands.html): commands that are validated upfront rarely need to fail. And to "Reserve, or apologize?" (https://milestone.topics.it/2027/02/10/reserve-or-apologize.html) for when accepting first is the business's choice. -->
+
+That's what accept-only endpoints are for:
+
+```csharp
+app.MapCommand<PlaceOrder>("/orders");           // Send, 202 Accepted
+app.MapEvent<OrderRequested>("/order-requests"); // Publish, 202 Accepted
+```
+
+<!-- TODO: no database, no transactional session needed, routing comes from the NServiceBus configuration. Optional location to poll. Then the nuance: when the atomic endpoint is the right call (the client needs the result now, the UI can't cope with eventual consistency), and when accept-only is the better default. No silver bullet. -->
+
+## What about retries?
+
+<!-- TODO: idempotency at the edge. Clients retry, proxies retry, users double-click. The Idempotency-Key header (IETF draft: https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) becomes the outgoing message IDs ({key}/{index}), so a retried request produces messages with the same identity and receivers can deduplicate them. Be honest about the limit: the transactional session doesn't deduplicate incoming requests, so a retried atomic request runs again and the database must reject the duplicate. Link to "Idempotent, you must be" (https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html). Storing and replaying responses is a later step. -->
+
+## Conclusion
+
+<!-- TODO: restate: the plumbing belongs to the infrastructure, not to every endpoint. But the more interesting question is whether the endpoint should do the work at all. Where the code lives (repo and package, once public), how to try it, and an invitation for feedback. A wink to the name, if it fits. -->
+
+---
+
+<!-- TODO: header image and Unsplash credit -->
