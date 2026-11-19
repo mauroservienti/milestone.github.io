@@ -72,11 +72,11 @@ None of these fail loudly. Everything works on a good day, and the damage shows 
 The following is what an endpoint looks like with Heyi:
 
 ```csharp
-app.MapPost("/orders", (PlaceOrder request, OrdersDbContext db, IOutgoingMessages messages) =>
+app.MapPost("/orders", async (PlaceOrder request, OrdersDbContext db, IOutgoingMessages messages) =>
 {
     var order = Order.From(request);
     db.Orders.Add(order);
-    messages.Publish(new OrderPlaced(order.Id));
+    await messages.Publish(new OrderPlaced(order.Id));
     return Results.Created($"/orders/{order.Id}", order);
 })
 .WithTransactionalSession();
