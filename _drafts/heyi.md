@@ -163,21 +163,47 @@ app.MapCommand<PlaceOrder>("/orders");           // Send, 202 Accepted
 app.MapEvent<OrderRequested>("/order-requests"); // Publish, 202 Accepted
 ```
 
-<!-- TODO: what accept-only endpoints do: no database, no transactional session, routing comes from the NServiceBus configuration, an optional location to poll (location: command => ...), a malformed body is a 400 and nothing is sent, a failed send is a 500 problem details response. Then acceptance checks for the edge validation described above: a class implementing IAcceptanceCheck<TMessage>, with dependencies through the constructor, returning Acceptance.Accept() or Acceptance.Reject(response) (typically a 4xx problem details response), added with .WithAcceptanceCheck<TCheck>() on accept-only endpoints only (a check for another message doesn't compile); nothing is sent when it rejects. Checks are for request validation (malformed data, a card number failing its checksum, a SKU that doesn't exist); business rules stay in the handler. Example from the Heyi README: SkuExists with IProductCatalog.Exists and a 422. One line on the boundary: a check validates the request, it doesn't decide; if a check starts deciding, move it to the handler. -->
+There's no database and no transactional session here: the request body becomes the message, and NServiceBus routing decides where it goes, as for any other send. A malformed body is a `400`, and nothing is sent. If the broker can't take the message, the response is a `500` problem details response, never a `202` for something that wasn't accepted. When the client needs somewhere to look for progress, the endpoint can say where:
+
+```csharp
+app.MapCommand<PlaceOrder>("/orders", location: command => $"/orders/{command.OrderId}");
+```
+
+What about the validation that belongs at the edge? Acceptance checks run before the message is dispatched:
+
+```csharp
+class SkuExists(IProductCatalog catalog) : IAcceptanceCheck<PlaceOrder>
+{
+    public async ValueTask<Acceptance> Check(PlaceOrder command, HttpContext httpContext) =>
+        await catalog.Exists(command.Sku, httpContext.RequestAborted)
+            ? Acceptance.Accept()
+            : Acceptance.Reject(TypedResults.Problem(statusCode: 422, title: "The product doesn't exist."));
+}
+
+app.MapCommand<PlaceOrder>("/orders").WithAcceptanceCheck<SkuExists>();
+```
+
+A check is a class, so its dependencies come in through the constructor, and it can be tested on its own. Checks run in the order they're added, and the first rejection stops the request: nothing is sent. They're tied to the message type, so a check for the wrong message doesn't compile, and they're only available on accept-only endpoints. A check validates the request; it doesn't decide. When a check starts deciding, it's time to move it to the handler.
 
 ## What about retries?
 
-<!-- TODO: idempotency at the edge. Clients retry, proxies retry, users double-click. The Idempotency-Key header (IETF draft: https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) becomes the outgoing message IDs ({key}/{index}), so a retried request produces messages with the same identity and receivers can deduplicate them. Be honest about the limit: the transactional session doesn't deduplicate incoming requests, so a retried atomic request runs again and the database must reject the duplicate. Link to "Idempotent, you must be" (https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html). Storing and replaying responses is a later step. -->
+Clients retry, proxies retry, users double-click. Each retry is a new request, and without help, a new set of messages the receivers can't tell apart from the first.
 
-<!-- TODO: retries come in layers, and NServiceBus.Extensions.DispatchRetries (https://github.com/mauroservienti/NServiceBus.Extensions.DispatchRetries) is the server-side one. Its README opens with this exact scenario: an HTTP request turned into a message, a flaky connection to the broker, a 500 to the caller.
-- Accept-only endpoints: a direct fit. MapCommand and MapEvent send through IMessageSession, outside a handler, so the dispatch goes through the outgoing pipeline and DispatchRetries retries it with a Polly policy (the batch policy, in this case) before giving up. A transient broker hiccup becomes a slower 202 instead of a 500.
-- Atomic endpoints: no fit. On Commit, the transactional session sends its dispatch message straight through the transport dispatcher (IMessageDispatcher), not the pipeline, so DispatchRetries never sees it. If that send fails, the session rolls back and Commit throws: Heyi turns it into a 500, and the client's retry, with the same Idempotency-Key, is the retry. The messages themselves are dispatched later by the processor endpoint, from the outbox, where recoverability already retries.
-- The layers, from the outside in: the client retries with an Idempotency-Key, the endpoint retries the dispatch (accept-only only), the receiver deduplicates by message ID. A dispatch retry after an ambiguous failure (the broker got the message, the acknowledgment got lost) resends the same message ID, so the receiver's deduplication covers that too.
-- Mention it as an option for accept-only endpoints, not a recommendation: a short aside or blockquote, since it's an existing library of mine, not part of Heyi. Heyi's docs mention it the same way. -->
+Heyi supports the `Idempotency-Key` header, an [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) for exactly this. The key becomes the identity of the outgoing messages: the first message sent while handling the request gets `{key}/0`, the second `{key}/1`, and so on. A retried request with the same key produces messages with the same IDs, and receivers deduplicate them as they would any other duplicate, as I described in ["Idempotent, you must be"](https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html).
+
+I want to be clear about the limit. Heyi doesn't deduplicate incoming requests. A retried atomic request runs again: the messages are deduplicated downstream, but the endpoint records the task a second time unless the database says no, for example with a unique index on the key stored alongside the task. Storing responses and replaying them for retried requests is a possible next step, not something Heyi does today.
+
+Retries come in layers. From the outside in: the client retries with an `Idempotency-Key`, and the receiver deduplicates by message ID. In between, the server can retry the dispatch itself.
+
+> For accept-only endpoints, that's what [NServiceBus.Extensions.DispatchRetries](https://github.com/mauroservienti/NServiceBus.Extensions.DispatchRetries) does: its README opens with this exact scenario. Accept-only endpoints send through `IMessageSession`, so the send goes through the outgoing pipeline, where DispatchRetries retries it before giving up: a broker hiccup becomes a slower `202` instead of a `500`. It doesn't apply to atomic endpoints: on commit, the transactional session sends its control message straight through the transport, outside the pipeline. If that fails, the session rolls back, the client gets a `500`, and the client's retry, with the same key, is the retry. And if a dispatch retry resends a message the broker had already received, it resends it with the same ID, so deduplication covers that too.
 
 ## Conclusion
 
-<!-- TODO: restate: the plumbing belongs to the infrastructure, not to every endpoint. But the more interesting question is whether the endpoint should do the work at all. Where the code lives (repo and package, once public), how to try it, and an invitation for feedback. A wink to the name, if it fits. -->
+Storing a task and sending the message that starts it, atomically, shouldn't take a page of plumbing in every endpoint. The plumbing belongs to the infrastructure, and with Heyi, the endpoint is left with what it's for.
+
+But the plumbing wasn't the most interesting part. Should the endpoint do the work? I don't think so. Validate the request, record a task when users need to see it, and hand the work to a message handler: atomic endpoints when there's a task, accept-only endpoints for everything else.
+
+Heyi is available [on NuGet](https://www.nuget.org/packages/Heyi), and the code is [on GitHub](https://github.com/mauroservienti/Heyi). Try it, break it, and tell me what's missing by [opening an issue](https://github.com/mauroservienti/Heyi/issues). And the name? 合一, héyī, means "to become one". Data and messages, become one.
 
 ---
 
