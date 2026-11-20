@@ -191,6 +191,26 @@ Clients retry, proxies retry, users double-click. Each retry is a new request, a
 
 Heyi supports the `Idempotency-Key` header, an [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) for exactly this. The key becomes the identity of the outgoing messages: each message sent while handling the request gets an ID made of the key, its type, and its position among the messages of that type, such as `{key}/{type}/0`. A retried request with the same key produces messages with the same IDs, and receivers deduplicate them as they would any other duplicate, as I described in ["Idempotent, you must be"](https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html).
 
+Positions only work if they're the same on every retry, and that's harder than it sounds once the sending code runs concurrently. ServiceComposer, for example, runs all the composition handlers of a request in parallel. Imagine a `POST /cart/add` decomposed into four handlers, one per service, each sending a message to its own backend. Here's how the IDs stay stable, scenario by scenario:
+
+- **One endpoint, messages sent one after the other.** The positions follow the code, and the code runs the same way on every retry. Nothing to worry about.
+- **Concurrent handlers, different message types.** This is the case I'd expect most often: Sales sends `Sales.AddItemToCart`, Warehouse sends `Warehouse.AddItemToCart`. Each type has its own counter, so whichever handler runs first, each message is position `0` of its own type.
+- **Concurrent handlers, same message type, explicit destinations.** Two handlers share a message type and each sends it to its own backend with `SetDestination`. A counter per type isn't enough anymore: the two handlers race for positions `0` and `1`, and on a retry they can swap. Each backend would then see an ID it never processed, and process the message twice, silently. Heyi counts these sends per destination too, so the ID becomes `{key}/{type}/{destination}/0`, the same no matter who's faster.
+- **Concurrent handlers, same message type, no destination.** Routed sends and publishes have no destination to tell them apart, and the shared `IOutgoingMessages` can't tell who's calling. Here the handler says who it is, by injecting `IOutgoingMessages<TSender>`:
+
+```csharp
+class SalesCartHandler(IOutgoingMessages<SalesCartHandler> messages) : ICompositionRequestsHandler
+{
+    [HttpPost("/cart/add/{id}")]
+    public Task Handle(HttpRequest request) =>
+        messages.Publish(new CartItemAdded(...));
+}
+```
+
+Each sender counts its own messages, and the ID becomes `{key}/{sender}/{type}/0`.
+
+The last two scenarios are worth a second thought, though. Two services sharing a message type usually means a contract that belongs to neither of them. When each service owns its messages, per-type counting is all it takes.
+
 I want to be clear about the limit. Heyi doesn't deduplicate incoming requests. A retried atomic request runs again: the messages are deduplicated downstream, but the endpoint records the task a second time unless the database says no, for example with a unique index on the key stored alongside the task. Storing responses and replaying them for retried requests is a possible next step, not something Heyi does today.
 
 Retries come in layers. From the outside in: the client retries with an `Idempotency-Key`, and the receiver deduplicates by message ID. In between, the server can retry the dispatch itself.
