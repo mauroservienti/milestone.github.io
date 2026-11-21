@@ -115,10 +115,10 @@ Forgetting a piece of it doesn't go unnoticed. When the endpoints are built, Hey
 Marking endpoints one at a time gets repetitive, too. Minimal APIs have an answer for that: route groups. A route group is a URL prefix plus configuration, such as authorization rules or filters, shared by every endpoint mapped in it. Heyi works on route groups as well:
 
 ```csharp
-var order = app.MapGroup("/orders/{orderId}").WithTransactionalSession();
+var orderGroup = app.MapGroup("/orders/{orderId}").WithTransactionalSession();
 
-order.MapPost("/cancellations", ...);
-order.MapPost("/returns", ...);
+orderGroup.MapPost("/cancellations", ...);
+orderGroup.MapPost("/returns", ...);
 ```
 
 Both endpoints are transactional, each request with its own session. And when one endpoint in the group shouldn't be, for example a webhook, `[WithoutTransactionalSession]` opts it out.
@@ -212,7 +212,7 @@ Clients retry, proxies retry, users double-click. Each retry is a new request, a
 
 Heyi supports the `Idempotency-Key` header, an [IETF draft](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/) for exactly this. The key becomes the identity of the outgoing messages: each message sent while handling the request gets an ID made of the key, its type, and its position among the messages of that type, such as `{key}/{type}/0`. A retried request with the same key produces messages with the same IDs, and receivers deduplicate them as they would any other duplicate, as I described in ["Idempotent, you must be"](https://milestone.topics.it/2026/11/26/idempotency-deep-dive.html).
 
-Positions only work if they're the same on every retry, and that's harder than it sounds once the sending code runs concurrently. ServiceComposer, for example, runs all the composition handlers of a request in parallel. Imagine a `POST /cart/add` decomposed into four handlers, one per service, each sending a message to its own backend. Here's how the IDs stay stable, scenario by scenario:
+Positions only work if they're the same on every retry, and that's harder than it sounds once the sending code runs concurrently. [ServiceComposer](https://github.com/ServiceComposer/ServiceComposer.AspNetCore), for example, runs all the composition handlers of a request in parallel. Imagine a `POST /cart/add` decomposed into four handlers, one per service, each sending a message to its own backend. Here's how the IDs stay stable, scenario by scenario:
 
 - **One endpoint, messages sent one after the other.** The positions follow the code, and the code runs the same way on every retry. Nothing to worry about.
 - **Concurrent handlers, different message types.** This is the case I'd expect most often: Sales sends `Sales.AddItemToCart`, Warehouse sends `Warehouse.AddItemToCart`. Each type has its own counter, so whichever handler runs first, each message is position `0` of its own type.
