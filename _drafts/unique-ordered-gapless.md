@@ -51,7 +51,7 @@ That's a reservation. A reservation of identifiers, with all the costs we discus
 
 GUIDs don't sort in creation order. Often, that's fine. Sometimes, it isn't: we want the newest orders first, or we want a database index that doesn't get fragmented by random keys.
 
-Time-ordered identifiers help. [UUID version 7](https://www.rfc-editor.org/info/rfc9562/) starts with a timestamp, so identifiers generated later sort later. Twitter's Snowflake did something similar, combining a timestamp, a machine identifier, and a sequence number.
+Time-ordered identifiers help. [UUID version 7](https://www.rfc-editor.org/info/rfc9562/) starts with a timestamp, so later-generated identifiers sort later. [Twitter's Snowflake](https://en.wikipedia.org/wiki/Snowflake_ID) did something similar, combining a timestamp, a machine identifier, and a sequence number.
 
 The catch is the word "later." Later according to whose clock? Two machines generating identifiers at the same time don't share a clock, and their clocks drift. Time-ordered identifiers are roughly ordered, and roughly is often good enough. If we need strict ordering across the whole system, we need a single source of truth that hands out numbers one at a time.
 
