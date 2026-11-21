@@ -258,4 +258,4 @@ Heyi is available [on NuGet](https://www.nuget.org/packages/Heyi), and the code 
 
 ---
 
-<!-- TODO: header image and Unsplash credit -->
+Photo by <a href="https://unsplash.com/@ttepavac?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">[Tanja Tepavac](https://unsplash.com/@ttepavac?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)</a> on <a href="https://unsplash.com/photos/a-single-orange-puzzle-piece-rests-on-a-pile-of-grey-pieces-W5Vm3PqxdzA?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">[Unsplash](https://unsplash.com/photos/a-single-orange-puzzle-piece-rests-on-a-pile-of-grey-pieces-W5Vm3PqxdzA?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)</a>
