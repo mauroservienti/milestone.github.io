@@ -89,6 +89,8 @@ The endpoint doesn't open, commit, or dispose anything. `WithTransactionalSessio
 - After the endpoint returns, it looks at the status code. A `2xx` commits, before the response is written, and the session saves the context's changes as part of the commit: no `SaveChanges` call needed. Anything else, exceptions included, disposes the session, which rolls back data and messages.
 - A failed commit becomes a `500`, never a success.
 - `IOutgoingMessages` sends and publishes through the open session. Using it outside a transactional endpoint throws, instead of quietly sending right away.
+- Reads don't need atomicity: `GET` and the other safe methods run without a session, unless `OpenSessionsForSafeMethods()` says otherwise. That's for when clients can't be trusted to pick the right verb.
+- The session is observable. With OpenTelemetry, a span covers it, records whether it committed or why it rolled back, and the messages sent inside it show up as its children.
 
 What about the setup? NServiceBus comes first, Heyi second. Heyi doesn't configure or host NServiceBus: the endpoint is configured as usual, with the transactional session and the outbox enabled, and registered with the standard hosting integration. Then Heyi needs to know how to open the session:
 
@@ -119,9 +121,28 @@ order.MapPost("/cancellations", ...);
 order.MapPost("/returns", ...);
 ```
 
-Both endpoints are transactional, each request with its own session.
+Both endpoints are transactional, each request with its own session. And when one endpoint in the group shouldn't be, for example a webhook, `[WithoutTransactionalSession]` opts it out.
 
-> Heyi doesn't add guarantees. The [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) and the outbox do the heavy lifting; Heyi adds the programming model.
+What about controllers? Remember the MVC filter in the documentation sample? `app.MapControllers().WithTransactionalSession()` makes every controller transactional. To pick, mark controllers or actions with `[WithTransactionalSession]` instead. And a controller doesn't even need a base class, which makes it look a lot like a message handler:
+
+```csharp
+[Controller]
+public class CancellationsEndpoint(RequestsDbContext db, IOutgoingMessages messages)
+{
+    [HttpPost("/orders/{orderId}/cancellations"), WithTransactionalSession]
+    public async Task<IResult> Handle(Guid orderId)
+    {
+        var cancellation = new CancellationRequest(orderId);
+        db.CancellationRequests.Add(cancellation);
+        await messages.Send(new CancelOrder(orderId, cancellation.Id));
+        return Results.Accepted($"/cancellations/{cancellation.Id}", cancellation);
+    }
+}
+```
+
+Same body, same rules, and MVC takes care of discovering and routing it.
+
+> Heyi doesn't add guarantees. The [NServiceBus transactional session](https://docs.particular.net/nservicebus/transactional-session/) and the outbox do the heavy lifting; Heyi adds the streamlined programming model.
 
 One decision deserves a few more words: how the `DbContext` joins the session. The usual approach builds the context in its DI registration: if there's an open SQL storage session, the context is created on top of its connection and transaction. It works, as long as the session is already open when the context is created. And that's not up to the registration: it depends on when something first asks for the context. An endpoint parameter asks before the endpoint body runs, so before the session opens.
 
@@ -210,6 +231,16 @@ class SalesCartHandler(IOutgoingMessages<SalesCartHandler> messages) : IComposit
 Each sender counts its own messages, and the ID becomes `{key}/{sender}/{type}/0`.
 
 The last two scenarios are worth a second thought, though. Two services sharing a message type usually means a contract that belongs to neither of them. When each service owns its messages, per-type counting is all it takes.
+
+There's one more catch: the key comes from the client. What if two clients send the same one, because of a bug, or on purpose? Their messages get the same IDs, and receivers silently drop the second client's messages as duplicates. The key needs a scope, such as who's calling:
+
+```csharp
+builder.Services.AddHeyi(options => options
+    .OpenSessionOptions(() => new SqlPersistenceOpenSessionOptions())
+    .ScopeIdempotencyKeys(httpContext => httpContext.User.FindFirst("sub")?.Value));
+```
+
+The scope is hashed and becomes part of the IDs, `{key}/{scope}/{type}/0`, so the same key from two users means two sets of messages.
 
 I want to be clear about the limit. Heyi doesn't deduplicate incoming requests. A retried atomic request runs again: the messages are deduplicated downstream, but the endpoint records the task a second time unless the database says no, for example with a unique index on the key stored alongside the task. Storing responses and replaying them for retried requests is a possible next step, not something Heyi does today.
 
