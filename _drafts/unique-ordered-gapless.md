@@ -94,7 +94,7 @@ What if an issued invoice is wrong? We can't delete it; that would leave a gap. 
 
 Think about it for a second: the credit note is a legal, standardized apology. Accounting institutionalized "accept and apologize" a long time ago. The invoice was issued, it's part of history, and the only way forward is a compensating action. Commands don't fail; we just record what happened next.
 
-There's one exception that proves the rule. In Italy, electronic invoices go through a central exchange system, and when it rejects an invoice, for example, because a field is malformed, the invoice is considered never issued. In that case, the [tax agency's guidance](https://www.agenziaentrate.gov.it/portale/documents/20143/297470/Circolare+n+13+del+02+luglio+2018_Circolare_13_02072018.pdf/da0b0db7-64eb-ac7b-c925-4fdbc776279d) prefers sending the corrected invoice with the same number and date, within five days of the rejection.
+One exception proves the rule. In Italy, electronic invoices go through a central exchange system, and when it rejects an invoice, for example, because a field is malformed, the invoice is considered never issued. In that case, the [tax agency's guidance](https://www.agenziaentrate.gov.it/portale/documents/20143/297470/Circolare+n+13+del+02+luglio+2018_Circolare_13_02072018.pdf/da0b0db7-64eb-ac7b-c925-4fdbc776279d) prefers sending the corrected invoice with the same number and date, within five days of the rejection. The key difference is that rejections are usually caused by format or schema validation, not business reasons, so we can "reuse" the gap just created.
 
 In other words, a rejected invoice gives its number back, with a deadline. A reservation that expires, but only if we act on it in time.
 
