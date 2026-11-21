@@ -90,7 +90,7 @@ And remember "based on one or more series"? That's partitioning. Many businesses
 
 ## You can't delete an invoice
 
-What if an issued invoice is wrong? We can't delete it; that would leave a gap. We issue a credit note that cancels it, fully or partially, and if needed, a new invoice.
+What if an issued invoice is wrong? We can't delete it; that would leave a gap. We issue a credit note that cancels it, fully or partially, and, if needed, a new invoice. And, not surprisingly, credit notes usually use a separate series.
 
 Think about it for a second: the credit note is a legal, standardized apology. Accounting institutionalized "accept and apologize" a long time ago. The invoice was issued, it's part of history, and the only way forward is a compensating action. Commands don't fail; we just record what happened next.
 
