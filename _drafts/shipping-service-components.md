@@ -31,64 +31,68 @@ It's the same question, asked from two sides. The 4+1 article asked it about UI 
 
 The 4+1 article used payments. This time, let's go back to hotels. [Hotelly](https://github.com/mauroservienti/hotelly), the demo behind ["Searching, paging, and sorting in a distributed system: the complete picture"](https://milestone.topics.it/2027/01/13/searching-paging-and-sorting.html), has four services:
 
-- **Registry:** hotels, their location, stars, and amenities.
-- **Reservations:** rooms and bookings.
-- **Marketing:** descriptions, ratings, and reviews.
+- **Registry:** hotels, their location, stars, amenities, and description.
 - **Sales:** nightly rates.
+- **Reservations:** rooms and bookings.
+- **Marketing:** ratings and reviews.
 
-<!-- TODO: link the Hotelly back office scenario once it's in the demo. -->
-So far, Hotelly only has a search page. Let's add a back office: the page hotel managers use to look at and edit a hotel.
+<!-- TODO: point the link to the README's back office section once the Hotelly stack is merged. -->
+Until now, Hotelly only had a search page. Now it also has a [back office](https://github.com/mauroservienti/hotelly): the pages hotel managers use to add a hotel, look at it, and edit it.
 
-> Hotels aren't "created" at once, though. As ["The fine art of dismantling"](https://milestone.topics.it/view-model-composition/2019/04/18/the-fine-art-of-dismantling.html) puts it, nobody in the business says "I want to create a hotel." Registry onboards it, then Sales sets its rates, Marketing writes its description, and Reservations configures its rooms, possibly days apart, and done by different people.
+The hotel page is a composed page. Each service contributes a panel showing the data it owns:
 
-The hotel page is a composed page. Each service contributes a panel showing the data it owns, and a form to edit it:
-
-- Registry's panel edits the name, the address, the stars, and the amenities.
+- Registry's panel edits the name, the city, the stars, the amenities, and the description.
 - Sales' panel edits the nightly rates.
-- Marketing's panel edits the description.
-- Reservations' panel edits the rooms.
+- Reservations' panel edits the rooms, and shows how many are booked.
+- Marketing's panel shows the rating and the latest reviews. It's read-only: reviews come from guests, not from hotel managers.
 
-Each panel saves on its own. There's no single "Save" button and no distributed transaction: a manager changing the rates doesn't touch the description.
+On the edit page, each panel saves on its own. A manager changing the rates doesn't touch the description, and there's no single "Save" button.
+
+> Hotels aren't necessarily "created" at once, though. As ["The fine art of dismantling"](https://milestone.topics.it/view-model-composition/2019/04/18/the-fine-art-of-dismantling.html) puts it, nobody in the business says "I want to create a hotel." Registry onboards it, then Sales sets its rates, and Reservations configures its rooms, possibly days apart, and done by different people.
+
+Hotelly's create page takes a shortcut, and it's a useful one to look at. The manager fills in the Registry, Sales, and Reservations panels and presses one button. One request reaches the gateway, and each service's handler takes its part of the form and sends a command to its own back end. If any part is invalid, for example a negative rate, the whole request fails, and nothing is sent: Registry never hears about the hotel.
+
+That's not a distributed transaction. Each back end processes its command on its own, later. What's atomic is the decision to send the commands: either all of them go out, or none does.
 
 ## Two hosts, neither of them yours
 
-Let's look at what Registry owns for that page. It's more than its back end:
+Let's look at what Registry owns for those pages. It's more than its back end:
 
 - **A UI component:** the panel, with its form.
 - **A composition handler:** it loads the hotel's details from Registry's database, for the panel to show.
 - **A decomposition handler:** it receives the form post, and sends a command to Registry's back end.
 
-The other three services own the same three pieces. None of them runs in the service's own host, though:
+Sales and Reservations own the same three pieces. Marketing's panel is read-only, so it has no decomposition handler. None of these pieces runs in the service's own host, though:
 
 <div class="mermaid">
 flowchart LR
   subgraph BackOffice[Back office application]
     RUI[Registry panel]
     SUI[Sales panel]
-    MUI[Marketing panel]
     XUI[Reservations panel]
+    MUI[Marketing panel]
   end
   subgraph Gateway[Composition gateway]
     RH[Registry handlers]
     SH[Sales handlers]
-    MH[Marketing handlers]
     XH[Reservations handlers]
+    MH[Marketing handlers]
   end
   RUI --> RH
   SUI --> SH
-  MUI --> MH
   XUI --> XH
+  MUI --> MH
   RH --> R[(Registry)]
   SH --> S[(Sales)]
-  MH --> M[(Marketing)]
   XH --> X[(Reservations)]
+  MH --> M[(Marketing)]
 </div>
 
 The panels run in the back office application. The handlers run in the composition gateway. Both hosts belong to someone else, usually a team that owns the application, and they host code from every service.
 
-> Hotelly already works this way for search. The composition gateway hosts the services' composition handlers and search providers. In the demo, the gateway references them as projects, because everything lives in one repository. In a real system, it wouldn't be that simple, and that's what the rest of this article is about.
+> Hotelly already worked this way for search, and the back office follows the same pattern. In the demo, the gateway references the handlers as projects, and the website references the panels as projects, because everything lives in one repository. In a real system, it wouldn't be that simple, and that's what the rest of this article is about.
 
-The decomposition handler, by the way, is exactly the kind of HTTP endpoint that sends a message, and needs to do it atomically. That's what ["Should the HTTP endpoint do the work?"](https://milestone.topics.it/2027/03/03/heyi.html) is about.
+The decomposition handlers are exactly the kind of HTTP endpoint that sends a message, and needs to do it atomically. That's what ["Should the HTTP endpoint do the work?"](https://milestone.topics.it/2027/03/03/heyi.html) is about. In Hotelly, the gateway maps the composition handlers with a transactional session, so all the handlers taking part in the same request send their commands in the same session. That's what makes the create page all or nothing.
 
 ## How does the panel get into the back office?
 
@@ -102,13 +106,15 @@ It's the simplest option, and the most coupled one. A new panel version reaches 
 
 Packages also share the application's dependencies. If the back office moves to the next major version of its UI framework, every panel has to follow, at the same time.
 
+That's what the Hotelly back office does. Each service ships its panel as a Razor class library, containing a JavaScript module and its styles, and the website registers the panels it references. Even with a package, there's a contract between the page and the panels: each panel module exports a title, a function to render it on the create page, and one to render it on the edit page. The page knows nothing else about the panels it hosts.
+
 ### A micro frontend loaded at runtime
 
 Registry deploys its panel somewhere it controls, and the back office loads it at runtime, for example with module federation or web components.
 
 Registry ships whenever it wants: the next page load picks up the new version. That's the main selling point, and it's a real one.
 
-The price is a runtime contract. The shell and the panel must agree on how the panel is mounted, which inputs it gets, like the hotel ID, and which events it raises, like "saved." The design system is shared at runtime too, so a panel built against a different version can look out of place, or break. The contract is still there: it moved from compile time to runtime, where nothing checks it.
+The price is that the contract is checked only at runtime. It's the same kind of contract Hotelly's panels have: the shell and the panel must agree on how the panel is mounted, which inputs it gets, like the hotel ID, and which events it raises, like "saved." The design system is shared at runtime too, so a panel built against a different version can look out of place, or break. With a package, the back office's build and tests run against the panel before it ships. Loaded at runtime, nothing does.
 
 <!-- TODO: add a personal take on micro frontends, if any. -->
 
@@ -150,16 +156,19 @@ The answer I like is: Registry decides that a version is ready, by releasing it,
 Registry's components run in at least three places: its back end, the gateway, and the back office. They never upgrade at the same moment. For a while, the new panel talks to the old handlers, or the new handlers read from a database schema the old back end is still using. The contracts between the pieces of the same service are what make that work:
 
 - **The composition contract:** the view model the handlers produce, and the panel reads.
+- **The form contract:** what the panel posts, and the decomposition handlers read.
 - **The messages:** the commands the decomposition handlers send to the back end.
-- **The database schema:** the composition handlers read Registry's database directly, as the Hotelly search does, so the schema is a contract too.
+- **The database schema:** the composition handlers read Registry's database directly, as the Hotelly search and back office do, so the schema is a contract too.
 
 They're contracts between parts of the same service, owned by the same team. That makes them easier to change, not free to change. Expand first, then contract: add the new field, ship everything that writes and reads it, then remove the old one.
+
+The create page adds one more wrinkle. Its request carries every service's part of the form, and the page itself belongs to the back office. Registry can add a field to its part without asking anyone, but the shape of the request as a whole, one part per service, is a contract between the page and all the services.
 
 ## Does the repository layout matter?
 
 A bit. With one repository per service, Registry's panel, handlers, and back end live together, and the hosts consume packages. That's what the development view in the 4+1 article suggested.
 
-With a monorepo, the gateway can reference Registry's handlers as projects, as Hotelly does. Every change to the handlers rebuilds the gateway, and the bump disappears. The coupling doesn't, though: a Registry change still deploys the gateway, and with it every other service's handlers. The monorepo makes that faster, not optional.
+With a monorepo, the hosts can reference Registry's handlers and panel as projects, as Hotelly does. Every change to them rebuilds the hosts, and the bump disappears. The coupling doesn't, though: a Registry change still deploys the gateway and the back office, and with them every other service's components. The monorepo makes that faster, not optional.
 
 <!-- TODO: anything from Particular's own experience worth adding here? -->
 
@@ -168,12 +177,13 @@ With a monorepo, the gateway can reference Registry's handlers as projects, as H
 A service owns more than its back end. Its UI components and its composition and decomposition handlers are its code, even if they run in hosts other teams own. Getting them there is a development view decision, and each option trades release independence for safety in a different way:
 
 - Packages are the most coupled, and the easiest to test.
-- Micro frontends and assemblies loaded at startup ship independently, and move the contract to runtime.
+- Micro frontends and assemblies loaded at startup ship independently, and move the contract checks to runtime.
 - Server-side composition moves the UI problem into the gateway, where it becomes a back-end packaging problem.
 
 Whatever we choose, the deploy button isn't the hard part. Backward-compatible contracts between the pieces of the same service are. With those, Registry releases when it's ready, the hosts pick the release up when they're ready, and nobody waits.
 
-<!-- TODO: link the Hotelly back office scenario once it's in the demo. -->
+<!-- TODO: point to the README's back office section once the Hotelly stack is merged. -->
+The [Hotelly back office](https://github.com/mauroservienti/hotelly) puts all of this together: four services, their panels in the website, and their handlers in the gateway.
 
 ---
 
