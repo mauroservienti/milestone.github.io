@@ -123,4 +123,4 @@ The lesson I keep relearning: testing each piece in isolation doesn't tell you t
 
 ---
 
-<!-- TODO: header image and Unsplash credit. -->
+Photo by <a href="https://unsplash.com/@karenchew?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Karen Chew</a> on <a href="https://unsplash.com/photos/a-close-up-of-a-book-with-musical-notes-8MOLegdydLk?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
