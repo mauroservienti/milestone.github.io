@@ -39,8 +39,20 @@ Composition over controllers is the migration path from [controllers to ServiceC
 - Error results, i.e. 4xx and 5xx status codes, `Forbid()` and `Challenge()`, skip the handlers: when the controller rejects the request, handlers with side effects shouldn't run.
 - Results that can't carry a model, e.g. redirects and `Ok()`, are still composed, and the view model is discarded, as in 5.x. POST-redirect-GET keeps working: `POST` handlers composing over an action that redirects still send their commands. ([#1218](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1218))
 - Should handlers also run over error results, as an opt-in? [#1221](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1221) tracks the interest: comment there with your use case.
-<!-- TODO: the beta.2 story? The welcome-to-the-state-machine demo caught the redirect regression, and now has an end-to-end test for the reservation flow. -->
 <!-- TODO: snippet: `composition-over-controllers-controller-model` from the docs. -->
+
+### A regression caught by a demo
+
+The redirect rule didn't start like that. In 6.0.0-beta.2, handlers didn't run at all when the controller action returned a result that can't carry a model. A redirect has no model to compose into, so skipping the handlers looked like saving some work.
+
+Then I upgraded the [Welcome to the state machine demo](https://github.com/mauroservienti/welcome-to-the-state-machine-demos) to beta.2. Its website uses POST-redirect-GET: reserving a ticket, finalizing, and checking out are `POST` requests to controller actions that return `RedirectToAction(...)`. The composition handlers composing over those actions are the ones sending the commands to Reservations, Finance, and Shipping. With beta.2, they'd stop running. No exception, no warning: the user is redirected as usual, and nothing happens behind the scenes.
+
+The demo's tests were all green. They call the handlers directly, so they check what each handler sends, not that ServiceComposer runs it.
+
+[6.0.0-beta.3](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/6.0.0-beta.3) fixed it ([#1218](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1218)): handlers run over every result that isn't an error, and a debug log says when the composed view model is discarded. The demo also got an [end-to-end test](https://github.com/mauroservienti/welcome-to-the-state-machine-demos/pull/654): it starts the whole system with Aspire's testing support, reserves and checks out a ticket through the website, and waits for the payment to succeed and the order to ship. It fails on beta.2 and passes on beta.3, and it runs in CI in about two minutes.
+
+The lesson I keep relearning: testing each piece in isolation doesn't tell you the pieces are wired together. Composition is all about wiring.
+<!-- TODO: keep, shorten, or move the story to its own post. -->
 
 ### Handlers' authorization is enforced
 
