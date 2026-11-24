@@ -18,7 +18,7 @@ series: view-model-composition
 <!-- TODO: confirm the title and the synopsis. -->
 <!-- TODO: write the intro from the following notes. -->
 
-- [ServiceComposer 6.0.0](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/6.0.0) is out. <!-- TODO: check the link once 6.0.0 is tagged. -->
+- [ServiceComposer 6.0.0](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/releases/tag/6.0.0) is out, on [NuGet](https://www.nuget.org/packages/ServiceComposer.AspNetCore/6.0.0).
 - The theme: keep "feeling at home" in ASP.NET Core, from the [last](https://milestone.topics.it/2025/01/08/all-new-goodies-in-servicecomposer.html) [posts](https://milestone.topics.it/2025/04/23/contract-less-handlers.html), and remove the behaviors that surprised users.
 - It's a major: breaking changes are listed in the [upgrade guide](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/upgrade-guides/5.x.x-6.0.0.md).
 
@@ -36,7 +36,10 @@ Composition over controllers is the migration path from [controllers to ServiceC
 ### Controllers and handlers cooperate
 
 - Handlers compose into the model the controller action returns, instead of replacing it. ([#273](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/273))
-- Error and redirect results aren't composed.
+- Error results, i.e. 4xx and 5xx status codes, `Forbid()` and `Challenge()`, skip the handlers: when the controller rejects the request, handlers with side effects shouldn't run.
+- Results that can't carry a model, e.g. redirects and `Ok()`, are still composed, and the view model is discarded, as in 5.x. POST-redirect-GET keeps working: `POST` handlers composing over an action that redirects still send their commands. ([#1218](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1218))
+- Should handlers also run over error results, as an opt-in? [#1221](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1221) tracks the interest: comment there with your use case.
+<!-- TODO: the beta.2 story? The welcome-to-the-state-machine demo caught the redirect regression, and now has an end-to-end test for the reservation flow. -->
 <!-- TODO: snippet: `composition-over-controllers-controller-model` from the docs. -->
 
 ### Handlers' authorization is enforced
@@ -44,6 +47,10 @@ Composition over controllers is the migration path from [controllers to ServiceC
 - Before: `[Authorize]` on a handler composing over a controller was ignored; only the controller's applied. ([#1119](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1119))
 - Now: the handlers' metadata goes on the controller endpoint. The most restrictive requirements win: a handler's `[Authorize]` beats the action's `[AllowAnonymous]`. Security first.
 - Conventions see the components through `CompositionEndpointComponents`.
+
+### Matching the right action
+
+- Handlers compose over the controller action with the same HTTP method, also when the controller has other actions on the same template, or is mapped after other endpoints, e.g. minimal APIs. Before, these setups failed at startup, returned a 405, or failed requests with an `AmbiguousMatchException`. Also fixed in 5.3.4. ([#1211](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1211))
 
 ## Seeing the components behind a route
 
@@ -92,7 +99,8 @@ Composition over controllers is the migration path from [controllers to ServiceC
 ## Upgrading
 
 - Read the [upgrade guide](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/blob/master/docs/upgrade-guides/5.x.x-6.0.0.md): each breaking change says what changed and what to do.
-- Supported versions: 6.0, and 5.3 for patches. 4.3 patches end with 6.0 GA. <!-- TODO: confirm the supported versions. -->
+- Supported versions: only the last two majors are supported, so 6.0, and 5.3 for bug fixes. 4.x is no longer supported: 4.3.6 is its last release.
+- The demos are on 6.0: [All our aggregates are wrong](https://github.com/mauroservienti/all-our-aggregates-are-wrong-demos) and [Welcome to the state machine](https://github.com/mauroservienti/welcome-to-the-state-machine-demos) show the upgrade from `EnableCompositionOverControllers()` to `WithCompositionOverControllers()`. <!-- TODO: update the links to the upgrade commits once Renovate moves them from beta.3 to 6.0.0. -->
 - Release notes are now shorter, with a "what to do" for every behavior change. <!-- TODO: keep or drop. -->
 
 ## What's next
