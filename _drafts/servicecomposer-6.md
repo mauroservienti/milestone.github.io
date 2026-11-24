@@ -29,7 +29,7 @@ Composition over controllers is the migration path from [controllers to ServiceC
 
 ### One mode: an endpoint filter
 
-- `EnableCompositionOverControllers()`, an MVC result filter for every controller, is gone: obsolete in 5.3, a compilation error in 6.0. ([#1116](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1116), [#1126](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1126))
+- `EnableCompositionOverControllers()`, an MVC result filter for every controller, is gone: obsolete in 5.3, a compilation error in 6.0. ([#1116](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1116), [#1126](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1126))
 - `WithCompositionOverControllers()` opts controller endpoints in, and runs the handlers as an endpoint filter: other endpoint filters wrap both the action and the handlers.
 <!-- TODO: snippet: `app.MapControllers().WithCompositionOverControllers();` -->
 
@@ -47,7 +47,7 @@ Composition over controllers is the migration path from [controllers to ServiceC
 
 ## Seeing the components behind a route
 
-- `CompositionEndpointComponents`: each composition endpoint lists its handlers, subscribers and view model factory, with their classes, methods and attributes. Conventions and endpoint filters can read it. ([#1153](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1153))
+- `CompositionEndpointComponents`: each composition endpoint lists its handlers, subscribers and view model factory, with their classes, methods and attributes. Conventions and endpoint filters can read it. ([#1153](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1153))
 - `MapCompositionHandlers()` returns `CompositionEndpointConventionBuilder`, so libraries can add extension methods for composition endpoints only. ([#1149](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1149))
 <!-- TODO: snippet: the `composition-endpoint-components` convention from the endpoint filters docs. -->
 
@@ -60,8 +60,8 @@ Composition over controllers is the migration path from [controllers to ServiceC
 
 ## Registering components without assembly scanning
 
-- `ICompositionComponentsProvider`, and a source generator emitting one in every assembly with composition components. ([#1094](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1094), [#1108](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1108), [#1109](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1109))
-- `options.RegisterReferencedComponents()` registers all referenced providers. ([#1110](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1110))
+- `ICompositionComponentsProvider`, and a source generator emitting one in every assembly with composition components. ([#1094](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1094), [#1108](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1108), [#1109](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1109))
+- `options.RegisterReferencedComponents()` registers all referenced providers. ([#1110](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/pull/1110))
 - Scanning and providers can be mixed while migrating.
 - The first step toward Native AOT: see "What's next".
 
