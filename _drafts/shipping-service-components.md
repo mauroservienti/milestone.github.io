@@ -187,4 +187,4 @@ The [Hotelly back office](https://github.com/mauroservienti/hotelly) puts all of
 
 ---
 
-<!-- TODO: header image and Unsplash credit. -->
+Photo by <a href="https://unsplash.com/@iamrohitchoudhari?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Rohit Choudhari</a> on <a href="https://unsplash.com/photos/a-large-pile-of-brown-cardboard-boxes-with-blue-tape-qO2ztAz5g7A?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">Unsplash</a>
