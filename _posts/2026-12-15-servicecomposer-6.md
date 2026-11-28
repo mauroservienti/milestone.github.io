@@ -77,10 +77,10 @@ public class ProductPriceHandler : ICompositionRequestsHandler
 
 The handler writes through `dynamic`, so the controller's model must support dynamic members, like `ExpandoObject`. With a typed model, use `GetComposedResponseModel<T>()`.
 
-What about results without a model? It depends on the result:
+What if the action doesn't return a model? It depends on what it returns:
 
-- **Errors**, i.e. 4xx and 5xx status codes, `Forbid()` and `Challenge()`, skip the handlers. When the controller rejects the request, handlers with side effects shouldn't run.
-- **Results that can't carry a model**, e.g. redirects and `Ok()`, are composed, and the view model is discarded, as in 5.x. That keeps POST-redirect-GET working: `POST` handlers composing over an action that redirects still send their commands. ([#1218](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1218))
+- **An error**, i.e. a 4xx or 5xx status code, `Forbid()`, or `Challenge()`: the handlers don't run. When the controller rejects the request, handlers with side effects, like sending a command, shouldn't run either.
+- **A result with no room for a model**, e.g. a redirect or a plain `Ok()`: the handlers run, as in 5.x, but the response is the controller's, and whatever the handlers composed is thrown away. Why run them at all, then? Because handlers don't only compose. A form posting to an action that redirects, the POST-redirect-GET pattern, is a common example: the `POST` handlers composing over that action are the ones sending commands to the back end. Skip them, and nothing happens. ([#1218](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1218))
 
 Should handlers also run over error results, as an opt-in? [#1221](https://github.com/ServiceComposer/ServiceComposer.AspNetCore/issues/1221) tracks the interest: if you have a use case, comment there.
 
